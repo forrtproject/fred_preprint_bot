@@ -1,0 +1,164 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: osfdb
+      POSTGRES_USER: osf
+      POSTGRES_PASSWORD: osfpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U osf -d osfdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: osf-sync-app:latest
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+      PYTHONPATH: /app
+      GROBID_URL: http://grobid:8070
+      PDF_DEST_ROOT: /data/preprints
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery-worker:
+    image: osf-sync-app:latest
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+      PYTHONPATH: /app
+      GROBID_URL: http://grobid:8070
+    command: >
+      sh -c "
+        python -c 'from osf_sync.db import init_db; init_db(); print(\"DB ready\")' &&
+        celery -A osf_sync.celery_app.app worker --loglevel=INFO --concurrency=2
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery-beat:
+    image: osf-sync-app:latest
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+      PYTHONPATH: /app
+    command: celery -A osf_sync.celery_app.app beat --loglevel=INFO
+    depends_on:
+      redis:
+        condition: service_healthy
+  celery-pdf:
+    image: osf-sync-app:latest
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+      PYTHONPATH: /app
+      PDF_DEST_ROOT: /data/preprints
+    command: >
+      sh -c "
+        mkdir -p /data/preprints &&
+        celery -A osf_sync.celery_app.app worker --loglevel=INFO --concurrency=1 -Q pdf --prefetch-multiplier=1
+      "
+    volumes:
+      - ./data:/data     # so PDFs land on the host
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  grobid:
+    image: lfoppiano/grobid:0.8.0
+    restart: unless-stopped
+    # (ports are optional — only needed if you want to hit it from your host)
+    ports:
+      - "8070:8070"
+    environment:
+      GROBID_MAX_CONCURRENT: "1"
+      JAVA_OPTS: "-Xms512m -Xmx2g -Djava.awt.headless=true"
+
+  celery-grobid:
+    image: osf-sync-app:latest
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+      PYTHONPATH: /app
+      PDF_DEST_ROOT: /data/preprints
+      GROBID_URL: http://grobid:8070
+    command: >
+      sh -lc "
+        mkdir -p /data/preprints &&
+        python /app/scripts/wait_for_grobid.py &&
+        celery -A osf_sync.celery_app.app worker --loglevel=INFO --concurrency=1 -Q grobid --prefetch-multiplier=1
+      "
+    volumes:
+      - ./data:/data
+      - ./scripts:/app/scripts
+    depends_on:
+      grobid:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Optional: Celery monitoring UI
+  flower:
+    image: osf-sync-app:latest
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://osf:osfpass@postgres:5432/osfdb
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "5555:5555"
+    command: >
+      sh -c "celery -A osf_sync.celery_app.app flower --port=5555 --broker=$CELERY_BROKER_URL"
+
+volumes:
+  pgdata:
+  
