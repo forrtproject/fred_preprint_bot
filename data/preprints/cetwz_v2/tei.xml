@@ -1,0 +1,2391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Hierarchical Factor Models For Analysis in Experimental Designs</title>
+				<funder ref="#_3GDDcfq">
+					<orgName type="full">ONR</orgName>
+				</funder>
+				<funder ref="#_2cayW2d">
+					<orgName type="full">National Science Foundation</orgName>
+					<orgName type="abbreviated">NSF</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Jeffrey</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+							<email>jrouder@uci.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mahbod</forename><surname>Mehrvarz</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Niek</forename><surname>Stevenson</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">University of Amsterdam</orgName>
+								<address>
+									<addrLine>Author Note Version 2</addrLine>
+									<postCode>2025</postCode>
+									<settlement>June</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Department of Cognitive Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>92697</postCode>
+									<settlement>Irvine</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Hierarchical Factor Models For Analysis in Experimental Designs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">1002783842FF1F74D9E0804B5D2A609A</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-19T16:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Factor Models</term>
+					<term>Hierarchical Models</term>
+					<term>Cognitive Control</term>
+					<term>Illusions</term>
+					<term>Mixed Models</term>
+					<term>Bayesian Analysis</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Author Contributions: All three authors developed the models in collaboration. JNR wrote much of the paper. MM developed JAGS code and edited the paper. NS implemented post-sampling alignment and edited the paper.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Factor Models For Analysis in Experimental Designs</head><p>In his presidential address to the American Psychological Association, <ref type="bibr">Lee Cronbach</ref> proposed a merger of sorts between experimental psychology and correlational psychology <ref type="bibr" target="#b15">(Cronbach, 1957)</ref>. Indeed, in many ways we have seen this merger as it is now popular to study individual differences in cognitive experimental tasks. By understanding how individuals' performance covaries across these tasks, it is perhaps possible to uncover an underlying latent structure of cognitive processing. A classic example in cognitive control comes from <ref type="bibr" target="#b55">Miyake et al. (2000)</ref>, who used latent-variable models to decompose individual differences in cognitive-control tasks into the three factors of inhibition, shifting, and updating. In today's psychological science, it is common to see latent-variable analyses of tasks that are comprised of many repeated trials. Examples come from fields as diverse as development, brain imaging, social cognition, aging, and clinical pathology.</p><p>Here is the usual data-analytic pipeline: First, individuals complete a battery of tasks.</p><p>In the study of executive function, examples of tasks include the Stroop task <ref type="bibr" target="#b89">(Stroop, 1935)</ref>, the flanker task <ref type="bibr" target="#b18">(Eriksen &amp; Eriksen, 1974)</ref>, and the antisaccade task <ref type="bibr" target="#b36">(Kane, Bleckley, Conway, &amp; Engle, 2001</ref>) among many others. These experimental tasks are comprised of many repeated trials per condition. Second, observations from repeated trials are aggregated into a single score per individual per task. The usual way of computing the score is to take either a sample mean or a sample contrast. For example, in a Stroop task, the score is the mean difference in response time between conflict (incongruent) and non-conflict (congruent) conditions. We will call this the take-the-mean approach, and it is prevalent, perhaps ubiquitous, in application. Third, The matrix of scores per individual across tasks serves as input for computing the correlation among the tasks. Fourth, Task covariation is decomposed into latent variables in a structural-equation model <ref type="bibr" target="#b4">(Bollen, 1989;</ref><ref type="bibr" target="#b83">Skrondal &amp; Rabe-Hesketh, 2004)</ref>. It is the relations among these latent variables that hopefully reveal the underlying structure of cognitive processes. The usual pipeline with take-the-mean scores is shown in Figure <ref type="figure">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Attenuation of Correlations, Overconfidence in Bad Ansewrs</head><p>Although this usual approach is common, the results with experimental tasks have been beset with problems. First, experimental tasks are unreliable as measures of individual differences <ref type="bibr" target="#b17">(Enkavi et al., 2019;</ref><ref type="bibr" target="#b20">Franco-Martínez, Vicente-Conesa, Shanks, &amp; Vadillo, 2024;</ref><ref type="bibr" target="#b29">Hedge, Powell, &amp; Sumner, 2018;</ref><ref type="bibr" target="#b38">Karr et al., 2018;</ref><ref type="bibr" target="#b94">Vadillo, Malejka, Lee, Dienes, &amp; Shanks, 2022)</ref>. Values of split-half reliability are often below .5 in value. Second, several tasks that purportedly measure the same construct do not correlate well. For example, the correlation between flanker and Stroop effects in large studies is often near .1 and rarely greater than .25 <ref type="bibr" target="#b17">(Enkavi et al., 2019;</ref><ref type="bibr" target="#b68">Rey-Mermet, Gade, &amp; Oberauer, 2018;</ref><ref type="bibr" target="#b75">Rouder, Kumar, &amp; Haaf, 2023)</ref>.</p><p>Third, latent-variable decomposition in cognitive-control domains seems unreplicable. This lack of replicability is showcased by <ref type="bibr" target="#b38">Karr et al. (2018)</ref> who found that latent-variable analysis with simulated data infrequently recovered the generating model when the sample sizes and parameter values used in the simulations came from extant studies.</p><p>These problems in practice reflect a statistical flaw in the usual approach with take-the-mean approach. The resulting estimates of correlation are statistically inconsistent.</p><p>Figure <ref type="figure">2</ref> shows why. Figure <ref type="figure">2A</ref> shows a scatter plot for 200 hypothetical individuals on two tasks. Plotted are true scores. True scores are the ideal and would be obtained if we had an unlimited number of trials per individual per task. There is a healthy correlation of .5 in value. Yet, we observe data from finite trials, and because of this, the sample scores are perturbed from the true scores. Figure <ref type="figure">2B</ref> shows the scatter among the sample scores. The trial noise perturbs these scores in all directions, and the result is the well-known attenuation of correlation by measurement error <ref type="bibr" target="#b85">(Spearman, 1904b)</ref>.</p><p>One of the unappreciated difficulties with trial noise is that the resulting confidence intervals (CIs) on correlation coefficients are miscalibrated. Figure <ref type="figure">2C</ref> shows CIs computed the conventional way with Fisher's z-transform method <ref type="bibr" target="#b19">(Fisher, 1921)</ref>. Here, we ran a small simulation where data were generated and analyzed several times. The first third of bars, colored red in Figure <ref type="figure">2C</ref>, show the CIs from 100 runs for 20 individuals per run (ordered by sample correlation value). The width of these CIs reflect the number of individuals but not the amount of trial noise or the number of trials. For 20 individuals, they are quite wide, but even so, the coverage of the true correlation is not near the nominal .95 value. As the number of individuals is increases (blue and green bars), the CIs narrow and the coverage becomes even worse. Let's not gloss this over-coverage actually decreases with an increasing number of individuals! The analyst becomes more sure of a bad answer.</p><p>The main difficulty with these CIs is that they do not reflect the influence of trial noise.</p><p>They are the CIs that reflect uncertainty from a finite number of individuals as if each had run an unlimited number of trials. The difficulties with these CIs is highlighted by comparing them to a more appropriate hierarchical treatment. A hierarchical linear model with separate variance components for trial noise and individuals was applied to the trial-level data underlying Figure <ref type="figure">2B</ref> (we specify this model subsequently as the unconstrained-variance model). The resulting posterior on the correlation across two tasks is shown in Figure <ref type="figure">2D</ref>. The true value of .5 is located in the middle of the posterior indicating that the model effectively disattenuates the correlation. The posterior, however, is wide. It is much wider than the corresponding CI (see the horizontal error bar) showing the needed inflation from trial noise. We have shown previously that these credible intervals have reasonable frequentist coverage properties <ref type="bibr">(Mehrvarz &amp; Rouder, 2025;</ref><ref type="bibr" target="#b75">Rouder, Kumar, et al., 2023</ref>)-95% credible intervals cover the true value about 95% of the time in realistic simulations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Underestimating The Salience of Factors</head><p>These difficulties in estimating correlations extend to factor analyses of experimental-task data. The main problem is that trial noise inflates residual variation resulting in less clear and less salient factor structures. We illustrate this problem with the following synthetic example that will be used throughout. Consider a battery of eight experimental tasks. Each task has two conditions, congruent and incongruent, with the later requiring more executive control than the former. The difference between the two conditions forms the target of inquiry. Each of 200 individual performs 100 trials in each condition, and the total number of observations is 320000 (200 × 8 × 2 × 100). With the take-the-mean approach, this total is reduced to a matrix that is 200 individual by 8 tasks or 1600 scores.</p><p>Suppose performance on the task is mediated by two factors. Table <ref type="table" target="#tab_0">1</ref> shows ground-truth loadings for this case. Factor 1 loads most highly on Task 1, second-most highly on Task 2 and decreases subsequently. Factor 2 loads most highly on Task 8, second most highly on Task 7, and decreases subsequently. Factor models are a decomposition of variance into common factor and unique residual components <ref type="bibr" target="#b4">(Bollen, 1989)</ref>, and this decomposition is depicted in Figure <ref type="figure">3</ref>. The top row, labeled "Population," shows the case for the ground truth at the population level. The total variance across tasks is shown on the left, and the influences of the factors are shown on the right. Because Factor 1 loads most highly on Task 1 and 2, the contribution to variance of these tasks is greatest. Factor models include a residual variance term, which is variability unique to a task. This residual is a diagonal matrix. It is helpful to track the contribution of each factor and the residual to the total, and a suitable measure is the trace of each matrix (the trace is the sum of the diagonal elements). We designed this example so that Factor 1, Factor 2, and the residual components each account for about 1/3rd of the total variance. The second row shows the effect of sampling individuals from the population. The variance matrix is that of true scores and is analogous to the scatter in Figure <ref type="figure">2A</ref>. The factor decomposition of this matrix is shown across the second row. There is some distortion of the factor loadings as there is only a finite sample of 200 individuals. Importantly, the influence of the residual is not amplified. In fact, each component contributes about 1/3 of the variances as the fluctuations are not systematic. The third row shows what happens with observed data. The input are the trial-by-trial observations, and scores are computed with take-the-mean aggregation. Shown is the empirical variance matrices of the scores, and, as before, the effect is a notable attenuation of off-diagonal terms. This attenuation occurs because trial noise inflates the residual. The factor decomposition of this take-the-mean variance matrix is shown. The factors each account for about 18.5% of the variance while the residual accounts for 63% making the factors appear less salient and theoretically less important than they truly are.</p><p>The goal of this paper is to provide accurate factor models for experimental task data.</p><p>The last row of Figure <ref type="figure">2</ref> foreshadows how we meet this goal. It is the results of the hierarchical factor model that is the main topic of this report. As can be seen, the model is highly successful-the salience of the factors is restored in the hierarchical model analysis.</p><p>Each factor accounts for about 1/3rd of the variance, and the residual accounts for the remaining 1/3rd. It is this success that should change how researchers perform factor analysis with experimental data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overview of The Hierarchical Solution</head><p>Although researchers often incorporate tasks with repeated trials into their latent-variable analysis, they rarely account for trial noise. As a result, latent patterns are appear both less salient and more stable than they are. The solution to this problem is conceptually straightforward-trial noise should be modeled simultaneously with individual differences in a hierarchical setup. At the first level of the hierarchy-the data level-observables are modeled as a function of individual true scores in tasks and trial noise.</p><p>At the second level-the latent level-these individual true scores are modeled with latent-variable models. In this paper we combine linear data models with exploratory and confirmatory factor models. Our goal is to make this development convenient for routine use in psychological science. We develop in the Bayesian framework as it is computationally convenient for hierarchical models <ref type="bibr" target="#b31">(Jackman, 2009;</ref><ref type="bibr" target="#b42">Lee, 2007)</ref> and associated tools such as Stan <ref type="bibr">(Carpenter et al., 2017)</ref> and JAGS <ref type="bibr" target="#b62">(Plummer, 2003)</ref> are powerful and user friendly.</p><p>Here is how to differentiate this hierarchical use of factor models from the more usual use. In the more usual use, the input is a matrix of observed scores. These are manifest variables, and we can refer to the model here as a manifest factor model. In the current development the input to the factor models are not observables, they are themselves latent variables that must be modeled. We term these models as hierarchical factor models as they are hierarchical in the sense of <ref type="bibr" target="#b67">Raudenbush and Bryk (2002)</ref>. Unfortunately, the term hierarchical factor models has a different meaning in an older factor-analysis literature. It refers to placing latent factors themselves in a hierarchy <ref type="bibr" target="#b78">(Schmid &amp; Leiman, 1957;</ref><ref type="bibr" target="#b92">Tucker, 1940)</ref> rather than using a hierarchical structure to account for measurement error. In the modern literature, the older usage of hierarchical factors would fall under structural-equation modeling. Hence, we use the term hierarchical factor models in the more modern sense of <ref type="bibr" target="#b67">Raudenbush and Bryk (2002)</ref> and not in the older sense of <ref type="bibr" target="#b92">Tucker (1940)</ref>. In the experimental-psychology context, they refer to models that explicitly account for trial noise along with factor structures on individual variation.</p><p>Factor models have a long and storied history in psychology <ref type="bibr">(Caspi et al., 2014;</ref><ref type="bibr" target="#b50">McCrae &amp; Costa Jr, 1997;</ref><ref type="bibr">Spearman, 1904a;</ref><ref type="bibr" target="#b90">Thurstone, 1938)</ref>, and Bayesian analysis with factor models is well developed <ref type="bibr" target="#b1">(Ando, 2009;</ref><ref type="bibr" target="#b3">Bhattacharya &amp; Dunson, 2011;</ref><ref type="bibr" target="#b45">Lopes &amp; West, 2004;</ref><ref type="bibr" target="#b54">Merkle, Fitzsimmons, Uanhoro, &amp; Goodrich, 2021)</ref>. The usual context is that factor models are manifest in that they are applied to a matrix of observed scores. A few authors have developed them in the hierarchical context promoted here. In many of the previous applications, the factor model serves as a regularization devise to help estimate either individual scores or the variance matrix among these scores <ref type="bibr" target="#b37">(Kang, Yi, &amp; Turner, 2022;</ref><ref type="bibr">Mehrvarz &amp; Rouder, 2025)</ref>. Our development is most similar to <ref type="bibr">Stevenson, Innes, Boag, et al. (2024)</ref> inasmuch as the target of analysis is the estimation of a factor structure in a hierarchical setting.</p><p>As prologue, the hierarchical factor model has the following advantages that should promote their adoption:</p><p>1. Accurate Estimates: In Figures <ref type="figure">2</ref> and<ref type="figure">3</ref> we demonstrated that non-hierarchical methods dramatically underestimate correlations and the salience of factors. In hierarchical factor models, model-based estimates are accurate. The salience of the factor structure is not understated and resulting correlations are not attenuated in value. The disattenuation is similar in spirit to Spearman's disattenuation <ref type="bibr" target="#b85">(Spearman, 1904b)</ref> with two notable advantages: First, the disattenuation is more general in that it applies to the salience of factors as well as correlations; second, it is more interpretable in that correlations and proportion-of-variance measures are constrained to the appropriate intervals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Calibrated Uncertainty:</head><p>In Figure <ref type="figure">2</ref> we showed that confidence intervals are miscalibrated-in fact too narrow-because they fail to account for trial noise. In the hierarchical factor model, uncertainty reflects the number of trials, the degree of trial noise relative to true variation across individuals, and the number of individuals <ref type="bibr">(Rouder &amp; Mehrvarz, 2024)</ref>. When correlations are disattenuated for trial noise, there is uncertainty in the disattenuation process that must be reflected in the uncertainty about correlations and factor loadings. The hierarchical factor model provides an appropriate approach for understanding the limits of the resolution of the data for inference about correlations and the associated factor structure. This understanding assuredly leads to better science.</p><p>3. No Heywood Cases. Heywood cases are a well-known problem in factor analysis where the resulting variances may be negative and resulting correlations may be out of the [-1,1] range. The Bayesian approach adopted here with proper priors is not prone to Heywood cases <ref type="bibr" target="#b11">(Congdon, 2003;</ref><ref type="bibr" target="#b45">Lopes &amp; West, 2004</ref>).</p><p>In the next section, we provide a quick review of the conventional orthogonal factor model on manifest variables. Following this brief review, we present the hierarchical factor model. In the remaining sections we provide a series of applications that highlight the usefulness, performance, and the unique insights afforded by hierarchical factor models.</p><p>The Manifest Factor-Model Specification.</p><p>The factor model is a statistical model that underlies exploratory factor analysis (EFA), confirmatory factor analysis (CFA), and structural equation modeling (SEM). We assume readers have a passing familiarity with the aims, uses, and interpretation of factor models. In the following, we review the conventional factor model for manifest or observed data. Our focus here is on issues pertinent to Bayesian analysis and hierarchical extensions.</p><p>Readers seeking a systematic development are referred to <ref type="bibr" target="#b83">Skrondal and Rabe-Hesketh (2004)</ref> and <ref type="bibr" target="#b21">Gana and Broc (2019)</ref> for theoretical and applied treatments, respectively.</p><p>The input to a manifest factor model is a matrix of observations. The rows of the matrix denote individuals; the columns denote measures (or tasks in psychology batteries); the entries, Y ij are the score for the ith individual, i = 1, . . . , I on the jth measure, j = 1, . . . , J. In the previous example, there were I = 200 individuals and J = 8 tasks. The inputted matrix to the manifest model had 1600 observations. Factor models describe a decomposition of the matrix of scores into a reduced number of factors, M , where M &lt; J. An intuitive but incomplete expression of the model is:</p><formula xml:id="formula_0">Y ij = µ j + M m=1 λ jm η im + ϵ ij .</formula><p>Here, µ j is a population mean score on the jth measure, λ jm is the factor loading for the jth measure on the mth factor, η im is the factor score for the ith individual on the mth factor, and ϵ ij ∼ N(0, δ 2 j ) is normally-distributed, zero-centered, measure-specific residual error not accounted for by the factor structure. Each person may be described by the vector of factor scores: η i = η i1 , . . . , η iM . The scores are usually z-scores, so a value of η im = -2 is a particularly low score. More importantly, these values are treated as random effect, e.g., η im ∼ N(0, 1). The more complete specification is:</p><formula xml:id="formula_1">Y ij | η i1 , . . . , η iM = µ j + M m=1 λ jm η im + ϵ ij η im ∼ N(0, 1)</formula><p>It is convenient to recast the model with matrix notation. Let Y i = (Y i1 , . . . , Y iJ ) ′ be a (column) vector of scores for the ith individual. Then, the model may be rewritten as</p><formula xml:id="formula_2">Y i | η i ∼ N J (µ + Λη i , D(δ 2 )),<label>(1)</label></formula><formula xml:id="formula_3">η i ∼ N M (0, I).</formula><p>Model parameters are as follows: µ = (µ 1 , . . . , µ J ) ′ is a vector of J true means, Λ is the J × M matrix of factor loadings, η i = (η i1 , . . . , η iM ) ′ is a vector of M factor scores for the ith individual, and D(δ 2 ) is a J × J diagonal matrix with the diagonal given by (δ 2 1 , . . . , δ 2 J ).</p><p>Equation 1 is conditional on factor scores. Whereas factor scores are fully specified, it is possible to marginalize with respect to them. The marginal form of the model is</p><formula xml:id="formula_4">Y i ∼ N J (µ, Σ), Σ = ΛΛ ′ + D(δ 2 ). (<label>2</label></formula><formula xml:id="formula_5">)</formula><p>The conditional and marginal forms are identical in content. That said, they have different computational properties. In the conditional form, the scores are conditionally independent and the residual variance has no covariance terms. Covariance from the factor structure enter through the location (mean) with additions of Λη i . In the marginal form, covariance from the factor structure enters the variance rather than the mean. Because the variance now captures the complete factor structure, it is useful for understanding model behavior.</p><p>Figure <ref type="figure">3</ref> shows the decomposition for two factors. The key is that the crossproduct ΛΛ ′ may be written as the sum of the influence of each factor on variance. Let λ m = (λ 1m , . . . , λ Jm ) ′ be the loadings of all tasks onto the mth factor. Then, the influence on variance of this factor is λ m λ ′ m . For example, the second column in Figure <ref type="figure">3</ref> shows λ 1 λ ′ 1 , the influence of the first factor. The third column in Figure <ref type="figure">3</ref> shows λ 2 λ ′ 2 , the influence of the second factor. The crossproduct ΛΛ ′ is simply the sum of these influences from all factors, that is,</p><formula xml:id="formula_6">ΛΛ ′ = m λ m λ ′ m .</formula><p>We find breaking up the crossproduct this way to be helpful in visualizing factor decompositions and, to our limited knowledge, the representation is novel.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Factor Model Specification</head><p>The main goal is to account for multiple trials and trial noise in experimental settings.</p><p>We develop a hierarchical model with a data level and a latent level, where the latent level is a factor model. We take the development in two steps. Consider a battery composed of J experimental tasks. Each task has a control and treatment condition and the main measure of interest is the difference between them. For example, in the Stroop task, incongruent stimuli serve as treatment and congruent ones serve as control. Each observation in this battery is denoted by Y ijkℓ where i = 1, . . . , I indexes individuals, j = 1, . . . , J indexes tasks, k = 1, 2 indexes conditions, and ℓ = 1, . . . , L ijk indexes the replicate trials in the conditions.</p><p>The input to the model is the full array of data. For example, if there are I = 200 individuals, J = 8 tasks, and L ijk = 100 replicates per individual per task per condition, then the total number of observations is N = I × J × 2 × L = 320000 observations. It is instructive to compare this input to that of the manifest model. To use the manifest model, we take means over replicates and conditions to arrive at a single score per person per task.</p><p>For I = 200 and J = 8, there are 1600 scores that serve as input. Here, all 320,000 observations serve as input. The hierarchical version is a much larger models.</p><p>The first step is the data model. Here is a simple data model for treatment-control tasks:</p><formula xml:id="formula_7">Y ijkℓ | θ ij ∼ N(α ij + x k θ ij , τ 2 j )</formula><p>In this setup, α ij is the overall performance of the ith individual on the jth task,</p><p>x k = -.5, .5 is a condition indicator, and θ ij is the effect of the ith individual on the jth task. Parameter τ 2 j is the trial noise on the jth task. The target of inquiry are the effects, θ ij , which is modeled subsequently.</p><p>The data model may be generalized beyond a treatment-control task as follows. Let Y ij be a vector of n ij observations for the ith person on the jth task. Then,</p><formula xml:id="formula_8">Y ij ∼ N n ij (X 0ij α ij + X 1ij θ ij , Iτ 2 j ),<label>(3)</label></formula><p>where X 0ij is a n ij × K design matrix, α ij is a vector of auxiliary parameters of length P , X 1ij is a design vector of length n ij , I is the n ij × n ij identity matrix, and τ 2 j describes the trial noise for the jth task. For the above example with an overall mean and difference score, X 0ij would be a vector of 1's; α ij would be the single mean parameter, X 1ij would be a vector with -1/2 and 1/2 entries for congruent and incongruent trials, respectively.</p><p>The data model is an ordinary linear model with the constraint that trial noise is constant across people within a task. Although we develop the hierarchical model with this simple data model, it may be possible to use alternative data models depending on context.</p><p>For example, if observations are dichotomous, then it may be desirable to use a logit-linked data model. Likewise, if observations are response times, it may be desirable to use a skewed distributions. It is conceptually straightforward to adopt these data models in the Bayesian framework <ref type="bibr" target="#b37">(Kang et al., 2022;</ref><ref type="bibr" target="#b72">Rouder, 2025;</ref><ref type="bibr">Stevenson, Innes, Boag, et al., 2024;</ref><ref type="bibr" target="#b88">Stevenson, Innes, Gronau, et al., 2024)</ref>. In this publication, we develop with a linear data model; developments outside this model remain for future studies.</p><p>The next step is placing a factor model on these effects:</p><formula xml:id="formula_9">θ i ∼ N J (ν Σ), Σ = ΛΛ ′ + D(δ 2 ),<label>(4)</label></formula><p>where θ i is the vector of effects for the ith individual. The final model is the combination of the data model ( <ref type="formula" target="#formula_8">3</ref>) and the factor model (4).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis</head><p>Several researchers have proposed and developed Bayesian analysis of the manifest factor models <ref type="bibr" target="#b1">(Ando, 2009;</ref><ref type="bibr" target="#b3">Bhattacharya &amp; Dunson, 2011)</ref>. We follow <ref type="bibr" target="#b54">Merkle et al. (2021)</ref> who provide development on two separate tracks. One of these is based on the conditional form of the model with explicit parameters for factor scores and factor loadings (see Eq. 1).</p><p>The other is based on the marginal form (see Eq. 2).</p><p>The conditional form is perhaps the simplest. The advantage of this approach is that conditional posterior distributions of factor scores and factor loadings are independent normal distributions, which are exceedingly quick to sample in Markov chain Monte Carlo (MCMC) analysis. The disadvantage may be poor mixing in some contexts where posterior chains are highly correlated and slow to converge <ref type="bibr" target="#b23">(Ghosh &amp; Dunson, 2009)</ref>. This poor mixing is problematic when the chain relies on sequential sampling of each parameter in Gibbs steps.</p><p>The marginal form is recommended by <ref type="bibr" target="#b54">Merkle et al. (2021)</ref> to avoid poor mixing in the conditional form. The drawback of using the marginal form is speed-it takes substantially longer to sample from correlated multivariate normal distributions. We have developed both forms. We find that for the hierarchical factor models presented here that the conditional form mixes well in JAGS and Stan and runs substantially faster than the marginal form.</p><p>Priors. Model specification is completed by providing priors on parameters. At the data level, priors are needed for the collection of auxilliary parameters α ij and trial variance τ 2 j . We choose broad conjugate forms that have mass across a broad range of plausible values:</p><formula xml:id="formula_10">α ij ∼ N P (m α , S α ), τ j ∼Inverse-χ 2 (1, s 2 j ),</formula><p>where the inverse-χ 2 (a, b) has a degrees-of-freedom and scale of b. Values of m α , S α , and s j must be chosen before hand. For example, in the treatment-control design with subsecond response times as data, we placed a normally-distributed prior on α ij with means of 800 ms and standard deviations of 1000 ms. Likewise, the value of s j reflects an anticipated standard deviation with repeated trials. We set it to 200 ms as this is fairly typical. The inverse-χ 2 with 1 degree of freedom is a fat-tailed distribution, and with this setting, there is sizable prior mass from 20 ms to 2000 ms. The choices here are benign in that they have no undue influence on posterior quantities.</p><p>At the latent level, priors are needed for for task mean, µ, factor scores, λ, and residual variances, δ 2 . Again, conjugate forms are broad, flexible, and convenient:</p><formula xml:id="formula_11">µ j ∼ N(a j , b 2 j ) λ jm ∼ N(0, c 2 j ) δ 2 j ∼ Inverse-χ 2 (1, d 2 j )</formula><p>Values of constants must be chosen before hand. We used Haaf, Hoffstadt, and Lesche (2024), who surveyed 64 cognitive control tasks, as guidance. The priors on µ may be diffuse.</p><p>In the executive-function task battery example, typical differences between congruent and incongruent conditions are 60 ms, and we chose a j to be this value and b j = 100 ms such that a broad range of effects on the tens to hundreds of milliseconds are plausible. We used more informed priors for factor loadings and residuals. According to <ref type="bibr" target="#b26">Haaf et al. (2024)</ref>, we may expect that the total variation in θ is about 35 ms in standard deviation. Guided by this value, we chose c j and d j to be 25 ms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rotations.</head><p>It is well known that factor models are identified only up to rotation. A matrix A is called a rotation matrix if A ′ = A -1 and that the determinant of A is 1 in value. A good example of such a matrix is Euler's rotation matrix:</p><formula xml:id="formula_12">A(ϕ) =     cos ϕ -sin ϕ sin ϕ cos ϕ     ,</formula><p>and it is straightforward to confirm that for all ϕ, det(A(ϕ)) = 1 and A ′ = A -1 . This means that several different factor-loadings give rise to the same covariance matrix Σ. For example, suppose Σ = ΛΛ ′ + D(δ 2 ) for some Λ. We can rotate Λ by A to yield a new factor loading</p><formula xml:id="formula_13">matrix Λ r = ΛA. Note that Λ r Λ ′ r = ΛA(ΛA) ′ = ΛAA ′ Λ ′ = ΛAA -1 Λ ′ = ΛIΛ ′ = ΛΛ ′ .</formula><p>Hence, Σ is concordant with both Λ and Λ r ; both are equally good factor-loading solutions for any data set.</p><p>In frequentist analysis, this rotational indeterminancy is benign. Analysts rotate their solutions to aid interpretation much like a hiker might rotate a topographic map to match the view of the landscape. A good example of rotation-to-aid-intepretation is the varimax rotation <ref type="bibr" target="#b34">(Kaiser, 1958)</ref> where factors are rotated so that tasks load highly on a minimal number of factors. Even though rotational indeterminacy is benign in most frequentist analysis, it is far more difficult in Bayesian analysis. The problem comes about from Markov chain Monte Carlo analysis. Different iterations in the MCMC chain often correspond to different rotations. The problem remains that the posteriors for factor loadings are artifactually too diffuse.</p><p>Solutions to this rotation problem with MCMC are two-fold: One solution is to use priors to set a specific rotation where the first task loads only onto the first factor, the second task loads only onto the first two factors and so on. The requirement is that λ forms a lower triangular matrix with positive diagonal elements, and examples of this approach are in <ref type="bibr" target="#b23">Ghosh and Dunson (2009)</ref>, <ref type="bibr" target="#b22">Geweke and Zhou (1996)</ref> and <ref type="bibr" target="#b95">Vandekerckhove (2014)</ref>. The drawback of this approach is that the choice of which loadings to set to zero is arbitrary yet impactful <ref type="bibr" target="#b10">(Chen, Li, &amp; Zhang, 2020</ref>). An alternative solution is to use post-sampling alignment algorithms <ref type="bibr" target="#b60">(Papastamoulis &amp; Ntzoufras, 2022;</ref><ref type="bibr" target="#b63">Poworoznek, Ferrari, &amp; Dunson, 2021;</ref><ref type="bibr" target="#b71">Ročková &amp; George, 2016)</ref>. In these approaches, chains are unrestricted and each may correspond to different rotations as they do in Figure <ref type="figure">4A</ref>. Afterwards, loadings on each iterations are aligned to a common rotation. Figure <ref type="figure">4B</ref> shows the results after alignment with the Poworoznek et al.'s jointrot algorithm. As can be seen, this algorithm works exceedingly well and the excessive diffusion from rotation indeterminancy is eliminated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation</head><p>The above development may seem daunting especially to psychologists who are used to working in lavaan and other extant factor analysis programs. There may be much new here including Bayesian models, hierarchical models, and post-sampling alignment. Analysis is conveniently performed in R with JAGS. We provide a supplement at xxxx that provides the code and step-by-step instructions for using it.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance</head><p>Now that the model is specified and analyzed, the next step is assessing the quality of the analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mixing</head><p>The first task is assessing the mixing in the chains. Mixing may be problematic in Bayesian factor models, especially when the conditional model is used with Gibbs steps <ref type="bibr" target="#b23">(Ghosh &amp; Dunson, 2009)</ref>. The main culprit in the conditional model is the trade-off between factor loadings λ jm and factor scores, η im . These enter into the model as products, λ jm η im , which means that the product is preserved if loadings are multiplied by a constant while scores are divided by the same constant. Indeed, we do find poor mixing when we derive the full-conditional posteriors and sample with Gibbs sampling. Fortunately, these models are easily implemented in JAGS and Stan, which do not rely on Gibbs sampling. We have implemented the conditional and marginal hierarchical models in both JAGS and Stan, and highlight the case here for the JAGS implementation of the conditional hierarchical model as this runs most quickly. Figure <ref type="figure" target="#fig_6">5</ref> shows the evidence for good mixing. The first two panels show the case for selected factor loading and factor score parameters. The last panel shows a boxplot of effective sample sizes <ref type="bibr" target="#b41">(Kong, Liu, &amp; Wong, 1994</ref>) for all parameters. The chain was run for 5000 iterations, and as can be seen, the vast majority of effective sample sizes are within 80% of this value. Hence, we can be assured that posterior quantities are based on at least 4000 effective samples. The bottom line is that mixing is not problematic in modern general-purpose samplers.</p><p>Parameter Recovery Parameter recovery is straightforward to assess as true values are known. Figure <ref type="figure">6</ref> shows the quality of recovery. Panel A shows the case for factor loadings. The true values are shown as a point enumerated by task; the 95% credible ellipses on posterior estimates of factor loadings are shown in matching color. Overall, given the high-noise setting, the recovery is as expected. Panel B shows factor loadings, and there is regularization or shrinkage as expected in a high-noise setting. Panel C is perhaps the most important. It shows the posterior mean residual standard deviation δ j along with 95% credible intervals. The true value, 20 ms, is shown as a horizontal line. Key here is that the posterior does not inflate this residual as would be the case for take-the-mean scores. Panel D shows the posterior distribution of the salience of the factors and the residual. The true value is 1/3 of the variance for each, and the recovery is quite reasonable for a high-noise setting. Panel E shows the uncertainty in correlations between tasks. There is much, but that too is expected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Standardizing Factor Loadings For Decomposing Correlation Matrices</head><p>Consider the manifest factor model Y i ∼ N J (µ, Σ), Σ = ΛΛ ′ + D(δ 2 ). One issue in this model is that Σ contains physical units. For example if one measure is the individual's height in inches and the other is the individual's weight in pounds, then elements of Σ are in inches 2 , inches×pounds, and pounds 2 . The presence of different units for different measures makes visualizing and interpreting variances and loadings challenging. The same problem holds for the hierarchical version where latent scores, θ, are united as well.</p><p>To ease this interpretation burden, analysts often work in correlations rather than variances and in standardized unit-free loadings rather than united loadings. One approach is to standardize model parameters <ref type="bibr" target="#b0">(Anderson, 2003;</ref><ref type="bibr" target="#b2">Bartholomew, Knott, &amp; Moustaki, 2011)</ref>, and loadings standardized by total variance are:</p><formula xml:id="formula_14">λ * jm = λ jm m ′ λ 2 jm ′ + δ 2 j .</formula><p>When factor loadings are standardized this way, they decompose the correlation matrix rather than the variance. Here is how it works. Recall that Σ = ΛΛ ′ + D(δ 2 ). Any variance matrix may be re-expressed as a correlation matrix as follows: Σ = D(σ)ρD(σ) where D(σ) is a diagonal matrix with σ, a vector of standard deviations, on the diagonal, and ρ is the correlation matrix. For the factor model, σ j = m ′ λ 2 jm ′ + δ 2 j . Therefore, standardized factor loadings are the factor decomposition of correlation matrices given by:</p><formula xml:id="formula_15">ρ = Λ * (Λ * ) ′ + D((δ * ) 2 ),</formula><p>where Λ * is the factor loading matrix of standardized loadings and δ</p><formula xml:id="formula_16">* j = δ j / m ′ λ 2 jm ′ + δ 2 j</formula><p>is the standardized residual.</p><p>We will continue to place priors on unstandardized loadings and residuals. For convenience, we will report correlations, standardized loadings and standardized residuals in the following applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application: Individual differences in visual illusions</head><p>One main question in the vision literature is whether people who are susceptible to one type of visual illusion are susceptible to other types as well. There is a division in the literate were some authors advocate for a general-susceptibility factor (Makowski, Te, Kirk, Liang, &amp; Chen, 2023) while others advocate that performance across illusions is at best weakly correlated <ref type="bibr" target="#b14">(Cretenoud et al., 2019)</ref>. We analyze data from Mehrvarz, Popat, and Rouder the Ebbinghaus Illusions, the Poggendorf Illusions, and the Ponzo Illusion, and each of these had an two versions to control for response bias. In total, then, there were ten tasks that results from five illusions with two versions each.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conventional Analysis</head><p>Data for conventional analysis were derived by taking the mean across replicate trials.</p><p>A single score, the strength of the illusion, was computed per individual per task. Figure <ref type="figure">7C</ref> shows the sample correlations of these scores across tasks. Inspection of the sample correlations shows that for three illusions, there is a high between-version correlations. Other than that, correlations are modest.</p><p>We started with a conventional exploratory factor analysis (in lavaan) on observed scores defined as the average illusion effect per person per task. Yet, the results were not so insightful. Factors rotated by varimax largely assigned factors to tasks, with the first three factors isolating the three tasks with high between-version correlations. Here, the design choice to control for possible response bias is what is most recovered-when there is little response bias there is a high degree of uninteresting correlation between versions within tasks.</p><p>To gain more insight and answer the theoretical questions about whether there is a common susceptibility factor, we constructed a conventional bifactor model. There were five illusion-specific factors: these were used to account for correlation between versions within illusions, and their inclusion is motivated by the two-version design of the study. The remaining factor-the factor of interest-loaded on all tasks. We were unable to fit this model (or similar ones) in a conventional framework because resulting variances were negative indicating Heywood cases <ref type="bibr" target="#b70">[Rindskopf (1984)</ref>;new citation too].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Analysis</head><p>Bayesian analysis with proper priors is not hobbled by Heywood cases <ref type="bibr" target="#b45">(Lopes &amp; West, 2004)</ref>. We fit a hierarchical Bayesian bifactor model with five specific factors (one for each illusion) and two general factors. The structure of the model is shown in Table <ref type="table">2</ref>, the standaardized loadings matrix Λ * . Where there are "-", the loading was fixed to zero. The first factor therefore is a Zöllner factor as it loads only on the two versions of the Zöllner task. The first five factors are illusion-specific and capture within-illusion-task correlations.</p><p>These five factors are treated as nuisance as the main substantive questions are not about correlations within illusions but across them. The substantively important factors were the sixth and seventh. These factors are exploratory in that they may load on all 10 tasks.</p><p>Data: Let X ijk be the kth observation for the ith individual in the jth task (i = 1, . . . , 138, j = 1, . . . , 10, k = 1, . . . , K ij ) in natural units such as pixels or angular displacement. Observations were scaled as follows: Let v ij be the sample variance of observations for the ith person and jth task. Effect-size-scaled observations Y ijk were defined as Y ijk = X ijk /s j , where s j = ( i v ij )/I is a task-averaged standard deviation. These effect-size-scaled observations served as input to the hierarchical factor model, and they have a unitless scale with a unity scale constant.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Model. The data model is</head><formula xml:id="formula_17">Y ijk ∼ N(θ ij , τ 2 j ).</formula><p>Factor Model. The factor model is given in (4) where θ i = (θ i1 , . . . , θ i,10 ) ′ for the 10 tasks.</p><p>Priors. The priors were as follows: µ j ∼ N(2, 2 2 ), λ jm ∼ N(0, 1), τ 2 j ∼ inverse-gamma(.5, .5), δ 2 j ∼ inverse-gamma(.5, .5). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We report the standardized version of factor-model parameters. The main output is the matrix ρ, the correlation matrix, and it's factor-model decomposition into loadings, and residuals. This decomposition is shown in Figure <ref type="figure">8</ref>. First, note that the model based correlation matrix on the left is highly similar to the sample-based correlation in Figure <ref type="figure">7</ref>.</p><p>This similarity means that there was not much disattenuation and that trial noise is not problematic in this application. Second, the decomposition is into nuisance factors (Factors 1 through 5), the two general factors (Factors 6 and 7), and the residual. Factor 6 seems quite robust in accounting for variation; Factor 7 does not. These observations indicate that there is a single, general susceptibility to visual illusions. The conclusion is reinforced by inspecting the standardized factor loadings in Table <ref type="table">2</ref>. Importantly, Factor 6 loads on all tasks. As such, it may safely be interpreted as a susceptibility-to-illusions factor <ref type="bibr" target="#b47">(Makowski et al., 2023)</ref>.</p><p>Figure <ref type="figure">9</ref> shows the uncertainty in variabilities and across-illusion correlations. The proportional of variance accounted for by the 6th factor-susceptibility to illusions-centers at 23% with plausible values ranging from 15% to 30%. This value is substantially more than the 6% accounted for by the seventh factor confirming the salience of a one-factor solution after accounting for within-illusion correlations. Across illusion correlations are fairly small and fairly well localized. And although the one-factor struture is clear, the associated amount of variance predicted from one illusion to another is a rather small 5%. In this sense, the results are in line too with researchers who stress lack of strong patterns of individual differences in visual illusions <ref type="bibr" target="#b12">(Cottier, Turner, Holcombe, &amp; Hogendoorn, 2023;</ref><ref type="bibr" target="#b13">Cretenoud, Grzeczkowski, Kunchulia, &amp; Herzog, 2021;</ref><ref type="bibr" target="#b25">Grzeczkowski, Clarke, Francis, Mast, &amp; Herzog, 2017;</ref><ref type="bibr" target="#b49">Mazuz, Kessler, &amp; Ganel, 2023)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application: Individual Differences in Cognitive Control</head><p>We analyze data from <ref type="bibr" target="#b17">Enkavi et al. (2019)</ref> to assess the dimensionality of individual differences in cognitive control. Included are six behavioral experimental tasks: a flanker interference task <ref type="bibr" target="#b18">(Eriksen &amp; Eriksen, 1974)</ref>, a global-to-local interference task <ref type="bibr" target="#b57">(Navon, 1977)</ref>, a control-of-negative-priming task <ref type="bibr" target="#b16">(Egner &amp; Hirsch, 2005)</ref>, a Simon interference task <ref type="bibr" target="#b81">(Simon, 1969)</ref>, and a Stroop interference task <ref type="bibr" target="#b89">(Stroop, 1935)</ref>. Each task was comprised of a congruent and an incongruent condition with the incongruent condition requiring more control to ignore the interfering information. In each task, the dependent measure was response time, and the critical contrast to measure cognitive control was the difference in response time between the incongruent and congruent condition. Response times in all tasks were about 700 ms and critical contrasts were about 70 ms. The main theoretical question was whether there was a single factor corresponding to an ability to ignore interfering information.</p><p>Figure <ref type="figure">10A</ref> shows the observed correlations among the critical contrast across tasks.</p><p>None of these are too large (maximum is .24), and several are near zero. One question is whether this lack of structure reflects attenuation from excessive trial noise, or, alternatively, whether it reflects a lack of true correlation across the tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Analysis</head><p>We fit a hierarchical Bayesian factor model with two general factors.</p><p>Data Model. Let Y ijkℓ be a response time for the ith individual, i = 1, . . . , 203, for the jth task, j = 1, . . . , 6, in the kth congruency condition (k = 1, 2), for the ℓth replicate</p><formula xml:id="formula_18">trial, ℓ = 1, . . . , L ijk . The data model is Y ijk ∼ N(α ij + x k θ ij , τ 2 j )</formula><p>, where x k = -.5, .5 and θ ij , the congruency effect, is the target of inquiry.</p><p>Factor Model. The factor model is given in (4) where θ i = (θ i1 , . . . , θ i,6 ) ′ for the 6 tasks.</p><p>Priors. The priors were as follows: µ j ∼ N(70, 100 2 ), λ jm ∼ N(0, 25 2 ), τ 2 j ∼ inverse-gamma(.5, .5 × 200 2 ), δ 2 j ∼ inverse-gamma(.5, .5 × 25 2 ), and</p><formula xml:id="formula_19">α ij ∼ N(1000, 1000 2 ).</formula><p>Implementation. Chains were run for 5000 iterations with the first 500 serving as burn in. Factors were aligned with the <ref type="bibr" target="#b63">Poworoznek et al. (2021)</ref> post-sampling alignment algorithm. Chains mixed well as in the preceding example, and the 4500 iterations were more than sufficient for consideration of posterior means.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>Figure <ref type="figure">10B</ref> shows the disattenuated correlation matrix from the model. The degree of disattenuation is sizable because there is a high degree of trial noise and relatively few trials <ref type="bibr">(Rouder &amp; Mehrvarz, 2024)</ref>. The largest disattenuated correlation value is .36, which is 50% larger than the observed value. reflects the correlation between Stroop and task-switching task, and Factor 3 does not have an obvious role. In summary, the factor structure simply highlights a few idiosyncratic correlations that are greater in magnitude than the others. There is no evidence for a general inhibition or cognitive control factor. Figure <ref type="figure">10H</ref> shows that correlation coefficients are not well localized. In summary, there is little structure that can be identified perhaps because there is so much trial noise.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Unconstrained-Variance Model</head><p>Factor models provide constraint on covariance. The smaller the number of factors, the larger the amount of constraint. Figure <ref type="figure">11</ref> shows how this constraint works. Figure <ref type="figure">11A</ref> is a one-factor constraint, that is, it is ρ when Λ is restricted to a single column. The one-factor constraint is fairly stringent, and the resulting correlation matrix is limited in the number of patterns. Figure <ref type="figure">11B</ref> is the two-factor constraint, and because the model is more complex, more diversity in the correlation matrix may be seen. In particular, stronger positive correlations and negative correlations are possible. Figure <ref type="figure">11C</ref> shows the three-factor constraint, and increasing dimensionality allows for more subtlety in the resulting correlation matrix.</p><p>In conventional manifest factor models, this series of increasing factor complexity has an obvious endpoint-the sample correlation or sample variance matrix. Factor modeling, like PCA, is a way of approximating this sample correlation matrix with reduced dimensionality. In the hierarchical factor model, the endpoint is Σ, the covariance of θ i across individuals: Σ = ΛΛ ′ + D(δ 2 ). The right-hand side serves as constraint, especially is the dimension Λ (the number of columns M ) is much smaller than Σ (the number of tasks J). The problem is that Σ is not observed, in fact, it may not be obvious how to estimate Σ is without the factor constraint. In the manifest version, we may check how well our factor solution approximates the sample variance matrix. In the hierarchical model, the factor model itself does not provide this check.</p><p>Needed is a hierarhcical model without the factor constraint so that we may visualize Σ. This need is met by placing diffuse priors on Σ that impart a minimal of prior information save that Σ is a valid covariance matrix. Suitable choices are the inverse Wishart <ref type="bibr" target="#b58">(O'Hagan &amp; Forster, 2004)</ref>, the LKJ prior <ref type="bibr" target="#b43">(Lewandowski, Kurowicka, &amp; Joe, 2009)</ref>, and the scaled inverse Wishart <ref type="bibr" target="#b30">(Huang &amp; Wand, 2013)</ref>. We have found that inverse Wishart is computationally convenient but must be tuned carefully imposing a burden on the analyst;</p><p>the LKJ is computationally slow though more robust to prior settings (see <ref type="bibr" target="#b101">Yang &amp; Rouder, 2025)</ref>; and the scaled inverse Wishart is both computation convenient and robust to prior settings. Our hierarchical unconstrainted variance model is:</p><formula xml:id="formula_20">θ i | Σ ∼ N(µ, Σ) Σ ∼ Scaled Inverse Wishart(S, v).</formula><p>The scaled inverse Wishart has two settings, a scale vector S, and a degrees-of-freedom setting ν. It is easiest to understand the role of these two settings through the decomposition Σ = D(σ)ρD(σ). The degrees-of-freedom parameter v is a prior on correlation matrix ρ, and greater values of v correspond to more mass near zero. At v = 2, the marginal prior on each correlation is uniformly distributed, and this is why we used this value throughout. The scale parameter S affects only σ, the standard deviation, and not ρ, the correlation matrix of interest. Hence, it's setting is far less influential on the posterior values of correlation. For the cognitive control data set, we set each element S j to 40 ms, a reasonable standard deviation on θ ij for this set.</p><p>Figure <ref type="figure">11D</ref> shows the correlation matrix for the unconstrained-variance model. It differs modestly from the three factor model indicating that there is still a small degree of outstanding variance. Given that the factors account for a small degree of variance and are essentially uninterpretable, we are not so concerned about additional variation beyond the three-factor solution. In applications where correlations are more salient and factor structures are more interpretable, it may be substantively important to use the unconstrained-variance model as a catch-all to understand the factor-model approximation.</p><p>Note that we did not fit an unconstrained-variance model to the illusions data set. We did not do so because the seventh factor was already quite limited in explanatory power indicating that there was not much missing variation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Influence of Prior Specification</head><p>Bayesian analysts need be aware of the role of arbitrary choices in prior specifications.</p><p>In the hierarchical set up, the factor model (\ref{facMod) serves as a prior on θ in the data model (??). The factor model serves as a means of regularizing estimation of the correlations of these latent scores across tasks. For example, the data model itself could be easily estimated with noninformative priors on θ ij , albeit the posterior means would exactly match the take-the-mean aggregate, correlations would be dramatically attenuated; and factors would be difficult to find. The factor structure on θ i is a form of regularization to a specific structure that is interpretable. In this sense, posteriors need to be appropriately sensitive to prior specification rather than insensitiy to prior specification. Regularizing estimates almost always involves making a few choices and tuning a few parameters. Indeed, prior specification is often tantamount to tuning regularization.</p><p>We have explored the influence of various prior settings. Perhaps the most important element of prior setting is the scale of factor loadings relative to the scale of residual variation. In the illusions application, we had scaled the data by the trial noise, and used scales of 1.0 on factor loadings and residual variances, that is c j = d j = 1. In the cognitive control application, we used the meta-analysis by <ref type="bibr" target="#b26">Haaf et al. (2024)</ref> to set c j = d j = 25 ms.</p><p>In both cases, the ratio bwtween c j and d j is 1-to-1. To understand the influence of this ratio, we created alternative prior ratios of 1-to-1 and 1-to-4. Figure <ref type="figure" target="#fig_5">12</ref> shows the resulting posteriors on the proportion of variance accounted for by the factor structure ΛΛ ′ relative to Σ. As can be seen, the posterior is dependent on this prior ratio.</p><p>Two points emerge. First, the influence of prior settings is a function of the quality of the data. The data are of higher quality in the visual illusion set than in the cognitive control set inasmuch as there is far less trial noise and latent correlations are better localized.</p><p>Because the data have higher quality in the visual illusion set, the posterior is less sensitive to the prior ratio than it is in the cognitive control set. Second, the ratio tunes the degree of regularization-the greater the ratio the greater the salience of the factor structure. Tuning parameters are part of most regularization approaches, and these parameters must be set not only in hierarchical modeling but in ridge regression and lasso shrinkage. The Bayesian hierarchical factor model is no different than other methods in this regard.</p><p>Overall, we think the 1-to-1 ratio serves as a reasonable default for many applications.</p><p>That said, researchers are encouraged to explore how reasonable variations in this ratio affect their results. Understanding this sensitivity provides researchers with context for drawing conclusions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Factor models were developed in psychology to explore the covariation in survey data.</p><p>Each individual provides responses to a number of items, and the covariation in the matrix of responses is decomposed into factors. Data from experiments however differ from survey data in two important regards: First, data from experiments are comprised of repeated trials nested within people, tasks, and conditions. This is an advantage as the variation across replicate trials may be accounted, which in turn, perhaps allows for more precise understanding of the covariation across individuals and tasks. Second, data from experiments is often far more noise prone than survey data. In a typical response-time task, for example, one is trying to localize some 25 ms of variation across individuals in an effect whereas each trial adds some 200 ms of residual variability. In realistic designs, this degree of trial noise tends to lead to attenuation of correlations-observed correlations are about one-half of true values <ref type="bibr" target="#b26">(Haaf et al., 2024;</ref><ref type="bibr" target="#b73">Rouder, Chavez de la Peña, Mehrvarz, &amp; Vandekerckhove, 2023)</ref>. Moreover, subsequent latent-variable analyses were at a marked disadvantage as the trial noise diminished the salience of the latent variables themselves. In turn, this diminished saliency makes it more difficult understand the structure in these latent variables. Several authors have noted the appeal of Bayesian hierarchical models to disattenuate these correlations and recover patterns of covariation <ref type="bibr" target="#b27">(Haines et al., 2020;</ref><ref type="bibr" target="#b48">Matzke et al., 2017;</ref><ref type="bibr" target="#b74">Rouder &amp; Haaf, 2019</ref>). Here we show that a simple data model of trial noise may be yoked with factor models to reveal the salience of underlying latent variables.</p><p>There are a few technical challenges; fortunately, new computationally-convenient tools now exist to meet them.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations and Future Directions</head><p>Model Comparison. Perhaps the most obvious limitation of the hierarchical factor models developed here is the lack of a formal mechanism for inference on structure. Needed is a way of comparing different models and stating evidence for various dimensional constraints. In frequentist factor-model analysis, model comparison formally occurs through AIC and BIC fit statistics <ref type="bibr" target="#b100">(Vrieze, 2012)</ref> as well as through considerations of eigenvalues <ref type="bibr" target="#b35">(Kaiser, 1960;</ref><ref type="bibr" target="#b64">Preacher &amp; MacCallum, 2003)</ref>. Model comparison in Bayesian analysis remains a contested topic with strong opinions about the utility of Bayes factors and posterior-predictive methods <ref type="bibr" target="#b56">(Morey, Wagenmakers, &amp; Rouder, 2016;</ref><ref type="bibr" target="#b97">Vanpaemel, 2010;</ref><ref type="bibr" target="#b98">Vehtari, Gelman, &amp; Gabry, 2017)</ref>. The Bayesian model comparison development from statistics has traditionally centered on Bayes factors <ref type="bibr" target="#b32">(Jeffreys, 1961;</ref><ref type="bibr" target="#b40">Kass &amp; Raftery, 1995)</ref>, though we suspect it may not be too difficult to implement WAIC comparisons <ref type="bibr" target="#b98">(Vehtari et al., 2017)</ref>. Here, we discuss current developments with Bayes factors.</p><p>Bayes factor computations with nonhierarchical factor models have followed two related paths called here the separate specification approach and the encompassing approach.</p><p>The separate specification approach is to (i) specify separate, competing models each with a different dimensionality, and (ii) compare them through marginal likelihood computations.</p><p>Traditionally, this approach has not proven popular for factor models. We suspect it is because much development of factor models in the statistics and computer science literature is designed to address high-dimensional problems such as those in genetics and image processing. In high-dimensional spaces, the number of possible models and possible model comparisons is unwieldy. Instead, the encompassing approach is used. Here there is a single, maximal model. Dimensions are then adaptively eliminated in analysis if they are not supported by the data. The encompassing approach is in the spirit of Lasso regularization, where adaptive priors are used to eliminate dimensions that have little support from the data (e.g., <ref type="bibr" target="#b33">Jiang, He, &amp; Zhang, 2016)</ref>. Examples of this encompassing approach for latent variables include automatic-relevance-detection priors (MacKay, 1992), spike-and-slab priors <ref type="bibr" target="#b59">(Oh &amp; Kim, 2010)</ref>, and multiplicative gamma priors <ref type="bibr" target="#b3">(Bhattacharya &amp; Dunson, 2011)</ref>.</p><p>Factor model analysis in psychology often comprises just a few dimensions or factors.</p><p>In the current applications in cognition, one hopes to discriminate among a handful of possible factors. Even in the most advanced applications in say personality and intelligence, the dimensionality of the problem is limited. For these applications, we suspect the separate-specification approach will be appropriate and convenient. Computing marginal likelihoods (Bayes factors) is often computationally involved <ref type="bibr" target="#b39">(Kass, 1993)</ref>. Fortunately, Bayesian analysts have a well-stocked toolbox of computational approaches including Lapace approximation <ref type="bibr" target="#b80">(Shun &amp; McCullagh, 1995)</ref>, importance sampling <ref type="bibr" target="#b82">(Sinharay &amp; Stern, 2005)</ref>, and bridge sampling <ref type="bibr" target="#b24">(Gronau et al., 2017;</ref><ref type="bibr" target="#b53">Meng &amp; Wong, 1996)</ref>. And many authors have used a variety of techniques to estimate Bayes factors in factor models including <ref type="bibr" target="#b22">Geweke and Zhou (1996)</ref>, <ref type="bibr" target="#b45">Lopes and</ref><ref type="bibr" target="#b45">West (2004), and</ref><ref type="bibr" target="#b61">Pitt, Chan, and</ref><ref type="bibr" target="#b61">Kohn (2006)</ref>. Most recently, <ref type="bibr" target="#b79">Schnuerch, Mehrvarz, and Rouder (2025)</ref> provide an easy-to-use bridge-sampling Bayes-factor solution for manifest factor models. How well any of these approaches work in hierarchical-factor-model settings is a topic for future research.</p><p>Realistic Psychological-Process Models. The data model here are linear models.</p><p>Although linear models are a workhorse of statistical analysis, they rarely serve as insightful models of mental processes. Over the last 60 years, researchers have proposed nonlinear accounts of mental processes, and popular model classes include multinomial tree models <ref type="bibr" target="#b69">(Riefer &amp; Batchelder, 1988)</ref>, evidence accumulation models <ref type="bibr" target="#b66">(Ratcliff &amp; Rouder, 1998;</ref><ref type="bibr" target="#b99">Vickers &amp; Smith, 1985)</ref>, race models <ref type="bibr" target="#b5">(Brown &amp; Heathcote, 2008;</ref><ref type="bibr" target="#b44">Logan, 1988)</ref>, and gating models <ref type="bibr" target="#b91">(Townsend &amp; Ashby, 1982)</ref>. And in the last twenty years, it has become increasingly common to develop hierarchical versions of these process models that account for trial noise as well as variation across individual in model-based parameters <ref type="bibr" target="#b28">(Heck, Arnold, &amp; Arnold, 2018;</ref><ref type="bibr" target="#b77">Rouder, Province, Morey, Gomez, &amp; Heathcote, 2015;</ref><ref type="bibr" target="#b96">Vandekerckhove, Tuerlinckx, &amp; Lee, 2011)</ref>.</p><p>There has been notable progress in combining latent variable models with cognitive process models. One of the early demonstrations comes from Vandekerckhove (2014) who used a factor decomposition of accumulation-rate parameters in the diffusion-model <ref type="bibr" target="#b65">(Ratcliff &amp; McKoon, 2008)</ref>. To simplify analysis, Vandekerckhove used an algebraic decomposition rather than a stochastic one-drift rates were assumed to be the product of factor loadings and factor scores without any additional residual noise. Because there was no residual variation, all noise was assumed to be at the trial level and correlations of true scores-such as those in for future research to compare the pragmatic differences in choosing a process model, as done by <ref type="bibr">Stevenson, Innes, Boag, et al. (2024)</ref> and <ref type="bibr" target="#b72">Rouder (2025)</ref>, or a more anodyne linear-model approach, as done here.   </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure</head><label></label><figDesc>Figure 4A shows the complication. Plotted in red are factor loadings for Task 1 for different iterations. They sweep a large arc, with the arc representing different rotations for different iterations. Plotted in blue are the loading for Task 4, and they sweep too large of an arc for the same reason. The two solid lines correspond to a single iteration, and they show the relationship between Task 1 and Task 4. The cosine of the angle is the correlation between the tasks on the iteration, and it is about .62 in value. The dashed lines correspond</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>(</head><label></label><figDesc>2024) on individual differences in perceiving visual illusions. An example of one of these-the Brentano illusion-is shown in Figure7A. There are two demonstration examples, and consider for a moment just the upper one with the outer arrows pointing rightward and the inner arrow pointing leftward. Individuals had to adjust the location of the inner arrow so that the red and blue lines equaled each other in length. Though it may not appear it, they are equal in the figure. Individuals tend to set the inner arrow too far to the left lengthening the red line at the expense of the blue line. The lower demonstration has the arrows pointing in the reverse direction, and the participants here tend to set the inner arrow too far to the right lengthening the blue line at the expense of the red line. Figure7shows a Zöllner Illusion; the individual adjusted the angle of the near horizontal-line segments until they were perfectly parallel. In the figure, the lines are indeed perfectly parallel, but because of the illusion, individual tend to apply a counter clockwise rotation to the 1rst, 3rd, and 5th line and a clockwise rotation to the 2nd and 5th line.One design feature is that there were two versions of each tasks, and the two versions of the Brentano illusions are shown in Figure7A.<ref type="bibr" target="#b51">Mehrvarz et al. (2024)</ref> included two versions to control for response bias. For example, if a participant was biased toward setting the chevron to the left, it would enhance the illusion in one version and attenuate it in the other. There was a second version of the Zöllner Illusion, not shown, where the cross-hatch segments were rotated 90 and the bias was to rotate the 1rst, 3rd, and 5th line clockwise and the 2nd and 4th line counter clockwise.<ref type="bibr" target="#b51">Mehrvarz et al. (2024)</ref> ran three addition illusions,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>.</head><label></label><figDesc>Chains were run for 5000 iterations with the first 500 serving as burn in. To align differing rotations within the MCMC chain, Factors 6 and 7 were aligned with the<ref type="bibr" target="#b63">Poworoznek et al. (2021)</ref> post-sampling alignment algorithm. Nuisance factors do not enter into rotational alignment as rotations are fixed by the zero loadings. These factors still may have a sign indeterminacy across iterations, and to address this issue, we fixed the loadings to be positive for the first version of each task for these nuisance factors. The resulting chains mixed well as in the preceding example, and the 4500 iterations were more than sufficient for consideration of posterior quantities.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure</head><label></label><figDesc>Figure 10C-F show the factor decomposition of this correlation matrix, and Figure 10G shows the porportion of variance accounted for by each component. Loadings are shown in Table 3. With a few exceptions, factor loadings are fairly small in value. Much of the variability is unique, and the factors themselves are difficult to interpret. Factor 1 reflects the correlation between the Global-Local interference task and the Stroop task; Factor 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>Figure ??A, D, and E-were by specification 1.0 in value. Turner and colleagues<ref type="bibr" target="#b37">(Kang et al., 2022;</ref><ref type="bibr" target="#b93">Turner, Wang, &amp; Merkle, 2017)</ref> develop hierarchical factor models much like those presented here for diffusion model parameters as a way of linking fMRI activation with behavior. The factor models in their work serve as a regularization device in localizing brain-behavior links. Most recently, Stevenson, Innes, Boag, et al. (2024) provide a general hierarchical factor model solution for process models, such as the diffusion model. Stevenson et al. focus on the factor structure in drift rates with the goal is to recover the structure in the factor loadings. Rouder (2025) provides a different example-he integrates a factor model with a psychophysical model to assess the factor structure of thresholds. It is a matter</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 1 .Figure 2 .</head><label>12</label><figDesc>Figure 1 . Usual data-analytic pipeline: A. The raw data are tabulated into individual scores by taking the mean across repeated obsercations. B. The correlation among these individual scores may be computed C. These correlations may be decomposed with structural equation models.</figDesc><graphic coords="46,72.00,75.19,359.99,99.52" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5 . Hierarchical model mixes well when implemented in JAGS. Left and Center: Chains for select parameters. Right: Boxplot of effective sample sizes for all parameters for a chain with 5000 iterations.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc></figDesc><table><row><cell cols="2">Ground Truth Factor Loadings</cell></row><row><cell>(ms)</cell><cell></cell></row><row><cell cols="2">Factor 1 Factor 2</cell></row><row><cell>Task 1 30.00</cell><cell>7.00</cell></row><row><cell>Task 2 26.71</cell><cell>10.29</cell></row><row><cell>Task 3 23.43</cell><cell>13.57</cell></row><row><cell>Task 4 20.14</cell><cell>16.86</cell></row><row><cell>Task 5 16.86</cell><cell>20.14</cell></row><row><cell>Task 6 13.57</cell><cell>23.43</cell></row><row><cell>Task 7 10.29</cell><cell>26.71</cell></row><row><cell>Task 8 7.00</cell><cell>30.00</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="funding">
+<div><p>JNR was supported by <rs type="funder">NSF</rs> <rs type="grantNumber">2126976</rs> and by <rs type="funder">ONR</rs> <rs type="grantNumber">N00014-23-1-2792</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_2cayW2d">
+					<idno type="grant-number">2126976</idno>
+				</org>
+				<org type="funding" xml:id="_3GDDcfq">
+					<idno type="grant-number">N00014-23-1-2792</idno>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Anderson</surname></persName>
+		</author>
+		<title level="m">An introduction to multivariate statistical analysis</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="volume">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Bayesian factor analysis with fat-tailed factors and its exact marginal likelihood</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ando</surname></persName>
+		</author>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0047259X09000396" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Multivariate Analysis</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1717" to="1726" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Latent variable models and factor analysis: A unified approach</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Bartholomew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Knott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Moustaki</surname></persName>
+		</author>
+		<ptr target="https://books.google.com/books?hl=en&amp;lr=&amp;id=5YxvE1S56DwC&amp;oi=fnd&amp;pg=PT6&amp;dq=Bartholomew" />
+		<editor>+D.+J.,+Knott,+M.,+%26+Moustaki,+I.+</editor>
+		<imprint>
+			<date type="published" when="2011">2011. 2011</date>
+			<publisher>John Wiley &amp; Sons</publisher>
+		</imprint>
+	</monogr>
+	<note>+Latent+ Variable+Models+and+Factor+Analysis:+A+Unified+Approach+(3rd+ed.).+Wiley. &amp;ots=0IGoBPPlel&amp;sig=Vd91yDtodeH3DSVioIqTiKsfss0</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Sparse Bayesian infinite factor models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bhattacharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Dunson</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/biomet/asr013/46695653/asr013.pdf</idno>
+		<ptr target="https://academic.oup.com/biomet/article-pdf/doi/10.1093/biomet/asr013/46695653/asr013.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="291" to="306" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Structural equations with latent variables</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Bollen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989">1989</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The simplest complete model of choice reaction time: Linear ballistic accumulation</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Heathcote</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="153" to="178" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><surname>Carpenter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Goodrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bettencourt</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Stan: A probabilistic programming language</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Riddell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="page">76</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Caspi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Houts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Belsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Goldman-Mellor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Harrington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Israel</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The p Factor: One General Psychopathology Factor in the Structure of Psychiatric Disorders?</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">E</forename><surname>Moffitt</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/2167702613497473</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Clinical Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="119" to="137" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Structured latent factor analysis for large-scale data: Identifiability, estimability, and their implications</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2019.1635485</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<author>
+			<persName><forename type="first">P</forename><surname>Congdon</surname></persName>
+		</author>
+		<ptr target="https://books.google.com?id=ImejAwAAQBAJ" />
+		<title level="m">Applied Bayesian Modelling</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Exploring the extent to which shared mechanisms contribute to motion-position illusions</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">V</forename><surname>Cottier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">O</forename><surname>Holcombe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hogendoorn</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/jov.23.10.8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vision</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Individual differences in the perception of visual illusions are stable across eyes, time, and measurement methods</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Cretenoud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Grzeczkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kunchulia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Herzog</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/jov.21.5.26</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vision</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="26" to="26" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Factors underlying visual illusions are illusion-specific but not feature-specific</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Cretenoud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Karimpur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Grzeczkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Francis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hamburger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Herzog</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/19.14.12</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vision</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The two disciplines of scientific psychology</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Cronbach</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0043943</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Psychologist</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="671" to="684" />
+			<date type="published" when="1957">1957</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Where Memory Meets Attention: Neural Substrates of Negative Priming</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Egner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hirsch</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/089892905774589226</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognitive Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1774" to="1784" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Large-scale analysis of test-retest reliabilities of self-regulation measures</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Z</forename><surname>Enkavi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">W</forename><surname>Eisenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Bissett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">L</forename><surname>Mazza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Mackinnon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Marsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Poldrack</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<publisher>Proceedings of the National Academy of Sciences</publisher>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page" from="5472" to="5477" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Effects of noise letters upon the identification of a target letter in a nonsearch task</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Eriksen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Eriksen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Perception &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="143" to="149" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">On the &quot;Probable Error&quot; of a Coefficient of Correlation Deduced from a Small Sample</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fisher</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Metron</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="3" to="32" />
+			<date type="published" when="1921">1921</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Measurement and sampling noise undermine inferences about awareness in location probability learning: A modeling approach</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Franco-Martínez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Vicente-Conesa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shanks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Vadillo</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/grkya</idno>
+		<ptr target="10.31234/osf.io/grkya" />
+		<imprint>
+			<date type="published" when="2024-03-05">2024. March 5</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><surname>Gana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Broc</surname></persName>
+		</author>
+		<ptr target="https://books.google.com/" />
+		<title level="m">books?hl=en&amp;lr=&amp;id=QMOCDwAAQBAJ&amp; oi=fnd&amp;pg=PP2&amp;dq=Structural+Equation+Modeling+with+lavaan&amp;ots= VmnKfYew6</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>Structural equation modeling with lavaan. K&amp;sig=3wM4yrQd4mkQjOWRopNaDH0C0IE</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Measuring the pricing error of the arbitrage pricing theory</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Geweke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhou</surname></persName>
+		</author>
+		<ptr target="https://academic.oup.com/rfs/article-abstract/9/2/557/1631132" />
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="557" to="587" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Default prior distributions and efficient posterior computation in Bayesian factor analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Dunson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="306" to="320" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">A tutorial on bridge sampling</title>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">F</forename><surname>Gronau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sarafoglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Matzke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Boehm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Steingroever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename></persName>
+		</author>
+		<ptr target="http://www.sciencedirect.com/science/article/pii/S0022249617300640" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page" from="80" to="97" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">About individual differences in vision</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Grzeczkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Clarke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Francis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">W</forename><surname>Mast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Herzog</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.visres.2016.10.006</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Vision Research</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="page" from="282" to="292" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Attentional Control Data Collection: A Resource for Efficient Data Reuse</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Haaf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hoffstadt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lesche</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/4evy6</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Theoretically informed generative models can advance the psychological and brain sciences: Lessons from the reliability paradox</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Haines</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Kvam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">H</forename><surname>Irving</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Beauchaine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Pitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">TreeBUGS: An R package for hierarchical multinomial-processing-tree modeling</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Heck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">R</forename><surname>Arnold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Arnold</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-017-0869-7</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="264" to="284" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">The reliability paradox: Why robust cognitive tasks do not produce reliable individual differences</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hedge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sumner</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>Behavioral Research Methods</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Simple Marginally Noninformative Prior Distributions for Covariance Matrices</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Wand</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/13-BA815</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="439" to="452" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jackman</surname></persName>
+		</author>
+		<title level="m">Bayesian Analysis for the Social Sciences</title>
+		<meeting><address><addrLine>Chichester, United Kingdom</addrLine></address></meeting>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jeffreys</surname></persName>
+		</author>
+		<title level="m">Theory of Probability</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="1961">1961</date>
+		</imprint>
+	</monogr>
+	<note>rd Edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Variable Selection With Prior Information for Generalized Linear Models via the Prior LASSO Method</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2015.1008363</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">513</biblScope>
+			<biblScope unit="page" from="355" to="376" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">The varimax criterion for analytic rotation in factor analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">F</forename><surname>Kaiser</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02289233</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="187" to="200" />
+			<date type="published" when="1958">1958</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">The Application of Electronic Computers to Factor Analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">F</forename><surname>Kaiser</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001316446002000116</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Educational and Psychological Measurement</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="141" to="151" />
+			<date type="published" when="1960">1960</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">A controlled-attention view of working-memory capacity</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Kane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Bleckley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R A</forename><surname>Conway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Engle</surname></persName>
+		</author>
+		<ptr target="http://search.ebscohost.com/login.aspx?direct=true&amp;db=psyh&amp;AN=2001-17501-002&amp;loginpage=Login.asp&amp;site=ehost-live&amp;scope=site" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="169" to="183" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">A regularization method for linking brain and behavior</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Turner</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000387</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">The unity and diversity of executive functions: A systematic review and re-analysis of latent variable studies</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Karr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">N</forename><surname>Areshenkoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Rast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Hofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">L</forename><surname>Iverson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Garcia-Barrera</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page">1147</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Bayes Factors in Practice</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Kass</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Statistician</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="551" to="560" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Bayes factors</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Kass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1995.10476572</idno>
+		<ptr target="http://amstat.tandfonline.com/doi/abs/10.1080/01621459.1995.10476572" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="page" from="773" to="795" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Sequential Imputations and Bayesian Missing Data Problems</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Wong</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2291224</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="issue">425</biblScope>
+			<biblScope unit="page" from="278" to="288" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Structural equation modelling: A Bayesian approach</title>
+		<author>
+			<persName><forename type="first">S.-Y</forename><surname>Lee</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>Wiley</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Generating random correlation matrices based on vines and extended onion method</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lewandowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kurowicka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Joe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Multivariate Analysis</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1989" to="2001" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Towards an instance theory of automization</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Logan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="page" from="492" to="527" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Bayesian model assessment in factor analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">F</forename><surname>Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>West</surname></persName>
+		</author>
+		<ptr target="https://www.jstor.org/stable/24307179?casa_token=gHhCc_ZZIL0AAAAA" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistica Sinica</title>
+		<imprint>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="41" to="67" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+	<note>pd7RR7uhvuygJjQ0hyo-aT9ghFSaW-Aiu2w6L6dBt0lCSHMqI1k7_ QDSgooVSi7hJFT2N5MVLq6Gm0X3PGKW92kxsN-UiEhZTrv1Rt0aC4-oq6wGyS6</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Bayesian interpolation</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Mackay</surname></persName>
+		</author>
+		<ptr target="https://direct.mit.edu/neco/article-abstract/4/3/415/5639" />
+	</analytic>
+	<monogr>
+		<title level="j">Neural Computation</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="415" to="447" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">A novel visual illusion paradigm provides evidence for a general factor of illusion sensitivity and personality correlates</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Makowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Te</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kirk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">Z</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H A</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-023-33148-5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">6594</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Bayesian inference for correlations in the presence of measurement error and estimation uncertainty</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Matzke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Selker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Weeda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Scheibehenne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Wagenmakers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Collabra: Psychology</title>
+		<imprint>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">The BTPI: An online battery for measuring susceptibility to visual illusions</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Mazuz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ganel</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/jov.23.10.2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vision</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">2</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Personality trait structure as a human universal</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Mccrae</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">T</forename><surname>Costa</surname><genName>Jr</genName></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Psychologist</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">509</biblScope>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Individual Differences in Visual Illusions: Graphical and Analytic Approaches For Finding Structure in Real-World Cases</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mehrvarz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Popat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/6z92y</idno>
+		<imprint>
+			<date type="published" when="2024-05-02">2024, May 2</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Estimating correlations in low-reliability settings with constrained hierarchical models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mehrvarz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-024-02568-0</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">59</biblScope>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Simulating ratios of normalizing constants via a simple identity: A theoretical exploration</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistica Sinica</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="831" to="860" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Efficient Bayesian Structural Equation Modeling in Stan</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Merkle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Fitzsimmons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uanhoro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Goodrich</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v100.i06</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">The unity and diversity of executive functions and their contributions to complex &quot;frontal lobe&quot; tasks: A latent variable analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miyake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">P</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Emerson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Witzki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Howerter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">D</forename><surname>Wager</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="100" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Calibrated Bayes factors should not be used: A reply to Hoijtink, van Kooten, and Hulsker</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Morey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Wagenmakers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multivariate Behavioral Research</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="11" to="19" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Forest before trees: The precedence of global features in visual perception</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Navon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="353" to="383" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Kendall&apos;s advanced theory of statistics</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>O'hagan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Forster</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Bayesian inference</title>
+		<meeting><address><addrLine>Arnold</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Bayesian principal component analysis with mixture priors</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D.-G</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Korean Statistical Society</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="387" to="396" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">On the identifiability of Bayesian factor analytic models</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Papastamoulis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ntzoufras</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11222-022-10084-4</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics and Computing</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">23</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Efficient Bayesian inference for Gaussian copula regression models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kohn</surname></persName>
+		</author>
+		<ptr target="https://academic.oup.com/biomet/article-abstract/93/3/537/380692" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="537" to="554" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">JAGS: A Program for Analysis of Bayesian Graphical Models Using Gibbs Sampling</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Plummer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Workshop on Distributed Statistical Computing</title>
+		<meeting>the 3rd International Workshop on Distributed Statistical Computing</meeting>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Efficiently resolving rotational ambiguity in Bayesian matrix sampling with matching</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Poworoznek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ferrari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dunson</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/2107.13783" />
+		<imprint>
+			<date type="published" when="2021-07-29">2021, July 29. November 21, 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Repairing Tom Swift&apos;s Electric Factor Analysis Machine</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Preacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Maccallum</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/S15328031US0201_02</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Understanding Statistics</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="13" to="43" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">The diffusion decision model: Theory and data for two-choice decision tasks</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Mckoon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Computation</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="873" to="922" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Modeling response times for decisions between two choices</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="347" to="356" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<monogr>
+		<title level="m" type="main">Hierarchical linear models: Applications and data analysis methods</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Raudenbush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Bryk</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>Sage</publisher>
+			<pubPlace>Thousand Oaks, CA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Second Edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Should We Stop Thinking About Inhibition? Searching for Individual and Age Differences in Inhibition Ability</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rey-Mermet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oberauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/xlm0000450</idno>
+		<ptr target="http://dx.doi.org/10.1037/xlm0000450" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Multinomial modeling and the measure of cognitive processes</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Riefer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Batchelder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="page" from="318" to="339" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Structural equation models: Empirical identification, Heywood cases, and related problems</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rindskopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="109" to="119" />
+			<date type="published" when="1984">1984</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Fast Bayesian Factor Analysis via Automatic Rotations to Sparsity</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ročková</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">I</forename><surname>George</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2015.1100620</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">516</biblScope>
+			<biblScope unit="page" from="1608" to="1622" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Random-Effects Psychophysics For Studying Individual Differences in Perception</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rouder</surname></persName>
+		</author>
+		<ptr target="https://osf.io/7zb6p_v1" />
+		<imprint>
+			<date type="published" when="2025-06-21">2025. June 21. June 21, 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">On Cronbach&apos;s merger: Why experiments may not be suitable for measuring individual differences</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Chavez De La Peña</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mehrvarz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vandekerckhove</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/8ktn6</idno>
+		<imprint>
+			<date type="published" when="2023-12-21">2023, December 21</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">A psychometrics of individual differences in experimental tasks</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Haaf</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13423-018-1558-y</idno>
+		<ptr target="https://doi.org/10.3758/s13423-018-1558-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin and Review</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="452" to="467" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Why many studies of individual differences with inhibition tasks may not localize correlations</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Haaf</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13423-023-02293-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="2049" to="2066" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Hierarchical-Model Insights for Planning and Interpreting Individual-Difference Studies of Cognitive Abilities</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mehrvarz</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/09637214231220923</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Current Directions in Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="128" to="135" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">The lognormal race: A cognitive-process model of choice and latency with desirable psychometric properties</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Province</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Morey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Heathcote</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="page" from="491" to="513" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">The development of hierarchical factor solutions</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Leiman</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02289209</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="53" to="61" />
+			<date type="published" when="1957">1957</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<monogr>
+		<title level="m" type="main">Model comparison for factor models with Bayes factors through bridge sampling</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schnuerch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mehrvarz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rouder</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/4a965_v1</idno>
+		<imprint>
+			<date type="published" when="2025-05-16">2025. May 16</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Laplace Approximation of High Dimensional Integrals</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Shun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mccullagh</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1995.tb02060.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="749" to="760" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">Reactions toward the source of stimulation</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Simon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page" from="174" to="176" />
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">An Empirical Comparison of Methods for Computing Bayes Factors in Generalized Linear Mixed Models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sinharay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Stern</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/106186005X47471</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="415" to="435" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<monogr>
+		<title level="m" type="main">Generalized Latent Variable Modeling: Multilevel, longitudinal, and structural equation models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Skrondal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rabe-Hesketh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004">2004</date>
+			<publisher>CRC Press</publisher>
+			<pubPlace>Boca Raton</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">General Intelligence,&apos; obectively determined and measured</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Spearman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Psychology</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="201" to="293" />
+			<date type="published" when="1904">1904</date>
+		</imprint>
+	</monogr>
+	<note>a)</note>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">The Proof and Measurement of Association between Two Things</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Spearman</surname></persName>
+		</author>
+		<ptr target="https://www.jstor.org/stable/pdf/1412159.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Psychology</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="72" to="101" />
+			<date type="published" when="1904">1904b</date>
+		</imprint>
+	</monogr>
+	<note>refreqid=excelsior%3Af2a400c0643864ecfb26464f09f022ce</note>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><surname>Stevenson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Innes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Boag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Miletić</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J S</forename><surname>Isherwood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Trutti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<analytic>
+		<title level="a" type="main">Joint Modelling of Latent Cognitive Mechanisms Shared Across Decision-Making Domains</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">U</forename><surname>Forstmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s42113-023-00192-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Brain &amp; Behavior</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<monogr>
+		<title level="m" type="main">Using group level factor models to resolve high dimensionality in model-based sampling</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Stevenson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Innes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">F</forename><surname>Gronau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Miletic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Heathcote</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Forstmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Brown</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/pn3wv</idno>
+		<ptr target="10.31234/osf.io/pn3wv" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Studies of interference in serial verbal reactions</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Stroop</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="643" to="662" />
+			<date type="published" when="1935">1935</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<monogr>
+		<title level="m" type="main">Primary Mental Abilities</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Thurstone</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1938">1938</date>
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<analytic>
+		<title level="a" type="main">Experimental test of contemporary mathematical models of visual letter recognition</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Townsend</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">G</forename><surname>Ashby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Human Perception and Performance</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="834" to="864" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">The role of correlated factors in factor analysis</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Tucker</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02287872</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="141" to="152" />
+			<date type="published" when="1940">1940</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">Factor analysis linking functions for simultaneously modeling neural and behavioral data</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Merkle</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2017.03.044</idno>
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">153</biblScope>
+			<biblScope unit="page" from="28" to="48" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Raising awareness about measurement error in research on unconscious mental processes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Vadillo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Malejka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Y H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Dienes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Shanks</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13423-021-01923-y</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="21" to="43" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b95">
+	<analytic>
+		<title level="a" type="main">A cognitive latent variable model for the simultaneous analysis of behavioral and personality data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vandekerckhove</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page" from="58" to="71" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b96">
+	<analytic>
+		<title level="a" type="main">Hierarchical diffusion models for two-choice response time</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vandekerckhove</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tuerlinckx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="44" to="62" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b97">
+	<analytic>
+		<title level="a" type="main">Prior sensitivity in theory testing: An apologia for the Bayes factor</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Vanpaemel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="491" to="498" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b98">
+	<analytic>
+		<title level="a" type="main">Practical Bayesian model evaluation using leave-one-out cross-validation and wAIC</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vehtari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gabry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics and Computing</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1413" to="1432" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b99">
+	<analytic>
+		<title level="a" type="main">Accumulator and random-walk models of psychophysical discrimination: A counter-evaluation</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Vickers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Perception</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="471" to="497" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b100">
+	<analytic>
+		<title level="a" type="main">Model selection and psychological theory: A discussion of the differences between the Akaike information criterion (AIC) and the Bayesian information criterion (BIC)</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">I</forename><surname>Vrieze</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0027127</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="228" to="243" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b101">
+	<monogr>
+		<title level="m" type="main">Assessing Two Common Priors of Covariance in Hierarchical Designs</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Rouder</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/jen65_v1</idno>
+		<imprint>
+			<date type="published" when="2025-04-04">2025, April 4</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Computational Models of Dual-Process Reasoning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-10-12">October 12, 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><roleName>Beucler, J</roleName><forename type="first">Z</forename><forename type="middle">A</forename><surname>Purcell</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">De</forename><surname>Neys</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">W</forename><forename type="middle">&amp;</forename><surname>Desender</surname></persName>
+						</author>
+						<title level="a" type="main">Computational Models of Dual-Process Reasoning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-10-12">October 12, 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">0D6A2A428017B2F34100BBE0C44AE274</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-19T16:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Dual-process theories posit that reasoning emerges from the interplay of fast, intuitive Type 1 processes and slower, deliberative Type 2 processes, regulated by metacognitive control. Yet despite their influence, these frameworks remain largely verbal and underspecified, limiting their capacity for falsifiable predictions. Here, we introduce a set of computational models that formalise key dualprocess assumptions within an evidence-accumulation framework. Each model instantiates distinct mechanisms of working memory, inhibition, and confidencebased regulation and is evaluated against data from two-response bat-and-ball reasoning tasks. Six model variants-ranging from single-process "default" to confidence-regulated architectures-were compared using indices of accuracy, response time, and confidence. All models reproduced core reasoning signatures, but even the simplest captured many qualitative patterns, revealing that common verbal assumptions can be implemented by multiple mechanistic architectures. These findings underscore that while dual-process theories capture essential intuitions about intuitive-analytic dynamics, they remain underdetermined without formal specification. Computational modelling provides the necessary precision to advance dual-process theory from a descriptive dichotomy toward mechanistic explanation.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Dual-process theories propose that human reasoning arises from the interaction between two distinct cognitive processes: an intuitive, fast, and automatic Type 1, and a reflective, slow, and effortful Type 2 (Evans and <ref type="bibr" target="#b0">Stanovich [2013]</ref>, <ref type="bibr" target="#b1">Kahneman [2012]</ref>). The engagement and influence of each type are thought to be regulated by metacognitive processes, such as confidence <ref type="bibr" target="#b2">(Thompson et al. [2011]</ref>, <ref type="bibr" target="#b3">Pennycook et al. [2015]</ref>, <ref type="bibr" target="#b4">De Neys [2012]</ref>). These theories have shaped research across multiple domains, including economic decision-making, moral reasoning, and the human-AI interaction <ref type="bibr" target="#b5">(Greene [2013]</ref>, <ref type="bibr" target="#b6">Bago et al. [2021]</ref>, <ref type="bibr" target="#b7">De Neys and Raoelison [2025]</ref>. Yet despite their broad influence, few efforts have been made to formalise these verbal models into testable computational frameworks. Existing models of higher-level decisions tend to target narrow effects-such as framing or risk-taking-and often fail to (or simply do not aim to) explicitly model the interaction between the two types of processes (e.g., <ref type="bibr" target="#b8">Zhou and Pitt [2024]</ref>, <ref type="bibr" target="#b9">Mukherjee [2010]</ref>.</p><p>In this article, we develop a set of computational models that instantiate key assumptions of dual-process theories, translating verbal characterisations of dual-process frameworks into formal models, and comparing them against empirical data from the ubiquitous reasoning task: the bat-and-ball problem (see Box 1). This task has been central to the dual-process literature, and provides robust behavioural markers-such as response times, confidence, and accuracy-that can constrain and inform model development.</p><p>Dual-process accounts have been motivated by empirical findings showing that despite having the sufficient mindware to reach a correct solution, we often err-giving intuitive but incorrect responses <ref type="bibr" target="#b1">(Kahneman [2012]</ref>, Evans <ref type="bibr">[2010]</ref>). In bat-and-ball tasks, for instance, participants frequently miss the 'more than' cue, giving the intuitive 10c response (see Box 1; <ref type="bibr" target="#b11">Frederick [2005]</ref>). However, some individuals do succeed at this task-this success, according to dual process proponents, may be due to reflecting upon and inhibiting the intuitive 5c response <ref type="bibr" target="#b11">(Frederick [2005]</ref>). However, these claims remain poorly specified, and as such remain largely speculative. The question of why some people succeed on this, and other bias-inducing tasks-and the mechanisms that underlie itremains open.</p><p>Box 1: The Classic Bat-and-Ball Problem A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost? (1) 5c (incorrect, heuristic response) (2) 10c (correct, logical response) Traditional behavioural methods are ill-suited to address these mechanistic questions. But, computational modelling provides a way forward by allowing us to specify and quantiatively compare competing accounts of how underlying reasoning processes unfold over time <ref type="bibr" target="#b12">(van Rooij and Blokpoel [2020]</ref>, <ref type="bibr" target="#b13">Devezer et al. [2020]</ref>. For example, one hypothesis is that deliberation affords success on heuristic and bias tasks because it enables one to override or inhibit an initial intuitive response <ref type="bibr" target="#b1">(Kahneman [2012]</ref>, <ref type="bibr" target="#b11">Frederick [2005]</ref>). Others posit that this success is a result of engaging working memory and allowing the successful creation and integration of probabilistic or logical information <ref type="bibr" target="#b14">(Purcell et al. [2021]</ref>, <ref type="bibr">Bago and De Neys [2020]</ref>). These hypotheses are difficult to adjudicate using behavioural data alone, but can be directly instantiated and compared in formal models.</p><p>In addition to aiding the specification of and comparison between competing mechanistic hypotheses, computational modelling is well-positioned to help us evaluate causal claims that are otherwise difficult to test. A widely reported pattern in reasoning research is the inverse relationship between confidence and response time-low confidence is consistently associated with longer response times (e.g., <ref type="bibr" target="#b15">Bago and De Neys [2019]</ref>, <ref type="bibr" target="#b16">Purcell et al. [2022]</ref>). While this pattern is often interpreted as evidence that confidence causally regulates the engagement of deliberative thinking, experimental tests have been unable to disentangle its direction and causality. By constructing models that do or do not include causal links between confidence and response dynamics, and examining how well these competing models capture observed behavioural data, we can begin to test the causality of this mechanism.</p><p>Although modelling offers many solutions to the issues facing reasoning research, developing computational dual-process models poses significant challenges. It requires formalising (creating mathematical functions for) the distinct processing characteristics of Type 1 and 2, specifying their interaction dynamics, and incorporating relevant metacognitive signals. In this article, we proceed in three steps. First, we distil core assumptions from prominent verbal dual-process theories. Second, we construct six formal models that differ in how they implement various dual-process assumptions, such as inhibition, working memory engagement, and confidence-based regulation. Third, we compare these models against behavioural data from two-response versions of the bat-and-ball task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">DUAL-PROCESS THEORY</head><p>Contemporary dual-process theories-sometimes grouped under the label "Dual Process Theory 2.0" <ref type="bibr" target="#b17">(De Neys [2023</ref><ref type="bibr" target="#b21">, 2018]</ref>)-extend classical dual-system models by refining their assumptions and integrating evidence across domains <ref type="bibr" target="#b17">(De Neys [2023]</ref>, <ref type="bibr" target="#b19">Ackerman and Thompson [2017]</ref>, <ref type="bibr" target="#b20">Trippas et al. [2016]</ref>, <ref type="bibr" target="#b3">Pennycook et al. [2015]</ref>, <ref type="bibr" target="#b21">Stanovich [2018]</ref>, <ref type="bibr" target="#b22">Reyna et al. [2017]</ref>, <ref type="bibr">Handley and Trippas [2015a]</ref>, <ref type="bibr" target="#b24">Thompson and Newman [2017]</ref>). While these models differ in scope and emphasis, they converge on several key hypotheses about the distinct capacities of Type 1 and Type 2 processes, and the metacognitive and goal-directed mecha-nisms that regulate their interaction. The present work builds on these shared assumptions, focusing on five central constructs: working memory, inhibition, metacognition, metacognitive and goal-directed regulation.</p><p>Working memory. A foundational claim across dual-process models is that Type 2 processes require working memory, whereas Type 1 processes do not (for a discussion see <ref type="bibr" target="#b25">Thompson [2013]</ref>). Working memory enables integration of multiple problem elements and supports inferential reasoning <ref type="bibr">(Baddeley [1992</ref><ref type="bibr" target="#b27">(Baddeley [ , 2010]]</ref>, <ref type="bibr" target="#b29">Dehaene et al. [2001]</ref>). For example, in bat-and-ball tasks (see Box 1), Type 2 processing may allow an individual to combine mathematical knowledge (e.g., how to perform substitution) with contextual cues (e.g., the phrase 'more than'). In contrast, Type 1 relies on automatic associations or heuristics-such as linking $1.10 and 10c, and concept of subtraction-without integrating stored mathematical knowledge or the 'more than' cue. The capacity of Type 2 to combine external task features with internal knowledge is critical for generating novel inferences and (potentially) revising initial responses.</p><p>Inhibition. Dual-process models posit that Type 2 processes can override initial responses generated by Type 1 via inhibitory control <ref type="bibr" target="#b1">(Kahneman [2012]</ref>, Evans <ref type="bibr">[2010]</ref>. In classic reasoning tasks, such as the bat-and-ball problem, Type 1 often generates a quick, stereotypical response (e.g., 10c), neglecting logical information. Successful reasoning may require inhibiting this default response, allowing Type 2 to engage and consider competing cues, or the alternative solutions <ref type="bibr" target="#b11">(Frederick [2005]</ref>). This inhibition process is central to the default-interventionist account, wherein intuitive responses are produced first and subsequently subject to monitoring and correction by Type 2 if necessary (Evans and <ref type="bibr" target="#b0">Stanovich [2013]</ref>, <ref type="bibr" target="#b30">De Neys and Glumicic [2008]</ref>). Similarly, parallel models also entail that inhibition is necessary to curb incorrect Type 1 processes <ref type="bibr">(Handley and Trippas [2015b]</ref>).</p><p>Metacognition. Metacognitive processes-including confidence and error monitoring-are increasingly central to dual-process theories <ref type="bibr" target="#b32">(Koriat et al. [2006]</ref>, <ref type="bibr" target="#b33">Thompson and Johnson [2014]</ref>). Recent 2.0 models suggest that confidence arises from the relative activation strength of competing response processes <ref type="bibr">(Bago and</ref><ref type="bibr">De Neys [2019], De Neys [2023]</ref>). When one process (e.g., that leading to the heuristic response) dominates, confidence is high; when activation is balanced across competing processes (e.g., heuristic vs. logical), confidence is lower. This framework provides a verbal account of why people report low confidence in reasoning tasks that elicit conflict and has been supported by data linking confidence with longer response times and answer revision (e.g., <ref type="bibr" target="#b15">Bago and De Neys [2019]</ref>, <ref type="bibr" target="#b2">Thompson et al. [2011]</ref>).</p><p>Regulation. Dual-process models propose that the engagement of Type 2, deliberative reasoning is regulated by both metacognitive signals-such as confidence and goal-directed factors <ref type="bibr" target="#b17">(De Neys [2023]</ref>, <ref type="bibr" target="#b34">Ackerman [2014]</ref>). Low confidence in an initial response increases the likelihood of further deliberation, as reflected in longer response times and higher rates of answer revision <ref type="bibr" target="#b2">(Thompson et al. [2011]</ref>, <ref type="bibr" target="#b16">Purcell et al. [2022]</ref>). This has been demonstrated using tworesponse paradigms, where confidence after an initial, time-pressured answer (Response 1) predicts subsequent revision behaviour during an unconstrained phase (Response 2; <ref type="bibr" target="#b2">Thompson et al. [2011]</ref>). However, recent models argue that this regulation is also shaped by internal goals and external constraints. According to the diminishing criterion model <ref type="bibr" target="#b34">(Ackerman [2014]</ref>, <ref type="bibr" target="#b19">Ackerman and Thompson [2017]</ref>), individuals become more willing to accept low-confidence responses over time, particularly under conditions of time pressure or low incentives. Thus, Type 2 engagement and cessation reflects a dynamic interplay between metacognitive monitoring and goal-directed control.</p><p>In sum, contemporary dual-process theories propose that reasoning reflects the dynamic interaction of two types of processes, distinguished by functions such as working memory and inhibition, and regulated by metacognitive confidence. Although these frameworks offer rich verbal hypotheses about the processes that govern reasoning, they remain largely informal. Key questions remain unanswered: How do different components-such as inhibition and confidence-jointly determine behavioural outcomes? And, how are these processes causally regulated? In the next section, we describe how computational models of decision making can help us begin to address these questions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DECISION MAKING</head><p>Decision-making research has developed detailed computational models that describe how people make choices. One of the most widely used frameworksknown as evidence accumulation models-treat decisions as a process of gradually collecting information until one option wins out over another <ref type="bibr" target="#b35">(Ratcliff [1978]</ref>, <ref type="bibr" target="#b36">Busemeyer and Rapoport [1988]</ref>). They describe decisions as the outcome of a stochastic process in which noisy evidence is integrated over time until a decision threshold is reached. When the task invites a decision to be made between two alternatives, this can be envisioned as a race between two independent accumulators, each accumulating evidence for their respective alternative <ref type="bibr" target="#b37">(Logan and Cowan [1984]</ref>).</p><p>These models are especially well suited to testing the regulatory role of confidence because they can capture how much evidence a person has for each possible answer, and how that balance shapes their confidence <ref type="bibr" target="#b38">(Usher and</ref><ref type="bibr">Mc-Clelland [2001], De Martino et al. [2013]</ref>). Echoing the verbal assumptions of contemporary dual process theories, confidence in these computational frameworks is defined as the distance between the two options being considered: the larger the difference in evidence, the higher the confidence in that decision.</p><p>In addition to defining confidence, race models offer several structural fea-tures that align closely with those central to dual-process theories of reasoning. As illustrated in Figure <ref type="figure">1</ref>, each accumulator (y l , y e ) is governed by its own drift rate (I l , I e ) which describes the rate of evidence accumulation. Dual process models assume that working memory is a core feature of Type 2 processing. Working memory facilitates both inference, through the combination of pieces of information, and increased access to stored information and processes via broadcast. As such, we might expect that, as a person engages more Type 2 thinking, this may be reflected as increases to the rate of evidence accumulation which can be captured by changes to the accumulator drift rates. Some race models include a parameter governing the strength of the competition between the accumulators (w l , w e ; <ref type="bibr" target="#b38">(Usher and McClelland [2001]</ref>). Many dual process theories assert that inhibition-the propensity of one solution process to suppress another-is a key Type 2 feature. Therefore, as one thinks more effortfully about a decision, we might expect that the strength of the inhibition, w, between the two accumulators will increase.</p><p>A feature of all evidence accumulation models is the evidence boundary, (a). Once one the of two accumulators reaches the boundary, a decision is taken in favour of that accumulator. Dual process models assert that different decisions require different levels of activation depending or evidence depending on the individual's goals and the task context. For example, decisions made under time pressure or that have little consequence for the reasoner may be taken with less evidence than decisions that can be made more slowly or for which the consequences are greater. As such, we might expect that when people are given more time to think about a problem, the evidence boundary increases.</p><p>Evidence accumulation models provide useful parameters that can be adapted to account for several dual process assumptions about: working memory (via modulation of drift), inhibition (via cross-suppression), confidence (via the difference between the accumulators), and evidence requirements (via the decision boundary). However, generalising these models to higher-level reasoning tasks requires important extensions. In particular, that 1) as a person moves from more Type 1 to Type 2 processing, we may observe changes to one, some, or all of these parameters and 2) that confidence plays a role in regulating these changes. In the present framework, we extend race models to include these components.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">DEVELOPING COMPUTATIONAL MOD-ELS OF REASONING</head><p>We formalise key components of dual-process reasoning-working memory, inhibition, metacognition, and regulation-by linking these processes to key pa- rameters from race models adapted to a two-response paradigm. As outlined earlier, we will use a paradigm that involves two responses per problem: an initial answer under time pressure (Step 1), followed by a chance to revise it without constraints (Step 2); after each response, participants rate their confidence <ref type="bibr" target="#b2">(Thompson et al. [2011]</ref>). This structure is not intended to mimic naturalistic decision-making, but to offer a controlled framework for identifying whether intuitive (Type 1) and deliberative (Type 2) processes exhibit distinct computational signatures, and whether early confidence regulates subsequent Type 2 engagement. This approach allows us to examine two central questions in dual-process theory:</p><formula xml:id="formula_0">dy</formula><p>• Duality: Are Type 1 and Type 2 processes mechanistically distinct, and if so, how?</p><p>• Regulation: Does confidence regulate the engagement of Type 2 processes, and if so, how?</p><p>To address these questions, we develop two-step computational models. For the two steps-matching Response 1 and Response 2 in two-response paradigmswe implement decisions as a race between two accumulators: one for the erroneous response (e), typically aligned with intuitive but incorrect answers, and one for the logical response (l), corresponding to the normatively correct choice. Accumulators have independent drift rates (I e , I l ) and inhibition weights (w e , w l ). Confidence (c) and decision boundaries (a) are also explicitly parameterised (see Figure <ref type="figure">1</ref> for a single-step depiction). We introduce three model classes:</p><p>1. Default model: A single process governs both steps with fixed parameters, assuming no qualitative shift between intuition and deliberation.</p><p>2. Shift models: Parameters vary between steps, capturing a transition in processing dynamics once deliberation becomes possible-consistent with the duality hypothesis.</p><p>3. Confidence-Regulation models: These extend the shift models by linking confidence at Step 1 to parameter changes between steps, thereby instantiating the regulation hypothesis.</p><p>Each model is described in detail below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Default model</head><p>In the default model, the parameters governing evidence accumulation remain constant across both decision phases. That is, the drift rates (I 1 , I 2 ) and inhibitory competition terms (w 1 , w 2 ) are fixed between Step 1 (timed) and</p><p>Step 2 (untimed) responses. This model assumes that the same underlying cognitive process supports both intuitive and deliberative responses, and thus reflects a single decision system. The default model is intended to provide a baseline against which to evaluate shift and confidence models that explicitly incorporate dual-process dynamics and confidence-driven regulation.</p><p>Step 1: dy e = (-w e y l + I e )dt + cdW, y e (0) = 0, dy l = (-w l y e + I l )dt + cdW, y l (0) = 0</p><p>(2)</p><p>The process continues until one of the accumulators, y 1 or y 2 , reaches the first decision boundary a 1 . Mathematically, this can be written as:</p><p>Stop when: max y e (t), y l (t) ≥ a 1 .</p><p>(3)</p><p>At this point (t), confidence is defined as the distance between the two accumulators at the point when the first response is made.</p><p>Confidence in the first response is then defined as:</p><formula xml:id="formula_1">c = |y e (t) -y l (t)| .<label>(4)</label></formula><p>The decision process continues (untimed) as follows:</p><p>Step 2: dy e = (-w e y l + I e )dt + cdW, dy l = (-w l y e + I l )dt + cdW.</p><p>(5)</p><p>The process continues until one of the accumulators, y e (t) or y l (t), reaches the second decision boundary a 2 . Mathematically, this can be written as:</p><p>Stop when: max y e (t), y l (t) ≥ a 2 .</p><p>In the following models, decision processes for Step 1 are always defined as in equation ( <ref type="formula">2</ref>) above. However, in line with dual-process assumptions, in each of the next models, a change occurs in one parameter in Step 2. Primes ( ′ ) indicate changed parameters generated for the second decision period.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Shift Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">Drift Shift</head><p>In the drift shift model, reasoning at Step 2 reflects enhanced access to taskrelevant information through increased working memory engagement. This is operationalised as a change in drift rates (I ′ l , I ′ e ) relative to that for Step 1.</p><p>The logic is that when time and cognitive resources are available, participants can more effectively maintain and manipulate problem-relevant representations, they may also have increased access to more distant cognitive resources, thereby increasing the rate at which evidence is accumulated for the logical response.</p><p>For the drift-shift model, Step 2 is defined as:</p><formula xml:id="formula_2">dy e = (-w e y l + I ′ e )dt + cdW, dy l = (-w l y e + I ′ l )dt + cdW.<label>(6)</label></formula><p>Where stimulus input is scaled by fixed multipliers:</p><formula xml:id="formula_3">I ′ e = I e * I e m, I ′ l = I l * I l m.</formula><p>(7)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Inhibition Shift</head><p>The inhibition shift model assumes that increased cognitive control at Step 2 enables more effective suppression of competing or prepotent responses. This is modelled as a change in the suppression terms (w ′ e , w ′ l ), which reflect the degree to which each accumulator inhibits its competitor. Enhanced inhibition may facilitate the eventual selection of the final response by reducing activity of the competing accumulator, even when drift rates remain constant.</p><p>Step 2 is defined as:</p><formula xml:id="formula_4">dy e = (-w ′ e y l + I e )dt + cdW, dy l = (-w ′ l y e + I l )dt + cdW.<label>(8)</label></formula><p>Where inhibition weights are scaled by fixed multipliers:</p><p>w ′ e = w e * w e m, w ′ l = w l * w l m.</p><p>(9)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Confidence-Regulation Models</head><p>In the first two confidence-regulation models, the parameters that were allowed to change in the shift models above (e.g., drift rate, inhibition) again change from Step 1 to 2. However, in this case, the change in the parameter is dependent on confidence at the time when the first response is made t 1 . In the third confidence-regulation model, the boundary parameter at Step 2 changes as a function of confidence at t 1 . These models formalise different specifications of the hypothesis that confidence regulates whether and to what extent deliberative processing is engaged.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.2">Confidence-Drift Model</head><p>This model assumes that confidence influences the rate of evidence accumulation. Specifically, lower confidence facilitates faster accumulation, while higher confidence slows it, reflecting the proposed relationship between confidence and deliberation as working memory resources.</p><p>Confidence is defined as the absolute difference between the two accumulators at the moment of the initial decision, see (3). However, to allow positive and negative modulation of the drift rate we rescale the confidence term to the range [-1, 1] as follows:</p><formula xml:id="formula_5">c rescaled = 2 c a -1, (<label>10</label></formula><formula xml:id="formula_6">)</formula><p>where a is the decision threshold used at Step 1. When c rescaled ≈ +1, the participant was highly confident; when c rescaled ≈ -1, confidence was low. This linear transformation enables symmetric modulation of evidence accumulation across trials.</p><p>The drift rates at Step 2 are defined as:</p><formula xml:id="formula_7">I ′ e = I e * I e m + c e * c rescaled , I ′ l = I l * I l m + c l * c rescaled ,<label>(11)</label></formula><p>where c e and c l are gain parameters that determine the extent to which confidence modulates the accumulation rates for each accumulator.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.2">Confidence-Inhibition Model</head><p>This model assumes that confidence modulates the level of inhibition between accumulators. This reflects the verbal assumption that low confidence leads to stronger inhibition and high confidence reduces the inhibitory interaction. Unlike the confidence-drift model, we do not rescale confidence to [-1, 1], as allowing negative values would imply excitation rather than inhibition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Inhibition parameters at</head><p>Step 2 are modulated by raw confidence, see (3):</p><formula xml:id="formula_8">w ′ e = w e * w e m + c e * c, w ′ l = w l * w e m + c l * c,<label>(12)</label></formula><p>where c e and c l are scaling parameters that govern the extent to which confidence modulates inhibition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.3">Confidence-Boundary Model</head><p>This model assumes that confidence modulates the final decision boundary. The decision boundary reflects how much evidence must accumulate before a response is made; thus, changes to the boundary reflect changes in response caution. When confidence is low, a higher boundary may be set to enable more evidence accumulation before responding (i.e., more cautious responding). Conversely, when confidence is high, a lower boundary may be used, reflecting reduced need for caution or deliberation. This formulation reflects the dualprocess assertions that (a) low confidence leads to greater deliberation and (b) task-goal trade-offs where low confidence leads to greater caution and a need for more evidence before committing to a decision.</p><p>As for the confidence-drift model, here we also rescale confidence to allow positive and negative modulation of the boundary (relative to a); see (10).</p><p>The decision process at Step 2 proceeds identically to previous models (as defined in Equations 1 and 2), but with a modified stopping rule:</p><formula xml:id="formula_9">max y e (t), y l (t) ≥ a ′ 2 ,<label>(13)</label></formula><p>where the new boundary is defined as a linear function of scaled confidence:</p><formula xml:id="formula_10">a ′ 2 = a 2 -c m * c rescaled .<label>(14)</label></formula><p>Here, a 2 represents the baseline boundary level (e.g., matched to Step 1), and c governs how much the boundary increases or decreases based on confidence. When c &lt; 0, lower confidence leads to more cautious responding (higher boundary), while high confidence yields a reduced threshold. This model formalises the hypothesis that confidence acts as a metacognitive signal regulating the amount of evidence required (either due to similar activations of competing response options or higher confidence standard due to individual goals) before committing to a decision in subsequent reasoning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">METHOD</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Participants</head><p>Ninety-nine US participants (47% female; M age = 31.06 years, SD = 10.07) were recruited via Prolific. Participants were compensated £4.50 for their time. All participants were located in the United States and provided informed consent prior to participation. No participants were excluded from the behavioural analyses, while eight were excluded from the computational analyses (see below).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Materials</head><p>Participants completed 100 bat-and-ball style reasoning problems <ref type="bibr" target="#b40">(Raoelison and Neys [2019]</ref>). The item set comprised 50 conflict and 50 no-conflict problems, presented in randomised order. Content was adapted for variation in surface features while preserving the underlying logical structure. The conflict items followed the underlying structure of the canonical bat-and-ball problem, but their surface features were modified to vary across trials <ref type="bibr" target="#b15">(Bago and De Neys [2019]</ref>). For instance, one item read: "A building has 370 pets in total, consisting of dogs and cats. There are 300 more dogs than cats. How many cats are there?" <ref type="bibr">[35,</ref><ref type="bibr">70]</ref>. These items were designed to simultaneously cue an intuitively appealing but incorrect heuristic response, as well as the correct response derivable via a basic algebraic formulation (e.g., 300 + 2x = 370). A key linguistic feature of these items was the inclusion of the comparative phrase "more than," which often triggers misinterpretation. In contrast, no-conflict items were structurally similar but omitted the comparative phrasing and did not elicit a conflict between heuristic and analytical responses. For example: "A building has 370 pets in total, consisting of dogs and cats. There are 300 dogs. How many cats are there?" <ref type="bibr">[35,</ref><ref type="bibr">70]</ref>. In these cases, the intuitive answer aligned with the correct response (e.g., 300 + x = 370), and thus no response conflict was expected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Procedure</head><p>Participants were instructed that each problem would be answered twice. They were first asked to provide their intuitive response-the first answer that came to mind-within a limited time, then given the opportunity to reconsider their answer without time constraints. After each response, they rated their confidence on a six-point scale (1 = not at all confident, 6 = very confident). Two practice trials preceded the main set of 100 items. Responses were made using the keyboard: "C" and "N" keys selected the left and right options, respectively. Confidence ratings from 1 to 3 were entered using the number keys 1, 2, and 3, and ratings from 4 to 6 using the 8, 9, and 0 keys. At the end of the session, participants reported their age, gender, and country of residence.</p><p>Each trial followed a fixed sequence adapted from <ref type="bibr" target="#b2">Thompson et al. (2011;</ref><ref type="bibr"></ref> see Figure <ref type="figure" target="#fig_1">2</ref>). A fixation cross appeared for 1000 ms, followed by a partial problem stem for 2000 ms (e.g., "In a building residents have 370 dogs and cats in total."). The full problem and two response options were then presented for up to 4000 ms or until a response was made (e.g., "There are 300 more dogs than cats. How many cats are there?" <ref type="bibr">[35,</ref><ref type="bibr">70]</ref>). During the final 2000 ms, the screen background turned yellow to signal the approaching deadline. If participants failed to respond in time, they were reminded to answer more quickly on subsequent trials. All trials where the participant did not respond before the initial time-limit were removed before analysis. Participants were then asked to give their confidence in that response, then answer the problem again-this time with no time constraints-finally, they gave their confidence in their second response. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Statistical and Model Fitting Approach</head><p>We used mixed-effects models to analyse accuracy, response times, confidence, and their interrelations. All models included subject as a random intercept. Accuracy (0, 1) was analysed using a logistic model with fixed effects of response stage (initial vs. final), question type (conflict vs. no-conflict), and their interaction. Response times were log-transformed and analysed with linear models using the same predictors. Confidence ratings were also analysed with linear models. We then examined response times and confidence (separately) as functions of response stage, question type and accuracy, and all their interaction. To examine the role of confidence in subsequent behaviour, we fit additional models predicting response times-using linear mixed model-and answer change-using a logistic mixed model-from initial confidence, question type, and their interaction, with subject as a random intercept. All model analyses used the lmerTest package <ref type="bibr" target="#b41">(Kuznetsova et al. [2013]</ref>) in RStudio (RStudio <ref type="bibr" target="#b42">Team [2019]</ref>) using an alpha level of .05 for significance testing.</p><p>We modelled our data using each of the six two-step computational models developed above. For all models, noisy evidence is accumulated separately for two response options (error and logical). For Step 1-reflecting the Response 1 process-the rate of evidence accumulation for each option is determined by independent drift rates I e and I l , and inhibition rates w e and w l -until a first decision boundary, a 1 , is reached. Changes between the proposed models only emerge at Step 2. For the default model, Step 2 is governed by the same weights and parameters as in Step 1, except the boundary, a 2 , which is able to change freely. Under this model, we assume that the same decision process is responsible for the decision at both Step 1 (initial, under time constraint) and Step 2 (final, no time constraint)-only at Step 2 this decision process continues until a new boundary is reached. Otherwise, there is no mechanistic difference between intuitive and deliberative stages.</p><p>The remaining five models allow the weights to change at Step 2 according to different dual-process principles. The two shift models allow the drift and inhibition parameter weights (I and w) to shift at Step 2, respectively. These models align with the dual process assertions that deliberation allows greater access to cognitive resources and increased capacity for inhibition. The three confidence-regulation models allow the drift, inhibition, and decision threshold parameter weights (I, w, a 2 ) to change at Step 2, respectively. In these models, the weights change as a function of confidence. A latent confidence parameter (c) is calculated by taking the absolute difference between the accumulators at the end of Step 1. For models in which confidence is allowed to have a negative impact (i.e., the confidence-drift and the confidence-boundary models), the confidence term is scaled to -1 to 1. These confidence-regulation models reflect the contemporary dual process assumption that confidence regulates the engagement and duration of deliberation. For all models, non-decision components were captured by non-decision parameters ter 1 and ter 2 at each Step.</p><p>Before fitting the models, we explored the range of behavioural patterns each model can produce by simulating them across wide parameter ranges, focusing on Step 2 outcomes (as all models behave identically in Step 1). This allowed us to verify the ability of the models to reproduce key behavioural patterns, namely, response choice (error or logical) and response time distributions across conflict and no-conflict trials, as well as getting a better understanding of the differences between our models. We conducted posterior predictive checks to assess whether the fitted models could reproduce key qualitative patterns in the data <ref type="bibr" target="#b43">(Palminteri et al. [2017]</ref>). These analyses examined how well each model matched the empirical patterns of confidence, response times and accuracies, both overall and as a function of conflict condition and response stage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Accuracy, Response Times, and Confidence</head><p>Behavioural. The accuracy analysis revealed a significant interaction between response stage and question type, χ 2 (1) = 7.06, p = .008). For no conflict items, accuracy was higher for final than initial responses (OR = 1.26, p = .001), while for conflict items, accuracy did not differ across responses (p = .800; see Figure <ref type="figure" target="#fig_2">3</ref>). Response times were significantly longer at Response 1 than Response 2, (F (18104) = 33.02, p &lt; .001). No other effects were significant (see Figure <ref type="figure" target="#fig_3">4</ref>). A linear mixed-effects model predicting log-transformed response times from accuracy response times, and question type revealed several significant main and interaction effects. There was a significant three-way interaction between Response, Question, and Accuracy, F (1, 17, 734.37) = 7.14, p = .008, indicating that the effect of accuracy on response times differed depending on both the response stage and question type. In pairwise com-parisons, accuracy effects varied by response stage and question type: there was a significant effect of accuracy in the initial response to conflict problems, t(17, 811) = 2.88, p = .004, and in the final response to conflict problems, t(17, 816) = -5.33, p &lt; .001. No significant accuracy effects were found in no-conflict problems, either at the initial, t(17, 771) = 0.27, p = .786, or final response stage, t(17, 782) = -1.44, p = .150.Confidence was higher for final than initial responses, F (1) = 531.13, p &lt; .001, and for no-conflict than conflict items, F (1) = 12.29, p &lt; .001, as indicated by main effects, however, the interaction was not significant. Computational. Results were quite consistent across models. All models were able to capture: 1) the lower accuracy for conflict compared to no-conflict responses (see Figure <ref type="figure" target="#fig_2">3</ref>), 2) the longer response times being more frequent in the final compared to the initial response stage (see Figure <ref type="figure" target="#fig_3">4</ref>), and 3) the more subtle interaction between conflict and accuracy for reaction times, with reaction times being higher for correct responses compared to incorrect responses for conflict items (see Figure <ref type="figure" target="#fig_3">4</ref>). However, the models tended to systematically underestimate final response times. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Confidence and Deliberation Indices</head><p>Behavioural. Regarding confidence and indices of deliberation, initial confidence predicted subsequent behaviour: higher confidence at Response 1 was associated with shorter Response 2 times (B = -0.29, p &lt; .001) and lower likelihood of answer change (B = -1.48, p &lt; .001; see Figure <ref type="figure" target="#fig_4">5</ref>). Computational. We tested whether the models could reproduce the confidence patterns found in the data, as well as the relationship between initial confidence and deliberative indices: (a) response times and (b) answer changes in Step 2. In the models, confidence is represented as a latent variable emerging from the internal decision process; here, we directly compare these latent confidence values to the explicit confidence ratings provided by participants. Because confidence measures were not used during fitting, these analyses provide an out-of-sample test on aspects of the data not involved in parameter estimation. This approach reduces the risk of overfitting and offers a stronger assessment of each model's ability to capture latent reasoning processes, allowing us to systematically compare the adequacy of each computational account of dual-process reasoning. As shown in Figure <ref type="figure" target="#fig_4">5</ref>, all models were able to capture: 1) the negative relationship between confidence at Response 1 and response times at Response 2, and 2) the negative relationship between confidence at Response 1 and change-of-mind at Response 2.</p><p>The Default model provided a good overall qualitative account of participants' behaviour across variables. It captured the main patterns observed in the data, including the relationships between initial confidence, final reaction time, and changes of mind, despite not explicitly modelling these effects. Notably, the simpler architecture of the Default model reproduced the same qualitative trends captured by more complex alternatives, suggesting that much of the observed behaviour in the bat-and-ball task under two-response conditions can be explained without additional model mechanisms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">GENERAL DISCUSSION</head><p>Dual-process theories of reasoning are highly influential verbal accounts of human reasoning, positing that intuitive and deliberative processes interact under the guidance of metacognitive control. However, despite their theoretical richness, such accounts often lack the precision needed to generate falsifiable predictions or specify concrete mechanisms. In the present work, we translated these verbal theories into a set of computational models, each formalising core constructs-working memory, inhibition, confidence, and regulation-within a race-based evidence accumulation framework. This modelling effort serves not only to evaluate the plausibility of key dual-process assumptions but also to demonstrate how computational instantiations can clarify, sharpen, and sometimes challenge verbal theorising.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Limitations of Verbal Dual-Process Theories</head><p>Despite their theoretical richness, verbal dual-process theories have long faced major conceptual challenges. First, they often lack the specificity required for falsifiable predictions. Terms such as "inhibition," "analytic override," or "confidence regulation" are used descriptively but without formal definitions of their dynamics or interactions. As a result, the same empirical pattern-such as longer response times before correct answers-can be taken as support for entirely different mechanisms. This interpretive flexibility has made it difficult to disconfirm verbal theories and, consequently, to build cumulative progress across studies.</p><p>Second, existing dual-process frameworks remain ambiguous about how their key components-such as working memory, inhibition, and metacognition-interact over time. For example, many accounts posit that inhibition allows Type 2 reasoning to suppress Type 1 output, yet they rarely specify how or when this occurs, or how it depends on other factors like confidence or task difficulty. Similarly, the hypothesised role of confidence as a regulator of analytic engagement remains underspecified: some accounts treat confidence as an output of processing, others as an input controlling it. Without explicit mechanistic structure, these verbal models cannot reveal the causal architecture linking these processes.</p><p>Third, even the most recent "Dual Process 2.0" frameworks-though more nuanced than classical two-system accounts-retain an essentially verbal format that makes quantitative prediction nearly impossible. They articulate rich qualitative hypotheses about metacognitive regulation, but stop short of defining how changes in working memory, inhibition, or decision thresholds produce measurable behavioural outcomes. Consequently, competing theories can accommodate similar data, leaving open the fundamental questions of what, when, and how dual processes interact during reasoning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">The Need for Computational Specification</head><p>The very fact that we were able to construct five distinct computational models from these theories highlights their vagueness. Each model represents a minimal instantiation of a particular verbal claim-whether that deliberation enhances working memory (drift shift), increases inhibition (inhibition shift), or whether confidence modulates these processes directly. Importantly, these five models are not meant as exhaustive formalisations but as boundary cases that delineate the minimal commitments required to implement common verbal hypotheses. That so many plausible formulations can be drawn from a single set of verbal claims suggests that the theories themselves are underdetermined.</p><p>Moreover, each of these models could, in principle, be elaborated into more complex hybrids. For example, a model could combine confidence-driven changes in drift rate with simultaneous adjustments to inhibition or evidence boundaries. The ease with which such extensions can be conceived underscores the flexibility-and hence the indeterminacy-of verbal theorising in this domain. The modelling exercise therefore does not merely translate dual-process assumptions into equations; it exposes their current underspecification and points toward the necessity of formalisation as a means of theoretical refinement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">What the Models Capture</head><p>Despite these conceptual limitations, the modelling results are encouraging. The relatively simple models captured several core behavioural signatures of reasoning. Across models, they reproduced the characteristic differences between conflict and no-conflict items, the longer response times for correct versus incorrect responses in conflict trials, and the inverse relationship between confidence and deliberation (as indexed by subsequent response times and changes of mind).</p><p>The fact that models as simple as the default architecture reproduced many of these qualitative patterns is instructive. It suggests that much of the behaviour observed in two-response reasoning paradigms can be explained by modest shifts in evidence accumulation dynamics-without invoking elaborate control hierarchies. Nevertheless, the more elaborate confidence-regulation models extend this by showing how metacognitive variables could mechanistically drive the transition between intuitive and reflective thought, offering a bridge between traditional dual-process constructs and observable performance data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Limitations and Next Steps</head><p>This work constitutes a proof of concept rather than a fully validated model set. While the six models provide a principled starting point for formalising dual-process theories, they were not subjected to the rigorous cross-validation and model recovery procedures recommended in recent computational modelling guidelines <ref type="bibr" target="#b44">(Wilson and Collins [2019]</ref>). The next step for the field will be to perform systematic model comparison across datasets and tasks, ideally with hierarchical Bayesian fitting and predictive cross-validation to assess generalisability. Such efforts will be critical to move from demonstrating that models can capture the data to establishing which mechanisms are necessary or preferable.</p><p>Future work should also seek to adjudicate between these mechanistic accounts. For instance, are reasoning improvements across time better explained by enhanced inhibition or by increases in working memory integration? Does confidence regulate deliberation through changes in evidence thresholds, or by altering accumulation dynamics? Addressing these questions will require experiments that manipulate these mechanisms directly-e.g., through cognitive load, incentive, or metacognitive interventions-and testing whether the corresponding model parameters shift in predictable ways. Only through such iterative cycles of modelling and empirical testing can dual-process theories evolve from verbal descriptive theories into mechanistic frameworks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Broader Implications</head><p>Beyond the domain of reasoning, formalising dual-process models can help clarify long-standing debates in diverse areas of psychology and cognitive sci-ence. For example, similar intuitions about fast versus slow thinking underlie research on misinformation and belief revision, moral and climate argumentation, and gender or age differences in confidence and cognitive effort. A computational framework allows these phenomena to be analysed within a common architecture, specifying whether differences arise from altered evidence accumulation rates, inhibitory control, or confidence thresholds. In this sense, computational dual-process models offer a unifying language for testing claims across domains-from how misinformation resists correction to how confidence biases emerge in educational or gender-related contexts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">Conclusion</head><p>In summary, we have demonstrated that the verbal dual-process framework, while influential, remains too underspecified to guide cumulative theoretical progress. By translating its assumptions into six computational models, we revealed both the flexibility and the limits of current theorising: multiple models can capture key behavioural patterns, yet they embody different mechanistic commitments. This exercise highlights the need to move beyond verbal dichotomies toward formal, testable architectures. We propose that computational models-anchored in explicit equations linking working memory, inhibition, confidence, and regulation-offer the most promising path forward for refining dual-process theories and for bridging the gap between descriptive constructs and mechanistic understanding.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">APPENDIX</head><p>To characterise the cognitive mechanisms underlying dual-stage reasoning, we implemented two-step models, simulating the temporal dynamics of intuitive and deliberative responses. Each model instantiates two sequential decision processes-an early, speeded response under time pressure (Step 1) and a subsequent, reflective response without time constraints (Step 2). The full behavioural trajectory on each trial is modelled as a pair of evidence accumulation processes evolving toward response boundaries. Simulations were executed via a custom C++ engine with Rcpp bindings for integration into the R environment. This ensured efficient simulation over repeated trials while preserving trial-level item structure and conflict labels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A1. Model Architecture</head><p>Each response stage is governed by a race between two accumulators (representing the logical and intuitive responses), with inputs modulated by the type of reasoning problem. Conflict trials assign competing drift inputs to both accumulators, whereas no-conflict trials funnel evidence exclusively toward the logical accumulator, while the other accumulator accumulates only noise. The model includes key parameters for drift rate (I e , I l ), lateral inhibition (w e , w l ), decision thresholds (a 1 , a 2 ), and non-decision times (ter 1 , ter 2 ). A confidence signal is computed as the absolute difference in accumulator values at threshold crossing.</p><p>The default model assumes the same parameter set governs both Step 1 and</p><p>Step 2, allowing a 2 to change. In contrast, the modulated models introduced dynamic changes to parameter weights for I and w at Step 2, implemented in one of two ways. In the shift models, parameter weights at Step 2 are shifted relative to their Step 1 counterparts (e.g., increased inhibition or drift). In the confidence-based models, Step 2 parameters are adjusted relative to their Step 1 weights but as a function of confidence, c. For example, low initial confidence may result in increased drift, greater inhibition, or a higher threshold at Step 2, operationalising the idea that confidence modulates deliberative resource allocation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A2. Parameter Estimation</head><p>Model parameters were estimated individually for each participant using a simulation-based quantile fitting approach (e.g., <ref type="bibr" target="#b45">Desender et al. [2021]</ref>). Specifically, we minimized the G 2 deviance-the divergence between observed and simulated response time distributions-computed separately by response stage (Step 1, Step 2) and accuracy (correct, incorrect). The fitting procedure used empirical reaction time quantiles at 0.1, 0.3, 0.5, 0.7, and 0.9, dividing each distribution into six bins defined by these five cut points to capture its overall shape:</p><formula xml:id="formula_11">G 2 = 2N obs q i=1</formula><p>p obs,i ln p obs,i p pred,i</p><p>where N obs is the number of observed trials, p obs,i and p pred,i are the observed and predicted proportions in bin i, and q is the total number of quantile bins.</p><p>We minimized G 2 total using differential evolution optimization as implemented in the DEoptim package in R <ref type="bibr" target="#b46">(Mullen et al. [2011]</ref>). Each parameter set was evaluated by simulating 1,000 trials per participant, with 10 stochastic replicates per observed trial to account for variability in the DDM simulation. The best-fitting parameters were retained for each participant after 1000 iterations, or earlier if the improvement in the deviance fell below a relative tolerance of 10 -6 for more than 200 consecutive steps.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Figure 1: Example of an evidence accumulation model with two accumulators that 'race' toward the decision boundary (a). Each of the accumulators has an independent rate of evidence accumulation (drift rates I l and I e ) and the difference between the accumulators at boundary crossing reflects confidence (c) in that decision. 'a.u.' = arbitrary units. As depicted in the equation, changes in evidence (dy) for each accumulator are suppressed by the strength of the other at a rate of w. Ter = Non-decision time e.g., for motor response.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Two-response trial format.</figDesc><graphic coords="14,133.77,146.72,343.71,106.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Accuracy as a function of response stage and conflict. Bars show participants' mean accuracy with standard errors, and white dots indicate predictions from the Default model.</figDesc><graphic coords="16,204.75,255.31,198.43,165.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Response time distributions as a function of response stage, conflict, and accuracy. Histograms show trial distributions across all participants, the red line shows the normalised Default model distribution, and overlaid dots indicate mean reaction times for participants (black) and the model (red).</figDesc><graphic coords="17,133.77,124.80,343.70,211.51" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Confidence-deliberation link. The upper panel shows the relationship between initial confidence and final reaction time, and the lower panel shows the relationship between initial confidence and the proportion of changes of mind in the final response stage. Participant data are shown in black (discrete confidence ratings), and model confidence is binned into sextiles of the latent initial confidence variable.</figDesc><graphic coords="18,133.77,124.80,343.72,437.46" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Dual-Process Theories of Higher Cognition: Advancing the Debate</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">B T</forename><surname>St</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keith</forename><forename type="middle">E</forename><surname>Evans</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Stanovich</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1745691612460685</idno>
+		<ptr target="https://doi.org/10.1177/1745691612460685.Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Psycholog-ical Science</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="223" to="241" />
+			<date type="published" when="2013-05">May 2013</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Thinking, fast and slow. Penguin psychology. Penguin Books</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<pubPlace>London</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Intuition, reason, and metacognition</title>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jamie</forename><forename type="middle">A Prowse</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gordon</forename><surname>Pennycook</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2011.06.001</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0010028511000454" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<idno type="ISSN">0010-0285</idno>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="107" to="140" />
+			<date type="published" when="2011-11">November 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">What makes us think? A three-stage dual-process model of analytic engagement</title>
+		<author>
+			<persName><forename type="first">Gordon</forename><surname>Pennycook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">A</forename><surname>Fugelsang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><forename type="middle">J</forename><surname>Koehler</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2015.05.001</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0010028515000481" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<idno type="ISSN">0010-0285</idno>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="page" from="34" to="72" />
+			<date type="published" when="2015-08">August 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Bias and Conflict: A Case for Logical Intuitions</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1177/1745691611429354</idno>
+		<ptr target="https://doi.org/10.1177/1745691611429354.Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Psychological Science</title>
+		<idno type="ISSN">1745- 6916</idno>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="28" to="38" />
+			<date type="published" when="2012-01">January 2012</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">D</forename><surname>Greene</surname></persName>
+		</author>
+		<ptr target="https://www.amazon.com/Moral-Tribes-Emotion-Reason-Between/dp/1594202605" />
+		<title level="m">Moral Tribes: Emotion, Reason, and the Gap Between Us and Them</title>
+		<meeting><address><addrLine>New York, NY</addrLine></address></meeting>
+		<imprint>
+			<publisher>Penguin Press</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Intuition rather than deliberation determines selfish and prosocial choices</title>
+		<author>
+			<persName><forename type="first">Bence</forename><surname>Bago</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-François</forename><surname>Bonnefon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1037/xge0000968</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<idno type="ISSN">1939-2222</idno>
+		<imprint>
+			<biblScope unit="volume">150</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1081" to="1094" />
+			<date type="published" when="2021">2021</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Humans and LLMs rate deliberation as superior to intuition on complex reasoning tasks</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthieu</forename><surname>Raoelison</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s44271-025-00320-8</idno>
+		<idno>44271-025-00320-8. Publisher</idno>
+		<ptr target="https://www.nature.com/articles/s" />
+	</analytic>
+	<monogr>
+		<title level="j">Communications Psychology</title>
+		<idno type="ISSN">2731-9121</idno>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">141</biblScope>
+			<date type="published" when="2025-09">September 2025</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Dual-process modeling of sequential decision making in the balloon analogue risk task</title>
+		<author>
+			<persName><forename type="first">Ran</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><forename type="middle">A</forename><surname>Pitt</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2023.101629</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0010028523000877" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<idno type="ISSN">0010-0285</idno>
+		<imprint>
+			<biblScope unit="volume">149</biblScope>
+			<biblScope unit="page">101629</biblScope>
+			<date type="published" when="2024-03">March 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A dual system model of preferences under risk</title>
+		<author>
+			<persName><forename type="first">Kanchan</forename><surname>Mukherjee</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0017884</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<idno type="ISSN">1939-1471</idno>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="243" to="255" />
+			<date type="published" when="2010">2010</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Thinking twice: Two minds in one brain. Thinking twice: Two minds in one brain</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">B T</forename><surname>St</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Evans</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>Oxford University Press</publisher>
+			<biblScope unit="page">240</biblScope>
+			<pubPlace>New York, NY, US</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Pages: viii</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Cognitive Reflection and Decision Making</title>
+		<author>
+			<persName><forename type="first">Shane</forename><surname>Frederick</surname></persName>
+		</author>
+		<idno type="DOI">https://www.aeaweb.org/articles?id=10.1257/089533005775196732</idno>
+		<ptr target="https://www.aeaweb.org/articles?id=10.1257/089533005775196732" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Perspectives</title>
+		<idno type="ISSN">0895-3309</idno>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="25" to="42" />
+			<date type="published" when="2005-12">December 2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Formalizing Verbal Theories. Social Psychology</title>
+		<author>
+			<persName><forename type="first">Iris</forename><surname>Van Rooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Blokpoel</surname></persName>
+		</author>
+		<idno type="DOI">10.1027/1864-9335/a000428</idno>
+		<idno>1864-9335/a000428. Publisher</idno>
+		<ptr target="https://econtent.hogrefe.com/doi/abs/10.1027/" />
+		<imprint>
+			<date type="published" when="2020-09">September 2020</date>
+			<publisher>Hogrefe Publishing</publisher>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="285" to="298" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The case for formal methodology in scientific reform</title>
+		<author>
+			<persName><forename type="first">Berna</forename><surname>Devezer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Danielle</forename><forename type="middle">J</forename><surname>Navarro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Vandekerckhove</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erkan</forename><surname>Ozge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Buzbas</forename></persName>
+		</author>
+		<idno type="DOI">10.1098/rsos.200805</idno>
+		<ptr target="https://royalsocietypublishing.org/doi/full/10.1098/rsos.200805.Pub-lisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Royal Society Open Science</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2020">200805. 2020</date>
+			<publisher>Royal Society</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Advancing the specification of dual process models of higher cognition: a critical test of the hybrid model view</title>
+		<author>
+			<persName><forename type="first">Zoe</forename><forename type="middle">A</forename><surname>Purcell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Colin</forename><forename type="middle">A</forename><surname>Wastell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naomi</forename><surname>Sweller</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/13546783.2018.1552194</idno>
+		<idno>doi: 10.1080/13546783.2018.1552194</idno>
+		<ptr target="https://doi.org/10.1080/13546783.2018.1552194" />
+	</analytic>
+	<monogr>
+		<title level="j">Thinking &amp; Reasoning</title>
+		<idno type="ISSN">1354-6783</idno>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="1" to="30" />
+			<date type="published" when="2020-01">April 2021. January 2020</date>
+		</imprint>
+	</monogr>
+	<note>Thinking &amp; Reasoning. Publisher: Routledge eprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The Smart System 1: evidence for the intuitive nature of correct responding on the bat-and-ball problem</title>
+		<author>
+			<persName><forename type="first">Bence</forename><surname>Bago</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1080/13546783.2018.1507949</idno>
+		<ptr target="https://doi.org/10.1080/13546783.2018.1507949" />
+	</analytic>
+	<monogr>
+		<title level="m">Publisher: Routledge eprint</title>
+		<imprint>
+			<date type="published" when="2019-07">July 2019</date>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="257" to="299" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Eye movements reveal that low confidence precedes deliberation</title>
+		<author>
+			<persName><forename type="first">Zoe</forename><forename type="middle">A</forename><surname>Purcell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Colin</forename><forename type="middle">A</forename><surname>Wastell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naomi</forename><surname>Sweller</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/17470218221126505</idno>
+		<ptr target="https://doi.org/10.1177/17470218221126505.Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1539" to="1546" />
+			<date type="published" when="2022-09">September 2022</date>
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Advancing theorizing about fast-and-slow thinking</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1017/S0140525X2200142</idno>
+		<ptr target="https://www.cambridge.org/core/product/identifier/S0140525X2200142X/type/journal_article" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavioral and Brain Sciences</title>
+		<idno type="ISSN">0140-525X, 1469-1825</idno>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Dual Process Theory 2.0. Routledge, London</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.4324/9781315204550</idno>
+		<imprint>
+			<date type="published" when="2018-02">February 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Meta-Reasoning: Monitoring and Control of Thinking and Reasoning</title>
+		<author>
+			<persName><forename type="first">Rakefet</forename><surname>Ackerman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2017.05.004</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S1364661317301055" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<idno type="ISSN">1364-6613</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="607" to="617" />
+			<date type="published" when="2017-08">August 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Logic brightens my day: Evidence for implicit sensitivity to logical validity</title>
+		<author>
+			<persName><forename type="first">Dries</forename><surname>Trippas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><forename type="middle">J</forename><surname>Handley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">F</forename><surname>Verde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kinga</forename><surname>Morsanyi</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/xlm0000248</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<idno type="ISSN">1939-1285</idno>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="1448" to="1457" />
+			<date type="published" when="2016">2016</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<author>
+			<persName><forename type="first">Keith</forename><forename type="middle">E</forename><surname>Stanovich</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/13546783.2018.1459314</idno>
+		<ptr target="https://doi.org/10.1080/13546783.2018.1459314" />
+	</analytic>
+	<monogr>
+		<title level="m">Miserliness in human cognition: the interaction of detection, override and mindware</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="423" to="444" />
+		</imprint>
+	</monogr>
+	<note>Publisher: Routledge eprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">The Fuzzy-Trace Dual Process Model</title>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">F</forename><surname>Reyna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shahin</forename><surname>Rahimi-Golkhandan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rebecca</forename><forename type="middle">K</forename><surname>Garavito</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Helm</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Dual Process Theory 2.0. Routledge</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page">18</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<author>
+			<persName><forename type="first">Simon</forename><forename type="middle">J</forename><surname>Handley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dries</forename><surname>Trippas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chapter</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/bs.plm.2014.09.002</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0079742114000036" />
+	</analytic>
+	<monogr>
+		<title level="m">Dual Processes and the Interplay between Knowledge and Structure: A New Parallel Processing Model</title>
+		<editor>
+			<persName><forename type="first">Brian</forename><forename type="middle">H</forename><surname>Ross</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Academic Press</publisher>
+			<date type="published" when="2015-01">January 2015</date>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="33" to="58" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Logical Intuitions and other Conundra for Dual Process Theories</title>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><forename type="middle">R</forename><surname>Newman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Dual Process Theory 2.0. Routledge</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page">16</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Why It Matters: The Implications of Autonomous Processes for Dual Process Theories-Commentary on Evans &amp; Stanovich</title>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1745691613483476</idno>
+		<ptr target="https://doi.org/10.1177/1745691613483476.Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="253" to="256" />
+			<date type="published" when="2013-05">2013. May 2013</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.1126/science.1736359</idno>
+		<ptr target="https://www.science.org/doi/abs/10.1126/science.1736359" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">255</biblScope>
+			<biblScope unit="issue">5044</biblScope>
+			<biblScope unit="page" from="556" to="559" />
+			<date type="published" when="1992-01">January 1992</date>
+			<publisher>American Association for the Advancement of Science</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Working memory</title>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Baddeley</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cub.2009.12.014</idno>
+		<ptr target="https://www.cell.com/current-biology/abstract/S0960-9822" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Biology</title>
+		<idno type="ISSN">0960-9822</idno>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="2133" to="2135" />
+			<date type="published" when="2010-02">February 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Publisher</surname></persName>
+		</author>
+		<imprint>
+			<publisher>Elsevier</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A Neuronal Model of a Global Workspace in Effortful Cognitive Tasks</title>
+		<author>
+			<persName><forename type="first">Stanislas</forename><surname>Dehaene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michel</forename><surname>Kerszberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Pierre</forename><surname>Changeux</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1749-6632.2001.tb05714.x</idno>
+		<ptr target="https://nyaspubs.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1749-6632.2001.tb05714.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Annals of the New York Academy of Sciences</title>
+		<idno type="ISSN">1749-6632</idno>
+		<imprint>
+			<biblScope unit="volume">929</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="152" to="165" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Conflict monitoring in dual process theories of thinking</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tamara</forename><surname>Glumicic</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2007.06.002</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0010027707001576" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<idno type="ISSN">0010-0277</idno>
+		<imprint>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1248" to="1299" />
+			<date type="published" when="2008-03">March 2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<author>
+			<persName><forename type="first">Simon</forename><forename type="middle">J</forename><surname>Handley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dries</forename><surname>Trippas</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/bs.plm.2014.09.002</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0079742114000036" />
+	</analytic>
+	<monogr>
+		<title level="m">Dual Processes and the Interplay between Knowledge and Structure: A New Parallel Processing Model</title>
+		<editor>
+			<persName><forename type="first">Brian</forename><forename type="middle">H</forename><surname>Ross</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Academic Press</publisher>
+			<date type="published" when="2015-01">January 2015</date>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="33" to="58" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The intricate relationships between monitoring and control in metacognition: Lessons for the causeand-effect relation between subjective experience and behavior</title>
+		<author>
+			<persName><forename type="first">Asher</forename><surname>Koriat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hilit</forename><surname>Ma'ayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ravit</forename><surname>Nussinson</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0096-3445.135.1.36</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<idno type="ISSN">1939-2222</idno>
+		<imprint>
+			<biblScope unit="volume">135</biblScope>
+			<biblScope unit="page" from="36" to="69" />
+			<date type="published" when="2006">2006</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Conflict, metacognition, and analytic thinking</title>
+		<author>
+			<persName><forename type="first">Valerie</forename><forename type="middle">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><forename type="middle">C</forename><surname>Johnson</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/13546783.2013.869763</idno>
+		<ptr target="https://doi.org/10.1080/13546783.2013.869763" />
+	</analytic>
+	<monogr>
+		<title level="m">Publisher: Routledge eprint</title>
+		<imprint>
+			<date type="published" when="2014-04">April 2014</date>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="215" to="244" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">The diminishing criterion model for metacognitive regulation of time investment</title>
+		<author>
+			<persName><forename type="first">Rakefet</forename><surname>Ackerman</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0035098</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<idno type="ISSN">1939-2222</idno>
+		<imprint>
+			<biblScope unit="volume">143</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1349" to="1368" />
+			<date type="published" when="2014">2014</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">A theory of memory retrieval</title>
+		<author>
+			<persName><forename type="first">Roger</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.85.2.59</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<idno type="ISSN">1939-1471</idno>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="59" to="108" />
+			<date type="published" when="1978">1978</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Psychological models of deferred decision making</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jerome</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amnon</forename><surname>Busemeyer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rapoport</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0022-2496(88)90042-9</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/0022249688900429" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<idno type="ISSN">0022-2496</idno>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="91" to="134" />
+			<date type="published" when="1988-06">June 1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">On the ability to inhibit thought and action: A theory of an act of control</title>
+		<author>
+			<persName><forename type="first">Gordon</forename><forename type="middle">D</forename><surname>Logan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><forename type="middle">B</forename><surname>Cowan</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.91.3.295</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<idno type="ISSN">1939-1471</idno>
+		<imprint>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="295" to="327" />
+			<date type="published" when="1984">1984</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">The time course of perceptual choice: The leaky, competing accumulator model</title>
+		<author>
+			<persName><forename type="first">Marius</forename><surname>Usher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">L</forename><surname>Mcclelland</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.108.3.550</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<idno type="ISSN">1939-1471</idno>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="550" to="592" />
+			<date type="published" when="2001">2001</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Confidence in value-based choice</title>
+		<author>
+			<persName><forename type="first">Stephen</forename><forename type="middle">M</forename><surname>Benedetto De Martino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Fleming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raymond</forename><forename type="middle">J</forename><surname>Garrett</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dolan</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nn.3279</idno>
+		<ptr target="https://www.nature.com/articles/nn.3279.Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Neuroscience</title>
+		<idno type="ISSN">1546-1726</idno>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="105" to="110" />
+			<date type="published" when="2013-01">January 2013</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Do we de-bias ourselves?: The impact of repeated presentation on the bat-and-ball problem</title>
+		<author>
+			<persName><forename type="first">Matthieu</forename><surname>Raoelison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1017/S1930297500003405</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Judgment and Decision Making</title>
+		<idno type="ISSN">1930-2975</idno>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="170" to="178" />
+			<date type="published" when="2019-03">March 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Per Bruun Brockhoff, and Rune Haubo Bojesen Christensen. lmerTest: Tests in Linear Mixed Effects Models</title>
+		<author>
+			<persName><forename type="first">Alexandra</forename><surname>Kuznetsova</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=lmerTest" />
+	</analytic>
+	<monogr>
+		<title level="m">Institution: Comprehensive R Archive Network Pages</title>
+		<imprint>
+			<date type="published" when="2013-01">January 2013</date>
+			<biblScope unit="page" from="3" to="4" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">RStudio: Integrated development environment for R. manual</title>
+		<author>
+			<persName><forename type="first">Rstudio</forename><surname>Team</surname></persName>
+		</author>
+		<ptr target="http://www.rstudio.com/" />
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<publisher>RStudio, Inc</publisher>
+			<pubPlace>Boston, MA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">The Importance of Falsification in Computational Cognitive Modeling</title>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Palminteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valentin</forename><surname>Wyart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Etienne</forename><surname>Koechlin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2017.03.011</idno>
+		<ptr target="https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613" />
+	</analytic>
+	<monogr>
+		<title level="m">Trends in Cognitive Sciences</title>
+		<imprint>
+			<date type="published" when="2017-06">June 2017</date>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="30054" to="30056" />
+		</imprint>
+	</monogr>
+	<note>Publisher: Elsevier</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Ten simple rules for the computational modeling of behavioral data. eLife</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Robert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anne Ge</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Collins</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.49547</idno>
+		<ptr target="https://doi.org/10.7554/eLife.49547" />
+		<imprint>
+			<date type="published" when="2019-11">November 2019</date>
+			<publisher>Ltd</publisher>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">49547</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Understanding neural signals of post-decisional performance monitoring: An integrative review</title>
+		<author>
+			<persName><forename type="first">Kobe</forename><surname>Desender</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Ridderinkhof</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">R</forename><surname>Murphy</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.67556</idno>
+		<ptr target="https://elifesciences.org/articles/67556" />
+		<imprint>
+			<date type="published" when="2021-08">August 2021</date>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">67556</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">DEoptim: An R Package for Global Optimization by Differential Evolution</title>
+		<author>
+			<persName><forename type="first">Katharine</forename><forename type="middle">M</forename><surname>Mullen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Ardia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">L</forename><surname>Gil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><surname>Windover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Cline</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v040.i06</idno>
+		<ptr target="https://doi.org/10.18637/jss.v040.i06" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<idno type="ISSN">1548-7660</idno>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="1" to="26" />
+			<date type="published" when="2011-04">April 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

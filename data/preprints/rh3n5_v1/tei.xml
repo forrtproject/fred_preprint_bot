@@ -1,0 +1,1817 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Social transmission is conformist, variation is guided, variance is proportional</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Pavlína</forename><surname>Hillerová</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Philosophy and History of Science</orgName>
+								<orgName type="department" key="dep2">Faculty of Science</orgName>
+								<orgName type="institution">Charles University</orgName>
+								<address>
+									<addrLine>Viničná 7, Prague 2</addrLine>
+									<postCode>128 00</postCode>
+									<country key="CZ">Czech Republic</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Petr</forename><surname>Tureček</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Philosophy and History of Science</orgName>
+								<orgName type="department" key="dep2">Faculty of Science</orgName>
+								<orgName type="institution">Charles University</orgName>
+								<address>
+									<addrLine>Viničná 7, Prague 2</addrLine>
+									<postCode>128 00</postCode>
+									<country key="CZ">Czech Republic</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Center for Theoretical Study</orgName>
+								<orgName type="institution">Charles University and Czech Academy of Sciences</orgName>
+								<address>
+									<addrLine>Jilská 1, Prague 1</addrLine>
+									<postCode>110 00</postCode>
+									<country key="CZ">Czech Republic</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Social transmission is conformist, variation is guided, variance is proportional</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">77C7BB057ACF5FB18097D06784A00295</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-19T16:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>cultural evolution</term>
+					<term>cultural transmission</term>
+					<term>Galton-Pearson model</term>
+					<term>probability density function</term>
+					<term>Bayesian analysis</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>While cultural evolution has matured into a fully-fledged field, the science of cultural transmission remains underdeveloped. Most existing models still rely on naive assumptions of discrete trait imitation, while more complex transmission models for continuous traits are virtually non-existent. This paper fills the void by introducing a continuous transmission model that integrates biased transmission, conformity, and three distinct variance components into a single probability density function; one that still draws inspiration from the original biometric models that shaped early thinking about biological inheritance at the end of the 19th century.</p><p>Participants played a trivia-style guessing game in an app, being exposed to the answers of previous participants ("cultural parents") and providing numeric estimates ("cultural offspring") that serve as a continuous heritable trait for analysis. This approach yields clear evidence for three key features long hypothesized to distinguish cultural from biological inheritance: people conform to majority input, aligning with mutually similar social cues; they systematically adjust their estimates toward the correct answer (guided variation); and their estimate variance is not constant, but scales with the variance of presented cues. All three effects can be reliably estimated within a single generative model.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction:</head><p>The ability to learn from others is a key driver of adaptive behaviour across species <ref type="bibr" target="#b30">(Heyes, 2012;</ref><ref type="bibr" target="#b31">Hoppitt &amp; Laland, 2013;</ref><ref type="bibr" target="#b66">Whiten et al., 2017)</ref>. It has been documented across a wide range of taxa; from birds using social cues to locate food <ref type="bibr" target="#b23">(Galef &amp; Giraldeau, 2001)</ref> to primates and cetaceans exhibiting cultural transmission of foraging techniques <ref type="bibr" target="#b36">(Krützen et al., 2005;</ref><ref type="bibr" target="#b67">Whiten et al., 2005)</ref>. Even fruit flies exhibit capacity for imitating preferences of conspecifics <ref type="bibr" target="#b16">(Danchin et al., 2018)</ref>. One species, however, stands out: human cultural transmission appears to be especially faithful and forms the foundation of our evolutionary success <ref type="bibr" target="#b6">(Boyd &amp; Richerson, 1996;</ref><ref type="bibr" target="#b38">Laland, 2017;</ref><ref type="bibr" target="#b58">Tennie et al., 2009;</ref><ref type="bibr" target="#b59">Tomasello, 1999)</ref>. Socially acquired information enables us to navigate new, complex and unstable environments efficiently <ref type="bibr" target="#b59">(Tomasello, 1999)</ref>.</p><p>Cultural inheritance shares several features with genetics: we can describe distinct variants and track changes in their frequency due to selection or biased transmission. Both systems have been proposed as robust substrates for cumulative and open-ended evolution <ref type="bibr" target="#b46">(Morgan &amp; Feldman, 2024)</ref>. Early researchers of cultural evolution leveraged this similarity by adapting models from population genetics. However, despite obvious parallels, cultural evolution exhibits several unique features that depart from biological evolution, features that traditional genetic models are not designed to capture.</p><p>At first glance, cultural evolutionists may appear to be just rogue biologists that try to explain cultural change through gene-like entities and selection pressures <ref type="bibr" target="#b4">(Blackmore, 2000;</ref><ref type="bibr" target="#b17">Dawkins, 1989)</ref>. However, more nuanced approaches exist. Dual inheritance theory views culture as an integral part of human biology; not as a detachable add-on to our genes, but as a co-evolved feature that has influenced survival, reproduction, and fitness across generations <ref type="bibr" target="#b7">(Boyd &amp; Richerson, 1985;</ref><ref type="bibr" target="#b28">Henrich, 2016;</ref><ref type="bibr" target="#b39">Laland et al., 2001)</ref>. The concept of culture in question extends beyond the narrow sense of high art or symbolic expression. It includes domestication, tool-making, shelter-building, and clothing -practices with direct consequences for survival and reproduction <ref type="bibr" target="#b51">(Richerson &amp; Boyd, 2005;</ref><ref type="bibr" target="#b56">Sterelny, 2012)</ref>. This broader perspective does not mean dismissing Hamlet, opera, or viral dances. On the contrary, understanding why such phenomena spread and persist can offer valuable insights into cultural transmission <ref type="bibr" target="#b0">(Acerbi &amp; Mesoudi, 2015;</ref><ref type="bibr" target="#b43">Mesoudi, 2011)</ref>. Yet, all these examples suggest a discrete framing of cultural manifestations, reflecting a common bias in how culture is described and modeled in contemporary literature <ref type="bibr" target="#b68">(Yeh et al., 2019)</ref>. Continuous cultural traits -such as artifact dimensions (lengths, proportions, or continuous embeddings of co-occurring discrete traits) -and their evolution deserve no less attention.</p><p>Early works on cultural evolution proposed both discrete and continuous models of transmission. <ref type="bibr" target="#b11">Cavalli-Sforza and Feldman (1981)</ref> or <ref type="bibr" target="#b8">Boyd and Richerson (1988)</ref> gave considerable space to both approaches. Over time, however, the field has come to rely heavily on discrete models <ref type="bibr" target="#b29">(Henrich &amp; Boyd, 2002;</ref><ref type="bibr" target="#b44">Mesoudi et al., 2006)</ref>. This makes sense: discrete models are easier to formalize, simulate, and analyze -especially given the computational tools that were at hand in the 1980s. They also align with the forms of inheritance and transmission we understand best, such as genes, alleles, and the spread of viruses. Yet this convenience has come at a cost: we may be overfitting our theories to the kinds of traits that are easiest to model, rather than to those that actually matter <ref type="bibr" target="#b0">(Acerbi &amp; Mesoudi, 2015;</ref><ref type="bibr" target="#b14">Claidière et al., 2014)</ref>.</p><p>Occasionally, efforts are made to "continuize" models of cultural evolution. <ref type="bibr" target="#b47">Morin's (2013)</ref> analysis of the evolution of Renaissance portraiture being a notable example. Although the central hypothesis in his study concerns a binary outcome (whether the individual depicted in a painting averts their gaze from the viewer), the underlying variable is clearly continuous.</p><p>The model ultimately produces a probability of gaze aversion in portraits across different artists and stages of their careers. In short, while data are categorical, the explanatory mechanism is inherently continuous.</p><p>Similar tendencies are clearly present in the work of Dan Sperber, a major theorist of cultural evolution and Morin's teacher. Sperber often invokes the idea of a "space of possibilities", essentially a design space (much like, <ref type="bibr" target="#b40">Liu et al., 2021;</ref><ref type="bibr" target="#b48">O'Brien et al., 2016</ref>, in which cultural variants occupy positions within a multidimensional coordinate system. Many works inspired by Sperber's approach go on to develop models that incorporate continuous dimensions (e.g., [insert relevant references here]). Such concepts encourage us to think about cultural change in terms of gradual variation, not just discrete categories.</p><p>A notable exception that tends to employ continuous models is research quantifying the cumulativeness of cultural evolution through transmission-chain <ref type="bibr" target="#b9">(Caldwell &amp; Millen, 2008</ref><ref type="bibr">, 2009;</ref><ref type="bibr" target="#b34">Kirby et al., 2008)</ref>. These studies often track how the success of cultural productstypically artifacts such as paper planes or spaghetti towers -changes over time. However, they frequently focus on utility, as if "performance" were the only relevant trait, rather than examining the traits of the artifacts themselves. Moreover, they typically do not account for who learned from whom. They do not study the cultural equivalent of inheritance, just evolution, the change in performance across generations. Without parent-offspring links, it is difficult to study inheritance properly; even Mendel needed to know which plants were crossbred to produce offspring to uncover the laws of genetics. Models that could take advantage of such links already exist and deserve further development.</p><p>What we find in early works of Cavalli-Sforza and Feldman is some version of what they refer to as "Galton-Pearson" model (see, for instance the chapter Cultural Transmission for a Continuous Trait in <ref type="bibr" target="#b11">Cavalli-Sforza and Feldman, 1981)</ref>, something like</p><formula xml:id="formula_0">𝑡 ! ~N$mean$𝑡 " ), 𝜂), (<label>1</label></formula><formula xml:id="formula_1">)</formula><p>where 𝑡 ! is the offspring's trait value, drawn from normal distribution (𝑁) centred on the mean of the parental trait vector 𝑡 " with a constant standard deviation 𝜂 (implying a trait variance of 𝜂 # ). This is nothing else than an approximation of polygenic continuous trait transmission. Ronald Fisher famously bridged the gap between this biometric model and Mendelian genetics by decomposing offspring trait variance into three components: (i) mutation at the level of each allele, (ii) recombination and segregation of alleles at the level of parental gametes, and (iii) random modification at the level of the phenotype. The use of a constant variance is unsurprising, as stochasticity at each of these levels is isolated from -and insensitive toother sources of variability. The total variance is thus simply the sum of contributions from (potentially) polymorphic loci and phenotypic plasticity.</p><p>Cavalli-Sforza and Feldman were well aware that Fisher's variance decomposition should not be applied directly to culture. After all, culture is not stored on paired chromosomes, and there is no cultural transmission without cultural expression (unlike in genetics, where an eroded gene for tooth enamel can be passed on for millions of bird generations without ever affecting the fitness of its carriers <ref type="bibr" target="#b53">(Sire et al., 2008)</ref>).</p><p>Stepping back to a model once used by prominent biometricians to capture the inheritance of traits like human height or sweet-pea seed size (see Eq. 1) may be a reasonable starting point but it is certainly not the end. Unfortunately, the past forty years have seen little follow-up work in this direction, as testified by a recent review <ref type="bibr" target="#b21">(Fogarty &amp; Kandler, 2025)</ref>.</p><p>There are at least three key aspects in which a model aiming to capture cultural transmission must depart from Galton-Pearson inheritance:</p><p>1. Conformity. In sexual reproduction, two parents each contribute half of their genetic material to the offspring. In cultural transmission the number of "parents" (i.e., sources of influence) can exceed two, which invites weighting each parent's contribution by their similarity to other parents. We speak about conformist transmission when individuals disproportionally follow mutually similar inspiration sources.</p><p>2. Guided variation. While biological mutations are typically modeled as random with respect to trait values, it has been proposed that humans can non-randomly improve (or at least systematically bias) imitated cultural manifestations. This challenges the assumption of equality between the mean trait value of parents and that of the offspring 3. Variance proportionality. As noted earlier, the stochastic term in approximation of polygenic trait inheritance does not integrate information from multiple sources at any point.</p><p>In contrast, cultural transmission inherently involves pooling information across multiple observations or individuals. Therefore, models of cultural inheritance must accommodate variance-proportional variance. Even if precise imitation of the mean is the goal, as in descriptive statistics, standard error (𝑆𝐸) of the estimate grows with the sample standard deviation 𝜎 $ , following the formula 𝑆𝐸 =</p><formula xml:id="formula_2">% ! √'</formula><p>, where 𝑛 is the sample size. An analogous process is at play in cultural transmission: even when imitating a single model, that model's behaviour is typically observed multiple times under noisy conditions effectively turning the process into statistical sampling.</p><p>Moreover, error (analogous to mutation) is not the only potential source of variance proportionality in cultural transmission. Humans may adjust their willingness for exploration to the observed range of successful strategies. If the herd sizes of neighbors are tightly clustered (e.g., 62, 63, 63), people will likely stick to such numbers. But if they are widely spread <ref type="bibr">(e.g., 10, 62, 116)</ref>, people may feel freer and safer to deviate from the average in either direction. Models with fixed variance cannot account for this kind of flexibility.</p><p>All three listed deviations from biometric inheritance have profound implications for cultural evolution. Conformity, in particular, has been proposed as a key mechanism for maintaining sufficient fidelity in cultural transmission, thereby enabling cumulative culture.</p><p>Guided variation may accelerate the tempo of cultural adaptation by enabling faster intergenerational change than would be expected based solely on population variance and the strength of selection pressures. The extent to which cultural variation is genuinely "guided" rather than merely biased remains an open question. It has been shown that technologies can evolve through the accumulation of beneficial modifications to existing solutions, even when the individuals involved in cultural exchange are entirely unaware of why one solution is superior to another .</p><p>Proportionality between input and output variance may also accelerate cultural adaptation by increasing population variance under favorable conditions, thereby allowing for larger generational leaps under directional selection. While biological adaptation underpinned by constant population variance tends to progress linearly, adaptation in a system where offspring standard deviation is proportional to parental standard deviation can proceed exponentially toward the optimum. However, the likelihood of adaptation in a system with proportional variance depends critically on population size. In biological evolution, where each parental pair produces offspring with constant variance, the speed of adaptation is expected to be similar across small and large populations (aside from a slight disadvantage in smaller populations due to stronger genetic drift). Indeed, substantial evolutionary change has occurred on isolated islands with small populations. In contrast, technological adaptation under variance-proportional dynamics is expected to be far less likely in small populations. Some constant variance models can achieve this through right-skewed Gumbel distribution, which makes the probability that one member of a new generation surpasses the best individual of the previous contingent on population size. Such models, however, produce a critical-threshold behaviour (e.g. all symbolic revolutions expected at identical population densities), which motivates criticism. Some constant-variance models can achieve similar prediction with right-skewed Gumbel distribution. It makes the probability that at least one individual in the new generation surpasses the previous generation's best contingent on population size <ref type="bibr" target="#b27">(Henrich, 2004;</ref><ref type="bibr" target="#b50">Powell et al., 2009)</ref>. However, such models tend to produce critical-threshold behavior (for example, predicting that all symbolic revolutions occur at the same population density) which has drawn considerable criticism <ref type="bibr" target="#b62">(Vaesen et al., 2016)</ref>.</p><p>Models with proportional variance exhibit a broad buffer zone in which markedly different outcomes -rapid adaptation or stasis -are similarly likely, even under identical initial conditions. Any variance expended through directional selection to shift the population mean closer to the optimum in one generation is no longer available to boost variance -and thus the expected adaptive step -in the next. This inherent negative feedback introduces a level of uncertainty that is absent from Galton-Pearson or Gumbel-distribution-based models of cultural evolution.</p><p>In a multidimensional "culturespace," proportional variance between inputs and outputs (e.g. the positions of interaction partners before and after opinion exchange) facilitates the formation of subcultures, i.e., distinct clusters of mutually similar individuals.</p><p>The three phenomena -conformity, guided variation, and variance proportionality -have never been combined in a single model fitted to empirical data. Moreover, conformity and guided variation have rarely been translated from narrative descriptions into formal parameters within models of continuous trait transmission. In this study, we observe how these mechanisms co-define the distribution of "offspring" positions from socially transmitted "parental" cues along a single continuous dimension.</p><p>To collect an optimal dataset for this purpose, we developed an app called Tip for Science, styled as a trivia-guessing game. Each player answers a series of quantitative questions (e.g., "How high is Mount Uluru from base to top?"; see Supplement 1 for the full list), aiming to be as precise as possible to earn points. In most rounds, 1 to 5 guesses from previous players are displayed as potential hints.</p><p>A similar approach was introduced in the BEAST (Berlin Estimate AdjuStment Task) paradigm <ref type="bibr" target="#b45">(Molleman et al., 2019)</ref>, in which participants estimate the number of animals in a picture -a classic wisdom-of-crowds task -and later have the opportunity to adjust their guesses based on estimates provided by others. While BEAST focuses on individual variation in the use of social information, our framework is primarily concerned with how people integrate information from multiple sources. The game features a broader range of questions and a backend composed of multiple transmission chains with varying levels of selection and population size.</p><p>We model the likelihood of each submitted estimate (cultural offspring) as a function of the presented previous tips (cultural parents), using parameters that capture conformity, guided variation, and proportionality between parental and offspring standard deviation (SD). We also introduce a parameter that reflects proportionality between the parental mean and offspring SD, based on the idea that people tend to vary the mean by a percentage (e.g. 10%) rather than by a fixed unit (e.g. 10 centimetres).</p><p>We compare models that assume humans integrate social information into a single unimodal distribution with benchmark models that assume the selection of a single parent followed by random modification ("kernel inheritance models"). All models account for variation in parameter values across participants and questions. The models presented in the main text are fitted on the decadic logarithm scale (see Supplement 3 for alternative).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The app</head><p>Tip for Science is a single-page web application developed in TypeScript <ref type="bibr" target="#b2">(Bierman et al., 2014)</ref> and backed by the non-relational database DynamoDB.</p><p>Each question screen includes the question text, an illustrative image, 0-5 answers from previous participants, an answer field, and a submit button that also serves as a countdown timer. Players have 20 seconds to respond, a limit intended to discourage looking up answers online. After submitting a response, participants are shown the correct answer, their score (up to 100 points for a precise estimate, with partial credit awarded for answers within half to double the correct value), and a fun fact related to the question. If a player's guess is highly accurate (within ±10% of the correct answer), they are asked whether they already knew the correct answer. Points are awarded in both cases, but if the answer was not a guess, it is excluded from the analysis.</p><p>During registration, participants are informed that anonymized data will be used for scientific research and are asked to provide informed consent before proceeding. A short tutorial game then introduces the game mechanics. The questions are randomized in two blocks, since players may play for as long as they wish and are not required to answer all questions. Questions 1-15 are randomized independently and displayed first, ensuring that most participants answer at least this subset. The remaining questions are randomized in a second block.</p><p>The game backend is organized into runs. Each run is initialized with a specific population size per generation and a defined level of selection pressure. Initial tips for each participant in the first generation are either around 3× the correct answer or 1/3 of the correct answer. The variance of these tips is set at one of three levels -small, medium, or large -corresponding to a relative SD of 0.1, 0.2, or 0.3, respectively. For example, if the variance is medium (SD=0.2) and the mean is 1/3 of the correct answer, two parents would be positioned at 0.233 and 0.433 times the correct value.</p><p>After each generation, selection pressure is applied to the answers. This pressure is randomized across runs, ranging from 0% to 100%. The upper extreme (100%) corresponds to a situation where no parental tips are provided, and each player must estimate the quantity independently. For each generation, n guesses are obtained, and p percent of those furthest from the correct answer are eliminated from the pool of possible parents for the next cultural generation. The analysis of individual runs or adaptation dynamics within them is not a focus of this paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>Data were collected between August 2022 and May 2025. The game was freely accessible online to anyone, but most of the data come from two main waves. The first wave (August-December 2022; 32.8% of the data) used a snowball sampling method to recruit participants.</p><p>The second wave (two periods in August 2024 and April-May 2025; 60.9% of the data) was conducted under controlled laboratory conditions as part of a larger data collection project. Participants in this second wave were financially incentivized to achieve a high score, earning 1 Czech crown for every 50 points. The maximum reward was 284 CZK (approximately $14) for completing the full set of 142 questions.</p><p>As announced in the preregistration available at https://osf.io/ag5sy, we excluded participants who answered fewer than 5 questions (27 participants), those who answered more than 20 questions but failed to earn any points (1 participant), responses tagged as "I knew this" (557 cases), and missing values (1 002 cases) where participants did not respond within the time limit. Additionally, we excluded 165 tips with a value of 0 (which corresponds to -∞ on the log scale) and 4 extreme tips. Three of these exceeded 10 21 , one that exceeded 10 15 was also removed as it was submitted in the question of average human lifespan in hours (implying a lifespan longer than the age of the Earth). None of these exclusions influenced the conclusions of our analysis. The final dataset consists of 42 048 unique submitted estimates.</p><p>In this study, we focus on data where two or more previous participants' tips with non-zero variance are displayed. This allows us to evaluate variance proportionality (with 2 or more parents) and conformity (with 3 or more parents). In the main article, we analyze data from both major waves together, regardless of whether participants were financially motivated. However, we also include a supplementary analysis comparing laboratory conditions with financial incentives to playing the game "in the wild."</p><p>This results in 33 814 unique submitted estimates from 492 participants across 140 questions (mean = 68.73 questions per participant, SD = 41.55). One question was excluded because it was numeric but not continuous ("What is the international dialling code for Yemen?"; see Supplement 6), and another was removed because it contained only a single long transmission chain with one surviving parent per generation. Providing information about gender or age was not required.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data analysis</head><p>All analyses were conducted in R using the rethinking package <ref type="bibr" target="#b42">(McElreath, 2020)</ref> for Bayesian statistics and the Stan Hamiltonian Monte Carlo (HMC) sampling infrastructure. Posterior samples were extracted, visualized, and used to compute mean parameter estimates and 90% Compatibility Intervals (CIs, calculated as percentile intervals with 5% of posterior samples falling below and above the interval). Each new tip 𝑡 ! was modeled as drawn from a distribution extending the Galton-Pearson model described in Eq. 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conformity</head><p>In most experiments studying conformity -that is, the tendency to preferentially imitate the majority <ref type="bibr" target="#b5">(Bond &amp; Smith, 1996;</ref><ref type="bibr" target="#b13">Cialdini &amp; Goldstein, 2004</ref>) -participants choose from two or a few discrete options <ref type="bibr" target="#b60">(Toyokawa &amp; Gaissmaier, 2022;</ref><ref type="bibr" target="#b63">van Leeuwen et al., 2018)</ref>. Here, we introduce a convenient parametrization of conformity for a continuous trait, captured by the parameter ℂ.</p><p>We replace the simple arithmetic mean of parental values with a function that weights parental values based on their mutual similarity (Figure <ref type="figure" target="#fig_0">1</ref>). Specifically, emphasis 𝑧 + on parental value 𝑡 "+ is computed as the negative product of the conformity parameter ℂ and the total distance 𝑑 + from all other parental values 𝑡 ", normalized by the sum of all parental values ∑ 𝑡 ", -,./</p><p>. The emphasis values 𝑧 + are then transformed into weights 𝑤 + using the softmax function (weights sum up to 1). In equations, this can be expressed as</p><formula xml:id="formula_3">𝑑 + = &gt;?𝑡 "+ -𝑡 ", ? - ,./ , 𝑧 + = - ℂ𝑑 + ∑ 𝑡 ", - ,./ , 𝑤 + = 𝑒 0 " ∑ 𝑒 0 # - ,./ .</formula><p>(2)</p><p>The weighted mean is then defined as 𝜇 1 (𝑡 "+ ) = ∑ 𝑤 + 𝑡 "+ -+./</p><p>. This formulation ensures that when ℂ = 0 the weighted mean reduces to the arithmetic mean; when ℂ &gt; 0, the cultural offspring's expected value is biased toward clusters of mutually similar parents (conformity); and when ℂ &lt; 0 the expected value shifts toward more isolated, less typical parents (anti-conformity).</p><p>This approach provides much finer resolution than, for example, the probability of copying the more frequent cultural variant <ref type="bibr" target="#b33">(Kendal et al., 2009)</ref>. It also offers several advantages over alternative continuous formulations we considered: (i) The conformity parameter ℂ is independent of offspring variance and exclusively captures the balance between conformist bias and the preferential imitation of rare cultural variants <ref type="bibr" target="#b26">(Grabisch et al., 2019)</ref>.</p><p>(ii) The weighted mean scales proportionally with the magnitude of the parental values -the outcome is invariant under multiplication (e.g., parents 20, 21, 30 in Figure <ref type="figure" target="#fig_0">1A</ref> yield the same relative outcome as 200, 210, 300 in Figure <ref type="figure" target="#fig_0">1B</ref>).</p><p>(iii) The formula is robust to the inclusion of an additional parent (e.g., 205 in Figure <ref type="figure" target="#fig_0">1C</ref>): it does not overreact to such additions, yet is sensitive enough to register their influence. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Guided Variation</head><p>Continuous models can relax the assumption of unbiased transmission by replacing the mean (or weighted mean) with a function 𝑓$𝑡 " , 𝜃), where 𝜃 represents a cognitive attractor , or an optimal technological solution <ref type="bibr" target="#b22">(Foster, 1986;</ref><ref type="bibr" target="#b35">Klepper &amp; Simons, 2000;</ref><ref type="bibr" target="#b37">Lake &amp; Venti, 2009)</ref>.</p><p>In the latter case, we refer to guided variation in the narrow sense.</p><p>The most straightforward implementation of guided variation computes the vector from the (weighted) parental mean to the optimum, 𝜃 -𝜇(𝑡 " ), and adds a fraction 𝑎 of it to the original mean.</p><p>𝜇(𝑡 ! ) = 𝜇$𝑡 " ) + 𝑎 J𝜃 -𝜇$𝑡 " )K .</p><p>(3)</p><p>If 0 &lt; 𝑎 &lt; 1, the cultural offspring tend to move toward the optimum. If 𝑎 &lt; 0, cultural offspring move away from the optimum and other forces such as cultural selection must maintain the course of adaptation. If 𝑎 &gt; 1, offspring are most likely to overshoot the optimum, landing on the opposite side from the starting position defined by the (weighted) mean of the cultural parents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Proportionality between input and output variance</head><p>If people adjust how much they deviate from cultural input based on the amount of variation they observe in others (as suggested, e.g., by <ref type="bibr" target="#b41">Lorenz et al., 2011)</ref>, the constant standard deviation 𝜂 in Eq. 1 should be replaced or complemented by a term 𝜈sd$𝑡 " ), a product of additional model parameter 𝜈 and the standard deviation of the parental values. We treat sd$𝑡 " ) as the "population standard deviation" of the given set of parents (as opposed to "sample standard deviation", the R's default, that divides the sum of squares in the variance formula by 𝑛 -1 instead of the number of parents 𝑛). This definition ensures that for two parents, sd$𝑡 " ) is equal to half of the distance between them.</p><p>Adding this variance-dependent term introduces another source of variation independent of the constant. The resulting offspring trait 𝑡 ! is modeled as the sum of two normally distributed random variables</p><formula xml:id="formula_4">𝑡 ! ~N$𝑓$𝑡 " ), 𝜂) + N J0, 𝜈sd$𝑡 " K ) . (<label>4</label></formula><formula xml:id="formula_5">)</formula><p>Thanks to the additivity of variance -the property that the variance of the sum of two independent normal random variables is the sum of their variances <ref type="bibr" target="#b20">(Fisher, 1918)</ref> -this can be expressed as a single normal distribution</p><formula xml:id="formula_6">𝑡 ! ~N Q𝑓$𝑡 " ), R𝜂 # + 𝜈 # sd # $𝑡 " S ) (5)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Proportionality between input mean and output variance</head><p>It is difficult to dismiss the intuition that humans are more likely to modify a trait by a percentage than by a fixed number of units. This tendency toward relative (rather than absolute) modification can be captured by introducing another stochastic term in which offspring variance is proportional to the parental mean.</p><p>Galton himself originally considered such a model alongside the model with constant standard deviation, so we label it Galton 2 . Later, he also likely considered and rejectedfrom how data on heritability of human height are reported <ref type="bibr" target="#b24">(Galton, 1877</ref><ref type="bibr" target="#b25">(Galton, , 1886</ref>) -a model of biological inheritance with proportional variance between inputs and outputs.</p><p>In biological inheritance, the parental mean itself -unlike the alleles that constitute it -has no causal influence. Even if alleles affect traits in a multiplicative rather than additive manner, applying a logarithmic transformation to the trait removes any relationship between the parental mean and offspring variance. This assumption, however, does not necessarily hold for culturally transmitted traits.</p><p>Accordingly, the full likelihood function predicting an individual estimate (tip) in the Tip for Science game is defined as</p><formula xml:id="formula_7">N Q𝑓$𝑡 " , 𝜃, 𝑎, ℂ), R𝜂 # + 𝜁 # mean # $𝑡 " ) + 𝜈 # sd # $𝑡 " )S . (<label>6</label></formula><formula xml:id="formula_8">)</formula><p>Here the function 𝑓$𝑡 " , 𝜃, 𝑎, ℂ) calculates the weighted mean of previous tips 𝑡 " based on the conformity parameter ℂ, and then shifts that mean by a fraction 𝑎 toward the correct answer 𝜃.</p><p>We used weakly regularizing, unbiased priors based on maximum entropy criteria. The SDdefining parameters 𝜂, 𝜁, and 𝜈, which must be positive to ensure valid variances, were assigned exponential priors with rate = 1. The mean-modifying parameters 𝑎 and ℂ were were drawn from a normal distribution with mean 0 and standard deviation 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Varying effects</head><p>All model parameters were assigned varying effects by question (since some questions may be inherently easier or harder to estimate) and by participant (to account for individual differences in strategy or reliance on previous tips). The standard deviation for each parameter at each varying-effect level was given an exponential prior with rate = 1. To improve model convergence, all varying effects were coded as non-centered and uncorrelated. Parameters constrained to be strictly positive were varied on the log scale.</p><p>For example, the varying effect structure for the parameter 𝜂 is defined as:</p><formula xml:id="formula_9">exp$ln(𝜂) + 𝑧 2,4 [𝑞]𝜎 2,4 + 𝑧 ",4 [𝑝]𝜎 ",4 )<label>(7)</label></formula><p>where 𝑧 5,6 is a standardized (mean = 0, SD = 1) varying-effect vector for level 𝑙 (participant 𝑝 or question 𝑞) and parameter 𝜋, and 𝜎 5,6 is the corresponding standard deviation for that level and parameter. Mean modifiers that can take both positive and negative values were varied by simple addition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model comparison</head><p>The full model (Eq. 6) is compared to simpler alternatives in which some of the inheritance parameters are fixed at 0. For example, setting 𝑎, ℂ, 𝜁, and 𝜈 to 0 reduces the likelihood function to the basic Galton-Pearson (GP) model (Eq. 1). Other model abbreviations used throughout the text are G2 (Galton 2, free 𝜁), VD (Variance-Dependent, free 𝜈), A (Attraction or Guided variation, free 𝑎), and C (Conformity, free ℂ).</p><p>All combinations of free parameters are possible. This results in 2 7 -1 = 7 configurations of SD-controlling parameters (𝜂, 𝜁, 𝜈, with at least one non-zero), and 2 # = 4 configurations of mean-modifiers (𝑎 and ℂ), giving the total of 7 × 4 = 28 distinct models. These models are compared based on their expected out-of-sample performance using Widely Applicable Information Criterion (WAIC).</p><p>Because the responses span several orders of magnitude, and all questions assume positive numeric answers, we transform both tips and correct answers using the decadic logarithm before analysis. This transformation makes the offspring likelihood function effectively lognormal, which is the appropriate two-parameter maximum entropy distribution for strictly positive values.</p><p>We acknowledge that using the log scale does not allow to consider the naive Galton-Pearson model with constant standard deviation on the original scale. We therefore include comparisons with models fitted on the original (non-log) scale (most of them showing higher WAICs then even poorly performing log-scale models) in the Supplement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Kernel Inheritance models</head><p>It is an empirical question whether the mode of the resulting "offspring tip" distribution coincides with a (weighted) mean (shifted towards or away from the optimum) or whether a multimodal distribution provides a better fit. A process, where a participant selects a single parental tip to imitate (potentially influenced by conformity) and then draws an estimate around that value (optionally shifted toward the optimum) would naturally produce a proportionality between parental and offspring variance, without requiring a dedicated parameter like 𝜈. As parental values become more dispersed, the distribution of offspring in those models increases variance, then plateaus, and eventually produces a dip between multiple modes.</p><p>We refer to such multimodal mixture-distribution models as kernel inheritance models, due to their similarity to kernel density estimation <ref type="bibr" target="#b12">(Chen, 2017</ref>). These models are straightforward to implement in a Bayesian framework and can be compared to the unimodal distribution models using the Widely Applicable Information Criterion (WAIC).</p><p>We identified three possible types of kernel inheritance models: (i) Galton-Pearson, i.e. constant SD kernels 𝑁$𝑡 " " , 𝜂), (ii) Galton 2, where each parental kernel has standard deviation proportional to the trait value of that parent 𝑁$𝑡 " " , 𝜁𝑡 " " ), and (iii) Galton 2M, where each kernel's SD is proportional to the mean of all parental values 𝑁 J𝑡 " " , 𝜁mean$𝑡 " )K.</p><p>Strictly speaking, the third type -and any model incorporating conformity -already involves integration of information from multiple sources and therefore should not be considered uniparental (which is, unfortunately, the assumption of most theoretical models to date). Our main interest here, however, is in the contrast between unimodal and multimodal offspring distributions, and in the relevance of the proportional-variance parameter ν, given its implications for adaptation probability, adaptation speed, and the potential role it plays in subculture formation.</p><p>All models were run in 4 chains for 1 000 iterations each (with each chain producing 500 posterior samples, since the first 500 iterations are allocated to warm-up). All data and code necessary to reproduce the results are available at: https://osf.io/h6qz4/.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results:</head><p>Models that assume integration of information from parental tips into a single unimodal distribution consistently outperformed multimodal kernel inheritance models (Table <ref type="table" target="#tab_0">1</ref>). The full model on the logarithmic scale showed the best out-of-sample performance overall (Figure <ref type="figure" target="#fig_2">2</ref>). However, the ordering of the top models was not stable, as posterior distributions were highly multimodal and sampling effectiveness was low. Repeating the same Bayesian model comparison can occasionally result in a simpler model (containing only the constant and variance-proportional components, second best in Table <ref type="table" target="#tab_0">1</ref>) being selected as best (sampling works fine in this model, see Supplementary Figure <ref type="figure" target="#fig_3">S3</ref>).</p><p>The log transformation increases the interchangeability of 𝜂 # and 𝜁 # mean # $𝑡 " ) in the variance term, because even a constant standard deviation on the log scale translates to greater dispersion around higher values on the original scale. This creates difficulties particularly in the by-question varying effects, where all responses to a given question tend to be similar in order of magnitude. As a result, in models that include both these variance components, it is difficult to determine whether questions (and participants, see Figure <ref type="figure" target="#fig_2">2</ref>) vary more in their constant or mean-proportional variance.</p><p>The issue becomes even more pronounced in models on the original scale (Supplement 3), where higher means are typically associated with higher variances between parental tips. To some extent, this leads to confounding between 𝜁 and 𝜈. Likewise, ℂ and 𝑎 can become slightly confounded with the variance terms, as both introduce greater offsets of the offspring tip from the parental mean (this problem is also more apparent on the original scale).</p><p>Details on how to address model convergence issues and multimodal posteriors can be found in Supplement 4.   <ref type="table">S2</ref> Models that include variance-proportional variance, conformity, and guided variation consistently outperform those that omit them. Posterior estimates of these parameters and their varying effects are also unimodal and stable on the log-scale. Moreover, selection of a particular model does not influence these estimates substantially. According to the bestperforming log scale model, a one-order-of-magnitude increase in parental standard deviation leads to an expected increase in offspring standard deviation of 𝜈 = 0.85 [90% CI: 0.78, 0.92]. The conformity parameter is reliably positive, with ℂ = 2.78 [90% CI: 2.09, 3.53]. The attraction parameter indicates weak but detectable guided variation toward the optimum. On the log scale, offspring estimates are expected to shift between 2% and 6% of the distance from the parental mean toward the optimum, with 𝑎 = 0.04 [90% CI: 0.02, 0.06]. The implications of values of mean-modifying parameters are visualized in Figure <ref type="figure" target="#fig_3">3</ref>.</p><p>Mean-modifying parameter values tend to vary more between questions than between participants. In some questions, participants conform more (variance in ℂ), perhaps because they feel less confident about their own estimates, and answers in some questions can be more easily improved than in others (variance in 𝑎).</p><p>These effects hold in both prominent waves when analyzed separately. When people are financially motivated to achieve higher scores, however, they become more risk-averse and rely more on social cues: they show higher conformity, and their variance-proportional parameter 𝜈 is closer to 1, primarily at the expense of the mean-proportional variance term. However, lower independence from parental tips also limits the ability to constructively shift the mean toward the optimum, which is reflected in a lower value of the guided variation parameter 𝑎 (see Supplement 8).</p><p>Based on the comparison between the GPVD_CA (𝜂 = 0.33 [90% CI: 0.29, 0.37]) and GP_CA (𝜂 = 0.42 [90% CI: 0.38, 0.46]) models, where 𝜂 captures all variance-independent components of offspring variance and serves as a measure of residuals, the varianceproportional term 𝜈 and its varying effects uniquely account for approximately 38% of the total variance is participant guesses.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Our results highlight the importance of unique features in cultural transmission: conformity, guided variation, mean proportionality, and variance proportionality. These factors illustrate how cultural inheritance departs from the Galton-Pearson model that successfully describes inheritance of continuous biological traits.</p><p>Conformity is robustly supported by our data: individuals tend to align with clusters of mutually similar answers rather than weighting isolated guesses equally. The formalization of conformity for continuous traits introduced in this manuscript goes beyond modelling guessing games. It offers a rigorous framework for studying conformity in latent spaces underlying discrete cultural preferences, values, and norms; domains in which people may also disproportionately follow mutually similar models.</p><p>Guided variation component shows that cultural adaptation may be feasible even without selection -participants systematically shift their estimates toward correct values by a small fraction, supporting the view that human learners do not copy blindly but refine information in the direction of improvement.</p><p>Guided variation shows that cultural adaptation may be feasible even in the absence of selection: participants systematically shift their estimates toward correct values by a small fraction, supporting the view that human learners do not copy blindly but refine information in the direction of improvement. However, the attraction force toward optimum is very small so selective forces are likely responsible for the fast pace of cultural adaptation.</p><p>Mean proportionality captures the intuition that people tend to adjust traits by percentages rather than fixed units: a 10% tweak leads to small deviations around small values and large deviations around large ones. On a logarithmic scale, this results in approximately equivalent to constant standard deviation, which explains why models with constant and meanproportional variance can often be used interchangeably on transformed data. Notably, many studies of genetically inherited traits log-transform their data without acknowledging that this implies a multiplicative, rather than additive, model of inheritance <ref type="bibr" target="#b15">(Couto Alves et al., 2019;</ref><ref type="bibr" target="#b52">Sinnott-Armstrong et al., 2021;</ref><ref type="bibr" target="#b57">Stopher et al., 2012;</ref><ref type="bibr" target="#b64">Van Rijn et al., 2007;</ref><ref type="bibr" target="#b65">Vattikuti et al., 2012)</ref>. The mean-variance link helps explain why cultural change can scale smoothly across orders of magnitude. It also clarifies why models that fail to accommodate the extreme right skew of untransformed data often show convergence issues.</p><p>A distinctive feature of cultural inheritance -unparalleled in genetics -is variance proportionality. Unlike biological mutation, the "error" in imitation depends on how variable the inputs are: people explore more widely when others disagree and narrow their estimates when others show high agreement. This proportionality allows cultural systems to scale their exploratory range flexibly, enabling bursts of rapid change or periods of stability depending on population diversity <ref type="bibr" target="#b61">(Tureček et al., 2019)</ref>.</p><p>Distinguishing between kernel density models and unimodal models with proportional variance between inputs and outputs is difficult without a large dataset. When parental values are closely spaced, the resulting distributions may appear nearly identical. In our dataset, kernel models perform worse. Social transmission should not -and does not -opt out of integrating information from multiple sources. However, in real-world settings, the distinction may be less clear, as people likely filter out irrelevant information first. Future work in more messy, non-experimental contexts may require more complex approaches in which some potential cultural parents are explicitly ignored (as in kernel inheritance models) but the number of inspiration sources remains larger than one (as in unimodal models). Even in our experimental setting, the uniparental model -where each learner selects a single source and relies exclusively on that source -appears unrealistic (aligning with <ref type="bibr" target="#b19">Enquist et al., 2010)</ref> despite the enduring popularity of such models in theoretical work and simulations (see e.g., <ref type="bibr" target="#b1">Bentley et al., 2007;</ref><ref type="bibr" target="#b32">Kandler et al., 2023)</ref>.</p><p>Comparison of participants from the two major waves suggests that financial incentives make people more risk-averse, a pattern consistently reflected across distribution function parameters (higher conformity, less constant variance, more variance-proportionate variance). Overall, they rely more on social information, as indicated by multiple model components. However, their reduced willingness to vary independently -regardless of social cues -also limits their ability to guide variation toward the correct answer (guided variation parameter 𝑎 is closer to 0). This effect persists even when parental mean distance from the optimum, parental variance, and their combination are held constant between the waves. Together, our results suggest that social learning operates as a dynamic estimation process, which can, however, be adequately formalized using a parametric probability density function that involves multiple variance terms, conformity, and guided variation.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Visualization of the weighted mean of the offspring distribution for different values of the conformity parameter ℂ. A: Two mutually similar parents (𝑡 !" , 𝑡 !# ) and one parent differing from both (𝑡 !$ ). B: Same configuration as in A, but each value is multiplied by 10. C: A fourth parent (𝑡 !% ), similar to the first two, is added. The resulting weighted mean function becomes steeper.</figDesc><graphic coords="8,72.00,387.75,451.00,150.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>WAIC = Widely Applicable Information Criterion, SE = standard error, pWAIC = penalty term (average variance in lppd), pSE = standard error of the penalty term, dWAIC=difference from the best model, weight = relative model weight calculated as exp(-0.5×dWAIC)/Σexp(-0.5×dWAIC). GP = Galton-Pearson (η), G2 = Galton 2 (ζ), VD = variance-dependent (ν), C = conformity (ℂ), A = attraction (a), k = kernel model. Comparison of all 40 models can be found in Supplementary Table</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2</head><label>2</label><figDesc>Figure 2 Posterior distribution of parameter values from the full model on the log₁₀ scale. The height of each coloured polygon corresponds to posterior probability density. White dots indicate the mean of the sampled parameter values; black lines represent the 90% Compatibility Intervals (CIs).</figDesc><graphic coords="13,167.00,175.67,260.75,510.10" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3</head><label>3</label><figDesc>Figure 3 Implications of mean-modifying parameters ℂ and 𝑎. A: In a case with two mutually similar parental tips (210, 220) and one different (302), the expected offspring mean shifts from the unweighted parental mean (244) towards the two similar parents. With 90% probability, the offspring mean is expected to lie between 237 and 240 (violet segment of the ℂ-dependent weighted mean function; violet dashed lines indicate the 90% CI of the ℂ parameter itself). B: Further adjusted of offspring mean by guided variation. The black line shows the unmodified (weighted) mean, while the blue band indicates the 90% CI of the expected value after a 2-6% shift toward the optimum on the log scale. (For equivalent log-scale visualization, see Supplement 7.)</figDesc><graphic coords="14,72.00,86.55,451.00,205.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 . Model comparison (top 10 models)</head><label>1</label><figDesc></figDesc><table><row><cell>Rank Model</cell><cell>WAIC</cell><cell>SE</cell><cell>pWAIC</cell><cell>pSE</cell><cell>dWAIC</cell><cell>weight</cell></row><row><cell>1 m_GPG2VD_CA_log</cell><cell cols="4">32640.60 674.27 6628.74 140.23</cell><cell>0.00</cell><cell>1.00</cell></row><row><cell>2 m_GPVD_CA_log</cell><cell cols="4">33342.50 688.44 3235.04 116.97</cell><cell>701.90</cell><cell>0.00</cell></row><row><cell>3 m_G2VD_CA_log</cell><cell cols="4">33490.90 695.62 3390.36 124.10</cell><cell>850.30</cell><cell>0.00</cell></row><row><cell>4 m_GPG2VD_C_log</cell><cell cols="5">33890.95 696.48 6845.89 156.26 1250.35</cell><cell>0.00</cell></row><row><cell>5 m_GPVD_C_log</cell><cell cols="5">33947.40 689.47 2967.60 106.89 1306.80</cell><cell>0.00</cell></row><row><cell>6 m_G2VD_C_log</cell><cell cols="5">34116.26 697.26 3102.49 115.48 1475.66</cell><cell>0.00</cell></row><row><cell>7 m_GPVD_log</cell><cell cols="5">34120.77 691.10 2965.16 110.82 1480.17</cell><cell>0.00</cell></row><row><cell>8 m_G2VD_log</cell><cell cols="5">34291.22 695.31 3026.51 113.04 1650.62</cell><cell>0.00</cell></row><row><cell>9 m_kGP_CA_log</cell><cell cols="3">34334.15 687.12 2454.97</cell><cell cols="2">98.53 1693.55</cell><cell>0.00</cell></row><row><cell>10 m_GPG2VD_log</cell><cell cols="5">34391.99 706.97 6971.09 166.21 1751.39</cell><cell>0.00</cell></row><row><cell></cell><cell></cell><cell>…</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">If we are all cultural Darwinians what&apos;s the fuss about? Clarifying recent disagreements in the field of cultural evolution</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Acerbi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mesoudi</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10539-015-9490-2</idno>
+		<ptr target="https://doi.org/10.1007/s10539-015-9490-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Biology and Philosophy</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="481" to="503" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Regular rates of popular culture change reflect random copying</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Bentley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Lipo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Herzog</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Hahn</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.evolhumbehav.2006.10.002</idno>
+		<ptr target="https://doi.org/10.1016/j.evolhumbehav.2006.10.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolution and Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="151" to="158" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Understanding TypeScript</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Bierman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Torgersen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECOOP 2014 -Object-Oriented Programming</title>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Jones</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="volume">8586</biblScope>
+			<biblScope unit="page" from="257" to="281" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<idno type="DOI">10.1007/978-3-662-44202-9_11</idno>
+		<ptr target="https://doi.org/10.1007/978-3-662-44202-9_11" />
+		<imprint>
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">The Meme Machine</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Blackmore</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Culture and conformity: A meta-analysis of studies using Asch&apos;s (1952b, 1956) line judgment task</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">B</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-2909.119.1.111</idno>
+		<ptr target="https://doi.org/10.1037/0033-2909.119.1.111" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="111" to="137" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Why Culture is Common, but Cultural Evolution is Rare</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Richerson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the British Academy</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="page" from="77" to="93" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Culture and the Evolutionary Process</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Richerson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1985">1985</date>
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Culture and the Evolutionary Process</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Richerson</surname></persName>
+		</author>
+		<ptr target="https://press.uchicago.edu/ucp/books/book/chicago/C/bo5970597.html" />
+		<imprint>
+			<date type="published" when="1988">1988</date>
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Experimental models for testing hypotheses about cumulative cultural evolution</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Caldwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Millen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.evolhumbehav.2007.12.001</idno>
+		<ptr target="https://doi.org/10.1016/j.evolhumbehav.2007.12.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolution and Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="165" to="171" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Social Learning Mechanisms and Cumulative Cultural Evolution: Is Imitation Necessary?</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Caldwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Millen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1478" to="1483" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Cultural Transmission and Evolution: A Quantitative Approach</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Cavalli-Sforza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Feldman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1981">1981</date>
+			<publisher>Princeton University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A tutorial on kernel density estimation and recent advances</title>
+		<author>
+			<persName><forename type="first">Y.-C</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/24709360.2017.1396742</idno>
+		<ptr target="https://doi.org/10.1080/24709360.2017.1396742" />
+	</analytic>
+	<monogr>
+		<title level="j">Biostatistics &amp; Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="161" to="187" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Social Influence: Compliance and Conformity</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Cialdini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">J</forename><surname>Goldstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev.psych.55.090902.142015</idno>
+		<ptr target="https://doi.org/10.1146/annurev.psych.55.090902.142015" />
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Psychology</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="591" to="621" />
+			<date type="published" when="2004">2004. 2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">How Darwinian is cultural evolution?</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Claidière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">C</forename><surname>Scott-Phillips</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sperber</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rstb.2013.0368</idno>
+		<ptr target="https://doi.org/10.1098/rstb.2013.0368" />
+	</analytic>
+	<monogr>
+		<title level="j">Philosophical Transactions of the Royal Society B: Biological Sciences</title>
+		<imprint>
+			<biblScope unit="page">369</biblScope>
+			<date type="published" when="1642">2014. 1642</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">GWAS on longitudinal growth traits reveals different genetic factors influencing infant, child, and adult BMI</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Couto Alves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M G</forename><surname>De Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Karhunen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Sovio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Taal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Warrington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Lewin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kaakinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Cousminer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Thiering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">J</forename><surname>Timpson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Bond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Lowry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Estivill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Lindi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Bradfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Geller</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/sciadv.aaw3095</idno>
+		<ptr target="https://doi.org/10.1126/sciadv.aaw3095" />
+	</analytic>
+	<monogr>
+		<title level="j">Science Advances</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">3095</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>… Early Growth Genetics (EGG) Consortium</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Cultural flies: Conformist social learning in fruitflies predicts long-lasting mate-choice traditions</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Danchin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nöbel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pocheville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-C</forename><surname>Dagaeff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Demay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Alphand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ranty-Roby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Renssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Monier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Gazagne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Allain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Isabel</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.aat1590</idno>
+		<ptr target="https://doi.org/10.1126/science.aat1590" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">362</biblScope>
+			<biblScope unit="issue">6418</biblScope>
+			<biblScope unit="page" from="1025" to="1030" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">The selfish gene. New edition</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dawkins</surname></persName>
+		</author>
+		<ptr target="https://search.library.wisc.edu/catalog/999612476002121" />
+		<imprint>
+			<date type="published" when="1989">1989. 1989</date>
+			<publisher>Oxford University Press</publisher>
+			<pubPlace>Oxford ; New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Causal understanding is not necessary for the improvement of culturally evolving technology</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Derex</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Bonnefon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mesoudi</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-019-0567-9</idno>
+		<ptr target="https://doi.org/10.1038/s41562-019-0567-9" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="446" to="452" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">One cultural parent makes no culture</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Enquist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Strimling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Eriksson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Laland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sjostrand</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.anbehav.2010.03.009</idno>
+		<ptr target="https://doi.org/10.1016/j.anbehav.2010.03.009" />
+	</analytic>
+	<monogr>
+		<title level="j">Animal Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1353" to="1362" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">The Correlation between Relatives on the Supposition of Mendelian Inheritance</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Fisher</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0080456800012163</idno>
+		<ptr target="https://doi.org/10.1017/S0080456800012163" />
+	</analytic>
+	<monogr>
+		<title level="j">Transactions of the Royal Society of Edinburgh</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="399" to="433" />
+			<date type="published" when="1918">1918</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Modelling Cultural Transmission</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fogarty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kandler</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/oxfordhb/9780198869252.013.2</idno>
+		<ptr target="https://doi.org/10.1093/oxfordhb/9780198869252.013.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Oxford Handbook of Cultural Evolution</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Tehrani</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Kendal</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename></persName>
+		</editor>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2025">2025</date>
+			<biblScope unit="page">0</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">N</forename><surname>Foster</surname></persName>
+		</author>
+		<title level="m">Innovation: The Attacker&apos;s Advantage</title>
+		<imprint>
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+	<note>Summit Books</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Social influences on foraging in vertebrates: Causal mechanisms and adaptive functions</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">G</forename><surname>Galef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L.-A</forename><surname>Giraldeau</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/anbe.2000.1557</idno>
+		<ptr target="https://doi.org/10.1006/anbe.2000.1557" />
+	</analytic>
+	<monogr>
+		<title level="j">Animal Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="15" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Typical laws of heredity</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Galton</surname></persName>
+		</author>
+		<ptr target="https://galton.org/bib/JournalItem.aspx_action=view_id=80" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Royal Institution</title>
+		<meeting>the Royal Institution</meeting>
+		<imprint>
+			<date type="published" when="1877">1877</date>
+			<biblScope unit="page" from="282" to="301" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Regression Towards Mediocrity in Hereditary Stature</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Galton</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2841583</idno>
+		<ptr target="https://doi.org/10.2307/2841583" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of the Anthropological Institute of Great Britain and Ireland</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page">246</biblScope>
+			<date type="published" when="1886">1886</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">A model of anonymous influence with anti-conformist agents</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Grabisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Poindron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rusinowska</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jedc.2019.103773</idno>
+		<ptr target="https://doi.org/10.1016/j.jedc.2019.103773" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Dynamics and Control</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page">103773</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Demography and cultural evolution: How adaptive cultural processes can produce maladaptive losses-The Tasmanian case</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Henrich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Antiquity</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="197" to="214" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">The Secret of Our Success</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Henrich</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/j.ctvc77f0d</idno>
+		<ptr target="https://doi.org/10.2307/j.ctvc77f0d" />
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">On Modeling Cognition and Culture representations</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Henrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<idno type="DOI">10.1163/156853702320281836</idno>
+		<ptr target="https://doi.org/10.1163/156853702320281836" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognition and Culture</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="87" to="112" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">What&apos;s social about social learning</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Heyes</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0025180</idno>
+		<ptr target="https://doi.org/10.1037/a0025180" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Comparative Psychology</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="193" to="202" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Social Learning: An Introduction to Mechanisms</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hoppitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Laland</surname></persName>
+		</author>
+		<ptr target="https://www.jstor.org/stable/j.ctt2jc8mh" />
+	</analytic>
+	<monogr>
+		<title level="m">Methods, and Models</title>
+		<imprint>
+			<publisher>Princeton University Press</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The interplay between age structure and cultural transmission</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kandler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fogarty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Karsdorp</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1011297</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1011297" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">1011297</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">The evolution of social learning rules: Payoff-biased and frequency-dependent biased transmission</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kendal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Giraldeau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Laland</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jtbi.2009.05.029</idno>
+		<ptr target="https://doi.org/10.1016/j.jtbi.2009.05.029" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Biology</title>
+		<imprint>
+			<biblScope unit="volume">260</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="210" to="219" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Cumulative cultural evolution in the laboratory: An experimental approach to the origins of structure in human language</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kirby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cornish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0707835105</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0707835105" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences of the United States of America</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">31</biblScope>
+			<biblScope unit="page" from="10681" to="10686" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">The Making of an Oligopoly: Firm Survival and Technological Change in the Evolution of the U.S. Tire Industry</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Klepper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Simons</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/316100</idno>
+		<ptr target="https://doi.org/10.1086/316100" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Political Economy</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="728" to="760" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Cultural transmission of tool use in bottlenose dolphins</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Krützen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Heithaus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Connor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bejder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">B</forename><surname>Sherwin</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0500232102</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0500232102" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="issue">25</biblScope>
+			<biblScope unit="page" from="8939" to="8943" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Quantitative Analysis of Macroevolutionary Patterning in Technological Evolution: BICYCLE DESIGN FROM 1800 TO 2000</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Lake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Venti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Pattern and Process in Cultural Evolution</title>
+		<imprint>
+			<publisher>University of California Press</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>st edn</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Darwin&apos;s Unfinished Symphony: How Culture Made the Human Mind</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Laland</surname></persName>
+		</author>
+		<ptr target="https://www.jstor.org/stable/j.ctv" />
+		<imprint>
+			<date type="published" when="2017">2017. 39x6r5</date>
+			<publisher>Princeton University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Cultural niche construction and human evolution</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Laland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Odling-Smee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Feldman</surname></persName>
+		</author>
+		<idno type="DOI">10.1046/j.1420-9101.2001.00262.x</idno>
+		<ptr target="https://doi.org/10.1046/j.1420-9101.2001.00262.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Evolutionary Biology</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="22" to="33" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Understanding the onset of hot streaks across artistic, cultural, and scientific careers</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dehmamy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Giles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41467-021-25477-8</idno>
+		<ptr target="https://doi.org/10.1038/s41467-021-25477-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Communications</title>
+		<imprint>
+			<biblScope unit="page" from="12" to="5392" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">How social influence can undermine the wisdom of crowd effect</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Rauhut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Schweitzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Helbing</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1008636108</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1008636108" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">22</biblScope>
+			<biblScope unit="page" from="9020" to="9025" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Statistical Rethinking: A Bayesian Course with Examples in R and Stan (2nd edn)</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mcelreath</surname></persName>
+		</author>
+		<idno type="DOI">10.1201/9780429029608</idno>
+		<ptr target="https://doi.org/10.1201/9780429029608" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Chapman and Hall/CRC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Cultural Evolution: How Darwinian Theory Can Explain Human Culture and Synthesize the Social Sciences</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mesoudi</surname></persName>
+		</author>
+		<idno type="DOI">10.7208/chicago/9780226520452.001.0001</idno>
+		<ptr target="https://doi.org/10.7208/chicago/9780226520452.001.0001" />
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Towards a unified science of cultural evolution</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mesoudi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Whiten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Laland</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0140525X06009083</idno>
+		<ptr target="https://doi.org/10.1017/S0140525X06009083" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavioral and Brain Sciences</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="329" to="347" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Unleashing the BEAST: a brief measure of human social information use</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Molleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H J M</forename><surname>Kurvers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Van Den Bos</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.evolhumbehav.2019.06.005</idno>
+		<ptr target="https://doi.org/10.1016/j.evolhumbehav.2019.06.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolution and Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="492" to="499" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Human culture is uniquely open-ended rather than uniquely cumulative</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J H</forename><surname>Morgan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Feldman</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-024-02035-y</idno>
+		<ptr target="https://doi.org/10.1038/s41562-024-02035-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="28" to="42" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">How portraits turned their eyes upon us: Visual preferences and demographic change in cultural evolution</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Morin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.evolhumbehav.2013.01.004</idno>
+		<ptr target="https://doi.org/10.1016/j.evolhumbehav.2013.01.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolution and Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="222" to="229" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Design Space and Cultural Transmission: Case Studies from Paleoindian Eastern North America</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>O'brien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Boulanger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Buchanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Bentley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Lyman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Lipo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Madsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Eren</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10816-015-9258-7</idno>
+		<ptr target="https://doi.org/10.1007/s10816-015-9258-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Archaeological Method and Theory</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="692" to="740" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Technical reasoning is important for cumulative technological culture</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Osiurak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lasserre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Arbanti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Brogniart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bluet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Navarro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Reynaud</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-021-01159-9</idno>
+		<ptr target="https://doi.org/10.1038/s41562-021-01159-9" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1643" to="1651" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Late pleistocene demography and the appearance of modern human behavior</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shennan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Thomas</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1170165</idno>
+		<ptr target="https://doi.org/10.1126/science.1170165" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">324</biblScope>
+			<biblScope unit="issue">5932</biblScope>
+			<biblScope unit="page" from="1298" to="1301" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Not by genes alone: How culture transformed human evolution</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Richerson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boyd</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005">2005</date>
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">GWAS of three molecular traits highlights core genes and pathways alongside a highly polygenic background</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sinnott-Armstrong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Naqvi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rivas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Pritchard</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.58615</idno>
+		<ptr target="https://doi.org/10.7554/eLife.58615" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="10" to="e58615" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Hen&apos;s teeth with enamel cap: From dream to impossibility</title>
+		<author>
+			<persName><forename type="first">J.-Y</forename><surname>Sire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Delgado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Girondot</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2148-8-246</idno>
+		<ptr target="https://doi.org/10.1186/1471-2148-8-246" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Evolutionary Biology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">246</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">Explaining culture</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sperber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996a</date>
+			<publisher>Blackwell</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<title level="m" type="main">Explaining Culture: A Naturalistic Approach</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sperber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996b</date>
+			<publisher>Blackwell Publishers</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">The Evolved Apprentice</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sterelny</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/j.ctt" />
+		<imprint>
+			<date type="published" when="2012">2012. 9qf9t0</date>
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Shared Spatial Effects on Quantitative Genetic Parameters: Accounting for Spatial Autocorrelation and Home Range Overlap Reduces Estimates of Heritability in Wild Red Deer</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">V</forename><surname>Stopher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Walling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">E</forename><surname>Guinness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">H</forename><surname>Clutton-Brock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Pemberton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">H</forename><surname>Nussey</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1558-5646.2012.01620.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1558-5646.2012.01620.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolution</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="2411" to="2426" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Ratcheting up the ratchet: On the evolution of cumulative culture</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Tennie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Call</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tomasello</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rstb.2009.0052</idno>
+		<ptr target="https://doi.org/10.1098/rstb.2009.0052" />
+	</analytic>
+	<monogr>
+		<title level="j">Philosophical Transactions of the Royal Society B: Biological Sciences</title>
+		<imprint>
+			<biblScope unit="volume">364</biblScope>
+			<biblScope unit="page" from="2405" to="2415" />
+			<date type="published" when="1528">2009. 1528</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<title level="m" type="main">The cultural origins of human cognition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tomasello</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+			<publisher>Harvard University Press</publisher>
+			<biblScope unit="volume">248</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<title level="m" type="main">Conformist social learning leads to self-organised prevention against adverse bias in risky decision making. eLife</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Toyokawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Gaissmaier</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.75308</idno>
+		<ptr target="https://doi.org/10.7554/eLife.75308" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="11" to="e75308" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Non-particulate inheritance revisited: Evolution in systems with Parental Variability-Dependent Inheritance</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Tureček</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Slavík</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kozák</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Havlíček</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/biolinnean/blz041</idno>
+		<ptr target="https://doi.org/10.1093/biolinnean/blz041" />
+	</analytic>
+	<monogr>
+		<title level="j">Biological Journal of the Linnean Society</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="518" to="533" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Population size does not explain past changes in cultural complexity</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Vaesen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Collard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cosgrove</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Roebroeks</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1520288113</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1520288113" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">16</biblScope>
+			<biblScope unit="page" from="2241" to="E2247" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">The development of human social learning across seven societies</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J C</forename><surname>Van Leeuwen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Collier-Baker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Rapold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schäfer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Schütte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Haun</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41467-018-04468-2</idno>
+		<ptr target="https://doi.org/10.1038/s41467-018-04468-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Communications</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">2076</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Heritability of blood pressure traits and the genetic contribution to blood pressure variance explained by four blood-pressure-related genes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J E</forename><surname>Van Rijn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Schut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Aulchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deinum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Sayed-Tabatabaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yazdanpanah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Isaacs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">I</forename><surname>Axenovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">V</forename><surname>Zorkoltseva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Zillikens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Pols</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Witteman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Oostra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Van Duijn</surname></persName>
+		</author>
+		<idno type="DOI">10.1097/HJH.0b013e32801449fb</idno>
+		<ptr target="https://doi.org/10.1097/HJH.0b013e32801449fb" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Hypertension</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="565" to="570" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Heritability and Genetic Correlations Explained by Common SNPs for Metabolic Syndrome Traits</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Vattikuti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Chow</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pgen.1002637</idno>
+		<ptr target="https://doi.org/10.1371/journal.pgen.1002637" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Genetics</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">1002637</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">The extension of biology through culture</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Whiten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Ayala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Feldman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Laland</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1707630114</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1707630114" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">30</biblScope>
+			<biblScope unit="page" from="7775" to="7781" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Conformity to cultural norms of tool use in chimpanzees</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Whiten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Horner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">B M</forename><surname>De Waal</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature04047</idno>
+		<ptr target="https://doi.org/10.1038/nature04047" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">437</biblScope>
+			<biblScope unit="issue">7059</biblScope>
+			<biblScope unit="page" from="737" to="740" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Cultural linkage: The influence of package transmission on cultural dynamics</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Yeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fogarty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kandler</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rspb.2019.1951</idno>
+		<ptr target="https://doi.org/10.1098/rspb.2019.1951" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the Royal Society B: Biological Sciences</title>
+		<imprint>
+			<biblScope unit="volume">286</biblScope>
+			<date type="published" when="1916">2019. 1916. 20191951</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

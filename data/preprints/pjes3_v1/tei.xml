@@ -1,0 +1,1766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Parties&apos; ideological cores and peripheries: Examining how parties balance adaptation and continuity in their manifestos</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><roleName>Dr</roleName><forename type="first">Annika</forename><surname>Werner</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Politics and International Relations</orgName>
+								<orgName type="institution">University of Southampton</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><roleName>Dr</roleName><forename type="first">Fabian</forename><surname>Habersack</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Political Science</orgName>
+								<orgName type="institution">University of Innsbruck</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Parties&apos; ideological cores and peripheries: Examining how parties balance adaptation and continuity in their manifestos</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">EA5D9F91792CD5D5903689E87FBD6C6D</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-19T16:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>party competition</term>
+					<term>party change</term>
+					<term>ideological scaling</term>
+					<term>classification</term>
+					<term>democracy</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>How do political parties balance policy adaptation with ideological continuity? While spatial models emphasize external factors driving party behaviour, less attention has been given to internal party choices. This article innovates by proposing that parties differentiate between and make distinct strategical decisions regarding their ideological core and peripheral policy areas. We argue that parties maintain continuity in their ideological core while exhibiting greater flexibility in modifying their periphery. Using the Manifesto Project Corpus and an XLM-RoBERTa-based language model, we analyse manifesto sections to distinguish core from peripheral segments. Our findings show that parties take clearer stances in their ideological core while adapting their periphery more flexibly, with niche parties displaying this pattern more strongly than mainstream parties. Electoral setbacks lead parties to adopt more extreme peripheries, while cores remain stable. These results highlight the strategic importance of the core-periphery distinction in party communication and suggest that studies of party competition should consider where policy shifts occur within parties' electoral programs.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>The way political parties change their positions -and, in doing so, attract voters and shape policy debates -has been a central concern in political science. Scholars have not only tested various theories but also measured party positions in different ways. To date, however, few approaches have taken into serious consideration that parties campaign on multiple issues simultaneously that are of different importance to them. While concepts like issue ownership and the distinction between pragmatic and principled policy issues have been explored, they are based on prescriptions external to the party.</p><p>Instead, we differentiate between parties' ideological cores and their policy peripheries, examining how parties strategically use these areas when designing their campaigns. Thus, this article asks: How do parties adjust their positions and the distinctiveness of their policy stances across their ideological core and periphery?</p><p>This paper focuses on party positions and positional changes measured based on parties' electoral programs. We follow this tradition as these programs, also called manifestos, are produced by political parties themselves at regular intervals and with relatively clear functions: communication to voters, their periphery, a pattern that especially applies to niche parties. This confirms that cores function as ideological anchors that differentiate parties from their competitors. Second, parties are significantly more likely to change their positions in their periphery than in their core. This suggests that adaptation occurs primarily in non-core policy areas, where the risk of voter alienation is low. Third, electoral setbacks prompt parties to adopt more extreme peripheral positions but leave core positions largely unchanged. However, electoral fortunes, in general, do not lead to larger or smaller position shifts. This indicates that while electoral losses create some incentives for party policy shifts, parties remain reluctant to alter their core policy commitments altogether. Thus, our findings demonstrate that core and peripheral policy positions follow distinct political logics, challenging the notion that party platforms shift as a whole.</p><p>This novel distinction -and our finding that parties systematically differentiate between their ideological core and policy periphery -carries significant implications for the study of political parties and representation. It calls into question the validity of interpreting party shifts along a unified left-right dimension, suggests distinct causal mechanisms for changes in specific policy areas and for patterns of party-citizen congruence, and may help explain discrepancies among manifesto-based, expert-based, and citizen-based measures of party positions. We therefore argue that incorporating the core-periphery distinction can enhance explanatory models across a range of research programs central to the functioning of representative democracy.</p><p>The article proceeds as follows: In the next section, we review the literature on party change, expand on the idea that parties have different incentives to adapt with respect to their cores and their peripheries, and develop our hypotheses. We then outline our research design and empirical strategy before presenting our findings and testing our hypotheses. We conclude with broader implications for the study of party representation and future avenues of research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Theory: The Strategic Role of the Ideological Core</head><p>The study of political parties' position change has a long and extensive tradition <ref type="bibr" target="#b24">(Downs 1957)</ref>. This interest in party positions is based on parties' core function within modern representative democracies as they establish the link between citizens and the political decision-making process via elections (e.g., <ref type="bibr" target="#b63">Schattschneider 1942)</ref>. Parties' programmatic offerings are, thus, central to the representative process given that these structure the policy choices for citizens and are the basis of parliamentary and governmental policy output. When parties change their programmatic offerings, they influence all parts of the representative chain.</p><p>Thus, theories on party competition and party behaviour often focus on where parties position themselves in the policy space and what factors encourage them to change these positions <ref type="bibr" target="#b13">(Budge 1994;</ref><ref type="bibr" target="#b51">Merrill and Grofman 1999)</ref>. Crucially, much of this literature draws on spatial theories of voting embedded in a rational choice framework. Accordingly, a voter supports a given party based on the perceived 'proximity' of her or his policy preferences to a party's platform. Parties therefore position themselves in the policy space so as to minimise the distance to their voters and maximise their electoral appeal <ref type="bibr" target="#b24">(Downs 1957)</ref>.</p><p>Building on this framework, research has explored the conditions under which mainstream actors respond to public opinion and shifts in voter preferences <ref type="bibr" target="#b5">(Adams, Clark et al 2004;</ref><ref type="bibr" target="#b8">Adams, Haupt et al 2009;</ref><ref type="bibr" target="#b60">Romeijn 2020)</ref>. Existing empirical studies emphasise the influence of electoral competition (Abou-Chadi 2018; Abou-Chadi and Orlowski 2016) and volatility <ref type="bibr" target="#b19">(Dassonneville 2018)</ref> on the need for parties to adjust their platforms to attract new voters. Observations of these adaptions reveal connections to broader trends in political competition, including the "rise of challenger parties" <ref type="bibr" target="#b22">(De Vries and Hobolt 2020)</ref>. Notably, the emergence of green and radical right challenger parties has introduced a new socio-cultural dimension to political competition <ref type="bibr" target="#b20">(Dassonneville et al 2024;</ref><ref type="bibr" target="#b45">Kriesi et al 2006)</ref>, prompting mainstream parties to revise their programmatic strategies. It appears that parties are willing to modify their policy profiles as circumstances evolve.</p><p>However, changing their programmatic offering also comes with a plethora of risks for parties. In particular, frequent adaptation of policy profiles risks undermining a parties' identity and credibility with voters <ref type="bibr">(Downs, 1957, p. 122)</ref>. Where radical shifts do occur, this often threatens to divide parties internally <ref type="bibr" target="#b10">(Bardi et al 2015;</ref><ref type="bibr" target="#b48">Mair 2013)</ref> and risks voter alienation <ref type="bibr" target="#b9">(Adams and Somer-Topcu 2009;</ref><ref type="bibr" target="#b72">Van Spanje 2018)</ref>. This is because parties are limited in their programmatic decisions by their activists, their established voter bases and target voters <ref type="bibr" target="#b11">(Basu 2020)</ref>. Policy adaptation can therefore be regarded as a 'desperate deed' of parties from a position of electoral weakness <ref type="bibr">(Schumacher and</ref> Van Kersbergen 2016; Van de Wardt 2015), because it is inherently uncertain how well positional shifts will resonate. Hence, especially where the core of a party family is concerned <ref type="bibr" target="#b49">(Mair and Mudde 1998)</ref>, parties more likely opt for continuity over frequent adaptation. Therefore, parties need to strike a fine balance between stability and change. To tackle this problem, it has been suggested that parties do not treat all of their positions the same when deciding on whether or not to change. This research has highlighted the roles of positional as well as salience shifts <ref type="bibr" target="#b17">(Carmines and Stimson 1993;</ref><ref type="bibr" target="#b50">Meguid 2008</ref>) and argues that parties face a constant choice between emphasising their 'core' policy issues and broadening their appeal by focusing on 'peripheral' ones, or in other words: "riding the wave" <ref type="bibr" target="#b75">(Wagner and Meyer 2014)</ref>. Instead, we propose that parties can keep stable ideological cores while adapting their peripheries at the same time.</p><p>Parties' ideological cores, their backgrounds -such as conservatism, liberalism or socialism -are the distinguishing feature of party families <ref type="bibr" target="#b12">(Beyme 1985;</ref><ref type="bibr" target="#b77">Ware 1996)</ref>, and directly inform how freely a party can move in the policy space. In the words of Mair and Mudde, the ideological core is "a belief system that goes right to the heart of a party's identity and (...) address <ref type="bibr">[es]</ref> the question of what parties are" <ref type="bibr">(1998, p. 220)</ref>. Often grounded in traditional cleavages or more recent changes in value patterns in western societies <ref type="bibr" target="#b37">(Inglehart 1977)</ref>, these ideological cores are crucial for parties' position in the party spectrum, connection to voters, and role in government. This centrality of the ideological core is why policy change tends to be incremental and why parties have been characterised as 'conservative organisations' <ref type="bibr" target="#b18">(Dalton and McAllister 2015;</ref><ref type="bibr" target="#b52">Meyer 2013</ref>).</p><p>Here, it is important to note that the concept of the ideological 'core', which parties in the same party families share, differs fundamentally from 'issue ownership' <ref type="bibr" target="#b58">(Petrocik 1996)</ref>, which ceases to exist once it is contested, i.e., once more than one party credibly lays claim to a given issue. For instance, as Abou-Chadi (2016) states, "green parties' ownership (...) of the environment issue is much higher than radical right parties' issue ownership of immigration" (2016, p. 421). However, even though radical right parties may not own the issue, immigration is still inextricably linked to their ideological identity.</p><p>Furthermore, the idea of the ideological core is different from the idea of principled versus pragmatic policies <ref type="bibr">(Tavits 2007, see also: Pattie and</ref><ref type="bibr" target="#b57">Johnston 2001)</ref>. While the theoretical idea is related, in that parties would expect higher voter risk when changing principled positions and should be rewarded for adaptability in pragmatic policies, the empirical implications are markedly different. <ref type="bibr" target="#b70">Tavits (2007)</ref> argues that voters have principled preferences on social issues that are valuebased, including societal and individual principles (p. 153), and that voters would punish parties for perceived lack of credibility (p. 154). Pragmatic preferences, on the other hand, are located in the economic policy space, where "given that economic conditions themselves are subject to change, viable economic policies are not likely to be constant across time" (p. 154). Thus, voters would welcome the adaption of policy positions to new economic circumstances and "may perceive ideological dogmatism about policy alternatives as a sign of unresponsiveness, and they may reject stability and tenacity" (p. 155).<ref type="foot" target="#foot_0">1</ref> </p><p>Instead of this static policy-based distinction, we build on the idea that parties' programs contain text that speaks to a parties' ideological core and text that is at the ideological periphery <ref type="bibr" target="#b34">(Habersack 2024;</ref><ref type="bibr" target="#b35">Habersack and Werner 2023</ref>, see also <ref type="bibr" target="#b41">: Koedam 2022)</ref>. The core defines the party's identity and has particular importance for the party members' identification with the organisation as well as the issue ownership and competence that voters assign to the party. Thus, the core contains the policies and positions that the party stands for, and is closely related to the party's family denotation as Social Democratic, Conservative, Green, Radical Right and so forth. At the same time, manifestos include text that is about policies at the party's ideological periphery, which are policies not intricately linked to the party's ideology and identity but need covering because they are relevant for the specific society and state at the time.</p><p>We investigate changes in the core and periphery separately as these changes have different meanings. In a nutshell, a change in the core indicates a committed shift in the party's identity, while a peripheral change does not have such a fundamental connotation and is less likely to have far-reaching consequences. A change in the core is a departure from the party's ideological identity and means updating or even abandoning central policy positions. Changes in the periphery, on the other hand, are an adaption of solutions to general problems that members, supporters, and voters will not attribute to the party's main competencies and values.</p><p>We connect our concept of the ideological core with the party family as these define the original ideological clusters of parties. There are approaches to establish groups of parties with common ideologies empirically (e.g., De La Cerda and Gunderson 2024) but these make individual parties' cores dependent on party competition as well as other contextual factors. As <ref type="bibr">Mair and Mudde (1998, p. 218)</ref> note, this method therefore often results in classifications that reflect national contexts more so than party ideologies. Furthermore, we do not follow the approach by <ref type="bibr" target="#b41">Koedam (2022)</ref> who distinguishes parties' primary and secondary dimensions of contestation based on the empirical salience of the cultural and economic dimensions within their manifestos. While this approach manages to distinguish parties based on economic or cultural cleavages, it loses a lot of information to differentiate the parties as for instance the cultural issues of the Greens and the Radical Right are markedly different.</p><p>Given the centrality of the ideological core to parties' identities, it encompasses the policy positions on which parties distinguish themselves from one another. Within a party program, the core should be where parties make claims that clearly signal to voters their fundamental policy principles. The periphery, by contrast, is the part of the program that contains positions for policies that are necessary in any modern state but on which parties and their voters do not have any particularly strong connection. As a result, the core and periphery serve distinct functions within party programs, which is reflected in our first hypothesis:</p><p>Hypothesis 1 Parties take more extreme positions in their core compared to their periphery.</p><p>While salience theory and the notion of issue ownership hold that parties should emphasise issues that are at the 'core' of their ideological identity and de-emphasise other, 'peripheral' ones, another strategy is possible. Instead of emphasising or de-emphasising core and peripheral issues, parties can also treat them differently in terms of change. Since the risks of policy change causing rifts within the party, alienate voters, and losing the party's identity is particularly connected to changes in the party's ideological core, parties should be much more inclined to change their peripheral positions.</p><p>As these are not connected to the identity of the party, the risks are lower while the potential to win new voters for whom these policies are salient is still given. Thus, our second hypothesis is:</p><p>Hypothesis 2 Parties are more likely to change their positions on peripheral issues than on core issues.</p><p>The next set of hypotheses focuses on differences between party types and how these distinctions influence their behaviour regarding core and peripheral policy positions. Party types, such as niche and mainstream parties, vary in their ideological focus, voter base, and strategies for maintaining relevance. These differences shape their tendencies toward ideological extremity, stability, and clarity in their core and peripheral policy positions.</p><p>Niche parties, such as green, radical right, and liberal parties, are typically defined by their concentrated focus on a narrow set of policy issues that are central to their identity and voter appeal <ref type="bibr" target="#b6">(Adams, Clark et al 2006;</ref><ref type="bibr" target="#b74">Wagner 2012)</ref>. These parties often adopt more extreme positions to maintain their distinctiveness and reinforce issue ownership, signalling commitment to their key policy domains. For instance, green parties' focus on environmental protection and radical right parties' emphasis on immigration demonstrate their reliance on extremity to mobilise their core constituencies. Such positioning is critical to their survival, as moderation risks diluting their ideological brand. Thus, we hypothesise: Hypothesis 3 Parties belonging to niche party families are more likely to take more extreme positions in their core than mainstream parties. This distinction does not carry over to the periphery.</p><p>The stability of core positions is another defining characteristic of party types. For niche parties, whose existence depends on the salience and consistency of their core policies, any deviation risks alienating their base and undermining their credibility <ref type="bibr" target="#b12">(Beyme 1985;</ref><ref type="bibr" target="#b74">Wagner 2012)</ref>. For example, a Green party weakening their stance on environmental protection would jeopardise its defining identity. Mainstream parties, by contrast, rely on a broader ideological appeal and are therefore more flexible in adjusting core positions. Their adaptability often reflects a strategic focus on electoral pragmatism and coalition-building rather than ideological consistency. <ref type="bibr" target="#b6">Adams, Clark et al (2006)</ref> find that niche parties are therefore less likely to change their policy positions in response to shifts in public opinion than mainstream parties, which are more inclined to signal responsiveness on a broader array of salient issues. Consequently, we hypothesise: Hypothesis 4 Parties belonging to niche party families are less likely to change their positions on core issues compared to mainstream parties. This distinction does not carry over to the periphery.</p><p>Finally, previous research has shown that parties respond to electoral signals from voters and tend to adjust their strategies after losing elections (Somer-Topcu 2009).<ref type="foot" target="#foot_1">2</ref> Specifically, a key question in party competition concerns whether electoral performance influences the extremity of party positions. <ref type="bibr" target="#b14">Budge, Ezrow et al (2010)</ref> argue in their integrated theory of party behaviour that parties are constrained by their ideological foundations when reacting to electoral signals. They note that "any Socialist party that totally abandons its concern about welfare imperils its own existence. (...) Uninhibited free movement, as implied by office-seeking or vote-seeking assumptions, is just not an option" <ref type="bibr">(Budge, Ezrow et al 2010, p. 792)</ref>. This suggests that parties have fixed ideological cores with which they distinguish themselves from their competitors. However, the extent to which parties adopt more extreme or more moderate positions in their programmatic periphery may still fluctuate in response to electoral success or defeat.</p><p>We argue that parties strategically adjust the extremity of their peripheral positions to consolidate their voter base. When a party experiences electoral loss, it faces pressure to rally its core supporters. Thus, they will adopt overall more radical positions, reinforcing their position in the policy space. This is particularly relevant in times of electoral downturn, when parties seek to strengthen their identity rather than broaden their appeal <ref type="bibr" target="#b5">(Adams, Clark et al 2004)</ref>. Conversely, when a party wins votes, it has incentives to moderate its periphery, appealing to a wider electorate. At the same time, their core policy positions will remain distant from the centre given their importance to a party's base and activists. This means that moderation primarily occurs in the periphery.</p><p>Hypothesis 5 Electoral loss leads to more extreme positions in the periphery, whereas electoral gain leads to moderation. Changes in electoral performance do not affect parties' cores.</p><p>Beyond extremity, electoral performance may also influence the degree to which parties change their positions altogether. While the causal chain between changes in the political environment, in voter preferences, and party positions is still under investigation <ref type="bibr" target="#b66">(Seeberg and Adams 2024)</ref>, research like <ref type="bibr" target="#b5">Adams, Clark et al (2004)</ref> has shown that parties move as a reaction to public opinion, of which elections are a very clear expression. <ref type="bibr" target="#b14">Budge, Ezrow et al (2010)</ref> show in their simulation that while parties respond to electoral defeat with adjustments in their programmatic focus, these changes remain constrained by their ideological identity. Following this logic, we assume that parties change their core to a much lesser degree (if at all) than their periphery. Further, we argue that while electorally successful parties face altogether little pressure to adapt and alter their course, electorally struggling parties should feel compelled to introduce broader programmatic shifts in their periphery, as they search for ways to regain competitiveness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hypothesis 6</head><p>Electoral gain leads to stability in core and peripheral issues, while electoral loss leads to changes in peripheral issues, leaving the core unaffected.</p><p>A major consideration in these theoretical mechanisms is timing. The standard account of representation assumes that first parties present their programs, and second voters choose the party best fitting their preferences. Parties change their program based on their electoral outcomes and with the purpose of attracting new voters (e.g., <ref type="bibr" target="#b9">Adams and Somer-Topcu 2009;</ref><ref type="bibr" target="#b18">Dalton and McAllister 2015;</ref><ref type="bibr" target="#b24">Downs 1957</ref>). However, other accounts argue that parties posses information about their likely electoral fortunes before the election and, therefore, already adapt their program at this time <ref type="bibr" target="#b7">(Adams and Ezrow 2009;</ref><ref type="bibr" target="#b34">Habersack 2024;</ref><ref type="bibr" target="#b56">Panebianco 1988;</ref><ref type="bibr" target="#b64">Schumacher and Öhberg 2020)</ref>. Similarly, experience gives parties a relatively good grasp of whether they might be in the position of negotiating government participation and need to take potential coalition partners' positions into account. This distinction has an impact on when we assume the hypothesised effects of H5 and H6 take place. Thus, we will run our tests of H5 and H6 with and without a temporal lag.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Empirical strategy</head><p>Methodological discussions related to party change often focus on the best ways to measure party positions and the nature and dimensionality of the policy space <ref type="bibr" target="#b27">(Ezrow et al 2011;</ref><ref type="bibr" target="#b28">Flentje et al 2017;</ref><ref type="bibr">König et al 2017b;</ref><ref type="bibr" target="#b47">Lowe et al 2011)</ref>. We follow the tradition of basing our analysis on party manifestos. While other approaches exist, including experts placing parties on scales <ref type="bibr" target="#b39">(Jolly et al 2022)</ref>, party perceptions by citizens <ref type="bibr" target="#b55">(Nyhuis and Stoetzer 2021)</ref> and election-specific party self-positioning collected for Voting Advice Applications (e.g., Garzia and Marshall 2014), party programs remain the only source of their positions that originate from the parties themselves and that are stable and easily comparable cross-sectionally and longitudinally <ref type="bibr" target="#b15">(Budge, Klingemann et al 2001)</ref>. Although different measurement approaches capture varying aspects of party positions (Adams, Bernardi et al 2019) and we do not claim that manifesto-based positions represent the 'true' party stances, they offer crucial insights into how parties seek to present themselves to the public and are thus central to our study.</p><p>Regarding our text analysis, we employ both manual and automated methods. The previous dominant approach by the Manifesto Project <ref type="bibr" target="#b15">(Budge, Klingemann et al 2001)</ref> measures party positions on the basis of policy statements being attributed one of 56 policy categories by human coders. Another strand of methods has used computerised attribution of, in particular, left-right positions to text and different scaling approaches (e.g., <ref type="bibr" target="#b25">Elff 2013;</ref><ref type="bibr" target="#b47">Lowe et al 2011)</ref>. Our approach retains the Manifesto Coding Scheme but uses an LLM-based approach to assign policy categories probabilistically. Rather than attributing each statement to a single category, we consider the ten most likely policy categories predicted by the language model <ref type="bibr" target="#b16">(Burst et al 2023)</ref>, acknowledging that a single policy statement can convey multiple policy messages at once. The model provides a probability distribution over potential categories (i.e., the Manifesto Project's 56 policy issues), which we use as weighted inputs instead of relying solely on the highest-probability classification. This approach preserves more information from the text and allows for a more fine-grained measurement parties' issue focus. We then aggregate these weighted classifications to measure parties' positions in the policy space. Additionally, we use the Manifesto Project's human-coded policy categories (see below) to identify a party's core and peripheral manifesto sections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data and case selection</head><p>For this analysis we include parties from all western European countries that are included with at least three elections since 1945 in the Manifesto Corpus <ref type="bibr" target="#b46">(Lehmann et al 2024)</ref> to have a sufficient time line for measuring party position change. This means that our data set includes parties from 17 countries in a span from 1946 to 2022. These countries are Austria, Belgium, Cyprus, Denmark, Finland, Germany, Greece, Iceland, Ireland, Luxembourg, the Netherlands, Norway, Portugal, Spain, Sweden, Switzerland, and the United Kingdom.</p><p>We exclude all parties that only appeared in one or two parliamentary election, as they do not allow us sufficient prediction of change, and parties with less than 2 percent vote share for their relatively low relevance. Reducing the number of parties in the data set increases the modelling speed and our ability to assess face validity. This means that we can analyse the changing positions of 137 parties, which are listed in Table <ref type="table">A</ref>.1 of the Appendix.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Methods and measurement</head><p>To execute our analysis, we use the Manifesto Project Corpus <ref type="bibr" target="#b46">(Lehmann et al 2024)</ref> as the textual basis.</p><p>The Manifesto Corpus includes the text of parties' electoral programs, unitised into quasi-sentences that have a maximal length of one grammatical sentence <ref type="bibr" target="#b79">(Werner et al 2021)</ref>. In the Manifesto Dataset, each quasi-sentence is further categorised into one of 56 main policy areas by a human coder. As we use automated sentence-based classification of the same quasi-sentences, the human coding serves as a yardstick to evaluate the accuracy of these policy classifications. Our analysis operates in the following sequence of steps.</p><p>First, based on the Manifesto Project's policy codes, we attribute each quasi-sentence as belonging to the core or periphery of the respective party's ideology. We determine the policies at the core of a party's ideology by their party family (see Table <ref type="table" target="#tab_0">1</ref>), considering Christian Democrats (CHR), Conservatives (CON), Green parties (ECO), Ethnic and Regional parties (ETH), Radical Left parties (LEF), Liberals (LIB), Radical Right parties (NAT) and Social Democrats (SOC). We draw on the operationalisation of party families' cores developed by <ref type="bibr">Habersack and Werner (2023, p. 871)</ref> and extend this scheme to the radical right party family as policies pertaining to nationalism, authoritari-anism and conservatism <ref type="bibr" target="#b53">(Mudde 2007)</ref>. All quasi-sentences that do not fall within a party family's core are defined as that party family's ideological periphery. 3 Based on this categorisation, every manifesto in our corpus is split into two sections: the core document and the periphery document. <ref type="bibr">Figures B.4 and B.5</ref> in the Appendix show descriptive statistics for the empirical distribution of these two documents. Additionally, we derive a binary 'niche party' indicator from this classification, coding green, ethnic and regional, radical left, liberal, and radical right parties as niche (1), and Christian Democrats, Conservatives, and Social Democrats -consequently -as mainstream (0). This distinction follows the literature identifying niche parties as those with narrow programmatic appeals <ref type="bibr" target="#b50">(Meguid 2008)</ref>. Second, we then use the manifestoberta model to retrieve the predicted probability of each quasisentence to be classified as each of the 56 Manifesto Project coding categories <ref type="bibr" target="#b16">(Burst et al 2023)</ref>.</p><p>manifestoberta is a fine-tuned multilingual XLM-RoBERTa model that is trained on the existing Manifesto Project annotations and takes a quasi-sentence's context into account when predicting the probability of a coding category to be applied. <ref type="bibr" target="#b16">Burst et al (2023)</ref> have trained and tested this model and shown that in 81% of the cases, the human-coded category is among the top three most confident predictions. They also show that the model does not perform so well for very rare categories (e.g., federalism and niche economic positions) and for non-European countries. We take these limitations into account through our measurement strategy and case selection. 4</p><p>3 Figure B.6 in the Appendix visualises each party families' top-10 most salient peripheral policy categories and confirms that our operationalisation does not overlook any meaningful policy categories (i.e., 'false negatives'). The remaining categories are overwhelmingly attributable to either technical policies and valence issues like administrative efficiency or policies that directly contradict a party families' core policy standpoints such as pro-law and order statements by green parties.</p><p>4 While no supervised model can perfectly reproduce human-coded labels, our approach does not rely on strict category assignments but instead makes use of probability distributions to capture the uncertainty inherent in manifestoberta's text Applying this model to our corpus results in a data frame that includes the predicted probabilities for all 56 coding categories for each quasi-sentence. For each quasi-sentence, we retain the ten highest predicted categories, and thus the ten most likely categories, along with their probability score.</p><p>Our validity check <ref type="bibr">(Table A.2,</ref><ref type="bibr">Appendix)</ref> shows that the hand-coded Manifesto coding category that was assigned by the Manifesto Project coder appears among these ten highest probability categories with a likelihood between 94% and 98%. We interpret this result as a strong indication of the validity of the model's classifications.</p><p>Compared to traditional approaches like resource-intensive human annotation, manifestoberta thus offers a distinct advantage: instead of assigning a single classification per quasi-sentence, it frequently identifies two, three, or even four policy areas with roughly equal probability. This better reflects the reality that parties often address multiple policy issues simultaneously through particular statements -either due to internal dissent, which necessitates ambiguity in positioning <ref type="bibr" target="#b40">(Koedam 2021;</ref><ref type="bibr" target="#b62">Rovny 2012)</ref>, or as part of a strategic framing effort, such as the Far Right's rhetorical linkage of immigration and security policy <ref type="bibr" target="#b36">(Helbling 2014;</ref><ref type="bibr" target="#b80">Zaslove 2004</ref>).</p><p>For instance, consider the following sentence from Fianna Fáil's 2020 manifesto: "The existential challenge of climate change heightens the pressing need to develop our public transport infrastructure, which is vital to curbing emissions and placing our future development on a sustainable path." While manifestoberta correctly classifies this quasi-sentence as '416 -Anti-Growth Economy: Positive' (41%), it also suggests '501 -Environmental Protection' (38%) and '411 -Technology and Infrastructure:</p><p>Positive' (21%). This multi-label classification provides a more comprehensive assessment of the policy areas addressed than any single label. 5   As a third step, we aggregate the predicted categories for all quasi-sentences contained in each core and periphery document, creating an economic and a cultural left-right score for each. We proceed in two steps. First, for each coding category we calculate their overall predicted share in each 'manifesto section' (i.e., the core or periphery of a given document). We do this by summing up the predicted probabilities for each category in all quasi-sentences that are predicted to contain this category. Any quasi-sentences that are not predicted to include the specific category are logically included as zero. Second, we divide this score by the number of quasi-sentences in this specific document section. 6 This procedure yields information on parties' core and peripheral documents on a total of 56 policy codes in the same format as the Manifesto Project's main dataset (i.e., for each document section, the labels add up to 100%).</p><p>Then we use these predicted shares to calculate party positions along the two left-right dimensions by subtracting left category shares from right category shares, normalising by their sum. This means positive values denote right-wing positions while negative values denote left-wing positions. To identify the economic and cultural left and right Manifesto Project categories, we compared our own classification. This ensures that our analysis retains more information from the text while mitigating potential biases from overconfident model predictions.</p><p>5 For a comparison of the top 10 most confident classifications and their probability distributions, see Appendix Figure A.1. 6 Essentially, the resulting policy category shares are thus composite scores, taking the label probabilities into account. This means that the composite score includes labels where manifestoberta is unsure, albeit the relative weight of these sentences is negligible. judgment with the approaches by <ref type="bibr" target="#b44">Krause (2020)</ref> and the Manifesto Project in 2022 7 , and removed any ambiguous allocation. Table <ref type="table" target="#tab_1">2</ref> shows our attributions. The details of the two alternatives can be found in the Online Appendix, Table <ref type="table">B</ref>  To operationalise ideological extremity, we measure the deviation of each party's economic and cultural position from the ideological centre on both dimensions. Specifically, we construct the Euclidean distance between a party's position (x, y) and the neutral midpoint (0, 0). This measure accounts for both dimensions simultaneously and provides an indicator of how far a party's stance diverges from the ideological centre:</p><formula xml:id="formula_0">Extremity = x 2 + y 2 (1)</formula><p>This approach captures the overall ideological distance while maintaining sensitivity to shifts along either dimension. Parties positioned farther from the centre are considered more ideologically 7 see bottom of https://manifesto-project.wzb.eu/information/documents/visualizations 8 This means we are assuming stable attribution of policy categories to left and right economic and cultural issues across context and over time. Some approaches have been proposed to make these attributions context-and time-dependent, producing results with high face validity <ref type="bibr" target="#b25">(Elff 2013;</ref><ref type="bibr" target="#b29">Franzmann 2015;</ref><ref type="bibr" target="#b30">Franzmann and Kaiser 2006;</ref><ref type="bibr" target="#b38">Jahn 2011;</ref><ref type="bibr">König et al 2017a)</ref>. However, most of these solutions have so far only been realised for the uni-dimensional left-right scale. Furthermore, although regression-based or Bayesian approaches provide a more dynamic assessment of parties' ideological cores, they often risk conflating the issues that left and right parties choose to emphasise with the fundamental definitions of these concepts and their ideational history <ref type="bibr" target="#b31">(Freeden 2013)</ref>. extreme, irrespective of direction. Importantly, this indicator of extremity reflects the extent of a party's policy divergence in a two-dimensional policy space, not 'extremism' in the sense of its commitment to democratic norms or its level of authoritarianism (for a similar approach, see <ref type="bibr" target="#b23">: Dow 2011;</ref><ref type="bibr" target="#b26">Ezrow 2008)</ref>. As in related work, we adopt a spatial modelling perspective, using Euclidean distance to locate parties and their programs within a multidimensional ideological space (e.g., Rosset and Kurella 2021). Accordingly, ideological extremity is understood as the degree to which a party's positions deviate from the theoretical centre, regardless of the content of those positions.</p><p>To measure positional change over time, we assess the movement of each party's core and periphery in the two-dimensional ideological space -comprising the economic (x) and the cultural (y) dimension -between successive elections. For each party, we compute the absolute change in position as the Euclidean distance between its locations in consecutive elections.<ref type="foot" target="#foot_2">9</ref> This is given by: Change = (x t -x t-1 ) 2 + (y t -y t-1 ) 2</p><p>(2)</p><p>Given While our approach focuses on positional shifts, it is important to note that changes in salience may influence the underlying left-right scores. For instance, a reduction in the emphasis placed on economic issues could affect a party's overall position, even if its stance on those issues remains constant. While some argue that salience changes are conceptually identical to positional shifts (e.g., <ref type="bibr" target="#b13">Budge 1994)</ref>, other literature shows that position and salience can be changed independently (e.g., <ref type="bibr" target="#b52">Meyer 2013;</ref><ref type="bibr" target="#b54">Neundorf and Adams 2018;</ref><ref type="bibr" target="#b68">Spoon et al 2014)</ref>. To account for the potential influence of salience on positional measures, we include controls for the salience of economic and cultural dimensions in each manifesto. Specifically, we calculate the proportion of quasi-sentences dedicated to economic and cultural policy areas, as derived from the predicted shares of the manifestoberta model.</p><p>These proportions serve as indicators of how much emphasis a party places on each dimension, allowing us to investigate whether observed changes in positions might stem from shifts in the salience of specific policy areas rather than genuine ideological movement.<ref type="foot" target="#foot_3">10</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results</head><p>To test our hypotheses, we first compare the extremity of parties' core and peripheral positions before assessing the hypothesised effects on extremity using linear regression models with clustered standard errors at the election level. In the second step, we analyse the position change variables using the same modelling approach. All models include fixed effects for country and election date to account for the election-based nature of the data. To examine the impact of electoral performance on both extremity and position change, we construct two variables, capturing a party's vote share change from t -1 to t 0 and from t -2 to t -1 , respectively. Additionally, we control for government participation and whether the party held the Prime Minister (or equivalent) position at time t 0 , as we expect these roles to limit parties' focus on their core issues, temper policy extremity, and constrain parties' ability to shift their positions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Analysing ideological extremity</head><p>To show the empirical results of our first dependent variable, Figure <ref type="figure" target="#fig_2">1</ref> graphs the density distribution of ideological extremity (i.e., parties' combined distance from the centre on the cultural and economic dimension). 11 The figure clearly illustrates that parties tend to take more extreme and thus distinguishable positions in their cores compared to their peripheries. This is confirmed by parties' economic cores being 14 percentage points more distant and parties' cultural cores being on average 22 percentage points further removed from the centre than their respective peripheries. Furthermore, we find that parties' peripheries are somewhat more variable, as evidenced by a Coefficient of Variation of 47% to 38% on the economic dimension and 68% to 56% on the cultural. These descriptive patterns conform to our hypotheses 1 and 2 and our general argument that parties treat their ideological cores and peripheries differently. 12   To test our hypotheses about the extremity of parties' cores and peripheries, we run a series of regression models that are summarised in Table <ref type="table" target="#tab_2">3</ref>. The result for the core versus periphery variable further supports our hypothesis 1. The coefficients for 'Core' are positive and statistically significant (p &lt; 0.001) across all models, confirming that ideological extremity is systematically higher in the core sections of parties' manifestos. This result holds even after controlling for party type, electoral performance, and other contextual factors. It indicates that parties are committed to maintaining distinct ideological stances in their cores, which serve as the foundation of their political identity.</p><p>Hypothesis 3 suggests that niche parties are more likely to adopt more extreme positions in their core compared to mainstream parties. The interaction term in model 2 shows a negative and statistically significant (p &lt; 0.001) effect. However, Figure <ref type="figure" target="#fig_3">2</ref> shows that this interaction effect is not based on mainstream and niche parties differing in their cores, but niche parties showing 11 Figures B.7, B.8 and B.9 in the Appendix display the scaling of party positions using our categorisation of economic and cultural left-right dimensions (see Table <ref type="table" target="#tab_1">2</ref>). Here, we present these positions as centred within each party system.</p><p>12 Figure B.3 in the Appendix additionally graphs the extremity of the individual party families' cores and peripheries. It shows that the pattern holds for most party families, supporting Hypothesis 1. The main exception is the ethnic and regionalist party family, which can be explained via their very limited ideological core that includes only a handful of policies somewhat unrelated to the policy issues on either the economic or cultural dimensions. Furthermore, we do not see the hypothesised patterns in the dimensions of low salience for some party families, particularly the economic dimension for Christina Democrats and Nationalists and the cultural dimension for Social Democrats and Left parties.  Note: data from MARPOR; cluster-robust standard errors at the country × election level; * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001 more extreme peripheries than mainstream parties. While not hypothesized, this likely reflects their reliance on a narrower and more coherent set of policy issues (e.g., the environment and related peripheral policies in foreign policy for Green parties or immigration and related peripheral policies in education for Radical Right parties) to mobilise specific voter segments. In contrast, mainstream parties maintain somewhat more moderate peripheral positions. Regarding hypothesis 5, which posits that while electoral fortunes do not affect change in a party's core, electoral loss leads to more extreme positions in the periphery and electoral gain fosters more moderate peripheries, Table <ref type="table" target="#tab_2">3</ref> shows no effect. This holds independent of whether we consider combined ideological extremity or break it down to only the cultural or economic dimension, as evidenced by the results presented in Table <ref type="table">C</ref>.4 in the Appendix.</p><p>Figure <ref type="figure" target="#fig_4">3</ref> illustrates how parties adjust their ideological extremity in response to electoral performance, distinguishing between core and peripheral manifesto sections. The figure confirms that parties show little reaction to electoral fortunes. We find no reaction in their periphery and only a small and statistically non-significant increase in the extremity of parties' cores with electoral success.</p><p>The main effect we see is that electoral loss leads to a greater spread and thus variety in the extremity of parties' cores and peripheries. This might point to a lack of coherence in strategic reactions to electoral losses, with some parties opting to adopt more extreme cores and peripheries while others moderate.</p><p>Dr. Annika Werner et al.</p><p>Thus, while leadership changes and contextual stimuli may at times prompt parties to adopt more or less extreme positions, electoral gains and losses do not generally and automatically lead parties to reconsider their ideological stances. This cautious approach to position-taking aligns well with prior research on party behaviour, which emphasises the importance of a consistent policy profile and of maintaining ideological credibility <ref type="bibr">(Downs 1957, p. 122)</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Analysing position change</head><p>Building on these insights into the strategic role of parties' cores for distinguishing themselves from competition through more extreme stances, we now shift our focus to how parties adjust their core and peripheral positions over time. Our theoretical argument posits that the magnitude of these shifts is, similarly, influenced by the distinction between core and peripheral issues, as well as by factors related to party type and electoral performance.</p><p>Figure <ref type="figure" target="#fig_5">4</ref> plots the density functions of positional changes distinguishing parties' core and periphery. It shows that, in general, parties only change their positions in small increments and, specifically, that parties change their cores less than their peripheries. This result lends descriptive support to our hypothesis 2, which suggests that parties are more likely to change their positions on peripheral issues than on core issues. The regression models presented in Table <ref type="table" target="#tab_3">4</ref> also provide strong empirical support for hypothesis 2. The coefficients for 'Core' are negative and statistically significant (p &lt; 0.01) across all but one model, indicating that position changes are systematically lower in parties' cores compared to their peripheries. This aligns with the expectation that parties exhibit greater flexibility in adjusting their peripheral issue positions while remaining steadfast when it comes to their core policies. These are central for their voter mobilisation and their party identity.</p><p>Hypothesis 4 predicted that niche parties would be more resistant to change in their core positions compared to mainstream parties. Model 6 supports this notion on first glance, indicating that niche parties are more reluctant to update their positions in matters that are of fundamental importance to them and their constituents. This effect is statistically significant at p &lt; 0.001. However, figure <ref type="figure" target="#fig_6">5</ref> sheds further light on the mechanism underlying this interaction term. It illustrates that niche parties are altogether more careful, while mainstream parties exhibit greater flexibility in adapting their peripheral policy positions. In other words, holding other factors constant, the interaction of the two factors leads to significantly greater ideological shifts -about 8.3 percent more -compared to what we would predict if these two factors operated independently. This aligns with the notion that mainstream parties, which more often find themselves in office, need to cater to a wider audience, demanding more flexibility in peripheral areas, yet not in core policy areas.  A key question in our analysis is how electoral performance shapes shifts in core and periphery positions. Hypothesis 6 anticipated that electoral gain leads to stability in core and peripheral issues, while electoral loss leads to changes in peripheral issues, leaving the core unaffected. However, changes in parties' vote shares, whether considering immediate or lagged policy responses to changes in performance, do not show a direct and automatic influence on their willingness to shift positions.</p><p>The results in Table <ref type="table" target="#tab_3">4</ref> and graphing the interaction term in Figure <ref type="figure" target="#fig_7">6</ref> show that neither vote share change by itself or its interaction with core and periphery have any effect.<ref type="foot" target="#foot_4">13</ref> Thus, parties do not change their positions more or less depending on their electoral fortunes and do not distinguish between their ideological core and periphery in this decision. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Discussion</head><p>Previous research has examined how parties navigate between emphasising their core issues and "riding the wave," strategically focusing on issues that are temporarily salient in the electorate <ref type="bibr" target="#b17">(Carmines and Stimson 1993;</ref><ref type="bibr" target="#b50">Meguid 2008;</ref><ref type="bibr" target="#b75">Wagner and Meyer 2014)</ref>. While this literature has illuminated how parties respond to shifting political environments, it tends to distinguish party behaviour among specific ideological or topic dimensions. At the same time, it often treats party platforms as uniform. This neglects the critical distinction between parties' ideological core and peripheral policy issues, which we argue parties should adapt differently when strategically taking positions. In this article, we therefore focus on how political parties adapt to changing conditions both within the core of their manifestos and with respect to those issues that are typically farther removed from their party identity.</p><p>To answer this question, we utilise data from the Manifesto Project Corpus <ref type="bibr" target="#b46">(Lehmann et al 2024)</ref> and use the large language model manifestoberta for content classification <ref type="bibr" target="#b16">(Burst et al 2023)</ref>.</p><p>Crucially, we divide the manifestos into parties' ideological core and periphery instead of following the common practice to treat each party program as one coherent document. Thus, we depart from identifying parties' positions on the basis of one single document, analysing their salience and change patterns. We take the argument seriously that parties are constrained in their ideological position-taking by concerns about their identity, members, and core voters <ref type="bibr" target="#b14">(Budge, Ezrow et al 2010)</ref>. Assuming that parties are aware of these constraints, we posit that parties are more extreme and stable in their ideological cores. At the same time, parties need to be able to change positions to attract new voters. We argue that they do so in their ideological periphery, which is the policy space that is not directly connected to their identity. This periphery allows parties to manoeuvre without risking their identity and core support.</p><p>Our findings underscore the importance of this distinction. Parties consistently adopt more extreme positions within their ideological cores compared to their periphery, a pattern evident across various party families and political systems. In addition, ideological cores tend to demonstrate greater stability over time than parties' ideological peripheries. Ideological cores act as stabilising anchors, limiting the scope for significant shifts and reinforcing a coherent ideological narrative that parties rely on to maintain voter trust and internal cohesion. In contrast, ideological peripheries provide strategic flexibility, allowing parties to adapt to changing political contexts without fundamentally altering their core policy agenda. This asymmetry in how parties handle core versus peripheral issues highlights the important role of the core-periphery distinction as a framework for understanding party behaviour and parties' ideological positioning.</p><p>In terms of party type, our results reveal that niche parties generally maintain more extreme positions in their periphery while mainstream parties adopt more moderate peripheries. Thus, niche parties seem to adopt a strategy of greater coherence between core and periphery while mainstream parties use peripheries to attract distant voters. Furthermore, niche parties are overall less likely to fundamentally shift their policy stances, while mainstream parties demonstrate greater flexibility in adapting their ideological peripheries. This is consistent with the logic that niche parties rely on a loyal voter base with strong attachments to specific issues, making shifts in their cores particularly costly.</p><p>Regarding parties' responses to changing electoral fortunes, the findings are less clear-cut. While decreasing vote shares seem to induce moderation and better results induce more bold and extreme positions, parties do not uniformly respond to electoral gains or losses by adjusting their policy stances, suggesting that factors beyond immediate electoral feedback play a role. Internal party dynamics, leadership stability, and strategic considerations related to long-term party branding likely moderate the relationship between electoral outcomes and programmatic change. While some studies have found that parties frequently update their positions in response to shifts in the voter market <ref type="bibr" target="#b5">(Adams, Clark et al 2004;</ref><ref type="bibr" target="#b24">Downs 1957;</ref><ref type="bibr" target="#b34">Habersack 2024;</ref><ref type="bibr" target="#b67">Somer-Topcu 2009)</ref>, our findings align more closely with a large body of literature rooted in the Rokkanian tradition, which portrays parties as conservative organisations, reluctant to fundamentally shift their policy stances between elections.</p><p>In sum, this article shows that the distinction between parties' ideological cores and peripheries matters and is empirically observable. We show that parties do not only own specific issues and compete differently on specific ideological dimensions, they also vary their strategic decisions in different parts of their electoral documents. One conceptual issue we were not able to solve, however, is that the positional changes we measure might be based in salience changes of specific policies.</p><p>While we control for the salience of the economic and cultural dimensions, we cannot rule out effects of salience changes within these dimensions. However, this is a general issue among the salience-based approach to measuring party positions <ref type="bibr" target="#b15">(Budge, Klingemann et al 2001;</ref><ref type="bibr" target="#b47">Lowe et al 2011)</ref> and its resolution outside the scope of this article. The contribution here is the theoretical and empirical distinction between parties' ideological core and positional periphery.</p><p>This distinction has implications for the literature on party responsiveness and competition writ large. So far, these topics have mainly been analysed in terms of general left-right positions or specific policy areas. Both would benefit from taking the core versus periphery distinction into account.</p><p>General studies about changes in parties' left-right positions should distinguish where exactly these changes originate as changes in the core or periphery have very different meanings. Likewise, studies of individual policy issues and strategic behaviour like blurring should account for whether a policy field belongs to a party's core or periphery, as this shapes not just how parties engage with it, but also whether they prioritize it as a defining stance or relegate it to the margins of their program.</p><p>Furthermore, the distinction between ideological core and policy periphery may help account for some of the discrepancies observed across party position measures. While it remains unclear which types of information expert respondents rely on when evaluating party positions -such as in the CHES <ref type="bibr" target="#b39">(Jolly et al 2022)</ref> or similar surveys -it is plausible that they implicitly weigh changes in a party's ideological core more heavily than shifts in peripheral policy areas. If so, expert-coded positions may systematically align more closely with core programmatic commitments than with peripheral policy adjustments. Investigating this possibility could improve the interpretation of expert survey data and clarify how such measures relate to manifestos or voter perceptions. More broadly, incorporating the core-periphery distinction may enhance the construct validity of expert-based estimates of party positions.</p><p>Finally, research on political representation and citizen-party linkages may also benefit from incorporating the core-periphery distinction. Studies have shown that citizens rarely update their perceptions of party positions in response to actual programmatic change <ref type="bibr" target="#b59">(Plescia and Staniek 2017;</ref><ref type="bibr" target="#b76">Wagner and Meyer 2023)</ref>, and work on positional congruence often finds limited alignment between parties and their electorates <ref type="bibr" target="#b33">(Golder and Stramski 2010;</ref><ref type="bibr" target="#b78">Werner 2020)</ref>. Distinguishing between core and peripheral policy change could help identify mechanisms underlying these findings: citizens may be more likely to perceive and respond to shifts in a party's ideological core than to adjustments in its policy periphery. As a result, congruence may be systematically higher -and more normatively meaningful -on core dimensions. Incorporating this distinction could thus sharpen theories of political representation by clarifying when and how voters perceive party change, and what kind of programmatic alignment they expect or prioritize.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Figure B.2 in the Appendix displays the log-transformed density distributions of positional shifts along the cultural and economic dimensions, as well as combined positional change. The figure shows that positional change is skewed towards smaller values, consistent with the notion of parties favouring small adjustments from one election to the next over dramatic re-alignment.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Combined cultural and economic extremity by manifesto section</figDesc><graphic coords="15,90.99,223.17,319.72,273.99" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Predicted ideological extremity based on Euclidean distance by manifesto section and party type, 95% and 99% CI</figDesc><graphic coords="17,89.70,179.90,319.67,273.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Predicted ideological extremity based on Euclidean distance by manifesto section and vote share change, 95% CI</figDesc><graphic coords="18,81.19,185.06,319.67,273.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Logged combined cultural and economic position change by manifesto section</figDesc><graphic coords="19,90.99,84.62,319.72,273.99" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Predicted ideological change between elections by manifesto section and party type, 95% and 99% CI</figDesc><graphic coords="21,89.70,94.10,319.67,273.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Predicted ideological change between elections by manifesto section and vote share change, 95% CI</figDesc><graphic coords="22,81.19,94.10,319.67,273.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Operationalisation of party families' ideological cores</figDesc><table><row><cell>Party Family</cell><cell>Manifesto Project categories</cell></row><row><cell>CHR</cell><cell>203-Constitutionalism (+); 504-Welfare State Expansion; 601-National Way of Life (+); 603-Traditional</cell></row><row><cell></cell><cell>Morality (+); 703-Agriculture and Farmers (+)</cell></row><row><cell>CON</cell><cell>401-Free-Market Economy; 410-Economic Growth (+); 414-Economic Orthodoxy; 601-National Way</cell></row><row><cell></cell><cell>of Life (+); 605-Law and Order (+)</cell></row><row><cell>LIB</cell><cell>303-Governmental and Administrative Efficiency; 401-Free-Market Economy; 407-Protectionism (-);</cell></row><row><cell></cell><cell>410-Economic Growth (+); 414-Economic Orthodoxy</cell></row><row><cell>NAT</cell><cell>109-Internationalism (-); 110-European Community/Union (-); 406-Protectionism (+); 601-National</cell></row><row><cell></cell><cell>Way of Life (+); 605-Law and Order (+); 608-Multiculturalism (-)</cell></row><row><cell>SOC</cell><cell>402-(Economic) Incentives (+); 403-Market Regulation; 503-(Socio-economic) Equality (+); 504-Welfare</cell></row><row><cell></cell><cell>State Expansion; 701-Labor Groups (+)</cell></row></table><note><p>ECO 106-Peace; 201-Freedom and Human Rights; 202-Democracy; 416-Anti-Growth Economy (+); 501-Environmental Protection ETH 109-Internationalism (-); 301-Decentralisation; 303-Governmental and Administrative Efficiency; 502-Culture (+); 602-National Way of Life (-); 705-Underprivileged Minority Groups LEF 103-Anti-Imperialism; 404-Economic Planning; 412-Controlled Economy; 413-Nationalisation; 415-Marxist Analysis; 503-(Socio-economic) Equality (+); 701-Labor Groups (+) Note: ± indicates directional policy codes and refers to a party's negative (-) and positive (+) positions on the respective policy issue.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>.3, and the respective replications of the analyses in Tables C.6 and C.7. 8 Manifesto Project left and right categories on two dimensions</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Regression results for combined ideological extremity</figDesc><table><row><cell></cell><cell>Baseline</cell><cell>Party Type</cell><cell cols="2">Electoral Performance</cell></row><row><cell></cell><cell>(1)</cell><cell>(2)</cell><cell>(3)</cell><cell>(4)</cell></row><row><cell>Core</cell><cell>13.9  *  *  *</cell><cell>22.6  *  *  *</cell><cell>14.9  *  *  *</cell><cell>15.0  *  *  *</cell></row><row><cell></cell><cell>(1.6)</cell><cell>(2.4)</cell><cell>(1.7)</cell><cell>(1.7)</cell></row><row><cell>Vote Share</cell><cell>-0.43  *  *  *</cell><cell>-0.43  *  *  *</cell><cell></cell><cell></cell></row><row><cell></cell><cell>(0.07)</cell><cell>(0.07)</cell><cell></cell><cell></cell></row><row><cell>Niche Party</cell><cell>3.6  *  *</cell><cell>9.0  *  *  *</cell><cell>6.2  *  *  *</cell><cell>6.2  *  *  *</cell></row><row><cell></cell><cell>(1.2)</cell><cell>(1.5)</cell><cell>(1.3)</cell><cell>(1.3)</cell></row><row><cell>Incumbency: Coalition</cell><cell>-0.87</cell><cell>-0.88</cell><cell>-2.9</cell><cell>-3.7  *</cell></row><row><cell></cell><cell>(1.5)</cell><cell>(1.5)</cell><cell>(1.6)</cell><cell>(1.8)</cell></row><row><cell>Incumbency: Head of Gov't</cell><cell>0.07</cell><cell>0.06</cell><cell>-7.2  *  *  *</cell><cell>-7.0  *  *  *</cell></row><row><cell></cell><cell>(2.0)</cell><cell>(2.0)</cell><cell>(1.8)</cell><cell>(1.9)</cell></row><row><cell>Salience (economy)</cell><cell>0.31  *  *  *</cell><cell>0.20  *  *</cell><cell>0.28  *  *  *</cell><cell>0.27  *  *  *</cell></row><row><cell></cell><cell>(0.06)</cell><cell>(0.06)</cell><cell>(0.06)</cell><cell>(0.07)</cell></row><row><cell>Salience (culture)</cell><cell>0.68  *  *  *</cell><cell>0.62  *  *  *</cell><cell>0.66  *  *  *</cell><cell>0.67  *  *  *</cell></row><row><cell></cell><cell>(0.06)</cell><cell>(0.06)</cell><cell>(0.06)</cell><cell>(0.06)</cell></row><row><cell>Core × Niche Party</cell><cell></cell><cell>-12.1  *  *  *</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>(2.1)</cell><cell></cell><cell></cell></row><row><cell>Vote Share ∆ t-1</cell><cell></cell><cell></cell><cell>-0.001</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>(0.14)</cell><cell></cell></row><row><cell>Core × Vote Share ∆ t-1</cell><cell></cell><cell></cell><cell>0.11</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>(0.19)</cell><cell></cell></row><row><cell>Vote Share ∆ t-2</cell><cell></cell><cell></cell><cell></cell><cell>0.04</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>(0.16)</cell></row><row><cell>Core × Vote Share ∆ t-2</cell><cell></cell><cell></cell><cell></cell><cell>0.02</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>(0.22)</cell></row><row><cell>Country</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell></row><row><cell>Election Date</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell></row><row><cell>Observations</cell><cell>1,109</cell><cell>1,109</cell><cell>1,023</cell><cell>925</cell></row><row><cell>R 2</cell><cell>0.46</cell><cell>0.47</cell><cell>0.44</cell><cell>0.45</cell></row><row><cell>Adjusted R 2</cell><cell>0.39</cell><cell>0.41</cell><cell>0.36</cell><cell>0.37</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Regression results for combined position change</figDesc><table><row><cell></cell><cell>Baseline</cell><cell>Party Type</cell><cell cols="2">Electoral Performance</cell></row><row><cell></cell><cell>(5)</cell><cell>(6)</cell><cell>(7)</cell><cell>(8)</cell></row><row><cell>Core</cell><cell>-0.004</cell><cell>-0.05  *  *  *</cell><cell>-0.04  *  *</cell><cell>-0.05  *  *  *</cell></row><row><cell></cell><cell>(0.01)</cell><cell>(0.01)</cell><cell>(0.01)</cell><cell>(0.01)</cell></row><row><cell>Vote Share</cell><cell>-0.001</cell><cell>-0.001</cell><cell></cell><cell></cell></row><row><cell></cell><cell>(0.009)</cell><cell>(0.009)</cell><cell></cell><cell></cell></row><row><cell>Niche Party</cell><cell>-0.02</cell><cell>-0.06  *  *</cell><cell>-0.05  *  *</cell><cell>-0.06  *  *  *</cell></row><row><cell></cell><cell>(0.02)</cell><cell>(0.02)</cell><cell>(0.01)</cell><cell>(0.02)</cell></row><row><cell>Incumbency: Coalition</cell><cell>-0.01</cell><cell>-0.01</cell><cell>-0.01</cell><cell>-0.01</cell></row><row><cell></cell><cell>(0.02)</cell><cell>(0.02)</cell><cell>(0.02)</cell><cell>(0.02)</cell></row><row><cell>Incumbency: Head of Gov't</cell><cell>-0.02</cell><cell>-0.02</cell><cell>-0.02</cell><cell>-0.02</cell></row><row><cell></cell><cell>(0.02)</cell><cell>(0.02)</cell><cell>(0.02)</cell><cell>(0.02)</cell></row><row><cell>Salience ∆ (economy)</cell><cell>0.0004</cell><cell>0.0004</cell><cell>0.0004</cell><cell>0.0001</cell></row><row><cell></cell><cell>(0.001)</cell><cell>(0.001)</cell><cell>(0.001)</cell><cell>(0.001)</cell></row><row><cell>Salience ∆ (culture)</cell><cell>-0.001</cell><cell>-0.001</cell><cell>-0.001</cell><cell>-0.001</cell></row><row><cell></cell><cell>(0.001)</cell><cell>(0.001)</cell><cell>(0.001)</cell><cell>(0.001)</cell></row><row><cell>Core × Niche Party</cell><cell></cell><cell>0.08  *  *  *</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>(0.02)</cell><cell></cell><cell></cell></row><row><cell>Vote Share ∆ t-1</cell><cell></cell><cell></cell><cell>-0.05</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>(0.03)</cell><cell></cell></row><row><cell>Core × Vote Share ∆ t-1</cell><cell></cell><cell></cell><cell>0.04</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>(0.03)</cell><cell></cell></row><row><cell>Vote Share ∆ t-2</cell><cell></cell><cell></cell><cell></cell><cell>-0.03</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>(0.02)</cell></row><row><cell>Core × Vote Share ∆ t-2</cell><cell></cell><cell></cell><cell></cell><cell>-0.03</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>(0.03)</cell></row><row><cell>Country</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell></row><row><cell>Election Date</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell></row><row><cell>Observations</cell><cell>835</cell><cell>835</cell><cell>833</cell><cell>759</cell></row><row><cell>R 2</cell><cell>0.21</cell><cell>0.22</cell><cell>0.23</cell><cell>0.22</cell></row><row><cell>Adjusted R 2</cell><cell>0.10</cell><cell>0.11</cell><cell>0.11</cell><cell>0.09</cell></row></table><note><p><p>Note: data from MARPOR; cluster-robust standard errors at the country × election level;</p>* p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001</p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>This idea is also related to the distinction between "valence" and "positional" issues<ref type="bibr" target="#b69">(Stokes 1963</ref>). However, this distinction is located at the system level, not the party-level as our study.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>When referring to electoral win or loss, we mean increasing or decreasing vote share instead of winning or losing government. In proportional systems, typically no one party can hope to win the government by itself, but vote share influences the chance to gain coalition membership. Thus, we refer to the more general meaning of election success and defeat.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="9" xml:id="foot_2"><p>In addition to the immediate election-to-election change from t -1 to t, we also compute a lagged version to capture earlier shifts from t -2 to t -1.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="10" xml:id="foot_3"><p>By the same token, we include two indicators of overall economic and cultural salience in our extremity models.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="13" xml:id="foot_4"><p>This is confirmed by the further lagged effect, see Figure C.11 in the Appendix.</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>References</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Niche party success and mainstream party policy shifts-how green and radical right parties differ in their impact</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Abou-Chadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="417" to="436" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Electoral competition, political risks, and parties&apos; responsiveness to voters&apos; issue priorities</title>
+		<author>
+			<persName><surname>Abou-Chadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral Studies</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="99" to="108" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Moderate as necessary: the role of electoral competitiveness and party size in explaining parties&apos; policy shifts</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Abou-Chadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Orlowski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="868" to="881" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A problem with empirical studies of party policy shifts: Alternative measures of party shifts are uncorrelated</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bernardi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Phillips</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1234" to="1244" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Understanding change and stability in party ideologies: Do parties respond to public opinion or to past election results?</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Glasgow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British journal of political science</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="589" to="610" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Are niche parties fundamentally different from mainstream parties? The causes and the electoral consequences of Western European parties&apos; policy shifts, 1976-1998</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Glasgow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="513" to="529" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Who do European parties represent? How Western European parties represent the policy preferences of opinion leaders</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="206" to="223" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">What moves parties? The role of public opinion and global economic conditions in Western Europe</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Haupt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stoll</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="611" to="639" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Moderate now, win votes later: The electoral consequences of parties&apos; policy shifts in 25 postwar democracies</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Somer-Topcu Z</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="678" to="692" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bardi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bartolini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Trechsel</surname></persName>
+		</author>
+		<title level="m">The Role of Parties in Twenty-First Century Politics</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>Routledge London</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Bridging spatial and saliency theory: party size and issue selection in campaigns</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Basu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="444" to="458" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Political parties in Western democracies</title>
+		<author>
+			<persName><forename type="first">Beyme</forename><surname>Kv</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1985">1985</date>
+			<publisher>Gower Publishing</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A new spatial theory of party competition: Uncertainty, ideology and policy equilibria viewed comparatively and temporally</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Budge</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British journal of political science</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="443" to="467" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Ideology, party factionalism and policy change: An integrated dynamic theory</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Budge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mcdonald</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="781" to="804" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Mapping policy preferences: estimates for parties, electors, and governments</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Budge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">D</forename><surname>Klingemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Volkens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tanenbaum</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Oxford University Press</publisher>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1945" to="1998" />
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">T</forename><surname>Burst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lehmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Franzmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Al-Gaddooa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ivanusch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Regel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Riethmüller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Weßels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zehnter</surname></persName>
+		</author>
+		<idno type="DOI">10.25522/manifesto.manifestoberta.56topics.sentence.2023.1.1</idno>
+		<ptr target="https://doi.org/10.25522/manifesto.manifestoberta.56topics.sentence.2023.1.1" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>Version 56topics.sentence.2023.1.1. Berlin / Göttingen</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">On the evolution of political issues</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Carmines</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Stimson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Agenda Formation</title>
+		<meeting><address><addrLine>Ann Arbor</addrLine></address></meeting>
+		<imprint>
+			<publisher>University of Michigan Press</publisher>
+			<date type="published" when="1993">1993</date>
+			<biblScope unit="page" from="151" to="152" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Random walk or planned excursion? Continuity and change in the left-right positions of political parties</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dalton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mcallister</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="759" to="787" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Electoral volatility and parties&apos; ideological responsiveness</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dassonneville</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="808" to="828" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Transformation of the political space: A citizens&apos; perspective</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dassonneville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hooghe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Marks</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="45" to="65" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Are party families in Europe ideologically coherent today?</title>
+		<author>
+			<persName><forename type="first">La</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Cerda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gunderson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1208" to="1226" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Political entrepreneurs: The rise of challenger parties in Europe</title>
+		<author>
+			<persName><forename type="first">De</forename><surname>Vries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hobolt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Princeton University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Party-system extremism in majoritarian and proportional electoral systems</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="341" to="361" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">An economic theory of democracy</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Downs</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1957">1957</date>
+			<biblScope unit="page">28</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A Dynamic State-Space Model of Coded Political Texts</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Elff</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/mps042</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="217" to="232" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Parties&apos; policy programmes and the dog that didn&apos;t bark: No evidence that proportional systems promote extreme party positioning</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="479" to="497" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Mean voter representation and partisan constituency representation: Do parties respond to the mean voter position or to their supporters?</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ezrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De</forename><surname>Vries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Steenbergen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="275" to="301" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Assessing the validity of the Manifesto Common Space Scores</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Flentje</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marbach</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.electstud.2017.03.004</idno>
+		<ptr target="https://doi.org/10.1016/j.electstud.2017.03.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Electoral Studies</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page" from="25" to="35" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Towards a real comparison of left-right indices: A comment on Jahn</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Franzmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="821" to="828" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Locating Political Parties in Policy Space: A Reanalysis of Party Manifesto Data</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Franzmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kaiser</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1354068806061336</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="163" to="188" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">The morphological analysis of ideology. The Oxford handbook of political ideologies</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Freeden</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="115" to="137" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Matching Voters with Parties and Candidates: Voting Advice Applications in Comparative Perspective</title>
+		<editor>Garzia D and Marshall S</editor>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>ECPR Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Ideological congruence and electoral institutions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Golder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Stramski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="90" to="106" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Carrots and sticks: How voter loyalty and electoral opportunities shape parties&apos; policy priorities in Europe</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Habersack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">How non-radical right parties strategically use nativist language: Evidence from an automated content analysis of Austrian, German, and Swiss election manifestos</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Habersack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Werner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="865" to="877" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Framing immigration in western Europe</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Helbling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Ethnic and Migration Studies</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="21" to="41" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Values, objective needs, and subjective satisfaction among western publics</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Inglehart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="429" to="458" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Conceptualizing Left and Right in comparative politics: Towards a deductive approach</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Jahn</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1354068810380091</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="745" to="765" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Chapel Hill expert survey trend file</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jolly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bakker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hooghe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Marks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Polk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rovny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Steenbergen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Vachudova</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral studies</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page">102420</biblScope>
+			<date type="published" when="1999">2022. 1999-2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Avoidance, ambiguity, alternation: Position blurring strategies in multidimensional party competition</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Koedam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Union Politics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="655" to="675" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">A change of heart? Analysing stability and change in European party positions</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Koedam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">West European Politics</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="693" to="715" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Estimating Party Positions across Countries and Time-A Dynamic Latent Variable Model for Manifesto Data</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Osnabrügge</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/mpt003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="468" to="491" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Left/right or U? Estimating the dimensionality of national party competition in Europe</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Osnabrügge</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1101" to="1105" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Appearing Moderate or Radical? Radical Left Party Success and the Two-Dimensional Political Space</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Krause</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01402382.2019.1672019</idno>
+	</analytic>
+	<monogr>
+		<title level="j">West European Politics</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1365" to="1387" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Globalization and the transformation of the national political space: Six European countries compared</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kriesi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Grande</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Lachat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dolezal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bornschier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Frey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="921" to="956" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lehmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Franzmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Al-Gaddooa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Burst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ivanusch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lewandowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Regel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Riethmüller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zehnter</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<publisher>Manifesto Corpus</publisher>
+			<biblScope unit="page" from="2024" to="2025" />
+			<pubPlace>Berlin</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Scaling Policy Preferences from Coded Political Texts</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Lowe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Benoit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mikhayliv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Laver</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1939-9162.2010.00006.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1939-9162.2010.00006.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Legislative Studies Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="123" to="155" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">The challenge to party government</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mair</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Politics. Routledge</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="211" to="234" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">The party family and its study</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mudde</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual review of political science</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="211" to="229" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Party Competition between Unequals: Strategies and Electoral Fortunes in Western Europe</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Meguid</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">A unified theory of voting: Directional and proximity spatial models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Merrill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Grofman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Meyer</surname></persName>
+		</author>
+		<title level="m">Constraints on party politics</title>
+		<imprint>
+			<publisher>ECPR Press</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mudde</surname></persName>
+		</author>
+		<title level="m">Populist Radical Right Parties in Europe</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">The micro-foundations of party competition and issue ownership: The reciprocal effects of citizens&apos; issue salience and party attachments</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Neundorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Adams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="385" to="406" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">The two faces of party ambiguity: A comprehensive model of ambiguous party position perceptions</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Nyhuis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Stoetzer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1421" to="1438" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Political parties: organization and power</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Panebianco</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1988">1988</date>
+		</imprint>
+		<respStmt>
+			<orgName>Cambridge University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Routes to party choice: Ideology, economic evaluations and voting at the 1997 British General Election</title>
+		<author>
+			<persName><forename type="first">Pattie</forename><forename type="middle">C</forename><surname>Johnston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="373" to="389" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Issue ownership in presidential elections, with a 1980 case study</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Petrocik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American journal of political science</title>
+		<imprint>
+			<biblScope unit="page" from="825" to="850" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">In the eye of the beholder: voters&apos; perceptions of party policy shifts</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Plescia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Staniek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">West European Politics</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1288" to="1309" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Do political parties listen to the (ir) public? Public opinion-party linkage on specific policy issues</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Romeijn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="426" to="436" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">The electoral roots of unequal representation: A spatial modelling approach to party systems and voting in Western Europe</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rosset</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Kurella</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="785" to="806" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Who emphasizes and who blurs? Party strategies in multidimensional competition</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rovny</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Union Politics</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="269" to="292" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Schattschneider</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Party Government. Farrar and Rinehart</title>
+		<imprint>
+			<date type="published" when="1942">1942</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">How do politicians respond to opinion polls? An experiment with Swedish politicians</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Schumacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Öhberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Research &amp; Politics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">2053168020955106</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Do mainstream parties adapt to the welfare chauvinism of populist parties?</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Schumacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Van Kersbergen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="300" to="312" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Citizens&apos; issue priorities respond to national conditions, less so to parties&apos; issue emphases</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">B</forename><surname>Seeberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adams</forename><forename type="middle">J</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Timely decisions: The effects of past national elections on party policy change</title>
+		<author>
+			<persName><forename type="first">Somer-Topcu Z</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="238" to="248" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Going green: Explaining issue competition on the environment</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Spoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hobolt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De</forename><surname>Vries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="363" to="380" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Spatial Models of Party Competition</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stokes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="368" to="377" />
+			<date type="published" when="1963">1963</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Principle vs. pragmatism: Policy shifts and political competition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tavits</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="151" to="165" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Desperate needs, desperate deeds: Why mainstream parties respond to the issues of niche parties</title>
+	</analytic>
+	<monogr>
+		<title level="j">West European Politics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="93" to="122" />
+			<date type="published" when="2015">2015</date>
+			<publisher>Van de Wardt M</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Controlling the Electoral Marketplace</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Van Spanje</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">Mapping policy preferences from texts: statistical solutions for manifesto analysts</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Volkens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Budge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mcdonald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">D</forename><surname>Klingemann</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>OUP</publisher>
+			<biblScope unit="volume">3</biblScope>
+			<pubPlace>Oxford</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Defining and measuring niche parties</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wagner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Party Politics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="845" to="864" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Which issues do parties emphasise? Salience strategies and party organisation in multiparty systems</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wagner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Meyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">West European Politics</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1019" to="1045" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">How do voters form perceptions of party positions?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wagner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Meyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1351" to="1362" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<monogr>
+		<title level="m" type="main">Political parties and party systems</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ware</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Representation in Western Europe: Connecting party-voter congruence and party goals</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Werner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The British Journal of Politics and International Relations</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="122" to="142" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Werner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Lacewell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Volkens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Matthieß</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zehnter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rinsum</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van</surname></persName>
+		</author>
+		<title level="m">Manifesto Coding Instructions: 5th fully revised edition</title>
+		<meeting><address><addrLine>Berlin</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Closing the door? The ideology and impact of radical right populism on immigration policy in Austria and Italy</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zaslove</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Political ideologies</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="99" to="118" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
