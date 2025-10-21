@@ -3,43 +3,51 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-import requests
-from requests.exceptions import RequestException, Timeout, ConnectionError
 from sqlalchemy import text
+from requests.exceptions import RequestException, Timeout, ConnectionError
 
 from .db import engine
-from .iter_preprints import SESSION  # resilient session with retries, UA, etc.
+from .iter_preprints import SESSION
 
 GROBID_URL = os.environ.get("GROBID_URL", "http://grobid:8070")
 DATA_ROOT   = os.environ.get("PDF_DEST_ROOT", "/data/preprints")
 
-def _tei_output_path(osf_id: str) -> Path:
-    folder = Path(DATA_ROOT) / osf_id
-    folder.mkdir(parents=True, exist_ok=True)
-    return folder / "tei.xml"
+def _pdf_path(provider_id: str, osf_id: str) -> Optional[Path]:
+    # New structure
+    p = Path(DATA_ROOT) / provider_id / osf_id / "file.pdf"
+    if p.exists():
+        return p
+    # Legacy fallback (no provider)
+    p_old = Path(DATA_ROOT) / osf_id / "file.pdf"
+    if p_old.exists():
+        # Optionally, move into new structure for cleanliness
+        new_dir = Path(DATA_ROOT) / provider_id / osf_id
+        new_dir.mkdir(parents=True, exist_ok=True)
+        new_dst = new_dir / "file.pdf"
+        try:
+            p_old.replace(new_dst)
+            return new_dst
+        except Exception:
+            return p_old
+    return None
 
-def _pdf_path(osf_id: str) -> Optional[Path]:
-    p = Path(DATA_ROOT) / osf_id / "file.pdf"
-    return p if p.exists() else None
+def _tei_output_path(provider_id: str, osf_id: str) -> Path:
+    d = Path(DATA_ROOT) / provider_id / osf_id
+    d.mkdir(parents=True, exist_ok=True)
+    return d / "tei.xml"
 
-def process_pdf_to_tei(osf_id: str) -> Tuple[bool, Optional[str], Optional[str]]:
-    """
-    Call GROBID fulltext API with the local PDF, write TEI as {DATA_ROOT}/{osf_id}/tei.xml.
-    Returns: (ok, tei_path, error_message)
-    """
-    pdf = _pdf_path(osf_id)
+def process_pdf_to_tei(provider_id: str, osf_id: str) -> Tuple[bool, Optional[str], Optional[str]]:
+    pdf = _pdf_path(provider_id, osf_id)
     if not pdf:
         return (False, None, "PDF missing")
 
-    url = f"{GROBID_URL}/api/processFulltextDocument"
+    url = f"{GROBID_URL.rstrip('/')}/api/processFulltextDocument"
     files = {"input": ("file.pdf", open(pdf, "rb"), "application/pdf")}
-    # You can adjust params: consolidatedHeader=1, teiCoordinates=true, etc.
     params = {"consolidateHeader": "1"}
     try:
         with SESSION.post(url, files=files, data=params, timeout=(10, 120)) as r:
             r.raise_for_status()
-            # GROBID returns TEI XML in response.text
-            tei_path = _tei_output_path(osf_id)
+            tei_path = _tei_output_path(provider_id, osf_id)
             tmp = tei_path.with_suffix(".xml.tmp")
             tmp.write_text(r.text, encoding="utf-8")
             tmp.replace(tei_path)

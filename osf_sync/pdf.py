@@ -1,15 +1,20 @@
 from __future__ import annotations
 import os
+import subprocess
 from pathlib import Path
 from typing import Optional, Tuple
+
 from requests.exceptions import RequestException, Timeout, ConnectionError
 from sqlalchemy import text
 
 from .db import engine
 from .iter_preprints import SESSION, OSF_API  # reuse resilient session
 
-def _safe_path(root: str, osf_id: str) -> Path:
-    p = Path(root) / osf_id
+ACCEPT_PDF = {"application/pdf"}
+ACCEPT_DOCX = {"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
+
+def _safe_dir(root: str, provider_id: str, osf_id: str) -> Path:
+    p = Path(root) / provider_id / osf_id
     p.mkdir(parents=True, exist_ok=True)
     return p
 
@@ -23,52 +28,52 @@ def _get_file_json_via_id(file_id: str) -> dict:
     r.raise_for_status()
     return r.json()
 
-def resolve_download_url_from_preprint_raw(raw: dict) -> Optional[str]:
-    """
-    Preferred: follow relationships.primary_file.links.related.href
-    Fallback: use relationships.primary_file.data.id -> /files/{id}/
-    Returns the direct file download URL (data.links.download) or None.
-    """
+def _file_meta_from_json(j: dict) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    data = j.get("data") or {}
+    links = data.get("links") or {}
+    attrs = data.get("attributes") or {}
+    return links.get("download"), attrs.get("content_type"), attrs.get("name")
+
+def resolve_primary_file_info_from_raw(raw: dict) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     rel = (raw.get("relationships") or {}).get("primary_file") or {}
-    # 1) preferred via links.related.href
     href = (((rel.get("links") or {}).get("related")) or {}).get("href")
     if href:
-        j = _get_file_json_via_href(href)
-        return ((j.get("data") or {}).get("links") or {}).get("download")
-
-    # 2) fallback via file id
+        return _file_meta_from_json(_get_file_json_via_href(href))
     fid = ((rel.get("data") or {}).get("id"))
     if fid:
-        j = _get_file_json_via_id(fid)
-        return ((j.get("data") or {}).get("links") or {}).get("download")
+        return _file_meta_from_json(_get_file_json_via_id(fid))
+    return None, None, None
 
-    return None
+def _looks_pdf(name: Optional[str]) -> bool:
+    return bool(name and name.lower().endswith(".pdf"))
 
-def download_pdf_via_raw(osf_id: str, raw: dict, dest_root: str = "/data/preprints") -> Tuple[bool, Optional[str]]:
-    """
-    Resolves the download URL from the preprint 'raw' JSON, downloads to:
-      {dest_root}/{osf_id}/file.pdf
-    Returns (ok, local_path).
-    """
-    url = resolve_download_url_from_preprint_raw(raw)
-    if not url:
-        return (False, None)
+def _looks_docx(name: Optional[str]) -> bool:
+    return bool(name and name.lower().endswith(".docx"))
 
-    folder = _safe_path(dest_root, osf_id)
-    out_path = folder / "file.pdf"
-    tmp_path = folder / ".file.tmp"
+def _download_to(path: Path, url: str):
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with SESSION.get(url, stream=True, timeout=(10, 300)) as r:
+        r.raise_for_status()
+        with open(tmp, "wb") as fh:
+            for chunk in r.iter_content(chunk_size=1024 * 64):
+                if chunk:
+                    fh.write(chunk)
+    tmp.replace(path)
 
+def _convert_docx_to_pdf(in_docx: Path, out_pdf: Path) -> bool:
+    cmd = [
+        "soffice", "--headless", "--convert-to", "pdf",
+        "--outdir", str(out_pdf.parent), str(in_docx)
+    ]
     try:
-        with SESSION.get(url, stream=True, timeout=(10, 300)) as r:
-            r.raise_for_status()
-            with open(tmp_path, "wb") as fh:
-                for chunk in r.iter_content(chunk_size=1024 * 64):
-                    if chunk:
-                        fh.write(chunk)
-        tmp_path.replace(out_path)
-        return (True, str(out_path))
-    except (RequestException, Timeout, ConnectionError):
-        return (False, None)
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        return False
+    candidate = out_pdf.parent / (in_docx.stem + ".pdf")
+    if candidate.exists():
+        candidate.replace(out_pdf)
+        return True
+    return False
 
 def mark_downloaded(osf_id: str, local_path: Optional[str], ok: bool):
     sql = text("""
@@ -82,3 +87,57 @@ def mark_downloaded(osf_id: str, local_path: Optional[str], ok: bool):
     """)
     with engine.begin() as conn:
         conn.execute(sql, {"ok": ok, "path": local_path, "id": osf_id})
+
+def delete_preprint(osf_id: str):
+    with engine.begin() as conn:
+        conn.execute(text("DELETE FROM preprints WHERE osf_id = :id"), {"id": osf_id})
+
+def ensure_pdf_available_or_delete(
+    osf_id: str,
+    provider_id: str,
+    raw: dict,
+    dest_root: str
+) -> Tuple[str, Optional[str]]:
+    """
+    Enforce file-type policy & provider-based foldering.
+      PDF: save to {root}/{provider}/{osf_id}/file.pdf
+      DOCX: download → convert → save pdf to same folder
+      Other: delete row
+    Returns (kind, path|None) where kind in {"pdf","docx->pdf","deleted"}.
+    """
+    url, ctype, name = resolve_primary_file_info_from_raw(raw)
+    if not url:
+        delete_preprint(osf_id)
+        return "deleted", None
+
+    folder = _safe_dir(dest_root, provider_id, osf_id)
+    pdf_path = folder / "file.pdf"
+
+    is_pdf = (ctype in ACCEPT_PDF) or (ctype is None and _looks_pdf(name))
+    is_docx = (ctype in ACCEPT_DOCX) or (ctype is None and _looks_docx(name))
+
+    if is_pdf:
+        _download_to(pdf_path, url)
+        return "pdf", str(pdf_path)
+
+    if is_docx:
+        docx_path = folder / "file.docx"
+        _download_to(docx_path, url)
+        ok = _convert_docx_to_pdf(docx_path, pdf_path)
+        try:
+            if docx_path.exists():
+                docx_path.unlink()
+        except Exception:
+            pass
+        if ok:
+            return "docx->pdf", str(pdf_path)
+        delete_preprint(osf_id)
+        try:
+            if pdf_path.exists():
+                pdf_path.unlink()
+        except Exception:
+            pass
+        return "deleted", None
+
+    delete_preprint(osf_id)
+    return "deleted", None
