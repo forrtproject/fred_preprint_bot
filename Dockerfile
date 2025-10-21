@@ -6,6 +6,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl ca-certificates git && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    libreoffice-writer \
+    libreoffice-core \
+    fonts-dejavu-core \
+    python3-uno && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy only requirements first for better caching

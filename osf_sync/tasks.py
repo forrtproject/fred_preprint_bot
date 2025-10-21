@@ -14,12 +14,12 @@ from .db import engine, init_db
 from .upsert import upsert_batch
 from .iter_preprints import iter_preprints_batches, iter_preprints_range
 from celery import chain
-from .pdf import mark_downloaded, download_pdf_via_raw
+from .pdf import mark_downloaded
 from .grobid import process_pdf_to_tei, mark_tei
 
+from .pdf import ensure_pdf_available_or_delete, mark_downloaded
 
 PDF_DEST_ROOT = os.environ.get("PDF_DEST_ROOT", "/data/preprints")
-
 
 SOURCE_KEY_ALL = "osf:all"
 
@@ -180,27 +180,31 @@ PDF_DEST_ROOT = os.environ.get("PDF_DEST_ROOT", "/data/preprints")  # optional o
 @app.task(bind=True, queue="pdf", autoretry_for=(RequestException,), retry_backoff=30, retry_jitter=True, retry_kwargs={"max_retries": 3})
 def download_single_pdf(self, osf_id: str):
     """
-    Download one preprint's primary PDF via relationships.primary_file.links.related.href
-    (fallback to file id) and update DB flags.
+    Only PDF/DOCX allowed. DOCX is converted to PDF. Others are deleted from DB.
+    Save under provider/{osf_id}.
     """
-    # Fetch raw JSON for this preprint and ensure it still needs downloading
-    sql = text("""
-        SELECT osf_id, raw
-        FROM preprints
-        WHERE osf_id = :id
-          AND is_published IS TRUE
-          AND COALESCE(pdf_downloaded, false) = false
-        LIMIT 1
-    """)
     with engine.begin() as conn:
-        row = conn.execute(sql, {"id": osf_id}).mappings().one_or_none()
+        row = conn.execute(
+            text("SELECT osf_id, provider_id, raw FROM preprints WHERE osf_id = :id LIMIT 1"),
+            {"id": osf_id}
+        ).mappings().one_or_none()
 
     if not row:
-        return {"osf_id": osf_id, "skipped": True}
+        return {"osf_id": osf_id, "skipped": "no longer in DB"}
 
-    ok, path = download_pdf_via_raw(osf_id=row["osf_id"], raw=row["raw"], dest_root=PDF_DEST_ROOT)
-    mark_downloaded(osf_id=row["osf_id"], local_path=path, ok=ok)
-    return {"osf_id": osf_id, "downloaded": ok, "path": path}
+    provider_id = row["provider_id"] or "unknown"
+    kind, path = ensure_pdf_available_or_delete(
+        osf_id=row["osf_id"],
+        provider_id=provider_id,
+        raw=row["raw"],
+        dest_root=PDF_DEST_ROOT
+    )
+
+    if kind == "deleted":
+        return {"osf_id": osf_id, "deleted": True, "reason": "unsupported file type"}
+
+    mark_downloaded(osf_id=row["osf_id"], local_path=path, ok=True)
+    return {"osf_id": osf_id, "downloaded": True, "source": kind, "path": path}
 
 @app.task(bind=True)
 def enqueue_pdf_downloads(self, limit: int = 100):
@@ -226,12 +230,8 @@ def enqueue_pdf_downloads(self, limit: int = 100):
 
 @app.task(bind=True, queue="grobid", autoretry_for=(RequestException,), retry_backoff=30, retry_jitter=True, retry_kwargs={"max_retries": 3})
 def grobid_single(self, osf_id: str):
-    """
-    Process one PDF with GROBID -> TEI XML.
-    """
-    # Ensure this still needs TEI and the PDF exists
     sql = text("""
-        SELECT osf_id, pdf_downloaded, tei_generated
+        SELECT osf_id, provider_id, pdf_downloaded, tei_generated
         FROM preprints
         WHERE osf_id = :id
         LIMIT 1
@@ -246,7 +246,8 @@ def grobid_single(self, osf_id: str):
     if row.get("tei_generated"):
         return {"osf_id": osf_id, "skipped": "already processed"}
 
-    ok, tei_path, err = process_pdf_to_tei(osf_id)
+    provider_id = row["provider_id"] or "unknown"
+    ok, tei_path, err = process_pdf_to_tei(provider_id, osf_id)
     mark_tei(osf_id, ok=ok, tei_path=tei_path if ok else None)
     return {"osf_id": osf_id, "ok": ok, "tei_path": tei_path, "error": err}
 
