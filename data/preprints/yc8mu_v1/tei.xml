@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Liquid speed: On-demand fast trading at distributed exchanges</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2019-07-24">July 24, 2019</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Michael</forename><surname>Brolley</surname></persName>
+							<email>mbrolley@wlu.ca.</email>
+							<affiliation key="aff2">
+								<orgName type="department">School of Business</orgName>
+								<orgName type="institution">Michael Brolley is affiliated with Wilfrid Laurier University</orgName>
+								<address>
+									<settlement>Lazaridis</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Marius</forename><surname>Zoican</surname></persName>
+							<email>marius.zoican@rotman.utoronto.ca</email>
+							<affiliation key="aff3">
+								<orgName type="institution">Marius Zoican</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="institution">Wilfrid Laurier University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">University of Toronto</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff4">
+								<orgName type="department">Rotman School of Management</orgName>
+								<orgName type="institution">University of Toronto Mississauga</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff5">
+								<orgName type="department">Rotman School of Management</orgName>
+								<address>
+									<addrLine>105 St. George Street</addrLine>
+									<postCode>M5S 3E6</postCode>
+									<settlement>Toronto</settlement>
+									<region>Ontario</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Liquid speed: On-demand fast trading at distributed exchanges</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2019-07-24">July 24, 2019</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">304399C61C3074B416984A794746792D</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T13:28+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>high-frequency trading</term>
+					<term>FinTech</term>
+					<term>decentralized exchanges</term>
+					<term>market design JEL Codes: G10</term>
+					<term>G14</term>
+					<term>G23 high-frequency trading</term>
+					<term>FinTech</term>
+					<term>decentralized exchanges</term>
+					<term>market design JEL Codes: G10</term>
+					<term>G14</term>
+					<term>G23</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Exchanges acquire excess processing capacity to accommodate trading activity surges associated with zero-sum high-frequency trader (HFT) "duels." The idle capacity's opportunity cost is an externality of low-latency trading. We build a model of decentralized exchanges (DEX) with flexible capacity. On DEX, HFTs acquire speed in real-time from peer-to-peer networks. The price of speed surges during activity bursts, as HFTs simultaneously race to market. Relative to centralized exchanges, HFTs acquire more speed on DEX, but for shorter timespans. Low-latency "sprints" speed up price discovery without harming liquidity. Overall, speed rents decrease and fewer resources are locked-in to support zero-sum HFT trades.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Electronic markets are driven by technology. Unlike humans, computers make trading decisions with extremely low latency, approaching the speed of light. If algorithms react simultaneously to a trading opportunity, their orders arrive at the market at the same time in so-called "micro-bursts." Indeed, using nanosecond-level message data from Nasdaq, <ref type="bibr" target="#b28">Menkveld (2018)</ref> documents that 20% of trades cluster in sub-millisecond intervals. However, micro-bursts are associated with higher adverse selection costs for liquidity providers, consistent with high-frequencies "races" between algorithms reacting to the same trading signal. <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref> document that the median duration of an arbitrage opportunity dropped from 97 milliseconds in 2005 to 7 milliseconds in 2015, whereas the dollar profit per arbitrage trade did not change during the same period. In markets with time priority, a trader needs to be at least as fast as its fastest competitor to capture such opportunities. However, since short-term "duels" between high-frequency traders (HFTs) are essentially zero-sum games, they may even harm liquidity <ref type="bibr" target="#b27">(Menkveld and Zoican, 2017)</ref>. <ref type="bibr" target="#b9">Biais, Foucault, and Moinas (2015)</ref> argue that the "arms race" for speed is a socially costly investment.</p><p>The low-latency arms race between HFTs also impacts the trading venues themselves. Higher demand for trading speed generates a need for better exchange infrastructure. Trading platforms have to be able to tackle surges in market activity, that is, "micro-bursts," as well as normal market conditions. To avoid order delays, exchanges invest in excess processing capacity, faster computer chips, and bigger data buffers <ref type="bibr" target="#b33">(Yesalavich, 2010)</ref>. Throughout 2007, at the start of the financial crisis, the New York Stock Exchange (NYSE) increased processing capacity twice: first in February, from 17 to 38 thousand messages a second, and again in August from 38 to 64 thousand messages per second. In 2011, spurred on by the emergence of high-frequency trading, the NYSE platform was able to process four times as much: 250,000 orders every second. 1 More recently, Nasdaq reports in May 2019 that the Securities Information Processor (SIP), which links the U.S. trading venue data into a single feed, has a capacity of 5.6 million messages per second. 2   Exchanges have an incentive to cater to the low-latency arms race and invest in excess capacity as they can partly extract HFT rents. Trading venues have a local monopoly over their own infrastructure: for instance, you have to pay NYSE a fee for locating your computer next to the NYSE server. <ref type="bibr" target="#b14">Budish, Lee, and Shim (2019)</ref> estimate that co-location fees amount to $874M-1024M in 2018, which is of the same order of magnitude as transaction fees charged by trading venues. Therefore, technology is an important source of revenue for exchanges. When trading off cost (i.e., building expensive computer capacity) against performance (message delays for traders), 1 Sources for this paragraph: After Crash, NYSE Got the Message(s), <ref type="bibr">Wall Street Journal, October 16, 2007;</ref><ref type="bibr">and How Linux Mastered Wall Street, PC World, August 15, 2011.</ref> 2 See: Time is Relative: Where Trade Speed Matters, and Where It Doesn't, Nasdaq, May 30, 2019.</p><p>1 exchanges are biased towards the latter, since HFTs are willing to bear the cost.</p><p>Since processing power is a scarce resource, maintaining idle capacity is costly. <ref type="bibr" target="#b28">Menkveld (2018)</ref> partitions trading days into microseconds, and finds that multi-trade microseconds occur only in 10% of the sample. MarketDataPeaks -a website that aggregates message rates across all U.S.-based exchanges on a daily basis -documents that the average throughput on a random day is of 3.21M messages per second, surging to 25.2M messages per second within micro-bursts. Therefore, we estimate that as much as 90% of the high-throughput exchange infrastructure is idle for 90% of the typical trading day.</p><p>In this paper, we study dynamic pricing of trading infrastructure and the role it can play toward reducing the social costs associated with the low-latency arms race. We build a model of highfrequency trading following <ref type="bibr" target="#b27">Menkveld and Zoican (2017)</ref>, to which we introduce a real-time market for computer power (CPU) capacity. Currently, dynamic pricing is successfully implemented in other settings, for example in electricity markets, airline reservation systems, or ride-sharing platforms. Financial markets, however, are unique as the demand for excess capacity is chronically generated by a zero-sum game between fast traders, rather than by fundamental consumer demand shocks. Further, from a technological standpoint, computer processing power for trading needs to be re-priced much more frequently, ideally at sub-second intervals.</p><p>Recent FinTech innovations allow for low-latency dynamic pricing of exchange infrastructure.</p><p>In particular, Section 3 describes the architecture of decentralized exchanges (DEX) currently functioning on the Ethereum blockchain. The limit order book data and the trade matching engine are distributed as computer code in a peer-to-peer network. Each participant in the network ("miner") has a copy of the exchange and may "rent out" spare computer power to process incoming orders, for a fee. When a trading surge occurs, excess demand pushes up the price of computing power, and miners allocate more CPU resources to the exchange. In normal market times, miners can re-route idle computer power towards other, more productive goals.</p><p>We compare two market design choices (as in, for example <ref type="bibr" target="#b10">Boulatov and George, 2013)</ref>. First, we consider a centralized exchange where HFTs invest in low-latency technology before trading starts.</p><p>This setup closely corresponds to the prevailing paradigm in which traders buy co-location services from the exchange on a subscription basis: the investment is sunk at the time of trading. Therefore, at centralized exchanges the equilibrium speed investment and price of CPU power is determined ex ante, and does not depend on real-time market conditions. Second, we consider a decentralized exchange where HFTs compete to acquire low-latency in real-time, that is, conditional on observing a profitable trading opportunity. This setup corresponds to cloud-or blockchain-based distributed exchanges as described in Section 3.</p><p>We find that decentralized exchanges with dynamic CPU pricing improve the allocation of idle resources. While a decentralized exchange does not eliminate high-frequency "duels" between market makers and speculators, it shortens the time during which resources are committed to support zero-sum HFT races. In centralized exchanges, HFTs rent expensive technology on a continuous basis, poised to act on short-term opportunities. Nevertheless, the rented CPU capacity is idle for a majority of the time, and excluded from alternative productive uses. By contrast, in decentralized exchanges, HFTs rent technology on-demand from peer-to-peer CPU providers.</p><p>Profitable trading opportunities simultaneously generate "micro-bursts" in trading activity as well as surges in the price of processing power.</p><p>Further, dynamic pricing of trading speed does not harm liquidity and may improve the speed of price discovery. As in <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref>, low-latency races in our model are a zero-sum game. Consequently the bid-ask spread depends only on relative speed of traders (i.e., the probability of winning the race) and not on the absolute latency. In a symmetric equilibrium, HFTs invest equal amounts in trading speed and have equal probabilities to win the race: therefore, the bid-ask spread is the same in both centralized and decentralized market.</p><p>A decentralized market may improve price discovery. At centralized markets, high-frequency traders must commit to rent CPU power continuously, for example via co-location fees, even when there are no trading opportunities. Since decentralized markets couple CPU resources to order execution, HFTs can spend similar resources to acquire more CPU power for shorter periods of time.</p><p>If trading at a centralized market resembles a marathon where runners need to pace themselves, trading at DEX mirrors a sprint where speed can surge higher over short intervals. Consequently, the expected time from news until a price update (either via a speculator trade or quote update from the market maker) is lower in decentralized markets. The result is, of course, conditional on the caveat that HFTs can reach the gateway of a cloud-based exchange with the same latency as for a centralized exchange (where they may colocate).</p><p>Finally, HFTs earn lower rents on decentralized than on centralized exchanges. Even if the aggregate CPU power used on decentralized exchanges is lower, high-frequency traders face higher prices during micro-bursts when speed competition intensifies, reducing their rents during speed races around news events. Therefore, decentralized exchanges transfer value from zero-sum HFT races to the suppliers of peer-to-peer exchange infrastructure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related literature</head><p>Our paper contributes to an active discussion on the role of technology in financial market design. It relates to several branches of literature in market microstructure and financial innovation (FinTech).</p><p>High-frequency trading. <ref type="bibr" target="#b21">Foucault and Moinas (2019)</ref> provide a comprehensive review of the recent literature on fast trading. In recent years, an arms race emerged for ever-faster markets:</p><p>Baldauf and Mollner (2018) report an average exchange-to-trader latency as low as 31 microseconds for highly liquid New York Stock Exchange instruments.</p><p>Closest to our paper, <ref type="bibr" target="#b9">Biais, Foucault, and Moinas (2015)</ref> and <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref> explicitly model investment in low-latency infrastructure on centralized exchanges. They argue that the speed arms race generates excessive investment in low-latency technology, but does not necessarily improve market quality. In both studies, speed investment is a binary decision (i.e., a trader can be either "fast" or "slow") and is sunk before trading starts. Further, the cost of low-latency technology is fixed and corresponds, for instance, to the cost of colocation. In our paper, we model the market for trading infrastructure. We allow for real-time acquisition and pricing of low-latency technology, allowing for speed investment to be contingent on contemporaneous trading data. We argue that such a market design, made possible by peer-to-peer decentralized platforms, leads to a better allocation of limited computer resources and limits the wasteful aspect of the low-latency trading arms race.</p><p>Recent empirical evidence suggests that benefits from faster markets flattened out. For example, <ref type="bibr" target="#b32">Ye, Yao, and Gai (2013)</ref> find that a drop in exchange latency on NASDAQ from microseconds to nanoseconds reduced market depth. <ref type="bibr" target="#b30">Shkilko and Sokolov (2019)</ref> find that when rain disrupts the microwave network connection between Chicago and New York, slowing down the market, liquidity actually improves. However, traders may individually benefit from being fast. <ref type="bibr" target="#b5">Baron, Brogaard, Hagströmer, and Kirilenko (2019)</ref> document that fast traders earn short-term profits on market orders, consistent with order sniping. <ref type="bibr" target="#b20">Foucault, Kozhan, and Tham (2016)</ref> find evidence that high-frequency trading generates toxic cross-market arbitrage in foreign exchange markets.</p><p>How does the exchange infrastructure impact market quality? Exchanges may use latency investment strategically: <ref type="bibr" target="#b29">Pagnotta and Philippon (2018)</ref> show that trading platforms may invest in speed as a horizontal differentiation tool to relax competition. Such strategic considerations are limited in the case of decentralized exchanges, where the infrastructure is provided competitively by atomistic participants in a peer-to-peer network. <ref type="bibr" target="#b27">Menkveld and Zoican (2017)</ref> argue that low-latency exchanges promote zero-sum "duels" between informed HFTs and can lead to lower liquidity.</p><p>This paper proposes decentralized markets as a solution to the low-latency arms race. There are several alternative proposals available. <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref> argue that a discretetime market with frequent batch auctions eliminates the advantage of being marginally faster than competitors and stimulates price competition between high-frequency traders. <ref type="bibr" target="#b25">Kyle and Lee (2017)</ref> propose, at the opposite end of the spectrum, a fully-continuous exchange where traders submit buy or sell trade rates over time, rather than quantities. Speed bumps, that is intentional delays to order execution, are a solution particularly favored by exchanges (see <ref type="bibr">Baldauf and Mollner, 2019</ref>, for a list of trading platforms that implemented speed bumps); however, their effectiveness depends on implementation details. <ref type="bibr" target="#b0">Aoyagi (2019)</ref> argues that a random delay can incentivize investment in trading speed and worsen adverse selection. <ref type="bibr" target="#b12">Brolley and Cimon (2019)</ref> caution that exchanges may choose the design of speed bumps for their trading platforms to maximize exchange profits, which may not coincide with the elimination of the high-frequency arms race.</p><p>Existing proposals focus therefore either on removing traders' incentives to be fast, or limiting speed directly. We argue for a market-based solution, where speed is priced in real-time, and therefore more costly within trading micro-bursts. Decentralized markets do not eliminate speed races, but rather "localize" them only to instances when speed is required, thereby reducing the time that technology remains idle.</p><p>Our model follows <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref> and <ref type="bibr" target="#b27">Menkveld and Zoican (2017)</ref> in that there is no exogenous information asymmetry between high-frequency market-makers and speculators. Indeed, <ref type="bibr" target="#b11">Brogaard, Hendershott, and Riordan (2014)</ref> find that fast traders both consume and provide liquidity. Adverse selection is generated by asynchronous arrival at an exchange with time-priority rules, where trading messages are processed in the order in which they reach the exchange. This complements a large body of literature where adverse selection stems from asymmetric information (for example, <ref type="bibr" target="#b22">Glosten and Milgrom, 1985;</ref><ref type="bibr" target="#b19">Foucault, Hombert, and Rosu, 2016)</ref>.</p><p>Financial technology and innovation. The paper also relates to a growing body of research studying the impact of financial technology (FinTech) on trading and market structure.</p><p>A majority of Blockchain-driven trading protocols feature a decentralized infrastructure where transaction settlement is implemented by "miners." <ref type="bibr">Cong, He, and Li (2019)</ref> argue that in proof-ofwork blockchains, where only the fastest miner receives the settlement reward, there are strong incentives to form coalitions (or mining pools) to share risk. The ensuing competition between ever larger mining pools inefficiently increases the energy consumption of proof-of-work-based blockchains. <ref type="bibr" target="#b6">Basu, Easley, O'Hara, and Sirer (2019)</ref> study the optimal design of miner fees on decentralized markets. They argue for a second-price auction system, which would reduce traders' incentives to bid strategically on transaction fees, and therefore lead to more predictable transaction costs. <ref type="bibr" target="#b8">Biais, Bisière, Bouvard, and Casamatta (2019)</ref> argue that information delays and software upgrades may lead to situations where miners "fork" a blockchain, leading to less reliable transaction records. <ref type="bibr" target="#b18">Easley, O'Hara, and Basu (2019)</ref> show that transaction fees are not necessarily Pareto-improving. They worry that, in the long run, waiting times and equilibrium fees could be high enough to discourage user participation. We complement these papers by focusing on distributed trading: Miners in our model post orders to a P2P-maintained limit book rather than registering already matched trades.</p><p>A number of papers focus on the role of Blockchain in market design. <ref type="bibr" target="#b24">Khapko and Zoican (2019)</ref> study the impact of distributed ledger on post-trade infrastructure, and find that real-time settlement can reduce liquidity as it increases inventory costs for intermediaries. <ref type="bibr" target="#b15">Chiu and Koeppl (2019)</ref> estimate that Blockchain-based settlement could lead to savings of 1-4 basis points per transaction in the U.S. corporate debt market. <ref type="bibr" target="#b26">Malinova and Park (2017)</ref> argue that Blockchain can improve trading transparency while limiting front-running risk, and therefore generate welfare gains.</p><p>Dynamic pricing. Dynamic pricing, where prices reflect the time-varying demand and marginal costs, is a regular occurrence in other infrastructure exchanges, such as the market for electricity <ref type="bibr" target="#b23">(Joskow and Wolfram, 2012)</ref>. <ref type="bibr" target="#b17">Cramer and Krueger (2016)</ref> use the example of the ride-sharing company Uber to show how a peer-to-peer platforms with dynamic pricing increase the efficiency of car usage, leading to lower costs for riders. <ref type="bibr" target="#b3">Azevedo and Weyl (2016)</ref> discuss how advances in information technology can ameliorate the functioning of matching markets. In the same spirit, our paper argues that the benefits of a nimble, real-time, market for trading infrastructures can reduce costs associated with the low-latency arms race.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Architecture of decentralized exchanges</head><p>As of 2019, several decentralized, exchanges (DEX) emerged in the realm of cryptosecurities, notably Binance DEX, IDEX, or Ethex. They are built on top of distributed application (dApp) platforms, such as Ethereum, and use tamper-proof and automatically-executed smart contracts to match trades <ref type="bibr" target="#b7">(Bhutoria, 2018)</ref>. Following the definition of <ref type="bibr" target="#b16">Cong and He (2019)</ref>, smart contracts are digital contracts enforced through network consensus. On a fully decentralized exchange such as Ethex, the computer code required to match orders and to maintain the state of the order book at any given time runs on a peer-to-peer (P2P) network of computers, rather than on a centralized exchange server.</p><p>A blockchain, which is a decentralized distributed ledger technology where "blocks" of transactions are cryptographically "chained" together, is a representative example of such a peer-to-peer network.<ref type="foot" target="#foot_0">3</ref> A distributed exchange can be implemented on a blockchain platform associated with a Turing-complete programming language, that is, a platform allowing for sophisticated statecontingent smart contracts. <ref type="foot" target="#foot_1">4</ref> The Ethereum blockchain (paired with the "Solidity" computer language) is an example of such a platform; the Bitcoin blockchain, on the other hand, is not. All real-world examples of decentralized exchanges referenced in this Section are implemented on the Ethereum blockchain.</p><p>How does a fully decentralized exchange (DEX) work? A trader first needs to broadcast her intention to buy or to sell a given quantity for a certain price. To this end, she accesses the DEX front-end through an application programming interface (API) or through a web-based platform.</p><p>The trader voluntarily appends a gas fee to the message to compensate P2P platform operators for running the exchange (see, e.g., <ref type="bibr" target="#b18">Easley, O'Hara, and Basu, 2019)</ref>, and finally signs the order with her private key. Cryptographic signatures prevent miners from tampering with, or front-running, the order: In fact, <ref type="bibr" target="#b1">Aune, Krellenstein, O'Hara, and Slama (2017)</ref> propose that the orders themselves be encrypted.</p><p>Following the order broadcast, one or more peer-to-peer computers (e.g., "relayers" in the language of <ref type="bibr" target="#b31">Warren and Bandeali, 2017)</ref> observe the pending order, pick it up, and "write it" to the smart contract that encapsulates the matching engine. The first relayer to attach the order to the smart contract collects the gas fee. A higher gas fee is likely to attract more miners and therefore reduce the order processing delay. Finally, the distributed matching engine automatically performs one of two actions: either (partially) executes the new order against a resting order if the market is crossed, or adds the order to the limit book otherwise.</p><p>Figure <ref type="figure" target="#fig_0">1</ref> illustrates a fully decentralized exchange architecture, following <ref type="bibr" target="#b31">Warren and Bandeali (2017)</ref> and Aurora Labs (2017). There are three components to the latency of an order: First, there is a trader-specific network latency, that is the required time to broadcast an order. Second, relayer latency corresponds to the delay between order broadcast and the moment when a relayer injects the order into the smart contract. Finally, contract latency measures the time needed for network consensus and the smart contract code execution. The illustration closely mirrors Figure <ref type="figure" target="#fig_0">1</ref> in <ref type="bibr" target="#b28">Menkveld and</ref><ref type="bibr">Zoican (2017, p. 1194</ref>) for a centralized exchange. We follow <ref type="bibr" target="#b27">Menkveld and Zoican (2017)</ref> and focus on latency due to exchange infrastructure as opposed to network latency to reach the exchange front end. The hybrid process is faster since a trade settles on the blockchain only after counterparties are matched. Other exchanges, such as Ethex, are fully decentralized and store limit orders on the blockchain. Second, on-chain settlement is typical: in addition to the order matching smart contract, decentralized exchanges may use a second smart contract to modify traders' holdings of digital assets. In the context of cryptoassets, where exchange hacks are common, on-chain settlement augments security as it allows for direct transfers between traders' accounts (Aurora Labs, 2017).</p><p>However, a decentralized exchange implemented on a regulated, transparent platform, does not necessarily need to integrate trading and settlement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Model</head><p>Asset. A single risky asset is traded on a limit order book with price-time priority. At the start of the trading game (t = 0), the asset has fundamental value v, which is common knowledge to all market participants. Innovations to the fundamental value ("news") arrive at a Poisson rate δ.</p><p>Conditional on news, the fundamental value is equally likely to be v + σ (i.e., good news) or v -σ (i.e., bad news), where σ &gt; 0 is the news size.</p><p>Trading environment. A matching engine operates the limit order book, where it accepts limit orders and "marketable" limit orders submitted by market participants. A limit order is defined as a price quote to either buy (a bid) or sell (an ask) a given amount of the asset. Any unexecuted limit orders are stored in the order book. A "marketable" limit order (either a limit buy order with a price higher than the lowest ask in the book or a limit sell order with a price below the highest bid) is immediately matched with the corresponding bid or ask price, resulting in a trade. We refer to such marketable limit orders simply as market orders.</p><p>Traders. There are two types of traders: H = 2 high-frequency traders (HFTs) and a large number of liquidity investors (LI). Both trader types are risk-neutral. High-frequency traders submit both marketable and non-marketable limit orders: they compete to supply liquidity, as well as trade on fundamental value innovations. There is no fee for submitting orders to the exchange. HFTs possess a monitoring technology that allows them to perfectly and instantaneously observe changes to the security's fundamental value. Further, they can invest in technology (computer processors) allowing them to access the market faster.</p><p>Liquidity investors receive private value shocks at a Poisson rate µ. Conditional on a shock, the private value of a liquidity investor is either η (translating to a buy intention) or -η (sell intention), with equal probabilities, where η &gt; σ. Liquidity investors are infinitely impatient and submit only market orders as soon as they are hit with a private value shock. Finally, liquidity investors do not have access to either the monitoring or market-access technologies.</p><p>Market Access Technology. High frequency traders have access to a low-latency market access technology provided by suppliers of computer processing power, which we refer to as processors.</p><p>There is a continuum of competitive processors indexed by j: By lending its resources to HFTs, processor j incurs a linear opportunity cost of K j = κ × j per unit of time. The parameter κ measures the elasticity of computer power supply: a higher κ translates to a higher marginal cost for technology.</p><p>The Poisson arrival rate of HFT messages is proportional to the amount of computer power she controls at a given point in time. In particular, if an HFT rents a mass λ of processors, any submitted orders arrive at the matching engine as a Poisson process with intensity λ.</p><p>The technology supply schedule corresponds to the marginal cost function of processors.</p><p>Therefore, as Figure <ref type="figure" target="#fig_1">2</ref> illustrates, if HFTs demand a processing rate λ, the clearing price for processing power is kλ, and consequently HFTs spend kλ 2 on low-latency technology. The technology market clears at a uniform price, and quantities are allocated pro rata. In particular, if the two HFTs, i and -i, demand order arrival rates λ i and λ -i , the unique equilibrium technology price is p</p><formula xml:id="formula_0">(λ i + λ -i ) = κ (λ i + λ -i ).</formula><p>It follows that individual HFT investment in processing speed is</p><formula xml:id="formula_1">C i = κλ i (λ i + λ -i</formula><p>) and, respectively,</p><formula xml:id="formula_2">C -i = κλ -i (λ i + λ -i ) .<label>(1)</label></formula><p>Timing. The timing of our setup closely follows that of <ref type="bibr" target="#b27">Menkveld and Zoican (2017)</ref>. At t = 0, the two high-frequency traders compete to provide quotes. Since any liquidity investor demands at most one unit, the HFTs submit limit orders for one unit of the asset. The highest-price buy quote (bid) and the lowest-price sell quote (ask) prevail and are posted to limit order book. We denote the HFT that succeeds in posting their quotes as the high-frequency market-maker (HFM). The other HFT acts as a quote sniper, which we refer to as the high-frequency "bandit" (HFB).</p><p>We define a "trigger event" to be the first arrival of either news or a liquidity investor. The trigger event time is random, with an expected value of Et trigger = 1 δ+µ . The HFTs immediately react to the trigger event and send out orders to the exchange. With probability µ µ+δ , a liquidity investor consumes the appropriate quote that matches the direction of their trading intentions.</p><p>Otherwise, with probability δ µ+δ , news arrives. The HFB rushes to submit a market order to the matching engine to snipe the stale quote, while the HFM rushes to cancel the stale quote. Upon the fill or cancellation of the stale quote, the game ends and market participants realize their payoffs.</p><p>In the spirit of <ref type="bibr" target="#b10">Boulatov and George (2013)</ref>, we compare two alternative exchange environments corresponding to different clearing times for the technology market. That is, we consider both (a) a centralized exchange with speed pre-commitment and, (b) a decentralized exchange with on-demand speed.</p><p>The timing of the trading game, in both cases, is illustrated below. In a speed pre-commitment environment, the market for latency infrastructure clears at t = 0, before trading starts. The setup echoes the prevailing market practice where centralized exchanges offer traders a menu of (usually monthly) server co-location and direct market access subscriptions.</p><p>By contrast, in the on-demand speed environment, the market for latency infrastructure clears in real-time. High-frequency traders acquire processing power "as-needed," after observing the trigger event. The setup echoes the implementation Ethereum-based distributed exchanges such as EtherDelta. Traders can attach a higher gas fee to their order submissions, offering incentives for miners to prioritize their message over others.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Equilibrium</head><p>We search for Nash Equilibria that are symmetric in processing speed investment (λ i = λ -i ).</p><p>Definition 1 (Equilibrium). An equilibrium of the trading game consists of (i) a choice λ i of low-latency investment for each HFT i , (ii) an HFT quoting strategy at t = 0, that is a bid price at which each HFT is ready to buy the asset and an ask price at which each HFT is ready to sell the asset, (iii) HFT orders following the trigger event, conditional on whether the order book features his quotes at the end of t = 0, and (iv) a market clearing price for computer processors.</p><p>In Section 5.1, we study the equilibrium in a centralized exchange with speed pre-commitment;</p><p>Section 5.2 focuses on decentralized exchanges with on-demand speed acquisition.</p><p>Order book symmetry. For simplicity of exposition, we focus throughout the paper on HFT ask quotes. This is without loss of generality, as buy and sell orders are symmetric as in, for example, <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref>.</p><p>To fix intuition, assume first good news arrived and the asset value is v + σ. A high-frequency bandit will attempt to buy the asset for ask and realize a profit of v + σ -ask. Since HFTs engage in a zero-sum game, the corresponding market maker loss is ask -σ. Alternatively, assume bad news and therefore the asset value is v -σ. In this case, the HFB attempts to sell the asset at the bid and make an identical profit of v -ask -(v + σ) = σ -ask. The two scenarios mirror each other: a successful snipe yields a profit of σ -ask to the HFB and a loss of ask -σ to the market-maker.</p><p>Similarly to this intuition, the public value of the security v at t = 0 cancels our in our analysis that follows in Sections 5.1 and 5.2. Thus, for simplicity, we normalize v = 0 in our subsequent analysis.</p><p>Finally, we use subscripts 'M' and 'B' denote variables and functions pertaining to HFM and HFB, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Centralized exchange environment (pre-committed speed investment)</head><p>In this section, we assume that investment in processing speed by HFT i given by C i (λ) in equation ( <ref type="formula" target="#formula_2">1</ref>) is made at the beginning of t = 0, just prior to the start of the trading game where HFTs rush to post quotes. We view this pre-committment to processing speed-denoted PC -as similar to the current centralized exchange paradigm: firms pay co-location subscription fees to access the exchange with reduced latency, where access persists for a length of time such that speed investment is a sunk cost with respect to any one trading day that begins at t = 0.</p><p>We solve this game via backward induction. At the quoting race stage following speed investment at t = 0, HFTs race to post their quotes to the matching engine to become the HFM. Because HFTs i and -i are both rushing to post quotes but do not yet know their roles in the game, the expected payoff from participating as the HFM is written as,</p><formula xml:id="formula_3">π M 0 = Pr(news) × Pr(quote sniped) × (ask -σ) + (1 -Pr(news)) × ask -E[processor rental time | λ i ] × C i (λ i ), = - δ δ + µ λ -i λ i + λ -i (σ -ask) + µ δ + µ ask -E[processor rental time | λ i ] × C i (λ i ). (<label>2</label></formula><formula xml:id="formula_4">)</formula><p>where the term λ -i λ i +λ -i reflects the probability that should HFT i become the HFM, HFT i loses the race to cancel the stale quote ask following the arrival of news, and E[processor rental time | λ i ] × C i (λ i ) reflects the total expected processing expenditure (i.e., duration multiplied by speed intensity). With probability µ δ+µ , a liquidity investor arrives to the market before news, buys the asset, and the HFM receives the ask price.</p><p>If HFT i becomes the HFB, they will seek to snipe stale quotes in the event of news arrival. As such, their expected payoff is given by,</p><formula xml:id="formula_5">π B 0 = Pr(news) × Pr(quote sniped) × (σ -ask) -E[processor rental time | λ i ] × C i (λ i ), = δ δ + µ λ i λ i + λ -i (σ -ask) -E[processor rental time | λ i ] × C i (λ i ).<label>(3)</label></formula><p>In equation ( <ref type="formula" target="#formula_5">3</ref>), since HFT i is the bandit, the snipe probability is λ i λ i +λ -i , that is, the probability that HFT i is the first to arrive at the market after news.</p><p>What is the equilibrium spread? To ensure both HFTs are indifferent to becoming an HFM or an HFB, HFTs will quote a price ask such that the expected profit functions in ( <ref type="formula" target="#formula_3">2</ref>) and (3) are equal. Intuitively, if HFT i instead posts ask + &gt; ask , then HFT -i always becomes the market-maker since she quotes the tighter spread. Therefore, HFT i earns the HFB expected profit for a spread of ask and is consequently indifferent between deviating or not. <ref type="foot" target="#foot_2">5</ref> Similarly, if HFT i quotes a tighter spread, that is ask -&lt; ask , she becomes the market maker for sure. However, the deviation is not profitable since</p><formula xml:id="formula_6">π M 0 (ask -) &lt; απ M 0 (ask ) + (1 -α) π B 0 (ask ) , ∀α ∈ [0, 1] .<label>(4)</label></formula><p>.</p><p>Setting ( <ref type="formula" target="#formula_3">2</ref>) and (3) equal and solving for ask , we obtain,</p><formula xml:id="formula_7">- δ δ + µ λ -i λ i + λ -i (σ -ask) + µ δ + µ ask = δ δ + µ λ i λ i + λ -i (σ -ask) ⇐⇒ µ δ + µ ask = δ δ + µ λ i + λ -i λ i + λ -i (σ -ask) ⇐⇒ ask = δ δ + µ σ.</formula><p>(5)</p><p>Note that the cost of investment in speed from ( <ref type="formula" target="#formula_3">2</ref>)-( <ref type="formula" target="#formula_5">3</ref>) cancels out when we compare the two payoff functions at the quoting stage, as the investment is sunk once the quoting game begins at t = 0. In fact, equation ( <ref type="formula">5</ref>) is not only independent of the expected processing speed cost, but-as in <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref>-the quoted spread ask is independent of speed levels altogether. The HFT "duel" is essentially a zero-sum game. Any investment in speed that reduces the probability of adverse selection to HFT i in their role as a market-maker also increases their ability to snipe a stale quote as a bandit at the same rate,</p><formula xml:id="formula_8">λ -i (λ i +λ -i ) 2</formula><p>. Moreover, the quoting decision of HFT i is impacted similarly by the speed investment of HFT -i . If HFT -i invests more in speed, then HFT i 's payoff as either market maker or bandit decreases at the same rate, that is</p><formula xml:id="formula_9">λ i (λ i +λ -i ) 2 .</formula><p>Hence, the equilibrium quoted price does not depend on the initial investment in speed by both HFTs.</p><p>Prior to the quoting game, HFTs commit resources to rent market access technology from processors at the beginning of t = 0. Market access technology is rented until the game ends following a trigger event. We denote the (random) trigger event time as τ trigger = min {τ news , τ LI }.</p><p>If the trigger event is an LI arrival, then the game stops immediately following the trigger event.</p><p>Conversely, if the trigger event is news arrival, the game continues until the event time τ HFT race that the stale quote is either consumed or updated. Formally, we write the expected processor rental duration for an HFT as:</p><formula xml:id="formula_10">E τ trigger + 1 τnews≤τ LI τ HFT race | λ i = ∞ 0 y 0 x + 1 λ i + λ -i δe -δx dx + y ∞ y δe -δx dx µe -µy dy, = 1 δ + µ + δ δ + µ 1 λ i + λ -i . (<label>6</label></formula><formula xml:id="formula_11">)</formula><p>The expected duration of processor use simplifies to equation ( <ref type="formula" target="#formula_10">6</ref>), which sums the expected duration of two events: the expected time until the first event 1 δ+µ , and the expected duration of the HFT race following the arrival of news 1 λ i +λ -i , which occurs with probability δ δ+µ . Given the equilibrium quote ask from (5) and the expected processor rental duration from (6), we write the HFT i payoff function at t = 0 denoted π i 0 as,</p><formula xml:id="formula_12">π i 0 (λ i ) = Pr(i = M | λ i )π M 0 (λ i ) + Pr(i = B | λ i )π B 0 (λ i ) -E[processor rental time | λ i ] × C i (λ i ) = λ i λ -i + λ i δµσ (δ + µ) 2 - 1 δ + µ + δ δ + µ 1 λ i + λ -i × λ i κ (λ i + λ -i ) .<label>(7)</label></formula><p>The simplification in (7) follows from the fact that π M 0 (ask ) = π B 0 (ask ). To solve for the optimal processing speed intensity λ i , we take the first-order condition of (7) and solve for the fixed point under the assumption of symmetric investment intensities (λ M = λ B ). Proposition 1 describes the equilibrium that obtains.</p><p>Proposition 1 (Symmetric Pre-Commitment Equilibrium). Let (δ, µ, σ, κ) ∈ (0, ∞) 4 . There exists a unique Nash Equilibrium in the sense of Definition 1 where ask is as in Equation ( <ref type="formula">5</ref>), and</p><formula xml:id="formula_13">λ i = λ -i = λ PC ∈ (0, ∞)</formula><p>is the maximum of Equation ( <ref type="formula" target="#formula_12">7</ref>). Moreover, λ PC is given by:</p><formula xml:id="formula_14">λ PC = -δ + δ 2 + 3δµσ κ(δ+µ) 6 .<label>(8)</label></formula><p>Proof. The beginning of the proof follows from the discussion above. What remains is to take the first-order condition of equation ( <ref type="formula" target="#formula_12">7</ref>) with respect to λ i and invoking symmetry of speed intensity</p><formula xml:id="formula_15">(λ i = λ -i = λ PC )</formula><p>to show that the resulting solution λ PC is unique and positive.</p><p>F.O.C (7):</p><formula xml:id="formula_16">λ i (δµσ -(λ i + λ -i + δ)κ(λ i + λ -i )(δ + µ)) (δ + µ) 2 (λ i -λ -i ) = 0,<label>(9)</label></formula><formula xml:id="formula_17">⇐⇒ λ PC = -δ + δ 2 + 3δµσ κ(δ+µ) 6 . (<label>10</label></formula><formula xml:id="formula_18">)</formula><p>where λ PC is the unique positive root, as the second root is negative and thus inadmissible.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Decentralized exchange environment (on-demand speed investment)</head><p>Consider an environment in which HFTs invest in "on-demand" (OD) processing speed C i (λ):</p><p>HFTs submit a fee to rent processing speed at the same time that they submit an order to the exchange. This environment captures the essence of a decentralized exchange, where a group of trade facilitators-"processors" in the language of our model-provide order-processing services for a fee. In a decentralize exchange, an HFT submits an order to a processor with the requisite fee such that the order is ferried to the matching engine. In our setup, HFT i will choose a Poisson arrival rate λ i , where the intensity of processing speed reflects the mass of processors that the HFT pays to execute their order. The intuition is that the greater mass of processors that the HFT rents to submit their order, the greater the probability that their order is given priority over any competitors.</p><p>With on-demand speed investment, an investment decision is made following the quoting game, which happens only following the arrival of news. Similar to the centralized exchange case, the news arrival triggers a rush by the HFB to snipe the stale quote. To improve his chances of doing so, the HFB chooses the mass of processors λ B to maximize the expected payoff from attempting to snipe the stale quote,</p><formula xml:id="formula_19">π B 0 (λ B | news arrival) = Pr(quote sniped) × (σ -ask) -E[processor rental time | λ B ]C B (λ B ), = λ B λ B + λ M (σ -ask) - 1 λ B + λ M λ B κ (λ B + λ M ) .<label>(11)</label></formula><p>Similarly, the arrival of news will trigger a reaction by the HFM to rush to cancel their stale quote. The HFM rents a mass of processors λ M to minimize the cost of being sniped:</p><formula xml:id="formula_20">π M 0 (λ M | news arrival) = Pr(quote sniped) × (ask -σ) -E[processor rental time | λ M ]C M (λ M ), = λ B λ B + λ M (ask -σ) - 1 λ B + λ M λ M κ (λ B + λ M ) .<label>(12)</label></formula><p>Taking the first-order conditions of ( <ref type="formula" target="#formula_19">11</ref>) and ( <ref type="formula" target="#formula_20">12</ref>), we obtain,</p><formula xml:id="formula_21">F.O.C (11): λ M (λ B + λ M ) 2 (σ -ask) -κ = 0,<label>(13)</label></formula><formula xml:id="formula_22">F.O.C (12): λ B (λ B + λ M ) 2 (σ -ask) -κ = 0.<label>(14)</label></formula><p>We note that first-order conditions ( <ref type="formula" target="#formula_21">13</ref>) and ( <ref type="formula" target="#formula_22">14</ref>) are symmetric and solve for the fixed point,</p><formula xml:id="formula_23">λ M = λ B = λ OD , λ OD = σ -ask 4κ .<label>(15)</label></formula><p>Next, by backward induction, we analyze the quoting decision at t = 0, and solve for ask , taking into account the optimal speed investment at the trigger time τ trigger . An HFT i selects their quoting strategy conditional on the anticipated outcome of the sniping/cancelling game played by the HFM and HFB. Similarly to Section 5.1, the HFT i chooses the quote ask such that the expected payoff to becoming either an HFM or an HFB are equal. Evaluating the payoffs π M 0 (λ i ) and π B 0 (λ i ) at λ OD yields,</p><formula xml:id="formula_24">π M 0 (λ OD ) = δ δ + µ (ask -σ) 2 + µ δ + µ ask - δ δ + µ σ -ask 4κ κ. (<label>16</label></formula><formula xml:id="formula_25">) π B 0 (λ OD ) = δ δ + µ (σ -ask) 2 - δ δ + µ σ -ask 4κ κ.<label>(17)</label></formula><p>Solving for ask such that π M 0 (ask ; λ OD ) = π B 0 (ask ; λ OD ) we obtain,</p><formula xml:id="formula_26">ask = δ δ + µ σ.<label>(18)</label></formula><p>Taken together, ask * into λ * OD yield the following proposition.</p><p>Proposition 2 (Symmetric On-Demand Equilibrium). Let (δ, µ, σ, κ) ∈ (0, ∞) 4 . There exists a unique Nash Equilibrium in the sense of Definition 1 where ask is as in Equation ( <ref type="formula" target="#formula_26">18</ref>), and</p><formula xml:id="formula_27">λ i = λ -i = λ OD ∈</formula><p>(0, ∞) solves the system of first-order conditions ( <ref type="formula" target="#formula_19">11</ref>)-( <ref type="formula" target="#formula_20">12</ref>). Moreover, λ OD is given by:</p><formula xml:id="formula_28">λ OD = µσ 4κ(δ + µ) . (<label>19</label></formula><formula xml:id="formula_29">)</formula><p>Proof. The proof follows the discussion above; equation ( <ref type="formula" target="#formula_28">19</ref>) results from inputting ask from equation ( <ref type="formula" target="#formula_26">18</ref>) into the expression for λ OD in equation ( <ref type="formula" target="#formula_23">15</ref>).</p><p>Figure <ref type="figure" target="#fig_3">4</ref> illustrates the result in Propositions 1 and 2. First, HFTs acquire more processing power in decentralized relative to centralized exchanges. Second, HFT invest more (less) in speed on centralized (decentralized) markets as the news arrival rate increases. A higher news rate generates two effects. On the one hand, it increases the likelihood of a sniping opportunity, and therefore the value of trading speed. On the other hand, it translates to a wider bid-ask spread and lower sniping profits, conditional on news. On a centralized exchange, the first effect dominates and the value of speed increases in news frequency. In contrast, on a decentralized exchange, speed investment is incurred conditional on news arrival, and consequently only the second effect persists. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Impact on market quality</head><p>In this section, we compare the equilibrium outcomes of the centralized and decentralized environments to examine how changing the timing of HFT investment in low-latency technology translates to changes in liquidity, price discovery, and the total amount of resources allocated to the speed race.</p><p>Liquidity and Price discovery. In Sections 5.1 and 5.2, we obtain that both the centralized and decentralized markets lead HFTs to an identical equilibrium quoting strategy (ask PC = ask OD ) that is independent of their investment in speed intensity λ.</p><p>Corollary 1 (Liquidity). The bid-ask spread askbid is equal to 2 × δσ δ+µ in both the centralized and decentralized market setting.</p><p>The result in Corollary 1 echoes the model of <ref type="bibr" target="#b13">Budish, Cramton, and Shim (2015)</ref>, who compare a continuous limit order market to frequent batch auctions. In both models, since the speed race is a zero-sum game between high-frequency traders, the bid-ask spread does not depend on absolute latency levels. Instead, the bid-ask spread depends solely on the magnitude of adverse selection costs.</p><p>Both the HFB and HFM spend resources to compete in the sniping/cancelling race that commences following the arrival of news. In a centralized market, resource commitment to processing speed takes place before quotes are posted, leaving the possibility that HFTs will commit resources to a speed race that never begins (i.e., if a liquidity trader arrives before news). HFTs in a decentralized market, however, invest in low-latency technology only after a speed race is triggered by news arrival. Using the equilibrium values for speed intensity across the two markets, we evaluate the difference in speed intensity λ PC -λ OD from equations ( <ref type="formula" target="#formula_14">8</ref>) and ( <ref type="formula" target="#formula_28">19</ref>), as well as the difference in speed prices p(λ PC ) -p(λ OD ) to arrive at the following proposition.</p><p>Proposition 3 (Speed Intensity). The equilibrium speed intensity λ and price of speed p(λ ) are higher in the decentralized market than in the centralized market.</p><p>Proof. See Appendix.</p><p>Proposition 3 aligns with intuition that HFTs will commit more resources to speed intensityand pay a higher average per-unit price to do so-if they know that the speed race will occur.</p><p>In a centralized market where HFTs must pre-commit to processing capacity knowing that said resources may remain idle, the competition for speed intensity is lower.</p><p>Irrespective of the market environment, the outcome of the speed race is identical: stale quotes are removed from the market to make way for quotes that incorporate new information, thereby contributing to the price discovery process. We can thus define a measure of price discovery that describes the expected race-time, and thus measure how quickly, on average, news is impounded into prices. From the time of news arrival, the expected time until the first order arrives is given by 1 2λ , which is the inverse of the sum of the equilibrium speed intensity investment by both HFTs. Thus, taking the difference 1 2λ PC -1 2λ OD , we can infer from Proposition 3 that the greater competition for speed intensity (λ OD &gt; λ PC ) in the decentralized market leads to faster price discovery relative to the centralized market. We summarize our price discovery result in Corollary 2 below.</p><p>Corollary 2 (Price Discovery). The expected time required for news to impound into prices is shorter in a decentralized market than in a centralized market.</p><p>Figure <ref type="figure" target="#fig_4">5</ref> illustrates the result in Corollary 2: price discovery is faster on decentralized exchanges since HFTs engage in a more intense arms race (albeit for shorter intervals). One caveat remains that since decentralized exchange do not allow for co-location (since the infrastructure is cloud-based), the trader-to-exchange latency is higher than at centralized exchanges. Corollary 2 implies that this effect is at least partly compensated by higher investments in on-demand speed on decentralized exchanges. Total Resource Usage and Rents from the Speed Race. Though a decentralized market leads the competition for processing speed to intensify at the point when processing resources are acquired, the length of time for which these resources need to be retained is a key advantage of a decentralized market: an HFT rents resources to process a single order, and upon order completion or cancellation, the resources are released.</p><p>Using the equilibrium HFT investment in processing speed intensity λ PC , we compute total resource usage in a centralized exchange environment. We denote total resource usage as Λ P C , which computes twice the per-HFT processor speed intensity multiplied by the average processor rental time E[processor rental time | λ PC ]:</p><formula xml:id="formula_30">Λ P C ≡ 2λ PC × E[processor rental time | λ PC ], = 2λ PC × 1 δ + µ + δ δ + µ 1 2λ PC , = δ δ + µ + δ 2 + 3δµσ κ(δ+µ) -δ 3(δ + µ) .<label>(20)</label></formula><p>On-demand total resource usage, denoted by Λ * OD , is given by,</p><formula xml:id="formula_31">Λ * OD = 2λ OD × δ δ + µ 1 2λ OD = δ δ + µ .<label>(21)</label></formula><p>Because speed intensity and time-to-execution following news arrival are perfectly inverselyrelated, resource usage in the event of news is identical in both environments, regardless of the investment in speed intensity. On a centralized exchange, however, pre-commitment generates excessive resource consumption: both HFTs rent a mass λ PC of processors which are rented-but-idle from t = 0 until the a trigger event occurs, a period with an expected length of 1 δ+µ .</p><p>Corollary 3 (Resource Usage). The expected total resource allocation to processing speed is lower in the decentralized market than the centralized market, Λ PC &gt; Λ OD . however, infrastructure is used more efficiently, with CPU power being rented only when a sniping opportunity emerges. We predict that the second effect dominates, yielding lower resource usage at decentralized exchanges.</p><p>Finally, we evaluate how on-demand speed in decentralized markets impacts the rents earned by high frequency traders from the speed race. First, we evaluate the equilibrium HFT profit π i 0 within the centralized market environment, from which we obtain:</p><formula xml:id="formula_32">π i 0 (λ PC ) = λ PC λ PC + λ PC δµσ (δ + µ) 2 - 1 δ + µ + δ (δ + µ) 1 2λ PC × λ PC κ (λ PC + λ PC ) ,<label>(22)</label></formula><formula xml:id="formula_33">= δκ 18(δ + µ) × δ + 6µσ κ(δ + µ) -δ 2 + 3µδσ κ(δ + µ) .<label>(23)</label></formula><p>Similarly, evaluating π i 0 at λ OD and ask , we obtain the equilibrium HFT profit under the decentralized market environment:</p><formula xml:id="formula_34">π i 0 (λ OD ) = λ OD λ OD + λ OD δµσ (δ + µ) 2 - δ δ + µ 1 2λ OD κλ OD (λ OD + λ OD ),<label>(24)</label></formula><formula xml:id="formula_35">= δµσ 4(δ + µ) 2 . (<label>25</label></formula><formula xml:id="formula_36">)</formula><p>Comparing π i 0 (λ PC ) and π i 0 (λ OD ) from equations ( <ref type="formula" target="#formula_33">23</ref>) and ( <ref type="formula" target="#formula_35">25</ref>), respectively, we arrive at the following Corollary.</p><p>Corollary 4 (HFT Rents from the Speed Race). The expected rent earned from the speed race by an HFT is greater in the centralized market than in the decentralized market.</p><p>Proof. See Appendix.</p><p>On decentralized exchanges, HFTs earn lower rents from speed. Figure <ref type="figure" target="#fig_6">7</ref> presents this result graphically. At a first glance, the outcome is surprising since, from Proposition 3, HFTs employ fewer infrastructure resources. Moreover, equations ( <ref type="formula" target="#formula_33">23</ref>) and ( <ref type="formula" target="#formula_35">25</ref>) underscores that HFTs do not extract extra rents from liquidity traders, as the first terms of both equations are equal. These effects, however, are dominated by the "surge-pricing" feature of decentralized markets, as HFTs start acquiring speed following news arrival-during a "micro-burst"-where competition for speed intensifies beyond that achieved in a centralized market (Proposition 3). Therefore, the on-demand speed race of decentralized markets allows for a transfer of value from HFTs to suppliers of processing speed infrastructure. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Concluding Remarks</head><p>In this paper, we argue that distributed exchanges can mitigate the negative consequences of the high-frequency trading arms race. On decentralized exchanges, HFTs acquire speed in real time, on an as-needed basis, whereas centralized exchanges provision excess capacity to these accommodate "trading micro-bursts," following trading signals. By its nature, a distributed exchange eliminates the negative externality associated with maintaining idle capacity that occurs, for example, with co-location at centralized exchanges. We find that decentralized exchanges encourage short-lived, though intense, HFT races.</p><p>On decentralized exchanges, intense HFT competition for speed during microbursts triggers a surge in the price of computer power. As a result, HFTs earn lower rents from low-latency trading and, at the same time, the overall resource consumption is lower.</p><p>Decentralized exchanges can improve, or at least not harm, traditional measures of market quality. We find relatively quicker price discovery at decentralized exchanges at no cost to liquidity.</p><p>Quicker price discovery obtains subject to the caveat that cloud-based exchanges exhibit slower stages of the trading process than centralized markets (i.e., from the trader computer to the exchange front end). Therefore, we caution that our model does not insist that decentralized exchanges are the fastest trading mechanism from order submission to settlement, nor do they necessarily yield quicker price discovery than centralized exchanges overall. We contend, however, that these stages may see improvements in speed in the near future. This would highlight decentralized exchanges as a viable solution toward reducing the social cost associated with the low-latency arms race, without harming market quality as measured, for example, by liquidity and price discovery. <ref type="foot" target="#foot_3">6</ref>It is enough to show that the numerator is positive, which we obtain by showing the following, </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Corollary 4</head><p>Proof. We compute the difference between the HFT expected profit in the two market settings from equations ( <ref type="formula" target="#formula_33">23</ref>) and ( <ref type="formula" target="#formula_35">25</ref>), that is We note that f (0) = 0 and further that f increases in σ since:</p><formula xml:id="formula_37">π i 0 (λ PC ) -π i 0 (λ OD ) =</formula><formula xml:id="formula_38">∂f ∂σ = 3µ          1 - δκ δκ δκ + 3µσ δ+µ &lt;1          &gt; 0, (B.5)</formula><p>which concludes the proof.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Decentralized exchange architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Processor market clearing</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure</head><label></label><figDesc>Figure 3: Model timing</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: HFT Speed Investment This figure illustrates the equilibrium HFT investment in low-latency technology measured by the Poisson arrival rate λ, as a function of the news arrival rate δ. Parameter values: µ = 2, κ = 0.25, and σ = 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Speed of Price Discovery This figure illustrates the expected time elapsed between a news event and the next trade or quote update, in both centralized and decentralized exchanges, as a function of the news arrival rate δ. Parameter values: µ = 2, κ = 0.25, and σ = 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Total Infrastructure Committed to Low-Latency Trading This figure illustrates the total usage of exchange infrastructure resources, in both centralized and decentralized markets, as a function of the news arrival rate δ. Parameter values: µ = 2, κ = 0.25, and σ = 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: HFT Speed Race Rents This figure illustrates the equilibrium HFT profits in both centralized and decentralized exchanges, net of technology cost, as a function of the news arrival rate δ. Parameter values: µ = 2, κ = 0.25, and σ = 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>δ</head><label></label><figDesc>36 (δ + µ) 2 2(δ + µ) δκ -δκ δκ + 3µσ δ + µ + 3µσ . (B.3) It is enough to show that f (σ) ≡ 2(δ + µ) δκ -δκ δκ + 3µσ δ + µ + 3µσ &gt; 0. (B.4)    </figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>We note, however, that P2P networks do not need to rely on a blockchain: BitTorrent, a file transfer software, is a peer-to-peer platform that does not use blockchain.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_1"><p>A Turing-complete language can theoretically implement any algorithm or task achievable by a computer.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_2"><p>The intuition here follows the proof of Proposition 1 from<ref type="bibr" target="#b28">Menkveld and</ref> Zoican (2017), p. 1217.   </p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_3"><p>In February 2019, Binance (one of the largest cryptoasset exchange) launched a decentralized exchange allowing for one-second settlement times. See: Binance releases a first version of its decentralized crypto exchange.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Notation summary</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Endogenous Quantities</head><p>Variable Definition ask The price at which the market-maker is willing to sell one unit of the asset at t = 1. λ i HFT speed, i.e., the Poisson intensity of the HFT market arrival process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Λ</head><p>Total expenditure with market CPU infrastructure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>p (•)</head><p>Market price of CPU infrastructure, p = κ i λ i .</p><p>π 0 (•) HFT profit from trading, net of speed cost.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Proofs Proposition 3</head><p>Proof. To show that λ OD &gt; λ PC , we compute the difference in speed intensity across the two market settings λ OD -λ PC , λ OD -λ PC = δ + 3µσ 2κ(δ+µ) -δ 2 + 3µσ κ(δ+µ) 6 (B.1)</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><surname>Aoyagi</surname></persName>
+		</author>
+		<title level="m">Speed Choice by High-Frequency Traders with Speed Bumps</title>
+		<imprint>
+			<date type="published" when="2019-06">Jun, 2019</date>
+		</imprint>
+	</monogr>
+	<note>Manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Footprints on a Blockchain: Trading and Information Leakage in Distributed Ledgers</title>
+		<author>
+			<persName><forename type="first">Rune</forename><surname>Aune</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Tevasvold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maureen O'</forename><surname>Krellenstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ouziel</forename><surname>Hara</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Slama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Trading</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="5" to="13" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">IDEX : A Real-Time and High-Throughput Ethereum Smart Contract Exchange</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1" to="11" />
+		</imprint>
+		<respStmt>
+			<orgName>Aurora Labs</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Matching markets in the digital age</title>
+		<author>
+			<persName><forename type="first">Eduardo</forename><forename type="middle">M</forename><surname>Azevedo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Glen</forename><surname>Weyl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">352</biblScope>
+			<biblScope unit="page" from="1056" to="1057" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Baldauf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Mollner</surname></persName>
+		</author>
+		<title level="m">Fast Trading on Fake News: The Role of Speed in Liquidity Provision, Manuscript. , 2019, High-frequency trading and market performance</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note>Manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Risk and Return in High-Frequency Trading</title>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Baron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Brogaard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Hagströmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrei</forename><surname>Kirilenko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial and Quantitative Analysis</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="993" to="1024" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">Soumya</forename><surname>Basu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Easley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maureen O'</forename><surname>Hara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emin</forename><surname>Sirer</surname></persName>
+		</author>
+		<title level="m">Towards a Functional Fee Market for Cryptocurrencies</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>Manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Decentralized Exchanges (DEX)</title>
+		<author>
+			<persName><forename type="first">Mrinalini</forename><surname>Bhutoria</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>Circle Research Whitepaper</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The Blockchain Folk Theorem</title>
+		<author>
+			<persName><forename type="first">Bruno</forename><surname>Biais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christophe</forename><surname>Bisière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthieu</forename><surname>Bouvard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Catherine</forename><surname>Casamatta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="1662" to="1715" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Equilibrium Fast Trading</title>
+		<author>
+			<persName><forename type="first">Bruno</forename><surname>Biais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thierry</forename><surname>Foucault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sophie</forename><surname>Moinas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page" from="292" to="313" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Hidden and displayed liquidity in securities markets with informed liquidity providers</title>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Boulatov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">J</forename><surname>George</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="2096" to="2137" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">High frequency trading and price discovery</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Brogaard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Terrence</forename><surname>Hendershott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Riordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="2267" to="2306" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Brolley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Cimon</surname></persName>
+		</author>
+		<title level="m">Order Flow Segmentation, Liquidity and Price Discovery: The Role of Latency Delays</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>Manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The High-Frequency Trading Arms Race: Frequent Batch Auctions as a Market Design Response</title>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Budish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Cramton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Shim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Quarterly Journal of Economics</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="page" from="1547" to="1621" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Will the Market Fix the Market? A Theory of Stock Exchange Competition and Innovation</title>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Budish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Shim</surname></persName>
+		</author>
+		<idno>No. 25855</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">NBER Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Blockchain-Based Settlement for Asset Trading</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Chiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thorsten</forename><forename type="middle">V</forename><surname>Koeppl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="1716" to="1753" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Blockchain Disruption and Smart Contracts</title>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Cong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiguo</forename><surname>William</surname></persName>
+		</author>
+		<author>
+			<persName><surname>He</surname></persName>
+		</author>
+		<idno>No. 25592</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<editor>
+			<persName><forename type="first">Jiasun</forename><surname>Li</surname></persName>
+		</editor>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="1754" to="1797" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">NBER Working Paper</note>
+	<note>Decentralized Mining in Centralized Pools</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Disruptive Change in the Taxi Business: The Case of Uber</title>
+		<author>
+			<persName><forename type="first">Judd</forename><surname>Cramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">B</forename><surname>Krueger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="page" from="177" to="182" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">From Mining to Markets: The Evolution of Bitcoin Transaction Fees</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Easley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maureen O'</forename><surname>Hara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soumya</forename><surname>Basu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">News Trading and Speed</title>
+		<author>
+			<persName><forename type="first">Thierry</forename><surname>Foucault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johan</forename><surname>Hombert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ioanid</forename><surname>Rosu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="page" from="335" to="382" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Toxic Arbitrage, The Review of Financial Studies</title>
+		<author>
+			<persName><forename type="first">Thierry</forename><surname>Foucault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roman</forename><surname>Kozhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wing</forename><forename type="middle">Wah</forename><surname>Tham</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="1053" to="1094" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Is Trading Fast Dangerous?</title>
+		<author>
+			<persName><forename type="first">Thierry</forename><surname>Foucault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sophie</forename><surname>Moinas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Global Algorithmic Capital Markets</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="9" to="27" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Bid, ask and transaction prices in a specialist market with heterogeneously informed traders</title>
+		<author>
+			<persName><forename type="first">Lawrence</forename><forename type="middle">R</forename><surname>Glosten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">R</forename><surname>Milgrom</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="71" to="100" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Dynamic Pricing of Electricity</title>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">L</forename><surname>Joskow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Catherine</forename><forename type="middle">D</forename><surname>Wolfram</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="page" from="381" to="385" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">How fast should trades settle?</title>
+		<author>
+			<persName><forename type="first">Mariana</forename><surname>Khapko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marius</forename><surname>Zoican</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Management Science Forthcom</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<author>
+			<persName><forename type="first">Albert (pete) S</forename><surname>Kyle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeongmin</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Toward a Fully Continuous Exchange</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="650" to="675" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Market Design for Trading with Blockchain Technology</title>
+		<author>
+			<persName><forename type="first">Katya</forename><surname>Malinova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Park</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>Working paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Need for speed? Exchange latency and liquidity</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Menkveld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Zoican</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="1188" to="1228" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">High-Frequency Trading as Viewed through an Electron Microscope</title>
+		<author>
+			<persName><forename type="first">Albert</forename><forename type="middle">J</forename><surname>Menkveld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Financial Analysts Journal</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="page" from="24" to="31" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<author>
+			<persName><surname>Pagnotta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Emiliano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Philippon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Competing on Speed</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="1067" to="1115" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<author>
+			<persName><forename type="first">Andriy</forename><surname>Shkilko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Konstantin</forename><surname>Sokolov</surname></persName>
+		</author>
+		<title level="m">Every Cloud Has a Silver Lining: Fast Trading, Microwave Connectivity and Trading Costs</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>Manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">An open protocol for decentralized exchange on the Ethereum blockchain</title>
+		<author>
+			<persName><forename type="first">Will</forename><surname>Warren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amir</forename><surname>Bandeali</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Whitepaper</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">The Externalities of High Frequency Trading</title>
+		<author>
+			<persName><forename type="first">Mao</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiading</forename><surname>Gai</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note>Working paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<author>
+			<persName><forename type="first">Donna</forename><surname>Yesalavich</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kardos</surname></persName>
+		</author>
+		<title level="m">Microbursts Present Big Issues For High-Speed Traders</title>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

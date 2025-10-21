@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Generating multiple-choice items for a B2 English reading test with GPT-4: targeting higher-order cognitive processing</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Olena</forename><surname>Rossi¹</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Independent Researcher</orgName>
+								<address>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Josep</forename><surname>Maria</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Independent Researcher</orgName>
+								<address>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Montcada</forename><surname>Escubairó²</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Independent Researcher</orgName>
+								<address>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Olena</forename><surname>Rossi</surname></persName>
+							<email>olena.rossi@itemwriting.co</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Education and Vocational Training</orgName>
+								<address>
+									<region>Catalonia</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Generating multiple-choice items for a B2 English reading test with GPT-4: targeting higher-order cognitive processing</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">77DE1061EC7DAD4141C32C76D111718E</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T14:01+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Generative AI</term>
+					<term>Reading assessment</term>
+					<term>Multiple-choice items</term>
+					<term>Automated item generation</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This study investigated the potential of generative AI to produce multiple-choice reading comprehension items for B2-level English assessment, with a focus on higher-order cognitive processing. Using GPT-4 configured within a custom environment, 164 items were generated from six authentic texts aligned with official test specifications of the Escoles Oficials d'Idiomes (Catalonia). Items underwent expert review and were trialled with 775 test-takers. A triangulated analysis combined linguistic analysis, expert judgements, psychometric modelling, and testtaker feedback. Findings showed that GPT-4 frequently attempted to target higher-order cognitive processing, but the resulting items were often misclassified and suffered from flaws such as implausible distractors and text misinterpretation. An item generation log revealed unstable model behaviour across rounds. Linguistic analysis of item stems highlighted formulaic structures and GPT-4's confusion regarding the cognitive processing required for item completion. Expert reviewers confirmed that most items required substantial revision, with distractor plausibility and construct alignment as recurrent concerns. Psychometric indices indicated that the items exhibited acceptable model fit and discrimination but were generally easy for the trial group. The study concludes that GenAI can replicate surface features of items targeting higher-order cognitive processing but rarely provides substantive coverage of complex reading processes.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Reading comprehension is an important skill in second language (L2) learning. By the B2 level of the Common European Framework of Reference for Languages (CEFR), L2 learners are expected not only to retrieve explicitly stated information but also to engage in higher-order cognitive processing by making inferences, integrating ideas, and evaluating meaning <ref type="bibr">(Council of Europe, 2020)</ref>. These abilities, therefore, form a central focus of standardised reading assessments at higher proficiency levels. Multiple-choice (MC) items are widely used in assessment contexts because they target various types of cognitive processing and maintain efficiency in administration and scoring. However, they are notoriously difficult to write because effective MC items must elicit intended cognitive processes while avoiding construct-irrelevant clues <ref type="bibr" target="#b8">(Haladyna et al., 2002)</ref>.</p><p>The rapid spread of generative artificial intelligence (GenAI) has prompted growing interest in its potential to support item writing. Large language models (LLMs) can generate fluent text quickly and at scale, raising hopes that they might assist in or even partially automate test development. Recent studies suggest that GenAI can produce reading comprehension items that are linguistically coherent and psychometrically adequate, yet concerns remain about their construct validity, particularly when items are intended to elicit higher-order processing <ref type="bibr" target="#b11">(Lin &amp; Chen, 2024;</ref><ref type="bibr" target="#b19">Wen et al., 2025;</ref><ref type="bibr" target="#b20">Zhang et al., 2025)</ref>. Against this backdrop, the present study examined whether GPT-4-generated MC items for B2 reading assessment meaningfully targeted text but upon what that information entails" <ref type="bibr">(Khalifa &amp; Weir, 2009, p. 75)</ref>. MC formats are particularly effective at assessing higher-order cognitive processing because distractors can represent plausible but incorrect interpretations <ref type="bibr" target="#b8">(Haladyna et al., 2002)</ref>. For example, IELTS Academic Reading uses MC items to identify main ideas and writer purpose <ref type="bibr">(Cullen et al., 2025)</ref>.</p><p>Similarly, TOEFL iBT includes MC questions that test higher-order cognitive processing such as inferencing and rhetorical purpose <ref type="bibr" target="#b15">(Sawaki, 2017)</ref>. However, MC items are challenging to produce, which is why the advent of GenAI -promising rapid generation of varied texts, including assessment items -has been greeted with considerable enthusiasm in language assessment.</p><p>The next section reviews recent empirical research on this topic.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Automated generation of multiple-choice reading comprehension items to assess higher-order cognitive processing</head><p>Recent studies (e.g., <ref type="bibr" target="#b1">Alshehri &amp; Alharbi, 2025;</ref><ref type="bibr" target="#b17">Shin et al., 2025)</ref> have explored the use of GenAI to produce reading test items without distinguishing between types of cognitive processing. <ref type="bibr" target="#b1">Alshehri and Alharbi (2025)</ref> used GPT-4 to generate texts and MC items for B1 learners, which were expert-reviewed and trialled with 150 students. Although they showed acceptable psychometric qualities, they were generally too easy, a result the authors interpreted as a GenAI bias toward lower-order information retrieval.</p><p>Several studies have examined whether LLMs can generate items targeting specific types of cognitive processing. <ref type="bibr" target="#b11">Lin and Chen (2024)</ref> instructed GPT-3.5 to produce items targeting explicit detail, word meaning, inference, main ideas, and sentiment. Five experts evaluated item quality and classified each item by cognitive processing type. Judgements largely matched the model's labels, but many "explicit detail" items simply copied text, reducing the processing required to lexical matching. The model also overproduced "explicit detail" and underproduced higher-order items (e.g., inference or sentiment), which the authors linked to GPT-3.5's weak abstract reasoning. <ref type="bibr" target="#b19">Wen and Chu (2025)</ref> also used GPT-3.5, applying the PIRLS framework, which distinguishes four processes: (1) retrieving explicitly stated information, (2) making straightforward inferences, (3) interpreting and integrating ideas, and (4) evaluating and critiquing content. Two experts judged ChatGPT 3.5 to have excelled at generating factual retrieval questions but performed significantly worse on inference and evaluation. Other recurring issues were content oversimplification (complex ideas reduced to recall), and difficulty in handling nuanced meaning. The authors concluded that GPT-3.5 lacked the deeper reasoning required to produce items targeting higher-order comprehension.</p><p>Recent work has tested newer GPT models. <ref type="bibr" target="#b13">Ma et al. (2025)</ref> prompted GPT-4 to generate inference questions from a taxonomy of inference subtypes. Three experts evaluated item quality and construct alignment: 93.8% of items were acceptable, but only 46.1% matched the intended inference subtype. <ref type="bibr" target="#b20">Zhang et al. (2025)</ref> applied a framework of academic reading subskills to generate varied item types, rated by five experts and trialled with 132 university students. Many items were found too easy for the test-taker sample. Experts commented that vocabulary items lacked nuance, while overall the items allowed answers without deep engagement with the text.</p><p>Overall, findings are consistent. GenAI produces fluent MC items that function reasonably well psychometrically but are generally easier than human-written ones <ref type="bibr" target="#b1">(Alshehri &amp; Alharbi, 2025;</ref><ref type="bibr" target="#b20">Zhang et al., 2025)</ref>. More critically, GenAI struggles to target higher-order cognitive processes such as inference, integration, and evaluation. Even advanced prompting, including chain-of-thought or iterative techniques, has not ensured construct fidelity <ref type="bibr" target="#b11">(Lin &amp; Chen, 2024;</ref><ref type="bibr" target="#b13">Ma et al., 2025;</ref><ref type="bibr" target="#b19">Wen &amp; Chu, 2025)</ref>, and newer LLMs have not considerably outperformed earlier ones.</p><p>Building on this evidence, important gaps remain. First, most prior studies relied on broad expert judgements without systematically cataloguing item flaws or quantifying how these flaws vary by type of cognitive processing. Second, no fine-grained linguistic analysis of generated items has been conducted, an analysis that would provide objective evidence linking surface item features to the ability to target higher-order cognitive processes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methodology</head><p>The methodology adopted for this study followed a multi-stage data collection process designed to develop, review, and trial B2-level reading comprehension items. An overview of the study's design is presented in Figure <ref type="figure">1</ref> below. Each stage is described in detail in the sections that follow.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1</head><p>Overview of the Study Methodology</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Prompt development and GPT setup</head><p>A e Linguistic analysis of generated items Qualitative analysis of the item generation log Krippendorff s alpha for AI/human agreement CTT and IRT analyses of test scores; Qualitative analysis of reviewer evaluations and student feedback assigned the persona of an experienced item writer, a common prompt-engineering technique also used in prior research (e.g., <ref type="bibr" target="#b11">Lin &amp; Chen, 2024)</ref>. Moreover, the GPT was supplied with supporting documentation, including the official test specifications and sample tasks provided by the department, as well as guidelines on producing MC items.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Item generation</head><p>B2 reading comprehension items were generated by the first author using six texts selected from a pool of retired tasks that had been used in live certification exams five to ten years prior to the study. All texts were authentic and drawn from a variety of public sources, including magazines, newspapers, and online blogs. Some texts were slightly edited for length when originally used, while maintaining their original structure and tone.</p><p>Item generation was conducted using GPT-4 within the 'My GPTs' environment. The initial prompt was used for the first three texts and then iteratively refined to address recurring issues.</p><p>For example, for Text 4 revisions included additional guidance to improve inferencing items, avoid lexical overlap with the source text, and ensure coverage of the cognitive processes identified by the model.</p><p>For most texts, three rounds of item generation were conducted, each producing ten items. After each round, items were briefly screened for quality, and notes were made on issues identified in individual items. Better quality items were copied to a task template. The first author maintained a three-day item generation log recording qualitative observations and recurring issues (see Table <ref type="table">1</ref>).</p><p>After the item generation, all selected items were reviewed to remove overlaps, and final sets of six to ten items -matching the number of items in the original retired tasks -were compiled for review. In selecting the final items, the primary considerations were quality and independence, essential principles in reading item design. Item independence requires that no two items target the same content in the text, and that no item provides clues that could assist in answering another. Some items that had initially been marked as usable were later excluded for violating this principle, due to overlap between items generated in different rounds. There was no requirement to distribute items evenly across different cognitive processing types within each set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e 1</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Excerpt from the Item Generation Log</head><p>Text 1 Round 1 Generated items exceeded my expectations -main idea items did focus on main ideas rather than individual sentences in the text, there was almost no lexical overlap with the text. The inference items do target inference rather than specific details. Taken individually, most items seem usable. However, taken as a set, items overlap and give clues to each other, therefore I had to carefully compare them to select items for the final set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Text 1 Round 2</head><p>This round was less encouraging: lexical inference items focus on reasonable phrases, but the distractors are so clearly incorrect that the answer is obvious and doesn't require inferencing. Implausible distractors, which make the item too easy to answer, was the main problem in this round of item generation. Other problems included lexical overlap (e.g., the item asks about the writer's profession, uses "freelance journalist" in the key which is the exact phrase used in the text, while the two distractors are never mentioned in the text), and targeting information that GPT has misinterpreted from the text…</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Item review</head><p>The compiled item sets were submitted for independent review by two assessment specialists from the Departament d'Educació i Formació Professional. Each reviewer completed a review checklist for every task (i.e., the set of items for a particular text) evaluated. The reviewers identified cognitive processes required to complete the item (e.g., global comprehension, inference of meaning, etc.) and assessed each item across multiple quality criteria. These included clarity and conciseness of the stem and options, structural consistency across options, correctness of the key, plausibility of distractors, and overall appropriateness for the B2 proficiency level. Reviewers also had the opportunity to provide written comments. Importantly, reviewers did not make any edits to the items because the study focus was to evaluate GenAI's capability in producing high-quality test items. The full version of the item review checklist is available in OSF https://osf.io/djeqh/overview?view_only=05c0fc44b4084859bfbbcec735506b86</p><p>Reviewers were already familiar with the original test specifications through their routine work in test development. A follow-up meeting was held between the first author and the two reviewers. The purpose of the meeting was to jointly select the two most promising tasks (out of six) to advance to the trialling stage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Item trialling</head><p>Following the selection of two tasks, a digital test form was created and prepared for online administration. The form included both reading tasks, each followed by a brief questionnaire designed to collect feedback on item quality. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5.">Data analyses</head><p>Test-taker responses to the trialled items were analysed using both Item Response Theory (IRT) and Classical Test Theory (CTT) approaches. IRT analysis was conducted in Jamovi using the dichotomous Rasch model. An expected score curve was generated for each item. In parallel, CTT analysis was conducted in SPSS (version 30), where item discrimination indices were calculated.</p><p>Agreement between the GPT-4-generated labels and human reviewer classifications of the cognitive process targeted by each item was evaluated using Krippendorff's alpha.</p><p>Quantitative data from item review checklists and test-taker feedback questionnaires were analysed using frequency counts and descriptive statistics. Optional textual comments -though limited in number -from both sources were analysed qualitatively by noting individual observations and identifying common themes.</p><p>Item generation data were organised in a spreadsheet to track item output, selection, and categorisation by cognitive processing type, based on metadata produced by GPT-4. For higherorder cognitive processing categories, item stems were collated and examined for question type and recurring structural and analytical patterns. Comments on item quality made during the initial screening phase were compiled and frequency counts were produced to quantify the occurrence of specific flaws (e.g., lexical overlap with the source text, ambiguous distractors, misalignment with the intended cognitive process). Finally, entries in the item generation log were thematically coded independently by both authors, yielding an inter-coder reliability of 91%. Any discrepancies were subsequently resolved through discussion.</p><p>All sources of data were triangulated in the final analysis to produce a comprehensive evaluation of the quality of GPT-4-generated items.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Findings</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Findings from the item generation</head><p>A total of 164 items were generated across the six texts, of which 46 (approximately 28%) advanced to the review stage following initial screening. For each item, GPT-4 specified the target cognitive processing type; their distribution is shown in Table <ref type="table">2</ref>. Notably, GPT-4 did not limit itself to lower-order processing; on the contrary, it frequently produced items aimed at higher-order cognitive processes. The most frequently targeted cognitive process was inferencing of meaning (n=49), followed by specific details (n=28) and main ideas (n=24). In contrast, few items were generated for categories such as identification of text function/type (n=1) and grasping implicit/connotative use (n=4). The third column of Table <ref type="table">2</ref> displays the percentage of items in each category that were selected for further review. These percentages represent category-level proportions, not a total sum across all items. They indicate that items targeting higher-order cognitive processing were as likely to advance to review as those targeting lower-order processing.</p><p>Linguistic analysis of item stems for each higher-order cognitive process as labelled by GPT-4 revealed that, in most categories, items tended to follow consistent patterns. The analysis focused on those higher-order cognitive categories that contained more than ten items, as this quantity was sufficient to identify patterns.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Lexi i fere i g</head><p>Nearly all lexical inferencing questions followed a uniform format -What does X mean/imply/suggest? or What is implied by X? -where X referred to idioms, metaphors, figurative expressions, or emotionally charged phrases drawn from the source text. For example:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e</head><p>Cognitive Identification of text function/type 1 0</p><p>Grasping Implicit/connotative use 4 0</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I fere i g f me i g</head><p>Items in this category followed three broad analytical patterns:</p><p>1) Implied meaning in the text, using verbs imply and infer, for example:</p><p>What is implied about the current job market for graduates?</p><p>2) Authorial attitude or viewpoint, for example:</p><p>What can be inferred about the author's view of being single?</p><p>3) Implied mental state, mood, feelings or motivations of individuals other than the writer, for example:</p><p>What can be inferred about Trimble's views on the criticism she received?</p><p>Across this category, the question structure was highly repetitive: 43 out of 49 questions began with What, and 19 began with What can be inferred. Additionally, nine items asked about the meaning of specific expressions (e.g., What does the phrase "all hell broke loose" imply about the narrator's experience upon arriving at the inn?), indicating that GPT-4 did not consistently differentiate between lexical inference and inference of meaning, despite labelling them as different.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>U der di g i ude /m d</head><p>The questions focussed on emotional reactions, tone, and affective stance. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G b mprehe i</head><p>This category showed more structural variation than others. Semantically, stems addressed emotional state (e.g., What was the narrator's emotional state as they drove to the inn?), motivation or reason (e.g., What is the primary reason the narrator accepts the invitation to the Cedar Inn and Spa?), cause-effect relationships (e.g., What ultimately led to the family being rescued?), and overall message or significance of the text. However, only the last group aligns with the construct of global comprehension, as it requires synthesis of information across the text or a substantial portion of it. Among the 22 items labelled as Global Comprehension, only five met this criterion, for example:</p><p>What is the significance of the title "An Everyday Hero"?</p><p>What is the author's view on aid in general, according to the entire text?</p><p>The analysis of comments made during the initial screening of items identified eight recurrent item flaws:</p><p>1. Lexical overlap (LO): The item stem and/or key (i.e., correct answer) repeated a substantial portion of the corresponding text verbatim, allowing test-takers to respond through lexical matching rather than engaging the intended cognitive process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Double key (DK):</head><p>The item contained more than one correct answer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Wrong key (WK):</head><p>The response option labelled by GPT-4 as correct did not contain the information necessary to answer the question accurately.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Longer key (LK):</head><p>The correct answer was noticeably longer than the distractors, providing a clue to test-wise test-takers.</p><p>5. Implausible distractor (ID): At least one distractor was clearly incorrect, making the item solvable by eliminating implausible options rather than applying the intended type of cognitive processing.</p><p>6. Obvious answer (OA): The correct answer was evident for reasons unrelated to length or plausibility of distractors (i.e., not attributable to #4 or #5).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Misinterpretation of the text (MT):</head><p>The item misrepresented the meaning of the relevant part of the text.</p><p>8. Wrong type of cognitive processing (WCP): Items could be answered without engaging the type of cognitive processing indicated by the GPT-4 label. This misalignment stemmed from the underlying item design and was not attributable to others flaws such as lexical matching or the use of implausible distractors.</p><p>The classification of flaw types was developed by the authors, drawing on professional item writing experience and informed by established principles of multiple-choice item construction (e.g., <ref type="bibr" target="#b8">Haladyna et al., 2002)</ref>. The frequency of each flaw across items targeting different types of cognitive processing is summarised in Table <ref type="table">3</ref>. Among the flaw categories, the most frequent was the incorrect attribution of items to a cognitive processing type (n=30, 22.9%), followed by items with an obvious answer (n=28, 21.4%). In contrast, flaws involving an incorrect key or misinterpretation of the text were relatively rare. To enable comparisons across cognitive processing types, flaw rates were normalised to account for differences in the number of items generated per category. When adjusted for item count, global comprehension items exhibited the highest flaw rate (13.2 flaws per 10 items). This was primarily due to misclassification: in 17 cases, GPT-4 mislabelled items as requiring global comprehension. Items targeting inferencing of meaning were also associated with a high number of flaws, although these were more evenly distributed across flaw types. Common issues included obvious answers, visibly longer keys, implausible distractors, and occasional misclassification of the cognitive process. By contrast, items focused on lower-order processing, such as specific details and main ideas, tended to exhibit flaws related to lexical overlap with the source text, obvious answers, implausible distractors, and key length. Notably, these items did not exhibit problems related to misclassification, incorrect keys, or textual misinterpretation, issues that were concentrated exclusively in items targeting higher-order cognitive processes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Distribution of Item Flaws by Cognitive Processing Type</head><p>Analysis of the item generation log identified six central themes, reflecting patterns in GPT-4's performance, its response to prompts and prompt modifications, item flaws, and GPT-4's ability to target different cognitive processing types. The themes, their frequencies, and distribution across texts are shown in Table <ref type="table">4</ref>. One of the most consistent observations concerned the fluctuating quality of generated items across rounds and texts. The quality of items sometimes improved midway through the process, only to decline again. As noted in the log, "each batch has one or two prevailing problems… as if ChatGPT performed at will," suggesting that output quality might be influenced by unpredictable factors. Recurring flaws, such as implausible distractors, longer keys, or lexical overlap with the text, were frequently documented. Another persistent issue was item overlap, where one item gave away the answer to another or multiple items targeted the same information, thus violating the rule of item independence. Prompts were iteratively adjusted in response to such problems, and some modifications yielded improvements. For example, in Round 3 of one session, a list of rules was prepared "worded very strictly", reflecting earlier issues. This resulted in better items, free of lexical overlap and targeting inferencing more accurately. However, not all changes were effective, and some improvements were short-lived.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Thematic Analysis of Item generation Log</head><p>The log reflects GPT-4's uneven ability to target specific cognitive processes. While some items, particularly those addressing main ideas and specific details, were well targeted, others were misclassified. Items labelled as global comprehension, for example, often targeted specific details or even individual words in the text. A frequent confusion was between paraphrase and inference: "ChatGPT doesn't know the difference between paraphrase and inference… something that human item writers have problems with too."</p><p>GPT-4's behaviour emerged as a distinct theme. The model was described as unpredictable, sometimes reverting to previous flaws after showing signs of progress.</p><p>Additionally, it was observed that GPT-4 "tends to target some parts of a text a lot, while overlooking some other parts," and that item generation sometimes followed a loop: "It goes on to generate items in order, but when it finds itself having exhausted info it comes back to the beginning." Although adaptation was partial and inconsistent, there was evidence of responsiveness to explicit instruction. For example, inference items improved after clarifying the difference between inference and paraphrase. Likewise, the quality of attitude items improved following repeated correction: "I've told it a couple of times that these are a type of inference items, and it seems to have taken it on board." Nonetheless, the model remained inconsistent in following instructions, with the log noting that GPT-4 "is selective in what it conforms to."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Findings from the item review</head><p>Six item sets, comprising 46 items in total, were independently reviewed by two professional reviewers. Agreement between GPT-4 and the two reviewers regarding the cognitive processes targeted by the items was examined using Krippendorff's α. Agreement was highest between GPT-4 and Reviewer 1 (α=0.802, 95% CI=0.661-0.915), indicating substantial consistency. Agreement between GPT-4 and Reviewer 2 was lower (α=0.589, 95% CI=0.404-0.758), as was agreement between the two human reviewers themselves (α=0.538, 95% CI= 0.352-0.694). When all three coders (GPT-4, Reviewer 1, and Reviewer 2) were considered together, agreement was α=0.644 (95% CI=0.523-0.763).</p><p>The reviewers also identified flaws in individual items; table <ref type="table">5</ref> summarises their counts.</p><p>The most frequent issue noted by both reviewers was distractor implausibility (Reviewer 1: n= 14;</p><p>Reviewer 2: n=16). Additionally, Reviewer 1 judged that distractors were possible answers in 15 items, whereas Reviewer 2 expressed concern about the appropriateness of the language level in 14 items. Notably, the two reviewers differed in the extent to which they observed these issues.</p><p>Several flaw types were rarely noted; for example, both reviewers recorded low counts for unclear stems, unclear options, and an incorrect key.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e</head><p>Reviewer judgements: Item flaw counts The optional qualitative comments corroborated the quantitative findings for the three most frequent flaw types. For implausible distractors, both reviewers noted that some distractors were "not supported with the text," "poor choices," or "too far away from the correct option" to be credible (Reviewer 1: 5 comments; Reviewer 2: 8 comments). Two main causes of implausibility emerged: valence imbalance, often in attitude and mood items where the key and distractor differed in polarity, and distractors that were the direct opposite of the correct answer, making them unrealistic. For distractors judged to be possible correct answers (Reviewer 1: 4; Reviewer 2: 2) reviewers observed that some were partially or wholly true. Regarding inappropriate language level, Reviewer 2 cited several words above B2 level (e.g., resilient, disheartened, aftermath), while Reviewer 1 did not view them as problematic. Few additional comments concerned other flaw types listed in Table <ref type="table">5</ref> (≤ 2 per reviewer).</p><p>Because Rasch models constrain item discrimination to be equal, CTT item-total correlations (point-biserials) were also calculated to provide additional evidence of item quality.</p><p>These ranged from .04 to .45, indicating that while some items contributed relatively little to distinguishing between stronger and weaker test-takers, others showed good discriminatory power. Importantly, none of the items displayed negative discrimination, indicating that weaker test-takers were not outperforming stronger ones on any item, a situation that would point to a flawed item.</p><p>Test-taker feedback on the two trialled tasks is summarised in Table <ref type="table">7</ref>. Overall, few respondents found items unclear, unusual, or extremely difficult or easy. By cognitive processing type, items requiring inferencing of meaning and global comprehension drew the most 'unclear' responses (up to 10%) and were more often rated as 'unusual' or 'extremely difficult' than those targeting other cognitive processes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e 7</head><p>Percentage of test-takers reporting items as unclear, unusual, or extremely difficult/easy Ten comments concerned 'unclear' items, all targeting higher-order cognitive processing, describing them as "open" or interpretive and stating, "you cannot find the exact/specific answer in the text." Eleven comments on 'unusual' and eight on 'extremely difficult' items also referred to higher-order cognitive processing, citing that such questions were interpretive, "unfair for neurodivergent people," and not directly text-based. Respondents most often linked difficulty to unfamiliar vocabulary (e.g., "some word was essential and I wasn't sure of the meaning') but also mentioned ambiguous options ("none of the answers were completely true") and referential uncertainty ("the use of "their" for me wasn't clear-singular or plural?").</p><p>The latter is notable, because both reviewers independently flagged the singular gender-neutral 'they' as problematic.</p><p>Items targeting specific details and main ideas (lower-order processing) were seldom rated as 'unclear' or 'unusual' and rarely as 'extremely difficult.' Reports of 'extremely easy' items were uncommon across all cognitive processing types but slightly for specific details items, and unaccompanied by qualitative comments. Overall, the convergence between the quantitative survey patterns and the limited qualitative feedback indicates that concerns about clarity, familiarity, and difficulty, where they did arise, were concentrated in items targeting higherorder cognitive processing. It is noteworthy, however, that psychometric analyses showed that all items were objectively easy for the test-taker sample.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1.">Item generation</head><p>Contrary to earlier studies that found GenAI favoured lower-order cognitive processing (e.g., Lin &amp; Chen, 2024), GPT-4 in this study did not show such a preference. Instead, most generated items were nominally aligned with higher-order processes, particularly inference.</p><p>Linguistic analysis of their stems revealed that the questions followed uniform repetitive patterns. For example, inference items commonly began with "What is implied by…?". Although such phrasing mimicked higher-order processing demands, the item flaw analysis demonstrated that many items did not require inferential reasoning. Thus, questions beginning with "What is implied by…?" often referred to explicitly stated information. <ref type="bibr" target="#b13">Ma et al. (2025)</ref> reported similar mismatches, with fewer than half of their items reflecting the intended inferential process.</p><p>Likewise, <ref type="bibr" target="#b20">Zhang et al. (2025)</ref> observed that AI-generated items seldom required deeper textual analysis. It seems that GPT-4 can successfully imitate the surface-level characteristics of items designed to tap into higher-order processing yet does not consistently generate items that truly demand such engagement. Moreover, this study found that many generated items could be answered through test-wiseness strategies such as eliminating implausible distractors, relying on lexical matching, or selecting the longest option. As a result, even when stems did target implied meaning -as judged by the first author during the initial screening process -flaws in item construction often removed the need for higher-order cognitive processing.</p><p>It was also found that GPT-4 did not always distinguish between processes related to implied meaning. Items intended to assess lexical inference were often labelled as inferencing of meaning, while items designed to measure meaning inference blended with the ones aimed at understanding attitudes/moods. Global comprehension items posed an even greater challenge, as they were frequently recast as questions about emotional states, motivations, or cause-effect relations that did not require understanding the text's overall message. Such patterns mirror difficulties encountered by human item writers <ref type="bibr" target="#b13">(Ma et al., 2025)</ref>. Automated generation may make these overlaps among cognitive processes more visible, pointing to underlying construct ambiguities.</p><p>This study also found that items targeting higher-order cognitive processing sometimes misinterpreted information in the source text. Similar difficulties were noted by <ref type="bibr" target="#b19">Wen and Chu (2025)</ref>, who also generated items from given texts and reported content misalignment and oversimplified interpretations. Such issues may partly stem from the types of texts used for generation. Previous studies asked GenAI to produce both texts and items <ref type="bibr" target="#b1">(Alshehri &amp; Alharbi, 2025;</ref><ref type="bibr" target="#b20">Zhang et al., 2025)</ref>, thereby reducing the likelihood of GenAI misinterpreting the source text.</p><p>By contrast, our study, as well as that of <ref type="bibr" target="#b19">Wen and Chu (2025)</ref>, used authentic texts, which may explain why GenAI occasionally misinterpreted passages or produced items misaligned with their deeper meaning. This is not intended as an argument for generating both texts and items with GenAI. On the contrary, based on our item-writing experience, GenAI-produced texts tend to be factual and low in implied meaning, thereby limiting opportunities for inferential items. Since implied meaning is a key focus of assessment at higher proficiency levels, the use of authentic texts remains preferable.</p><p>When using authentic texts, however, additional efforts may be required beyond simply supplying GenAI with a text and detailed instructions. In this study, we invested considerable effort in constructing a comprehensive item-generation prompt, assigning the model a persona, and providing multiple item-writing guides and examples. We also employed iterative prompting.</p><p>Yet the results were not always satisfactory. This suggests that detailed guidance and sophisticated prompting techniques alone are insufficient to ensure high-quality items, and that novel approaches may be needed. One possibility is to engage GenAI in clarifying a text's implied meaning and overall message prior to item generation. Another is to explore text-mapping approaches. Text mapping has been described as a "more principled basis for arriving at test items" <ref type="bibr">(Urquhart &amp; Weir, 2013, p. 162)</ref> and is widely used in human item generation, where panels of writers employ consensus techniques to identify the aspects of text meaning to be targeted in items. If valuable in human practice, it may also be relevant in automated generation. Several adaptations are possible: a human panel could agree on item content before tasking GenAI with item production; AI could be asked to map text meaning in collaboration with a human; or multiple LLMs could form a "panel" mapping the text, with results then verified by human experts.</p><p>The item generation log recorded GPT-4's unstable performance. Iterative prompting occasionally improved results, but gains were inconsistent, and the model's adherence to instructions was unreliable. This echoes Wen and Chu's (2025) account of ChatGPT-3.5, which selectively followed complex instructions and retained information only within the immediate context. Despite being a newer model, GPT-4 showed comparable volatility, underscoring persistent constraints in its ability to sustain stable performance across extended item generation sessions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.">Item review</head><p>Although only 28% of generated items, the subset judged better quality in pre-screening, were submitted for expert review, reviewers still identified numerous flaws, most commonly in distractors. GenAI's struggles with producing plausible distractors have been noted previously <ref type="bibr" target="#b2">(Attali et al., 2023)</ref>. Writing effective distractors requires anticipating the kinds of misjudgements likely among less proficient test-takers, which in turn depends on familiarity with test-taker populations or an intuitive sense of how people misinterpret texts. LLMs, lacking such experience, are poorly positioned to simulate these errors. As Kerner (2024) explains, "an LLM is a neural network trained to predict text sequences based on probability, and there is no evidence to suggest that LLMs are capable of reasoning as humans do". This limitation likely constrains GenAI's ability to generate high-quality distractors.</p><p>Several workarounds to producing distractors have emerged. To produce distractors for the Duolingo English Test, multiple versions of a passage are generated, with parallel segments repurposed as distractors in reading tasks <ref type="bibr" target="#b2">(Attali et al., 2023)</ref>. Sayin and Gierl (2024) used a template-based method to create short texts containing a single irrelevant sentence. Test-takers had to identify the intruder, thereby activating coherence inference. In trialling, incorrect options functioned effectively as distractors. Such strategies suggest that it may be more productive to design tasks that exploit GenAI's strengths than to persist with requesting LLMs to directly generate distractors, perhaps even reconsidering the need for conventional item formats that depend on distractors and shifting toward novel item types better suited to AI generation.</p><p>Expert review also revealed disagreements about the cognitive processes targeted. While reviewers generally distinguished between lower-and higher-order processing, they often diverged on the specific cognitive process involved. This echoes <ref type="bibr" target="#b13">Ma et al. (2025)</ref>, who reported only about 70% inter-rater agreement when classifying inference item types, attributing this to the inherent subjectivity of expert judgment in construct validation. The finding further underscores a broader challenge, shared both by humans and GenAI, of pinning down discrete cognitive categories in reading comprehension.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3.">Item trialling</head><p>Consistent with prior research <ref type="bibr" target="#b1">(Alshehri &amp; Alharbi, 2025;</ref><ref type="bibr" target="#b20">Zhang et al., 2025)</ref>, virtually all items in our study were objectively easy, with facility values well above .50. None showed negative discrimination, suggesting that they functioned as intended at the technical level.</p><p>However, the clustering of items below 0 logits meant that the upper end of the ability distribution was poorly targeted. This reflects the trial cohort's composition, students at the cusp of B2/C1, and our deliberate decision to prioritise identifying item flaws over optimizing difficulty.</p><p>Nevertheless, the lack of harder items has measurement implications: precision in ability estimates for more proficient learners is reduced, echoing reviewers' concerns that many items were "too obvious" or answerable without engaging fully with the text.</p><p>This study revealed a divergence between test-takers' subjective perceptions of item difficulty and their objective performance. Questionnaire responses indicated that inference and global comprehension items were perceived as considerably more challenging than literal detail items. Yet IRT analysis showed that all items were objectively easy for the group. The discrepancy likely reflects the cognitive demands of higher-order processing: such items may feel harder because their solution paths are less transparent. However, when items merely appear to target these processes, as was often the case in this study, the correct answer could be easily retrieved from the text.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Conclusion</head><p>This study evaluated the capacity of GPT-4 to generate MC B2 reading comprehension items intended to target higher-order cognitive processing. The study used a triangulated design that combined expert review, linguistic analysis, trialling with 775 learners, and test-taker feedback. The investigation showed that while AI-generated items can meet basic psychometric standards and replicate surface features of higher-order cognitive processing, they rarely provide substantive coverage of those complex cognitive processing types. It also seems that the shallow alignment between form and substance observed in earlier LLMs persists in more advanced models, though perhaps with greater fluency and polish.</p><p>These findings carry important implications for reading assessment practice. By detailing the issues that most commonly affect higher-order items, the study highlights areas that require particular attention in item review. Practitioners considering the use of GenAI to generate reading items should be aware that the cognitive process labels supplied by GenAI are often inaccurate: items may appear to target higher-order cognitive processing while in fact permitting answers through literal retrieval or test-wiseness strategies. Rigorous review is therefore essential, both to verify the type of processing an item is likely to elicit and to detect flaws that make items susceptible to shortcuts that bypass genuine higher-order processing.</p><p>The study makes several important contributions to the growing literature on GenAI for item writing in language assessment. It is the first to document the item generation process through a structured log, providing an empirical record of how model behaviour evolved across iterative rounds. It also extends previous work by offering a fine-grained linguistic analysis of item stems, linking surface features to the likelihood of eliciting higher-order cognitive processing. The study also advances validation practice by triangulating evidence from expert review, psychometric trial data, and test-taker feedback, an approach rarely adopted in prior research.</p><p>Finally, by embedding the investigation within an operational certification context, the study demonstrates both the practical feasibility and the current limits of using GenAI as a tool in largescale reading test development.</p><p>Several limitations should be acknowledged. First, trialling was conducted with learners slightly above B2 level, which may have affected item difficulty estimates and reduced comparability with the target population. Second, the study drew on a limited set of six texts, with only two advanced to trialling, so the findings may not extend to a broader range of genres and text types. Third, no advanced NLP methods such as LLM fine-tuning or pipeline architectures were applied. However, this "low-tech" approach reflects the realities of most operational test development contexts. Fourth, the reviewer pool was small, comprising only two experts, which restricted the breadth of perspectives on item quality and construct alignment. Finally, the classification of cognitive processes was based on expert judgement. While this is consistent with common practice in reading assessment research, more definitive evidence would require empirical validation through methods such as eye-tracking or think-aloud protocols, which were beyond the scope of the present study.</p><p>Future research should address both technical and assessment-oriented aspects of using GenAI for developing reading test items. On the technical side, where expertise is available, efforts could focus on fine-tuning LLMs in API environments or building evaluation-assisted system architectures. On the assessment side, promising directions include integrating text mapping into the item generation process and the development of novel item formats better aligned with GenAI capabilities.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>Third, studies typically describe prompting approaches but do not document the generation process itself so model behaviour over time remains opaque. Finally, many reports rely exclusively on expert review without item trial data, and virtually none incorporate the test-taker perspective. The present demand qualification, often used to meet university entry requirements or for professional advancement. The English B2 certification, similar to exams at the other CEFR levels, consists of five separate components -reading, writing, listening, speaking, and mediation -designed to reflect real-world, communicative language use. The reading test uses authentic texts and follows a selected-response format, including MC, true/false, and multiple matching items. The reading test includes three or four tasks, each based on a different text type (e.g., newspaper articles, blog posts, essays). Test-takers answer a total of 25 to 30 questions, with a time allowance of 60 minutes(Departament d'Educació i Formació Professional, n.d.).</figDesc><table><row><cell>study sought to address these gaps by investigating the quality of multiple-choice items</cell></row><row><cell>generated by GPT-4 for a B2-level English reading comprehension test:</cell></row><row><cell>RQ1: To what extent, and with what frequency, do recurrent flaws appear in the generated items,</cell></row><row><cell>and how do these vary across cognitive processing types?</cell></row><row><cell>RQ2: What linguistic properties characterise items intended to target higher-order cognitive</cell></row><row><cell>processing? Within the Àrea d'Ensenyament d'Idiomes EOI, a structured and collaborative test</cell></row><row><cell>development model is employed. Experienced language teachers from the EOI network are</cell></row><row><cell>trained as item writers and work in small teams to develop test materials against detailed</cell></row><row><cell>specifications. Each draft undergoes peer review within the writing group, followed by a</cell></row><row><cell>professional review by trained assessment specialists within the department. Once reviewed, the</cell></row><row><cell>items are trialled. Only those tasks that meet psychometric quality standards based on statistical</cell></row><row><cell>analysis of trial data and qualitative feedback from students and teachers are selected for official</cell></row><row><cell>test use. While this system has traditionally relied on expert-led human item development, the</cell></row><row><cell>increasing scale of test delivery and the rise of GenAI have prompted the organisation to explore</cell></row><row><cell>new avenues for item creation. The present study forms part of this broader innovation initiative.</cell></row><row><cell>administer official language certification exams aligned with the CEFR, covering levels B1, B2,</cell></row><row><cell>C1, and C2.</cell></row></table><note><p><p><p><p>RQ3: How do prompting techniques and workflow choices affect item quality?</p>RQ4: To what extent do the generated items meet quality standards when judged through a triangulated lens of expert review, psychometric analysis of item performance, and test-taker feedback?</p>3. Study Context</p>The Escoles Oficials d'Idiomes (EOI) are a network of publicly funded adult education centres governed by the Departament d'Educació i Formació Professional of the Generalitat de Catalunya. Operated under the Servei de Llengües Estrangeres i d'Origen, and specifically the Àrea d'Ensenyament d'Idiomes EOI, led by the second author of this paper, this network provides structured language instruction to both enrolled learners and external test-takers. EOIs also Certification exams are offered in several modern languages, including English, and are accessible to both current students and the wider public. The B2-level English exam is a particularly high-</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc>Processing Types: Item Counts and Percentage Forwarded for Review</figDesc><table><row><cell>Cognitive processing type (as stated</cell><cell>N° items generated</cell><cell>% sent for review (within category)</cell></row><row><cell>by GPT-4)</cell><cell></cell><cell></cell></row><row><cell>L wer-rder g i ive pr e i g</cell><cell></cell><cell></cell></row><row><cell>Specific details</cell><cell>28</cell><cell>35.7</cell></row><row><cell>Main ideas</cell><cell>24</cell><cell>16.7</cell></row><row><cell>Higher-rder g i ive pr e i g</cell><cell></cell><cell></cell></row><row><cell>Lexical inferencing</cell><cell>20</cell><cell>30.0</cell></row><row><cell>Inferencing of meaning</cell><cell>49</cell><cell>24.5</cell></row><row><cell>Understanding attitudes/moods</cell><cell>16</cell><cell>31.2</cell></row><row><cell>Global comprehension</cell><cell>22</cell><cell>40.9</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc>Commonlexical features included nouns mood, attitude, and feeling, and the verb feel. Typical question</figDesc><table><row><cell>structures included:</cell></row><row><cell>What can be inferred about ...?</cell></row><row><cell>What is the tone/attitude/mood ...?</cell></row></table><note><p><p>How does the author/person feel about ...?</p>Several items fitting this description also appeared in the Inference of Meaning category, reinforcing that the model did not clearly differentiate between various cognitive processes related to implied meaning.</p></note></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Findings from the item trialling</head><p>Responses from 775 test-takers were analysed using both IRT and CTT. Jamovi (snowIRT module) was used to obtain proportion correct, Rasch difficulty estimates (in logits) and fit indices (Table <ref type="table">6</ref>). Proportion correct values ranged from .54 to .98, indicating that most items were relatively easy for the test-taker sample. Consistently, all Rasch difficulty values are negative (-3.95 to -0.17 logits), suggesting that the items were located below the mean ability of the group. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T b e</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Item statistics from Rasch (IRT) and Classical Test Theory (CTT) analyses</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Assessing reading</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Alderson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Evaluating GPT-4 Turbo&apos;s ability to design English reading test items for language learners</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Alshehri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Alharbi</surname></persName>
+		</author>
+		<idno type="DOI">10.5539/elt.v18n7p48</idno>
+		<ptr target="https://doi.org/10.5539/elt.v18n7p48" />
+	</analytic>
+	<monogr>
+		<title level="j">English Language Teaching</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="48" to="57" />
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Attali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Laflair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Runge</surname></persName>
+		</author>
+		<title level="m">A new paradigm for test development</title>
+		<imprint>
+			<date type="published" when="2023-03-31">2023. March 31</date>
+		</imprint>
+	</monogr>
+	<note>Webinar</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<ptr target="https://www.youtube.com/watch?v=rRc96oe9bzk" />
+	</analytic>
+	<monogr>
+		<title level="j">Duolingo Webinar Series</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Common European framework of reference for languages: Learning, teaching, assessment. Companion volume</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Council of Europe Publishing</publisher>
+		</imprint>
+		<respStmt>
+			<orgName>Council of Europe</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">The official Cambridge guide to IELTS</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Cullen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>French</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Jakeman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>Cambridge University Press &amp; Assessment</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Mostres de les proves</title>
+		<ptr target="https://educacio.gencat.cat/ca/serveis-tramits/proves/proves-lliures-obtencio-titols/convocat-ordinaria-idiomes/mostres-proves/" />
+	</analytic>
+	<monogr>
+		<title level="m">Departament d&apos;Educació i Formació Professional</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Reading in a second language: Moving from theory to practice</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Grabe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A review of multiple-choice itemwriting guidelines for classroom assessment</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Haladyna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Downing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/S15324818AME1503_5</idno>
+		<ptr target="https://doi.org/10.1207/S15324818AME1503_5" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Measurement in Education</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="309" to="334" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Kerner</surname></persName>
+		</author>
+		<ptr target="https://www.techtarget.com/whatis/definition/large-language-model-LLM" />
+		<title level="m">What is a large language model (LLM)? TechTarget</title>
+		<imprint>
+			<date type="published" when="2024-02-08">2024, February 8</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Examining reading: Research and practice in assessing second language reading</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Khalifa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Weir</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Investigating the capability of ChatGPT for generating multiple-choice reading comprehension items. System</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.system.2024.103344</idno>
+		<ptr target="https://doi.org/10.1016/j.system.2024.103344" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">123</biblScope>
+			<biblScope unit="page">103344</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Comprehension skill and global coherence: A paradoxical picture of poor comprehenders&apos; abilities</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Chong</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.27.6.1424</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.27.6.1424" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1424" to="1429" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Automatic generation of inference-making questions for reading comprehension assessments</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Flor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2506.08260</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2506.08260" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Levels of comprehension monitoring and working memory in good and poor comprehenders</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Oakhill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hartt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Samols</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11145-005-3355-z</idno>
+		<ptr target="https://doi.org/10.1007/s11145-005-3355-z" />
+	</analytic>
+	<monogr>
+		<title level="j">Reading and Writing</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">7-9</biblScope>
+			<biblScope unit="page" from="657" to="686" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">The effects of different levels of performance feedback on TOEFL iBT® reading practice test performance</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sawaki</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/ets2.12159</idno>
+		<idno>No. RR-17-31). ETS</idno>
+		<ptr target="https://doi.org/10.1002/ets2.12159" />
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">ETS Research Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Using OpenAI GPT to generate reading comprehension items</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sayın</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Gierl</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/emip.12590</idno>
+		<ptr target="https://doi.org/10.1111/emip.12590" />
+	</analytic>
+	<monogr>
+		<title level="j">Educational Measurement: Issues and Practice</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="18" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">An exploratory study on two automated item generators for generating L2 reading test items</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/00336882251326284</idno>
+		<ptr target="https://doi.org/10.1177/00336882251326284" />
+	</analytic>
+	<monogr>
+		<title level="j">RELC Journal</title>
+		<imprint>
+			<biblScope unit="issue">0</biblScope>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Reading in a second language: Process, product and practice</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Urquhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Weir</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Routledge</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Using generative AI for reading question creation based on PIRLS 2011 framework</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K W</forename><surname>Chu</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/2331186X.2025.2458653</idno>
+		<ptr target="https://doi.org/10.1080/2331186X.2025.2458653" />
+	</analytic>
+	<monogr>
+		<title level="j">Cogent Education</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">2458653</biblScope>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Exploring the dual impact of AI in post-entry language assessment: Potentials and pitfalls</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Erlam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>De Magalhães</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0267190525000030</idno>
+		<ptr target="https://doi.org/10.1017/S0267190525000030" />
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Applied Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

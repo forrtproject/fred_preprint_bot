@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Alec</forename><surname>Pow¹</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Lora</forename><surname>Stonden²</surname></persName>
+						</author>
+						<title level="a" type="main">Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">5614496CE0D0F91E889188B369B725A1</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T13:25+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>CC BY 4</term>
+					<term>0 Chapter 1 -Executive Plan, Topical Map &amp; Manuscript Skeleton (this document) 2</term>
+					<term>Chapter 2 -Data Dictionary &amp; Cohorts 3</term>
+					<term>Chapter 3 -Basket Definition &amp; Calibration 4</term>
+					<term>Chapter 4 -Methods &amp; Measurement 5</term>
+					<term>Chapter 5 -Policy Solution: TIMW + EHTC 6</term>
+					<term>Chapter 6 -Results: Figure &amp; Table Specifications 7</term>
+					<term>Chapter 7 -Robustness &amp; Sensitivity 8</term>
+					<term>Chapter 8 -Policy Implications 9</term>
+					<term>Chapter 9 -Limitations 10</term>
+					<term>Chapter 10 -Conclusion 11</term>
+					<term>Chapter 11 -Data &amp; Code Availability + CRediT + Press Kit + Submission Metadata 12</term>
+					<term>Chapter 12 -References (Consolidated) + JSON-LD 13</term>
+					<term>Appendix A -Mobility Hours (Car vs Transit) 14</term>
+					<term>Appendix B -Checkout Uplift (Fees/Tips) 15</term>
+					<term>Appendix C -Sensitivity Tables + Glossary 2000-2025 (indices rebased to 2019=1; use latest available month)</term>
+					<term>2</term>
+					<term>2 Series inventory (Data dictionary)</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We measure Monthly Survival Hours (MSH, or Essential Hours), the paid work time required to buy a fixed essentials basket, revealing a sharp affordability crisis: D3 renter hours spiked 50% from 117.4 hours (2019) to 175.7 hours (2022), with 2025 levels at 157.7 hours. We test two implementable policies: a Time-Indexed Minimum Wage (TIMW) that sets the wage floor by rule wmin,t = Ct/Htarget to cap essentials at 120 hours/month, and an Essential Hours Tax Credit (EHTC) that refunds gaps below 100 hours/month for low-wage cohorts via monthly advances. Using CPI components and CPS/OEWS wages across six metros, we show how TIMW stabilizes MSH near target while EHTC backstops D1-D3 renters during shocks, delivering a dual-key hours guarantee without price controls. <ref type="bibr" target="#b0">[1,</ref> 2]    Case studies for Phoenix, NYC, and Houston illustrate both ends of the metro spread.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Responsible interpretation &amp; limitations</head><p>• Basket composition: Our essentials basket represents stylized national baselines; actual household needs vary by location, family size, and preferences. Results are most relevant for single-adult households in urban areas. • Policy implementation: TIMW and EHTC require administrative capacity and political consensus. Our cost estimates assume full take-up; actual rollout may face compliance challenges and behavioral responses not captured in static analysis. • Data limitations: Metro-specific rent-OER gaps use central-case calibration pending full regional CPI runs. Transport mode (gasoline vs transit) choice affects results; we report gasoline as headline with transit alternatives in Robustness.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Protocols: frequency, rebasing, missingness, version pinning</head><p>Frequency &amp; alignment CPI series are monthly; wages may be monthly (CPS) or annual (OEWS). Align all series to a monthly grid. For OEWS annual medians, use step-hold (carry the latest observed value forward) unless a simple linear interpolation is explicitly tested in sensitivity <ref type="bibr">[3][4]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rebasing</head><p>Rebase each CPI component to 2019-01 = 1.000: p'_{i,t} = p_{i,t} / p_{i,2019-01}. Maintain a metadata record of the base month and original units <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Missingness</head><p>For brief CPI gaps, use last observation carried forward (LOCF). For wage decile gaps (if computed annually), use linear interpolation constrained by observed percentiles. Document all imputations in metadata.json and flag imputed cells in CSVs (boolean column imputed).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Version pinning</head><p>For each dataset pull, store download date, endpoint URL, series IDs, and program version (if provided) in metadata.json. When citing datasets, include version/DOI where applicable and an access date per DataCite recommendations <ref type="bibr" target="#b7">[9]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.5</head><p>Reproducibility checklist (to be mirrored in repo) </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.6">Notes &amp; caveats</head><p>• Choice of transport index: Core run uses gasoline; transit appears only in robustness.</p><p>• Occupation wages: OEWS medians are annual; mapping to monthly introduces step artifacts-flag clearly in captions. • Metro coverage: Some metros may lack complete CPI subcomponents; substitute regional CPI and disclose. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Purpose &amp; principles</head><p>This chapter defines the fixed "survival" consumption basket used to compute Monthly Survival Hours (MSH), and documents calibration rules so results are reproducible and comparable across cohorts, metros, and time. Components are deliberately limited to essential, high-salience categories that dominate low-to middle-income budgets: housing, groceries (food at home), electricity, phone/internet, and basic transport <ref type="bibr">[1][2]</ref>. We use official price indices from the Bureau of Labor Statistics (BLS) CPI program and hold physical quantities or baseline dollar weights constant at their 2019 levels to isolate pure price and wage effects over 2000-2025 <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Basket specification (2019 baseline)</head><p>Two equivalent calibration modes are supported: (A) **Dollar-weighted** (recommended for simplicity with CPI indexes) and (B) **Physical-quantity** (diagnostic). For all CPI components we rebase the index to 2019-01=1.000 and compute basket cost as a Laspeyres-style aggregation with fixed 2019 weights <ref type="bibr" target="#b0">[1]</ref>[3].  Weights are intentionally conservative, national baselines for a single-adult household in 2019 (stylized). Replace with CES-derived shares if desired; results remain comparable so long as weights are fixed over time <ref type="bibr">[2]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Calibration rules</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rebasing CPI components</head><p>For each CPI series, rebase to 2019-01=1.000: p'_{i,t} = p_{i,t} / p_{i,2019-01}. Store base dates and original units in metadata.json <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Composite indices</head><p>• Phone/Internet: compute a simple average of the two CPI components unless a documented bundle share is provided: p'_{tel+net,t} = 0.5•p'_{tel,t} + 0.5•p'_{net,t} <ref type="bibr" target="#b0">[1]</ref>. • Transport: Core run uses gasoline; transit appears only in robustness <ref type="bibr" target="#b0">[1]</ref>[5].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metro localization</head><p>Where metro CPI is available, replace national CPI with metro series for Housing and other components; otherwise use regional CPI as a proxy. Document substitutions in captions and metadata.json <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Resulting basket cost</head><p>With Mode A (dollar weights), monthly basket cost is C_t = Σ_i q_i • p'_{i,t}, where q_i are the 2019 USD weights from Table <ref type="table" target="#tab_12">3</ref>.1. The baseline basket total is $1,500/month (gasoline transport mode). With Mode B (physical quantities), convert quantities to dollars using CPI-implied price relatives before aggregation; Mode A is recommended for parsimony <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr">[3]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Robustness ranges</head><p>Report a ±10% quantity/weight sensitivity for each component and, for transport, a gasoline↔transit switch (alternative to headline gasoline series); summarize impacts on MSH in the Robustness chapter <ref type="bibr">[2]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Figure: Basket composition (shares)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Cohort-basket mapping (recap &amp; specifics)</head><p>• Tenure: renter vs owner differs only in the housing index (Rent vs OER) <ref type="bibr" target="#b0">[1]</ref>.</p><p>• Deciles &amp; occupations: all use the same fixed basket; heterogeneity enters through wages w_{g,t} in MSH <ref type="bibr">[3]</ref>.</p><p>Core run uses gasoline; transit appears only in robustness.</p><p>• Telecom bundle: 50:50 Telephone:Internet unless data justify an alternative share; document any change <ref type="bibr" target="#b0">[1]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.6">Operational checklist</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Measurement framework</head><p>We express affordability as Monthly Survival Hours (MSH): the hours of work required to purchase a fixed essentials basket whose components and weights are frozen at a 2019 baseline to isolate price and wage dynamics over time <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr">[3]</ref>. Basket details appear in Chapter 3 and follow BLS CPI conventions for item classification and index treatment <ref type="bibr" target="#b0">[1]</ref>.</p><p>(1) (1) C_t = Σ_i q_i • p_{i,t} Here q_i are fixed 2019 baseline weights (USD or quantities) and p_{i,t} are CPI item indexes rebased to 2019-01=1.000; we use a Laspeyres-style aggregation, appropriate for tracking the burden of essential expenditures without substitution adjustments <ref type="bibr">[1][3]</ref>.</p><p>(2) (2) H_{g,t} = C_t / w_{g,t} w_{g,t} is the hourly wage for cohort g (wage decile or occupation), aligned to a monthly grid using CPS (for distribution) and OEWS (for occupations) per §4.4, with care to preserve level comparability across time and geographies <ref type="bibr">[4]</ref>[5].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Log-change decomposition</head><p>To attribute changes in hours to prices vs wages, we use a first-order log-change decomposition over 2019→t <ref type="bibr">[3]</ref>[4]:</p><p>(3) (3) Δ ln H_{g,t} ≈ Δ ln C_t -Δ ln w_{g,t} Component contributions to Δ ln C_t are computed by cost shares using rebased CPI levels, enabling stacked displays (housing, food, electricity, telecom, transport) in Figure <ref type="figure" target="#fig_2">2 [1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Equity splits &amp; distributional metrics</head><p>(4) (4) RS_t = H^{renter}_{g,t} -H^{owner}_{g,t} The Renter's Surcharge (RS_t) contrasts renter vs owner baskets (Rent vs OER) for the same cohort to isolate tenure effects on essentials burden <ref type="bibr" target="#b0">[1]</ref>.</p><p>(5) (5) Gap_t = H_{D1..D3,t} -H_{D10,t}</p><p>The Decile Gap contrasts lower-wage deciles with the top decile to summarize distributional stress in hours terms <ref type="bibr">[4]</ref>. <ref type="bibr" target="#b4">(6)</ref>  <ref type="bibr" target="#b4">(6)</ref> ΔH^{metro}_{g,t} = H^{metro}_{g,t} -H^{national}_{g,t}</p><p>The Metro Differential benchmarks local hours against national levels using available metro/regional CPI to localize price dynamics <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Index construction, rebasing &amp; composites</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rebasing CPI components</head><p>For each component, rebase to 2019-01=1.000 using p'_{i,t} = p_{i,t} / p_{i,2019-01}; store base dates and original units in metadata.json to ensure reproducibility and auditability <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Telecom composite</head><p>Create a composite telecom index by a simple average of "Telephone services" and "Internet/electronic information providers" unless a documented bundle share is available: p'_{tel+net,t} = 0.5•p'_{tel,t} + 0.5•p'_{net,t} <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Transport choice</head><p>Core run uses gasoline; transit appears only in robustness <ref type="bibr">[1][6]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metro localization</head><p>Replace national CPI with metro CPI where available; otherwise use regional CPI proxies, disclosing substitutions in captions and metadata to retain transparency <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Wage series alignment (CPS &amp; OEWS)</head><p>Deciles. Construct wage deciles D1…D10 from CPS microdata or use published percentiles; align to a monthly grid via weighted percentiles and constrained interpolation when needed, preserving level comparability <ref type="bibr">[4]</ref>.</p><p>Occupations. Use OEWS occupation medians (SOC codes in Chapter 2) and align annually via stephold to months; where hourly rates are unavailable, convert from annual salary using standard hours assumptions and flag such conversions in metadata <ref type="bibr">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Quality controls.</head><p>Track sample composition changes, top-coding, and breaks; report any methodology changes affecting time-consistency per BLS documentation to avoid spurious level shifts <ref type="bibr">[4]</ref>[5].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.6">Sensitivity design</head><p>• Basket weights ±10%: perturb q_i and recompute H_{g,t}; report bands in robustness figures to assess composition risk <ref type="bibr">[3]</ref>.</p><p>• Transport switch: gasoline ↔ public transport to assess mobility assumptions <ref type="bibr">[1][6]</ref>.</p><p>• Wage measure: compare CPS deciles vs alternative measures (weekly earnings, withinoccupation medians) <ref type="bibr">[4]</ref>[5]. • Fee/tip uplift: apply bounds on checkout uplift Uplift_t and recompute Ĉ_t = C_t•(1+Uplift_t) for sensitivity figures <ref type="bibr" target="#b5">[7]</ref>. • Metro substitution: swap metro vs regional CPI where missing; document impacts to check geographic consistency <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.7">Evaluation designs for TIMW &amp; EHTC</head><p>Pilot A (EHTC): a stepped-wedge (staggered ZIP rollout) difference-in-differences estimating the causal reduction in H_{g,t} for eligible cohorts, with ZIP and time fixed effects and clustered standard errors at the ZIP or county level to address serial correlation <ref type="bibr" target="#b6">[8]</ref>[9].</p><p>(</p><formula xml:id="formula_0">) (7) H_{z,t} = α_z + γ_t + β • (Treat_z × Post_t) + ε_{z,t}<label>7</label></formula><p>We will use contemporary staggered DID estimators (e.g., Sun-Abraham, Callaway-Sant'Anna) to avoid negative-weight bias under heterogeneous treatment timing, and report event-study coefficients for pre-trend checks <ref type="bibr">[9][10]</ref>.</p><p>Pilot B (TIMW): back-test counterfactual wage floors using w_{min,t}=C_t/H_{target} for Phoenix/Atlanta and compare realized vs indexed paths; forward-simulate semi-annual updates with a ≤5% glide cap and report distributional effects on H_{g,t} <ref type="bibr">[1][4]</ref>.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.8">Notation &amp; units</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.10">Assumptions register</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Objective &amp; design principles</head><p>We propose a paired intervention to keep essential goods affordable in time terms: (i) a structural floor that indexes the minimum wage to the cost of an essentials basket (TIMW), and (ii) an immediate, targeted tax credit that refunds the hours gap when wages temporarily lag (EHTC). This design ties measurement to action, uses existing administrative rails, and avoids broad price controls while focusing on distributional equity for lower deciles and renters <ref type="bibr" target="#b0">[1]</ref>[2][5] <ref type="bibr" target="#b4">[6]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Time-Indexed Minimum Wage (TIMW)</head><p>Rule (semi-annual): set the local minimum wage so that buying the essentials basket requires no more than a target number of hours for the baseline cohort (e.g., D1). Formally, </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Compliance &amp; administration</head><p>• Statistics office publishes C_t semi-annually; labor department issues w_{min,t} circulars <ref type="bibr" target="#b0">[1]</ref>.</p><p>• Region bands: metros with local CPI use localized C_t; others use regional CPI proxies with disclosure <ref type="bibr" target="#b0">[1]</ref>. • Small-firm phase-ins (e.g., two update periods) and youth wage bands documented in guidance <ref type="bibr" target="#b6">[8]</ref>.</p><p>Rationale: indexing to essentials prevents stealth erosion of minimum pay and anchors expectations in a transparent, auditable rule grounded in official statistics <ref type="bibr">[1][6]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Essential Hours Tax Credit (EHTC)</head><p>Benefit formula (monthly):</p><p>(2) EHTC_{g,t} = α ⋅ max(0, H_{g,t} -H_{threshold}) × w_{g,t} for eligible cohorts g (default: D1-D3). H_{g,t} = C_t / w_{g,t} is the Monthly Survival Hours for cohort g, and H_{threshold} is a published threshold (default 100 hours/month). The taper factor α ∈ [0.5,1.0] (default 0.8) smooths benefit cliffs. Deliver as a monthly advance via the EITC/CTC infrastructure using W-2/1099 verification and standard identity checks <ref type="bibr" target="#b7">[9]</ref>[10].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Targeting &amp; delivery rails</head><p>• Eligibility: income-tested (e.g., D1-D3, or AGI below a metro-adjusted cutoff); tenant flag optional for renter-heavy metros <ref type="bibr" target="#b7">[9]</ref>. • Disbursement: Treasury/Revenue agency issues monthly advances reconciled at filing, mirroring advance-credit playbooks <ref type="bibr" target="#b8">[10]</ref>. • Program integrity: random audits; penalties for misrepresentation; automated data crosschecks <ref type="bibr" target="#b7">[9]</ref>.</p><p>Rationale: the credit closes the hours gap immediately during shocks without requiring employers to reprice mid-cycle; it automatically phases down as wages catch up at the next TIMW update <ref type="bibr">[8][9]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Guardrails &amp; automatic triggers</head><p>Jurisdictions publish guardrails; breaching them triggers pre-approved actions. Fee transparency (all-in pricing) complements these by narrowing sticker-to-receipt gaps that raise effective costs for consumers <ref type="bibr">[4]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Budget scoring &amp; parameters</head><p>Static annual cost at take-up rate τ:</p><formula xml:id="formula_1">(3) Costyear ≈ 12 × Σ_g N_g × max(0, H_g -H_{threshold}) × w_g × τ</formula><p>where N_g is the number of eligible households in cohort g. Report low/central/high scenarios for τ, N_g, and hours gaps. Align with standard fiscal scoring conventions (no dynamic macro feedback in the base case) and disclose offsets (e.g., fine revenues from all-in pricing) separately <ref type="bibr" target="#b9">[11]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Central scenario (concrete)</head><p>Assume (published defaults): H_threshold=100 h/mo; τ=0.75 (take-up).</p><p>Cohorts &amp; national renter hours (2025 average, central case): -These figures are pre-offsets (e.g., all-in pricing penalties); report offsets separately per §5.5.</p><p>-Swap-in measured N_g and wage decile levels from the replication pipeline for publication; the formula and framing remain unchanged.</p><p>A sensitivity "tornado" summarizes parameter risk (see Fig. <ref type="figure" target="#fig_19">5Y</ref>): cost is most sensitive to takeup (τ), followed by the taper factor (α) and the 100-hour threshold (±5h); wage-growth and cohortsize assumptions contribute smaller changes. Check pre-trends; report ITT and TOT (using take-up as instrument).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.6">Pilot designs</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.6.2">Pilot B -TIMW back-test &amp; forward test</head><p>Design: compute counterfactual w_{min,t}=C_t/H_{target} for Phoenix and Atlanta (2019-2025); compare realized vs indexed wage floors; simulate prospective semi-annual updates with glide cap; report impacts on H_{g,t} by cohort and on the renter-owner hours gap. Where feasible, compare to control metros via synthetic control or matched DID <ref type="bibr" target="#b0">[1]</ref>[6] <ref type="bibr" target="#b6">[8]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.7">Risks, safeguards &amp; complementary policies</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Overview</head><p>This chapter specifies the exact structure of the three headline figures and three headline tables used in the Results section. Each artifact includes a Data contract (CSV schema, units, base, required cohorts/metros) so the analysis can be reproduced and regenerated without ambiguity <ref type="bibr">[</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Key Findings: The Post-COVID Affordability Crisis</head><p>Affordability worsened more quickly in 2020-2025 than in earlier periods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.1">The Inflation Crisis Impact</head><p>MSH for D3 renters increased 50% from 117.4 hours (2019) to 175.7 hours (2022), representing the peak of the post-COVID inflation crisis. This period reflects prices rising faster than wages in essential categories.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>What this means:</head><p>A typical third-decile renter who needed 117.4 hours of work per month to afford essentials in 2019 suddenly required 175.7 hours in 2022-an additional 58.3 hours per month, or roughly 14.6 hours per week of extra work just to maintain the same standard of living.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.2">Distributional Inequality Amplification</head><p>The crisis hit lower-wage workers disproportionately hard. While D1 workers saw MSH increase from 134.4h to 180.2h (34% increase), D10 workers experienced a more modest increase from 40.7h to 70.2h (73% increase, but from a much lower base). This represents a widening of the affordability gap between the top and bottom of the wage distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Economic interpretation:</head><p>The post-COVID period represents a structural shift where inflation in essential goods (housing, food, energy) consistently outpaced wage growth, particularly for lowerwage workers. This contradicts the traditional economic assumption that wage growth eventually catches up to inflation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.3">Three Economic Eras</head><p>Our 2000-2025 analysis reveals three distinct economic eras: The third era marks a sharp shift in levels. Whether existing policy tools suffice is an empirical question and we outline tests in Chapter 7.  -C_t computed per Chapter 3/4 from rebased CPI components <ref type="bibr" target="#b0">[1]</ref> -w_{g,t} from CPS/OEWS aligned to monthly <ref type="bibr">[3]</ref> Uncertainty ribbons (Fig. <ref type="figure" target="#fig_25">61a</ref>) show results are stable to sampling/estimation noise (≈±4-5% around the level); the 2020-22 spike remains clearly identified.  Implications. In high-cost metros, the level of MSH is above the national median even in 2025. Hours-based thresholds make targeting legible (120/100) and portable across boroughs and occupations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Figure 1 -Survival Hours 2019→2025 (Figures at the end</head><p>One-line: NYC exhibits the upper bound of renter surcharges in our sample (≈+8.7h/mo).  -compute as annual averages (mean of monthly values)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Tables -structures &amp; contracts</head><p>Note: Metro rankings table removed until regional CPI computation is included.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">Visual conventions &amp; QA</head><p>• Axes labeled with units (hours/month); index base noted ("CPI rebased to 2019=1").</p><p>• Annotate endpoints (2019 and 2025) in </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.1">Goals &amp; principles</head><p>We test the stability of key findings-levels and changes in Monthly Survival Hours (MSH), renterowner gaps, and metro rankings-under plausible variations in basket composition, transport choice, wage measurement, and geography, following standard practice for index-based distributional work and econometric diagnostics <ref type="bibr" target="#b0">[1]</ref>[3] <ref type="bibr" target="#b6">[8]</ref>. All sensitivity artifacts are reproducible from the shared data contracts and include explicit provenance in metadata.json <ref type="bibr">[4]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.2">Sensitivity experiments (pre-registered set)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.3">Placebo &amp; falsification checks</head><p>• Pre-period placebo: compute "fake" ΔMSH for 2017-2019 using back-extended series; large effects indicate structural breaks or misalignment in inputs <ref type="bibr" target="#b0">[1]</ref>[3]. • Non-essential component swap: replace food-at-home with food-away-from-home to confirm that service volatility amplifies noise; baseline excludes by design <ref type="bibr" target="#b0">[1]</ref>. • Metro shuffle: randomly permute metro CPI across metros to verify that observed rank patterns disappear under permutation, guarding against spurious correlation <ref type="bibr" target="#b0">[1]</ref>. -'band' computed by running ±10% weights jointly across components -baseline uses Table <ref type="table" target="#tab_12">3</ref>.1 weights -hold other weights constant while perturbing one component -hours computed with identical weights; only transport index changes</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.4">Robustness figures (specifications)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.5">Uncertainty quantification</head><p>We provide non-inferential uncertainty bands from deterministic perturbations (±10% weights; transport mode switch) and report sensitivity to wage-measure choices; because CPI and OEWS/CPS inputs are official aggregates, sampling-variance CIs are not the primary focus, but we add block bootstrap over months for ΔMSH to illustrate temporal dependence <ref type="bibr" target="#b0">[1]</ref>[3] <ref type="bibr" target="#b6">[8]</ref>.</p><p>Pseudocode -block bootstrap over months Document proxies per BLS guidance for regional/metro CPI; affects interpretation of metro ranks <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.7">Pre-registration &amp; deviations</head><p>We pre-register the sensitivity grid above and commit to reporting all runs, including those that attenuate headline effects; any deviations (e.g., additional metros) will be documented with timestamps in the repo CHANGELOG.md and cited in the manuscript footnotes <ref type="bibr">[4][8]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prepared for Affordability in</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1">Executive implications</head><p>Measured in Monthly Survival Hours (MSH), essentials affordability is a time burden that can be directly governed. Our findings reveal a post-COVID affordability crisis that demands immediate policy response: MSH for D3 renters spiked from 117.4 hours (2019) to 175.7 hours (2022), representing a 50% increase in required work time for essentials. This crisis implies three actionable levers:</p><p>1. Anchor the wage floor to essentials (TIMW): keep hours-to-essentials below a public target with semi-annual updates and glide caps <ref type="bibr" target="#b0">[1]</ref>[6] <ref type="bibr" target="#b5">[7]</ref>. 2. Refund the gap while wages catch up (EHTC): monthly advances to low-wage households, reconciled at filing, using established tax-credit rails <ref type="bibr" target="#b6">[8]</ref>[9]. 3. Close the sticker→receipt gap: require all-in pricing and recycle penalties to co-fund EHTC <ref type="bibr">[4]</ref>.</p><p>Target: MSHD1 ≤ 120 h/mo Equity gap: MSHD1 -MSHD10 ≤ 60 h Checkout uplift ≤ 2%</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.1">The Urgency of the Post-COVID Crisis</head><p>The 2020-2022 period represents a structural break in affordability trends that traditional policy responses cannot address. The 50% increase in MSH during this period reflects a breakdown in the relationship between wage growth and essential goods inflation, particularly affecting lower-wage workers and renters.</p><p>Policy urgency: Without intervention, the affordability crisis will continue to widen inequality and erode economic stability. The TIMW+EHTC framework provides a direct, measurable response that can be implemented using existing infrastructure (minimum wage laws and tax credit systems) without requiring new regulatory frameworks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.2">Implications for wage policy (TIMW)</head><p>What changes: Indexing the minimum wage to a fixed essentials basket (w_{min,t}=C_t/H_{target}) makes the wage floor an affordability instrument rather than a nominal value. This reduces stealth erosion when prices accelerate and improves transparency for employers and workers <ref type="bibr">[1][6]</ref>.</p><p>• Design signals: publish C_t, H_{target}, glide cap, and phase-ins on a predictable calendar (Jan/Jul). • Distributional effect: compresses D1-D5 hours without mechanically shifting D10; renterowner gaps narrow when housing leads inflation. • Business planning: the glide cap (≤5%) plus a published index path enables forward wage budgeting <ref type="bibr" target="#b5">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.3">Implications for targeted relief (EHTC)</head><p>What changes: The EHTC formula refunds the excess hours burden above a threshold to eligible cohorts (e.g., D1-D3), disbursed as monthly advances and reconciled at tax time, mirroring EITC/CTC administration <ref type="bibr" target="#b6">[8]</ref>[9].</p><p>• Precision: metro-adjusted eligibility prevents over-or under-compensation where local CPI diverges from national. • Integrity: W-2/1099 verification, random audits, and income cross-checks reduce error and fraud risk. • Budgeting: costs are predictable with the static scoring formula and scenario bands <ref type="bibr" target="#b8">[10]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.4">Implications for consumer protection (all-in pricing)</head><p>What changes: All-in pricing rules convert hidden fees into the posted price, lowering measured basket costs; penalties are reported separately and may offset EHTC outlays <ref type="bibr">[4]</ref>.</p><p>• Define "total price" inclusive of mandatory fees and default tips; require pre-contract disclosure across online and in-store channels. • Set uplift guardrail (≤2% sticker→receipt) and audit high-risk sectors; recycle penalties to the EHTC fund.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.5">Equity lens</head><p>MSH is inherently distributional: when housing and utilities outpace wages, renters and lower deciles bear outsized time costs. Publishing equity guardrails and triggering responses when breached helps keep targeting and measurement clear <ref type="bibr">[1][6]</ref>.</p><p>• Guardrails: D1 level ≤120 h/mo; D3 trend ≤+5% YoY; D1-D10 gap ≤60 h (see Chapter 5).</p><p>• Tenure-aware options: temporary renter supplements where Renter's Surcharge spikes (Chapter 6).  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.6">Implementation roadmap (12-18 months)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.8">KPIs &amp; monitoring</head><p>• Affordability levels: MSHD1, MSHD3 (monthly, metro); renter-owner surcharge (annual avg). • Equity gaps: MSHD1 -MSHD10; metro differentials (national vs local).</p><p>• Program performance: EHTC take-up rate τ, payment timeliness, audit hit rate.</p><p>• Compliance: share of audited businesses with all-in price compliance; penalty revenue recycled to EHTC. • Secondary outcomes: arrears, CC interest paid, job separation rates (pilot metros) <ref type="bibr" target="#b9">[11]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.9">Legal &amp; fiscal notes</head><p>• Rulemaking authority: TIMW via labor standards acts or municipal wage ordinances; EHTC via revenue statutes; all-in pricing via UDAP/consumer-protection authority <ref type="bibr">[4]</ref>. • Fiscal scoring: use static scoring with transparent scenarios; treat penalty revenues and savings as separate line items to avoid double counting <ref type="bibr" target="#b8">[10]</ref>.</p><p>Model language pointers (full text in Appendix B)</p><p>• TIMW: "The minimum hourly wage shall equal C_t / H_target, where C_t is the published essentials basket index…"</p><p>• EHTC: "Eligible households shall receive a monthly advance equal to max(0, H_{g,t} -H_threshold) × w_{g,t}, tapered by α…"</p><p>• All-in pricing: "It is an unfair practice to advertise a price that is less than the total price inclusive of all mandatory fees…"</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.10">Communications framing</head><p>• Headline option A: "Hold Monthly Survival Hours at ≤120 for all workers via a Time-Indexed Minimum Wage updated semi-annually with a ≤5% glide cap: Keep essentials under 120 hours a month." • Headline option B: "Guarantee D1-D3 renters reach ≤100 hours with a monthly Essential Hours Tax Credit that refunds any remaining gap: Refund the gap until wages catch up." • Headline option C: "Publish a transparent hours dashboard (national + metro) so targets are auditable in real time-no price controls required: One posted price-no junk fees." • Holds baseline basket weights fixed at 2019 to isolate price vs wage dynamics; this intentionally ignores substitution and quality change corrections used in official cost-ofliving measures <ref type="bibr" target="#b0">[1]</ref>[3]. • Targets essential and high-salience categories (housing, groceries, electricity, telecom, transport) and excludes non-essentials and durables by design. • Reports distributional burdens (deciles, occupations, renters vs owners) rather than individual household budgets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prepared for Affordability in</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.2">Data limitations</head><p>• CPI item coverage and construction. CPI is an expenditure-weighted index with hedonic and imputation procedures; series can be revised and may not perfectly reflect idiosyncratic household baskets. Owners' housing costs are proxied by Owners' Equivalent Rent (OER), not observed mortgage payments; renter series may lag lease changes <ref type="bibr" target="#b0">[1]</ref>[3]. • Metro vs regional CPI. Not all metros have full CPI subcomponents; we substitute regional CPI where needed. This can compress cross-metro differences and bias the Renter's Surcharge downward or upward depending on local shocks <ref type="bibr" target="#b0">[1]</ref>. • Telecom measurement. CPI "Telephone services" and "Internet/Electronic information providers" may not align with modern bundled plans; we use a 50:50 composite unless better evidence is available (see Methods) <ref type="bibr" target="#b0">[1]</ref>.</p><p>• Wages from CPS/OEWS. CPS deciles are subject to sampling error, top-coding, and classification changes; OEWS occupation medians are annual and require step-hold alignment to months, potentially introducing staircase artifacts <ref type="bibr">[4]</ref>[5]. • Energy diagnostics. Electricity CPI is price-of-service; EIA ¢/kWh can diverge short-run due to fuel-cost pass-through mechanics and seasonal adjustment differences <ref type="bibr" target="#b4">[6]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.3">Measurement &amp; modeling assumptions</head><p>• Fixed 2019 weights. Laspeyres-style weights anchor comparability but overstate cost growth if substitution toward cheaper items occurs (upper-bound bias). We address this with ±10% weight perturbations and report the envelope (Chapter 7) <ref type="bibr" target="#b0">[1]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.4">Causal inference boundaries</head><p>Core MSH results are descriptive. They track affordability in hours but do not identify causal effects of prices or wages on welfare or behavior. Causal claims pertain only to the pre-registered pilot designs (Chapter 5)-EHTC stepped wedges and TIMW back-tests/forward tests-estimated with modern staggered-DiD/event-study methods that mitigate negative-weight bias and test for pretrends <ref type="bibr">[8][9]</ref>. Even then, inference relies on identifying assumptions (parallel trends, no anticipation) and correct clustering; violations can bias β.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.5">External validity &amp; generalizability</head><p>• Household structure. Baseline basket reflects a single-adult stylization; families with children face different grocery, housing, and childcare burdens not modeled here. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.9">Mitigations &amp; future work</head><p>• Incorporate CES-based shares to cross-check baseline weights; report Paasche/Törnqvist comparisons where feasible <ref type="bibr">[2]</ref>. • Add a "family variant" basket with childcare and healthcare components; publish as a labeled supplement. • Enhance metro coverage by documenting exact series substitutions and publishing a proxy ledger (Table <ref type="table" target="#tab_33">7</ref>.3). • Expand fee/tip "checkout uplift" measurement with receipt studies; release the protocol and anonymized receipts where allowed <ref type="bibr" target="#b11">[13]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.3">Policy impact summary</head><p>TIMW: Indexing the minimum wage to the essentials basket keeps MSH under a public target (e.g., ≤120 h/month for D1) with semi-annual updates and glide caps, aligning the wage floor with living costs using official statistics <ref type="bibr">[1][6]</ref>.</p><p>EHTC: A monthly advance credit refunds the hours gap above a threshold (e.g., &gt;100 h/month) for eligible cohorts, reconciled at filing through existing EITC/CTC infrastructure-fast to deploy, easy to audit, and naturally tapering as wages catch up [5].</p><p>Consumer complement. All-in pricing reduces sticker→receipt uplifts that otherwise inflate effective basket costs and can co-fund EHTC via penalties <ref type="bibr">[4]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.4">Three quotable takeaways</head><p>Measure life in hours: index the wage floor to essentials and refund the rest -"We should measure inflation in hours, then promise a floor under the time it takes to live."</p><p>Keep essentials under 120 hours-then make sure the bottom third gets to 100 -"Index the wage floor to essentials; refund the gap while wages catch up."</p><p>No more silent pay cuts: wages move in lockstep with essential costs -"One posted price-no junk fees-so the basket on the sticker matches the basket on the receipt." </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.6">Collaboration invites</head><p>• Statistical agencies: co-publish C_t dashboards (national + metro) and series IDs for auditability <ref type="bibr" target="#b0">[1]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.7">Guardrails &amp; responsible interpretation</head><p>Use MSH as a distributional affordability barometer, not as a household-level budgeting tool. Always disclose metro CPI proxies, transport choice, and wage-measure alignment; pair headline results with sensitivity bands and the renter-owner surcharge to prevent misinterpretation <ref type="bibr" target="#b0">[1]</ref>[2] <ref type="bibr">[3]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Key insights from the back-test:</head><p>• Cap binding during inflation spikes: The ≤5% glide cap binds during high inflation periods (2021-2022), causing MSH to temporarily exceed 120 hours, but preventing excessive wage shocks.           </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•Chapter 3 -</head><label>3</label><figDesc>Licensing: All sources are public; derived data and code will be released under CC BY 4.0 with proper attribution. Prepared for Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 Basket Definition &amp; Calibration Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 . 1 -</head><label>31</label><figDesc>Figure 3.1 -Basket composition (2019 shares). Share of total baseline basket cost by component for renter and owner variants. Housing uses CPI Rent (renter) vs OER (owner); other components are identical. Use Mode A (dollar weights) for this figure. Core run shows national shares; metro overlays optional. Data contract file: basket_shares.csv columns: variant (renter|owner), component (housing|food_home|electricity|telecom|transport), share_2019 (0-1), share_2025 (0-1, optional for comparison) notes: -shares sum to 1 within variant and year -telecom = composite of telephone &amp; internet indices (50:50 unless specified) -transport = gasoline (headline); public_transport shown only in robustness</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>( 1 )</head><label>1</label><figDesc>w_{min,t} = C_t / H_{target} where C_t is the monthly basket cost (2019=1 rebased CPI aggregation) and H_{target} is a published target (default 120 hours per month). With the baseline basket total of $1,500/month, the baseline TIMW_2019 = $12.50/hour. Apply a glide cap of ≤5% per update to smooth adjustments; phase-in for small firms; use metro/regional CPI for localization<ref type="bibr" target="#b0">[1]</ref>[3][6][7]<ref type="bibr" target="#b6">[8]</ref>.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>-</head><label></label><figDesc>D1: H=180.0 h → gap=80.0 h -D2: H=168.0 h → gap=68.0 h -D3: H=157.7 h → gap=57.7 h # aligned with D3 2025 anchor Hourly wages (CPS deciles, central-case rounding): -w_D1 = $13/h -w_D2 = $17/h -w_D3 = $22/h Eligible households (N_g): -N_D1 = 7.0 million -N_D2 = 7.0 million -N_D3 = 6.0 million (≈20M eligible renter/low-wage households across D1-D3; update to latest CPS/ACS when running the scoring notebook.) Static annual cost (Eq. 3): Cost_year ≈ 12 × τ × Σ_g N_g × gap_g × w_g Computed bands: -Low (τ=0.60; gaps-10h; wages-$2): ~$124.0B -Central (τ=0.75; as above): ~$206.9B -High (τ=0.90; gaps+10h; wages+$2): ~$319.4BNotes:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>•</head><label></label><figDesc>Pre-GFC (2000-2007): Gradual affordability deterioration (103.7h to 110.2h for D3 renters) • GFC-to-COVID (2008-2019): Continued but moderate decline (110.2h to 117.4h) • Pandemic/Inflation (2020-2025): Sharp run-up (117.4h to 175.7h peak, then 157.7h)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 . 1 -</head><label>61</label><figDesc>Figure 6.1 -Survival Hours over time (national). Monthly Survival Hours (H_{g,t} = C_t / w_{g,t}) for distributional cohorts D1, D5, D10 and selected occupations (cashier, nurse, teacher, software engineer), 2019-2025, national basket and CPI. Note: Bottom-third workers required 40.3 more hours/month since 2019 (117.4→157.7h); the top decile required 29.5 more hours (40.7→70.2h). Sources: BLS CPI and CPS/OEWS [1][2][3]. Data contract</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>6. 3 Figure 2 -Figure 6 . 2 - 6 . 4 Figure 3 -Figure 6 . 3 -</head><label>326264363</label><figDesc>Figure 6.2 -Decomposition of change in hours (2019→2025). Stacked contributions to ΔH for cohorts D3, D5, D10, separating price-side effects by component (housing, food, electricity, telecom, transport) from the wage-side offset. We compute exact ΔH from H=C/w and report component attributions using the log-change identity as a guide; totals match the exact ΔH by construction. Quote: "Housing accounts for 60.0% of the change for renters." Sources: BLS CPI; CPS/OEWS [1][3]. Data contract</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 6 . 1 ;Chapter 7 -</head><label>617</label><figDesc>show totals above bars in Figures 6.2-6.3. • Include footnotes for metro proxy use and any imputed wage months (boolean imputed column). • Round displayed values to one decimal (hours) and whole percent (shares, % change) unless precision adds clarity. Prepared for Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 Robustness &amp; Sensitivity Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 7 . 1 -</head><label>71</label><figDesc>Figure 7.1 -Basket-weight bands. National MSH for D1, D5, D10 with shaded bands showing the envelope across ±10% perturbations to each component weight (all-together variant). Headline: "Core findings hold within 88.1-92.1 h/month bands." Sources: BLS CPI; CPS/OEWS [1][3]. Data contract</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 7 . 2 -</head><label>72</label><figDesc>Figure 7.2 -One-at-a-time component sensitivity. Tornado chart for D3 (national), showing how ΔMSH (2019→2025) changes when each component's weight is perturbed ±10% independently; housing dominates the range. Sources: BLS CPI; CPS/OEWS [1][3]. Data contract</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 7 . 3 -</head><label>73</label><figDesc>Figure 7.3 -Transport-mode switch. Comparison of D3 MSH for six metros under gasoline vs public-transport indexes, 2025 average. Interpretation: urban metros with strong transit show lower MSH under the transit option; report both as bounds. Sources: BLS CPI item series [2]. Data contract</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Chapter 8 -</head><label>8</label><figDesc>Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 Policy Implications Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Chapter 9 - 9 . 1</head><label>991</label><figDesc>Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 Limitations Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025 Scope of the metric Monthly Survival Hours (MSH) is a stylized affordability metric designed to track the hours of work needed to purchase a fixed essentials basket under a Laspeyres-style aggregation. It prioritizes transparency and distributional comparability over cost-of-living exactness. As such, MSH:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>10. 5 1 .</head><label>51</label><figDesc>Next steps (research, pilots, distribution) Finalize datasets &amp; code: freeze /data/processed, export figures, and archive to Figshare/OSF; include metadata.json, licenses, and a reproducibility script. Cite datasets with DOIs per DataCite [7]. 2. Pilot EHTC (stepped wedge) &amp; TIMW back-test/forward test: pre-register, use staggered-DiD/event-study estimators (Sun-Abraham; Callaway-Sant'Anna), and report pre-trends and robustness [8][9]. 3. Submission &amp; mirrors: publish the canonical preprint; configure mirrors (SSRN, RG, OSF, Figshare) to link back to the version of record and include Related Identifiers for supplements.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>•Figure 3 . 1 -</head><label>31</label><figDesc>Figure 3.1 -Basket composition (schema, 2019 baseline). Shares of total basket cost by component for renter and owner variants. Housing uses CPI Rent (renter) vs OER (owner); all other components are identical. Core headline uses</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Figure 6 . 1 -</head><label>61</label><figDesc>Figure 6.1 -Monthly Survival Hours (MSH), national, 2000-2025 (D1/D5/D10). D1 = lowest wages; D5 = median; D10 = highest. Units: hours/month; price indices rebased to 2019=1. Source: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="66,72.00,107.10,468.00,279.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>Figure 6 . 2 -</head><label>62</label><figDesc>Figure 6.2 -D3 Hours by Metro (Renters vs Owners), 2025. Lower-middle cohort (D3). Bars show renter and owner Monthly Survival Hours by metro; the difference equals the Renter's Surcharge in Fig. 6.3. Source: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="67,72.00,72.00,468.00,293.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head>Figure 6 . 3 -</head><label>63</label><figDesc>Figure 6.3 -Renter's Surcharge by Metro (D3), 2025. Definition: Renter's Surcharge = H_renter -H_owner (hours/month). Range across shown metros in 2025: 3.8-8.7 hours. Source: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="68,72.00,72.00,468.00,326.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_19"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5.X -EHTC Static Annual Cost Bands, 2025. Low/Central/High reflect take-up 𝜏and basket/earnings variants under Eq. (3); default 𝛼 = 0.8. Values in nominal USD billions. Source: Authors' static scoring per Eq. (3).</figDesc><graphic coords="69,72.00,72.00,468.00,366.95" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_20"><head>Figure</head><label></label><figDesc>Figure Appendix -TIMW Back-test vs Realized (Phoenix, D3 renters), 2000-2025. Counterfactual TIMW holds target 𝐻 𝑡𝑎𝑟𝑔𝑒𝑡 = 120h/mo with a ≤5% semiannual glide cap; cap binds in 2021-22 and reconverges thereafter. Units: hours/month. Source: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="70,72.00,72.00,468.00,279.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_21"><head>Figure 7 . 1 -Figure 7 . 2 -</head><label>7172</label><figDesc>Figure 7.1 -Basket-weight bands (national MSH for D1/D5/D10, 2000-2025). Lines plot baseline hours; shaded envelopes approximate the effect of joint ±10% perturbations to CPI component weights mapped into MSH. Spike corresponds to the 2020-2022 inflation</figDesc><graphic coords="71,72.00,399.40,468.00,272.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_22"><head>Figure 7 . 3 -</head><label>73</label><figDesc>Figure 7.3 -Transport-mode switch (D3 MSH by metro, 2025 average). Paired bars compare hours computed with identical basket weights while swapping only the transport CPI item: gasoline (headline) vs public transit. Transit-heavy metros show lower MSH under the transit option; we report both as bounds while the core headline uses gasoline. Sources: BLS CPI item series; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="72,72.00,96.90,468.00,272.65" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_23"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6.1a MSH with 95% uncertainty bands (national, 2000-2025). Notes: Ribbons approximate sampling/estimationuncertainty around the MSH series using bootstrap-style proxies for wages and CPI. Sources: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="73,72.00,72.00,468.00,272.55" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_24"><head>Figure</head><label></label><figDesc>Figure 5Y EHTC static cost sensitivity (tornado, 2025 central case). Notes: Bars show the magnitude of cost change fromthe central case when parameters vary (take-up τ, taper α, threshold ±5h, wage growth, cohort size). Signs and details discussed in Section 5.3.</figDesc><graphic coords="74,72.00,72.00,468.00,275.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_25"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6.3a Renter's Surcharge decomposition (NYC vs Houston, 2025). Notes: Stacked components (housing/Rent-OER, energy/transport, wage-gap effect) sum to the observed surcharge in Fig. 6.3; schematic allocation for comparability. Sources: BLS CPI; BLS CPS/OEWS; authors' calculations.</figDesc><graphic coords="75,72.00,72.00,468.00,272.65" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="65,72.00,84.90,468.00,247.50" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell>Prices</cell><cell>Rent of primary</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Core</cell></row><row><cell>(CPI)</cell><cell>residence (renter</cell><cell>CPI</cell><cell></cell><cell>(2019=1</cell><cell>0SEHA</cell><cell>w.bls.gov/cp</cell><cell>housin</cell></row><row><cell></cell><cell>basket)</cell><cell></cell><cell></cell><cell>after</cell><cell></cell><cell>i/</cell><cell>g price</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>rebasing)</cell><cell></cell><cell></cell><cell>for</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>renter</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[1][2]</cell></row><row><cell>Prices</cell><cell>Owners' equivalent</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Used</cell></row><row><cell>(CPI)</cell><cell>rent (owner</cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SEHC</cell><cell>w.bls.gov/cp</cell><cell>to</cell></row><row><cell></cell><cell>basket)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>proxy</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>owner</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>housin</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>g cost</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[1]</cell></row><row><cell>Prices</cell><cell>Food at home</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Grocer</cell></row><row><cell>(CPI)</cell><cell></cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SAF11</cell><cell>w.bls.gov/cp</cell><cell>ies</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>only</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>(exclu</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>des</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>food-</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>away-</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>from-</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>home)</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[2]</cell></row><row><cell>Prices</cell><cell>Electricity</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Can</cell></row><row><cell>(CPI)</cell><cell>(residential)</cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SEHF01</cell><cell>w.bls.gov/cp</cell><cell>cross-</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>check</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>with</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>EIA</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>price</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>per</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>kWh</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>trends</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[5]</cell></row><row><cell>Prices</cell><cell>Internet &amp;</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Use</cell></row><row><cell>(CPI)</cell><cell>electronic</cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SEEE03</cell><cell>w.bls.gov/cp</cell><cell>with</cell></row><row><cell></cell><cell>information</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>Teleph</cell></row><row><cell></cell><cell>providers</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>one</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>service</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s for</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>bundle</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>d</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>"Phone</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>/Inter</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>net"</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[2]</cell></row><row><cell>Prices</cell><cell>Telephone services</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Combi</cell></row><row><cell>(CPI)</cell><cell></cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SEED</cell><cell>w.bls.gov/cp</cell><cell>ne</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>with</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Intern</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>et</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>index</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>to</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>proxy</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>a basic</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>plan</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[2]</cell></row><row><cell>Prices</cell><cell>Gasoline (all types)</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Choose</cell></row><row><cell>(CPI)</cell><cell></cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SETB01</cell><cell>w.bls.gov/cp</cell><cell>as</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>transp</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>option</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>for car</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s; alt:</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Public</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>transp</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ort [2]</cell></row><row><cell>Prices</cell><cell>Public</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUUR000</cell><cell>https://ww</cell><cell>Choose</cell></row><row><cell>(CPI)</cell><cell>transportation</cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>0SETG</cell><cell>w.bls.gov/cp</cell><cell>as</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>i/</cell><cell>transp</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>option</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>for</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>transit</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[2][6]</cell></row><row><cell>Wages</cell><cell>Hourly wage by</cell><cell>BLS</cell><cell>Mo./</cell><cell>$ per</cell><cell>CPS</cell><cell>https://ww</cell><cell>Constr</cell></row><row><cell>(CPS)</cell><cell>decile (D1…D10)</cell><cell>CPS/</cell><cell></cell><cell>hour</cell><cell>microdat</cell><cell>w.bls.gov/cp</cell><cell>uct</cell></row><row><cell></cell><cell></cell><cell>ASEC</cell><cell>Ann.</cell><cell></cell><cell>a</cell><cell>s/</cell><cell>deciles</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>from</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>CPS</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>microd</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ata or</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>use</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>publis</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>hed</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>percen</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>tiles</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[3]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:41-</cell><cell>https://ww</cell><cell>Map to</cell></row><row><cell>(OEWS</cell><cell>wage -Cashier</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>2011</cell><cell>w.bls.gov/oe</cell><cell>occupa</cell></row><row><cell>)</cell><cell>(SOC 41-2011)</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>tion</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s;</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>harmo</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>nize to</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>monthl</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>y</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>timelin</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>e [4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:29-</cell><cell>https://ww</cell><cell>Pick</cell></row><row><cell>(OEWS</cell><cell>wage -Nurse</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>1141/11</cell><cell>w.bls.gov/oe</cell><cell>RN or</cell></row><row><cell>)</cell><cell>(SOC 29-</cell><cell>S</cell><cell></cell><cell></cell><cell>61</cell><cell>s/</cell><cell>combi</cell></row><row><cell></cell><cell>1141/1161)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ned</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>nursin</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>g</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>occupa</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>tions</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>per</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>study</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>design</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:25-</cell><cell>https://ww</cell><cell>Use</cell></row><row><cell>(OEWS</cell><cell>wage -Teacher</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>xxxx</cell><cell>w.bls.gov/oe</cell><cell>hourly</cell></row><row><cell>)</cell><cell>(SOC 25-2021 etc.)</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>equival</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ents</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>where</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>availab</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>le [4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:15-</cell><cell>https://ww</cell><cell>Rep for</cell></row><row><cell>(OEWS</cell><cell>wage -Software</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>1252</cell><cell>w.bls.gov/oe</cell><cell>upper-</cell></row><row><cell>)</cell><cell>engineer (SOC 15-</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>decile</cell></row><row><cell></cell><cell>1252)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s [4]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:53-</cell><cell>https://ww</cell><cell>Non-</cell></row><row><cell>(OEWS</cell><cell>wage -Truck</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>3032</cell><cell>w.bls.gov/oe</cell><cell>metro</cell></row><row><cell>)</cell><cell>driver (SOC 53-</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>sensiti</cell></row><row><cell></cell><cell>3032)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>vity</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>possibl</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>e [4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:41-</cell><cell>https://ww</cell><cell>Lower-</cell></row><row><cell>(OEWS</cell><cell>wage -Retail</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>2031</cell><cell>w.bls.gov/oe</cell><cell>wage</cell></row><row><cell>)</cell><cell>sales (SOC 41-</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>cohort</cell></row><row><cell></cell><cell>2031)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>repres</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>entatio</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>n [4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:47-</cell><cell>https://ww</cell><cell>Skilled</cell></row><row><cell>(OEWS</cell><cell>wage -Electrician</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>2111</cell><cell>w.bls.gov/oe</cell><cell>trade</cell></row><row><cell>)</cell><cell>(SOC 47-2111)</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>cohort</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[4]</cell></row><row><cell>Wages</cell><cell>Occupation median</cell><cell>BLS</cell><cell>Ann.</cell><cell>$ per</cell><cell>SOC:31-</cell><cell>https://ww</cell><cell>Care</cell></row><row><cell>(OEWS</cell><cell>wage -</cell><cell>OEW</cell><cell></cell><cell>hour</cell><cell>1120</cell><cell>w.bls.gov/oe</cell><cell>econo</cell></row><row><cell>)</cell><cell>Caregiver/Home</cell><cell>S</cell><cell></cell><cell></cell><cell></cell><cell>s/</cell><cell>my</cell></row><row><cell></cell><cell>health aide (SOC</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cohort</cell></row><row><cell></cell><cell>31-1120)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[4]</cell></row><row><cell>Geogra</cell><cell>Regional/Metro</cell><cell>BLS</cell><cell>Mo.</cell><cell>Index</cell><cell>CUURA10</cell><cell>https://ww</cell><cell>NYC,</cell></row><row><cell>phy</cell><cell>CPI (where</cell><cell>CPI</cell><cell></cell><cell>(2019=1)</cell><cell>1SEHA,</cell><cell>w.bls.gov/re</cell><cell>LA,</cell></row><row><cell></cell><cell>available)</cell><cell></cell><cell></cell><cell></cell><cell>CUURA31</cell><cell>gions/cpi/</cell><cell>Chicag</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>1SEHA,</cell><cell></cell><cell>o,</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>CUURA16</cell><cell></cell><cell>Housto</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>9SEHA,</cell><cell></cell><cell>n,</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>CUURA26</cell><cell></cell><cell>Phoeni</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>4SEHA,</cell><cell></cell><cell>x,</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>CUURA38</cell><cell></cell><cell>Atlanta</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>0SEHA,</cell><cell></cell><cell>metro</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>CUURA12</cell><cell></cell><cell>indices</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>0SEHA</cell><cell></cell><cell>[2].</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Cite</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>BLS</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>area</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>code</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>file for</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>metro</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>codes</cell></row><row><cell>Diagno</cell><cell>Residential</cell><cell>EIA</cell><cell>Mo.</cell><cell>¢/kWh</cell><cell>table_5_0</cell><cell>https://ww</cell><cell>For</cell></row><row><cell>stics</cell><cell>electricity price</cell><cell>EPM</cell><cell></cell><cell></cell><cell>3</cell><cell>w.eia.gov/el</cell><cell>chart</cell></row><row><cell></cell><cell>(¢/kWh)</cell><cell></cell><cell></cell><cell></cell><cell>(national</cell><cell>ectricity/mo</cell><cell>notes</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>),</cell><cell>nthly/</cell><cell>only;</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>epmt_5_6</cell><cell></cell><cell>CPI</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>_a (by</cell><cell></cell><cell>remain</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>state)</cell><cell></cell><cell>s</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>canoni</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cal in</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>results</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[5].</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>EIA</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Electri</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>c</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Power</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Monthl</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>y</cell></row><row><cell>Diagno</cell><cell>Gasoline price</cell><cell>EIA</cell><cell>Wkly.</cell><cell>$/gallon</cell><cell>EMM_EP</cell><cell>https://ww</cell><cell>Weekl</cell></row><row><cell>stics</cell><cell>(weekly)</cell><cell></cell><cell></cell><cell></cell><cell>MR_PTE_</cell><cell>w.eia.gov/pe</cell><cell>y</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>NUS_DPG</cell><cell>troleum/gas</cell><cell>gasolin</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>diesel/</cell><cell>e price</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>series;</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>can</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>cite</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>FRED</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 2 .1 -Core price and wage series Doma in</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>Concept</cell><cell>Sour</cell><cell>Freq.</cell><cell>Units</cell><cell>Series</cell><cell>Endpoint /</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>ce</cell><cell></cell><cell></cell><cell>ID/Code</cell><cell>URL</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>GASRE</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>GW</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>mirror</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>[7]</cell></row><row><cell>Diagno</cell><cell>Transit fare</cell><cell>FTA/</cell><cell>Var.</cell><cell>-</cell><cell>NTD fare</cell><cell>https://ww</cell><cell>Backgr</cell></row><row><cell>stics</cell><cell>documentation</cell><cell>BTS</cell><cell></cell><cell></cell><cell>data</cell><cell>w.transit.dot</cell><cell>ound</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>.gov/</cell><cell>on fare</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>metho</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>dologie</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s [6]. If</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>compu</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ting</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>"avg</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>fare</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>per</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>trip,"</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>note</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>BTS/N</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>TD</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>metho</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>dology</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>uses</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>unlink</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ed</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>passen</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>ger</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>trips</cell></row><row><cell cols="8">Notes: All price indices are rebased to 2019=1 prior to use. Wages harmonized to monthly by linear</cell></row><row><cell cols="3">interpolation or step-hold; see  §2.4.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">Data contracts (CSV schemas)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>prices.csv</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note><p><p>columns: date (YYYY-MM), metro (nyc|la|chicago|houston|phoenix|atlanta|national), component, value_index metadata.json fields: source, download_url, download_date, series_ids, units, transformation, contact, license</p>2.3 Cohorts &amp; geography</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 2 .2 -Cohorts (distributional &amp; occupational) Group Members Definition / Mapping Notes</head><label>2</label><figDesc></figDesc><table><row><cell>Wage</cell><cell>D1…D10</cell><cell>Percentiles of the hourly</cell><cell>Construct via weighted</cell></row><row><cell>deciles</cell><cell></cell><cell>wage distribution from</cell><cell>percentiles; impute</cell></row><row><cell></cell><cell></cell><cell>CPS (monthly or annual</cell><cell>missing months with</cell></row><row><cell></cell><cell></cell><cell>micro), converted to</cell><cell>monotone interpolation</cell></row><row><cell></cell><cell></cell><cell>deciles</cell><cell>[3]</cell></row><row><cell>Occupations</cell><cell>cashier, nurse,</cell><cell>Map to OEWS SOC codes</cell><cell>Occupation cohorts</cell></row><row><cell></cell><cell>teacher, software</cell><cell>(see Table 2.1) and use</cell><cell>show heterogeneity</cell></row><row><cell></cell><cell>engineer, truck</cell><cell>median hourly wage per</cell><cell>beyond deciles [4]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 2 .2 -Cohorts (distributional &amp; occupational)</head><label>2</label><figDesc></figDesc><table><row><cell>Group</cell><cell>Members</cell><cell>Definition / Mapping</cell><cell>Notes</cell></row><row><cell></cell><cell>driver, retail sales,</cell><cell>year; align to monthly</cell><cell></cell></row><row><cell></cell><cell>electrician, caregiver</cell><cell>timeline by step-hold</cell><cell></cell></row><row><cell>Tenure</cell><cell>renter, owner</cell><cell>Identical baskets except</cell><cell>Enables Renter's</cell></row><row><cell></cell><cell></cell><cell>housing: renters use</cell><cell>Surcharge analysis</cell></row><row><cell></cell><cell></cell><cell>"Rent of primary</cell><cell></cell></row><row><cell></cell><cell></cell><cell>residence"; owners use</cell><cell></cell></row><row><cell></cell><cell></cell><cell>"OER"</cell><cell></cell></row><row><cell>Metros</cell><cell>NYC, Los Angeles,</cell><cell>Use metro CPI where</cell><cell>Document any</cell></row><row><cell></cell><cell>Chicago, Houston,</cell><cell>available; otherwise</cell><cell>substitutions explicitly</cell></row><row><cell></cell><cell>Phoenix, Atlanta</cell><cell>regional CPI as proxy;</cell><cell>[2]</cell></row><row><cell></cell><cell></cell><cell>include a national series</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 2 .3 -Cohort-basket mapping rules Cohort Housing index Transport option Telecom bundle</head><label>2</label><figDesc></figDesc><table><row><cell>Notes</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head>Table 2 .3 -Cohort-basket mapping rules</head><label>2</label><figDesc></figDesc><table><row><cell>Cohort</cell><cell>Housing</cell><cell>Transport option</cell><cell>Telecom</cell><cell>Notes</cell></row><row><cell></cell><cell>index</cell><cell></cell><cell>bundle</cell><cell></cell></row><row><cell>D10 (upper-</cell><cell>OER (owner)</cell><cell>Gasoline</cell><cell>Telephone +</cell><cell>Comparison</cell></row><row><cell>wage)</cell><cell>or Rent (if</cell><cell></cell><cell>Internet</cell><cell>baseline for equity</cell></row><row><cell></cell><cell>explicitly</cell><cell></cell><cell></cell><cell>gaps</cell></row><row><cell></cell><cell>renter)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Occupations</cell><cell>As per tenure</cell><cell>Choose per</cell><cell>Telephone +</cell><cell>State choices in</cell></row><row><cell>(all)</cell><cell>flag</cell><cell>occupation</cell><cell>Internet</cell><cell>figure notes</cell></row><row><cell></cell><cell></cell><cell>context (e.g.,</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>transit for urban</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>teacher)</cell><cell></cell><cell></cell></row></table><note><p>Transport must be consistently chosen within a figure/table. Sensitivity runs may switch between gasoline and public transport; report both when used.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_11"><head></head><label></label><figDesc>1. List exact BLS series IDs for all CPI components; list SOC codes for all occupations. 2. Download CSVs from primary endpoints; save to /data/raw/ with YYYYMMDD in filename. 3. Create metadata.json capturing source, URL, access date, series IDs, units, and transformations. 4. Rebase CPI to 2019-01 = 1.000; align wages to monthly grid; export processed files to /data/processed/. 5. Build prices.csv, wages.csv, and geography.csv exactly as specified in the Data contracts. 6. Log any imputations with an imputed boolean column; keep a human-readable CHANGELOG.md. 7. Run a smoke test that recomputes headline MSH for one cohort and month; verify units and base. 8. Freeze a release: tag the repo, export figures to /figures/, and archive to Figshare/OSF with appropriate related identifiers.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_12"><head>Table 3 .1 -Core basket components and 2019 baseline weights</head><label>3</label><figDesc></figDesc><table><row><cell>Component</cell><cell>Index used</cell><cell>Mode A -</cell><cell>Mode B -</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>Baseline</cell><cell>Baseline</cell><cell></cell></row><row><cell></cell><cell></cell><cell>monthly</cell><cell>quantity</cell><cell></cell></row><row><cell></cell><cell></cell><cell>weight</cell><cell>(diagnostic)</cell><cell></cell></row><row><cell></cell><cell></cell><cell>(USD,</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>2019)</cell><cell></cell><cell></cell></row><row><cell>Housing</cell><cell>Rent of primary</cell><cell>$900</cell><cell>1 housing</cell><cell>Only component that</cell></row><row><cell></cell><cell>residence (renter) /</cell><cell>(renter);</cell><cell>unit (price</cell><cell>differs by tenure; see</cell></row><row><cell></cell><cell>Owners' equivalent</cell><cell>$900</cell><cell>proxied by</cell><cell>Table 3.2 [1]</cell></row><row><cell></cell><cell>rent (owner)</cell><cell>(owner via</cell><cell>CPI index)</cell><cell></cell></row><row><cell></cell><cell></cell><cell>OER)</cell><cell></cell><cell></cell></row><row><cell>Food at</cell><cell>CPI: Food at home</cell><cell>$275</cell><cell>Fixed weekly</cell><cell>Excludes food away</cell></row><row><cell>home</cell><cell></cell><cell></cell><cell>grocery list</cell><cell>from home to avoid</cell></row><row><cell>(groceries)</cell><cell></cell><cell></cell><cell>(diagnostic)</cell><cell>service volatility</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>[1][2]</cell></row><row><cell>Electricity</cell><cell>CPI: Electricity</cell><cell>$90</cell><cell>600-750</cell><cell>Quantity range</cell></row><row><cell>(residential)</cell><cell></cell><cell></cell><cell>kWh</cell><cell>reflects</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>climate/geography;</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>index remains</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>canonical [4]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_13"><head>Table 3 .1 -Core basket components and 2019 baseline weights</head><label>3</label><figDesc></figDesc><table><row><cell>Component</cell><cell>Index used</cell><cell>Mode A -</cell><cell>Mode B -</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>Baseline</cell><cell>Baseline</cell><cell></cell></row><row><cell></cell><cell></cell><cell>monthly</cell><cell>quantity</cell><cell></cell></row><row><cell></cell><cell></cell><cell>weight</cell><cell>(diagnostic)</cell><cell></cell></row><row><cell></cell><cell></cell><cell>(USD,</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>2019)</cell><cell></cell><cell></cell></row><row><cell>Phone &amp;</cell><cell>Composite of CPI:</cell><cell>$85</cell><cell>1 basic</cell><cell>50:50 index</cell></row><row><cell>Internet</cell><cell>Telephone services &amp;</cell><cell></cell><cell>mobile + 1</cell><cell>weighting unless</cell></row><row><cell></cell><cell>Internet/Electronic</cell><cell></cell><cell>basic</cell><cell>specified otherwise</cell></row><row><cell></cell><cell>information</cell><cell></cell><cell>broadband</cell><cell>[1]</cell></row><row><cell></cell><cell>providers</cell><cell></cell><cell>plan</cell><cell></cell></row><row><cell>Transport</cell><cell>CPI: Gasoline (all</cell><cell>$150</cell><cell>~45 gal</cell><cell>Headline series;</cell></row><row><cell>(headline)</cell><cell>types)</cell><cell>(gasoline)</cell><cell>gasoline</cell><cell>transit alternative in</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>Robustness [1][5]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_14"><head>Table 3 .2 -Tenure variants (only housing differs) Variant Housing index Other components Comment</head><label>3</label><figDesc></figDesc><table><row><cell>Renter</cell><cell>CPI: Rent of</cell><cell>Food at home; Electricity;</cell><cell>Enables estimation of</cell></row><row><cell>basket</cell><cell>primary residence</cell><cell>Phone/Internet; Transport</cell><cell>the Renter's Surcharge</cell></row><row><cell></cell><cell></cell><cell></cell><cell>[1]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_15"><head>Table 3 .2 -Tenure variants (only housing differs) Variant Housing index Other components Comment</head><label>3</label><figDesc></figDesc><table><row><cell>Owner</cell><cell>CPI: Owners'</cell><cell>Food at home; Electricity;</cell><cell>Owner housing proxied</cell></row><row><cell>basket</cell><cell>equivalent rent</cell><cell>Phone/Internet; Transport</cell><cell>per CPI practice [1]</cell></row><row><cell></cell><cell>(OER)</cell><cell></cell><cell></cell></row><row><cell cols="2">Why fixed 2019 weights?</cell><cell></cell><cell></cell></row><row><cell cols="4">Using a fixed-weight (Laspeyres-style) basket isolates price and wage dynamics without</cell></row><row><cell cols="4">confounding from substitution or changing quantities-appropriate for a distributional</cell></row><row><cell cols="4">affordability metric rather than a cost-of-living index with substitution effects [1][3].</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_16"><head>Chapter 4 -Methods &amp; Measurement Project: Affordability</head><label></label><figDesc>Prepared for Affordability inHours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</figDesc><table><row><cell>1. Populate prices.csv with CPI components rebased to 2019-01=1.000 (see Chapter 2</cell></row><row><cell>contracts) [1].</cell></row><row><cell>2. Set q_i to Table 3.1 Mode A values (or CES-derived values) and freeze in metadata.json [2].</cell></row><row><cell>3. Compute composite indices (telecom; chosen transport). Export basket_shares.csv for Figure</cell></row><row><cell>3.1.</cell></row><row><cell>4. Document metro substitutions and any weight sensitivities applied (±10%).</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_17"><head>Table 4 .1 -Symbols and definitions Symbol Definition Units Notes</head><label>4</label><figDesc></figDesc><table><row><cell>q_i</cell><cell>Fixed 2019 basket weight (USD or</cell><cell>USD or qty/month</cell><cell>See Chapter 3</cell></row><row><cell></cell><cell>quantity)</cell><cell></cell><cell></cell></row><row><cell>p_{i,t}</cell><cell>Price index for component i at time t</cell><cell>Index (2019=1)</cell><cell>BLS CPI item</cell></row><row><cell></cell><cell>(rebased)</cell><cell></cell><cell>series</cell></row><row><cell>C_t</cell><cell>Monthly basket cost</cell><cell>USD/month</cell><cell>Eq. (1)</cell></row><row><cell></cell><cell></cell><cell>(relative)</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_18"><head>Table 4 .1 -Symbols and definitions</head><label>4</label><figDesc></figDesc><table><row><cell>Symbol</cell><cell>Definition</cell><cell>Units</cell><cell>Notes</cell></row><row><cell>w_{g,t}</cell><cell>Hourly wage for cohort g</cell><cell>USD/hour</cell><cell>CPS/OEWS</cell></row><row><cell>H_{g,t}</cell><cell>Monthly Survival Hours</cell><cell>hours/month</cell><cell>Eq. (2)</cell></row><row><cell>RS_t</cell><cell>Renter's Surcharge</cell><cell>hours/month</cell><cell>Eq. (4)</cell></row><row><cell>Ĉ_t</cell><cell>Cost with uplift applied</cell><cell>USD/month</cell><cell>Ĉ_t=C_t•(1+Uplift_t)</cell></row><row><cell></cell><cell></cell><cell>(relative)</cell><cell></cell></row><row><cell>w_{min,t}</cell><cell>Time-indexed minimum wage</cell><cell>USD/hour</cell><cell>=C_t/H_target</cell></row></table><note><p><p>Uplift_t</p>Sticker→receipt uplift (fees/tips) fraction 0-1 bounds</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_19"><head>4.9 Algorithm (pseudocode) to compute MSH</head><label></label><figDesc></figDesc><table /><note><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p>// inputs: prices.csv, wages.csv, basket weights q_i, mapping rules, base month = 2019-01 // output: hours.csv with columns: date, cohort, hours 1. Load prices.csv; verify each component is rebased to 2019-01 = 1.000</p><ref type="bibr" target="#b0">[1]</ref></p>.</p>2. Construct composite telecom index; select transport index per cohort and fix choice for the run</p><ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b4">6]</ref></p>.</p>3. Compute C_t = Σ_i q_i * p_{i,t} for each date t using Mode A weights (Chapter 3)</p><ref type="bibr" target="#b0">[1,</ref>3]</p>.</p>4. Load wages.csv; align CPS deciles monthly; align OEWS occupation medians by step-hold</p>[4,5]</p>. 5. For each cohort g and date t, compute H_{g,t} = C_t / w_{g,t}</p>[4]</p>.</p>6. For renter/owner comparisons, recompute C_t with housing = Rent or OER to get RS_t</p><ref type="bibr" target="#b0">[1]</ref></p>.</p>7. Save hours.csv; attach metadata.json with series IDs, base, transformations, and imputation flags</p><ref type="bibr" target="#b7">[9]</ref></p>.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_20"><head>Table 4 .2 -Key assumptions, rationale, checks</head><label>4</label><figDesc>Prepared for Affordability inHours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0</figDesc><table><row><cell>Assumption</cell><cell>Rationale</cell><cell>Check / Mitigation</cell><cell>Impact if violated</cell></row><row><cell>Fixed 2019</cell><cell>Track affordability of</cell><cell>±10% weight</cell><cell>Bias in H magnitude;</cell></row><row><cell>basket weights</cell><cell>essentials without</cell><cell>sensitivity; report</cell><cell>direction shown by</cell></row><row><cell></cell><cell>substitution noise</cell><cell>bands</cell><cell>sensitivity</cell></row><row><cell>Telecom 50:50</cell><cell>Parsimonious proxy for</cell><cell>Alternative shares in</cell><cell>Minor change in</cell></row><row><cell>composite</cell><cell>bundled plans</cell><cell>robustness</cell><cell>telecom contribution</cell></row><row><cell></cell><cell></cell><cell></cell><cell>to ΔH</cell></row><row><cell>Transport choice</cell><cell>Consistency for cohort</cell><cell>Alternate mode in</cell><cell>Upper/lower bound</cell></row><row><cell>fixed within run</cell><cell>comparisons</cell><cell>robustness</cell><cell>on mobility costs</cell></row><row><cell>OEWS step-hold</cell><cell>Maintain observed</cell><cell>Compare to linear</cell><cell>Smooth vs step</cell></row><row><cell>to monthly</cell><cell>medians without</cell><cell>interpolation in</cell><cell>differences in H</cell></row><row><cell></cell><cell>interpolation artifacts</cell><cell>robustness</cell><cell></cell></row><row><cell>Metro CPI</cell><cell>Reflect local price levels</cell><cell>Document gaps;</cell><cell>Potential bias toward</cell></row><row><cell>substitution</cell><cell>where available</cell><cell>fallback to regional</cell><cell>national averages</cell></row><row><cell></cell><cell></cell><cell>CPI</cell><cell></cell></row></table><note><p>Chapter 5 -Policy Solution: Time-Indexed Minimum Wage (TIMW) + Essential Hours Tax Credit (EHTC) Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_21"><head>Table 5 .1 -Guardrails and automatic triggers Guardrail (publish) Threshold (example) Trigger (automatic) Notes</head><label>5</label><figDesc></figDesc><table><row><cell>Level -D1</cell><cell>MSHD1 ≤ 120</cell><cell>EHTC on next month;</cell><cell>Backstops low-wage</cell></row><row><cell>hours</cell><cell>h/mo</cell><cell>evaluate early TIMW update</cell><cell>cohorts during shocks</cell></row><row><cell></cell><cell></cell><cell></cell><cell>[8]</cell></row><row><cell>Level -D3</cell><cell>MSHD3 ≤ 100</cell><cell>EHTC on next month</cell><cell>Targets lower-middle</cell></row><row><cell>hours</cell><cell>h/mo</cell><cell>(tapered)</cell><cell>cohorts</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_22"><head>Table 5 .1 -Guardrails and automatic triggers</head><label>5</label><figDesc></figDesc><table><row><cell>Guardrail</cell><cell>Threshold</cell><cell>Trigger (automatic)</cell><cell>Notes</cell></row><row><cell>(publish)</cell><cell>(example)</cell><cell></cell><cell></cell></row><row><cell>Equity gap</cell><cell>MSHD1 -MSHD10 ≤</cell><cell>Increase EHTC taper α;</cell><cell>Equity guardrail by</cell></row><row><cell></cell><cell>60 h</cell><cell>consider renter-focused</cell><cell>design</cell></row><row><cell></cell><cell></cell><cell>supplements</cell><cell></cell></row><row><cell>Trend</cell><cell>ΔMSHD3(12m) ≤</cell><cell>Advance TIMW update by</cell><cell>Prevents persistent</cell></row><row><cell></cell><cell>+5%</cell><cell>one period</cell><cell>drift</cell></row><row><cell>Checkout</cell><cell>Sticker→receipt ≤</cell><cell>Enforce all-in pricing; fines</cell><cell>Consumer protection</cell></row><row><cell>uplift</cell><cell>2%</cell><cell>fund EHTC</cell><cell>complement [4]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_23"><head>Table 5 .2 -Policy parameter sheet (fill before simulation)</head><label>5</label><figDesc></figDesc><table><row><cell>Parameter</cell><cell>Symbol</cell><cell>Default</cell><cell>Range /</cell><cell>Where used</cell></row><row><cell></cell><cell></cell><cell></cell><cell>Scenario</cell><cell></cell></row><row><cell>Target hours</cell><cell>H_{target}</cell><cell>120 h/mo</cell><cell>110-130</cell><cell>Eq. (1); guardrail-</cell></row><row><cell>(TIMW)</cell><cell></cell><cell></cell><cell></cell><cell>leveling</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_24"><head>Table 5 .2 -Policy parameter sheet (fill before simulation)</head><label>5</label><figDesc></figDesc><table><row><cell>Parameter</cell><cell>Symbol</cell><cell>Default</cell><cell>Range /</cell><cell>Where used</cell></row><row><cell></cell><cell></cell><cell></cell><cell>Scenario</cell><cell></cell></row><row><cell>Threshold hours</cell><cell>H_{threshold}</cell><cell>100 h/mo</cell><cell>90-110</cell><cell>Eq. (2); eligibility</cell></row><row><cell>(EHTC)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Take-up rate</cell><cell>τ</cell><cell>0.75</cell><cell>0.6-0.9</cell><cell>Eq. (3); cost</cell></row><row><cell>Taper factor</cell><cell>α</cell><cell>0.8</cell><cell>0.5-1.0</cell><cell>Eq. (2); phase-out</cell></row><row><cell>Glide cap per</cell><cell>-</cell><cell>+5%</cell><cell>+3% to +7%</cell><cell>TIMW cadence</cell></row><row><cell>update</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Small-firm phase-in</cell><cell>-</cell><cell>2 periods</cell><cell>1-3</cell><cell>TIMW compliance</cell></row><row><cell>Eligibility cohorts</cell><cell>g</cell><cell>D1-D3</cell><cell>D1-D4</cell><cell>EHTC targeting</cell></row><row><cell>Households per</cell><cell>N_g</cell><cell>7.0M, 7.0M,</cell><cell>D1-D3</cell><cell>Eq. (3)</cell></row><row><cell>cohort</cell><cell></cell><cell>6.0M</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_26"><head>Table 5 .3 -Risk register and mitigations</head><label>5</label><figDesc></figDesc><table><row><cell>Risk</cell><cell>Concern</cell><cell>Safeguard / Mitigation</cell><cell>Evidence / Rationale</cell></row><row><cell>Employment</cell><cell>Potential</cell><cell>Glide cap; small-firm</cell><cell>Recent syntheses show</cell></row><row><cell>effects (TIMW)</cell><cell>hours/job</cell><cell>phase-ins; evaluation</cell><cell>modest average effects</cell></row><row><cell></cell><cell>reductions at the</cell><cell>with DiD &amp; event studies</cell><cell>with credible designs</cell></row><row><cell></cell><cell>margin</cell><cell></cell><cell>[6][7][8]</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_27"><head>Table 5 .3 -Risk register and mitigations</head><label>5</label><figDesc>Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • 2025</figDesc><table><row><cell>Risk</cell><cell>Concern</cell><cell>Safeguard / Mitigation</cell><cell>Evidence / Rationale</cell></row><row><cell>Price pass-</cell><cell>Firms may</cell><cell>All-in pricing (cap</cell><cell>Consumer-protection</cell></row><row><cell>through</cell><cell>adjust prices;</cell><cell>sticker→receipt gap</cell><cell>guidance on "junk fees"</cell></row><row><cell></cell><cell>fees obscure</cell><cell>≤2%); enforce disclosure;</cell><cell>[4]</cell></row><row><cell></cell><cell>effective costs</cell><cell>fines recycle to EHTC</cell><cell></cell></row><row><cell>Targeting</cell><cell>Benefits to</cell><cell>Income verification via</cell><cell>Tax-credit</cell></row><row><cell>leakage (EHTC)</cell><cell>ineligible</cell><cell>W-2/1099; random</cell><cell>administration</cell></row><row><cell></cell><cell>households</cell><cell>audits; taper α</cell><cell>standards [9][10]</cell></row><row><cell>Administrative</cell><cell>New program</cell><cell>Leverage existing</cell><cell>Existing advance-credit</cell></row><row><cell>burden</cell><cell>complexity</cell><cell>EITC/CTC rails; monthly</cell><cell>playbooks [10]</cell></row><row><cell></cell><cell></cell><cell>advance disbursement;</cell><cell></cell></row><row><cell></cell><cell></cell><cell>clear guidance</cell><cell></cell></row><row><cell>Heterogeneous</cell><cell>Local shocks</cell><cell>Metro CPI localization;</cell><cell>CPI regionalization</cell></row><row><cell>metro dynamics</cell><cell>differ from</cell><cell>equity guardrail monitors</cell><cell>protocols [1]</cell></row><row><cell></cell><cell>national trends</cell><cell>decile gaps; renter</cell><cell></cell></row><row><cell></cell><cell></cell><cell>supplement optional</cell><cell></cell></row><row><cell cols="3">5.8 Operational workflow (who does what, when)</cell><cell></cell></row><row><cell cols="4">1. Statistics office rebases CPI components, publishes C_t and dashboard (Jan/Jul) [1].</cell></row><row><cell cols="4">2. Labor department issues TIMW circular with glide cap and phase-ins (effective next</cell></row><row><cell>quarter) [8].</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">3. Revenue/Treasury computes EHTC awards; disburses monthly; reconciles at tax filing;</cell></row><row><cell cols="2">reports take-up [9][10].</cell><cell></cell><cell></cell></row><row><cell cols="4">4. Consumer authority audits all-in pricing; levies fines; remits revenues to EHTC fund [4].</cell></row><row><cell cols="4">5. Evaluation team runs pre-registered analyses (DiD/event-study), publishes results and</cell></row><row><cell cols="2">code annually [9][10].</cell><cell></cell><cell></cell></row></table><note><p><p><p><p>Prepared for Affordability in</p>Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 Chapter 6 -Results: Figure &amp; Table</p>Specifications</p>Project:</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_28"><head></head><label></label><figDesc>1][2][3]. Figures visualize Monthly Survival Hours (MSH), its decomposition into price vs wage effects, and the Renter's Surcharge across metros; tables summarize basket specs and level comparisons for 2019 vs 2025. Hours unit: hours/month; wages: $/hour; indices: unitless (2019=1). Cohorts and metros follow Chapter 2. • Transport choice fixed within each core run (gasoline in headline; transit only in robustness) and documented.</figDesc><table><row><cell>• All CPI components rebased to 2019-01 = 1.000; wages aligned to monthly grid</cell></row><row><cell>(CPS/OEWS) [1][3].</cell></row></table><note><p>•</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_29"><head></head><label></label><figDesc>These are central-case calibration values; they will be replaced by a direct metro CPI Rent vs OER run in the replication pipeline. Sources and constructs: Ch. 4 eq. (4) (RS), Table6.1 shares, Ch. 6 metro set, and the 2025 D3 hours anchor. Data contract</figDesc><table><row><cell>Box 6.A -Phoenix case study (D3 renters)</cell></row><row><cell>Setup. Phoenix shows how the hours lens behaves through the 2020-2022 spike and what a</cell></row><row><cell>semi-annual TIMW (≤5% glide) would have done.</cell></row><row><cell>file: renter_surcharge_metros.csv Facts (2025). D3 renters 165.6h, owners 159.5h → Renter's Surcharge = 6.1h/mo (Figs. 6.2-</cell></row><row><cell>columns: 6.3). Observed peak in 2022: 169.7h.</cell></row><row><cell>metro Policy counterfactual. The Phoenix TIMW back-test caps semi-annual adjustments at ≤5% and (nyc|la|chicago|houston|phoenix|atlanta) targets 120 h/mo. Counterfactual peak = 155.1h, 14.6h lower than realized (≈9% less burden at</cell></row><row><cell>cohort the peak), with deviations concentrated in inflation spike months (Appendix Fig. A.PHX). (D3)</cell></row><row><cell>hours_renter (float, hours/month, 2025 average)</cell></row><row><cell>hours_owner (float, hours/month, 2025 average)</cell></row><row><cell>surcharge_h (float, hours_renter -hours_owner)</cell></row><row><cell>constraints:</cell></row></table><note><p><p><p><p><p><p>-Use metro CPI for housing where available; else regional proxy with a 'proxy' flag column -Compute annual averages for 2025 unless otherwise stated rendering:</p>-bars of surcharge_h sorted descending; annotate values -optionally show paired dots/lines for renter vs owner as an inset A component decomposition (Fig.</p>63a</p>) attributes most of NYC's surcharge to housing (Rent/OER) with smaller energy and wage-gap effects; Houston shows a smaller housing contribution consistent with its lower total surcharge. Interpretation. Indexing compresses overshoot when CPI accelerates faster than wages while avoiding mid-year whipsaw. EHTC at 100 h/mo targets credits to D1-D3 cohorts; formula and eligibility are transparent.</p>Takeaway. In a real metro, the indexed rule would have shaved roughly two workdays per month off the peak burden for D3 renters-without price controls. Box 6.B -New York City: upper-end surcharge Facts (2025). D3 renters 176.6h, owners 167.9h → Renter's Surcharge = 8.7h/mo (largest in our sample). Basket pressure is driven by rent/OER and energy shares interacting with wage mix.</p>Policy lens. Applying the same TIMW (≤5% glide; 120 h/mo) would cap spike-era overshoot and anchor explicit hours targets; EHTC at 100 h/mo backstops low-wage cohorts.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_30"><head>Table 6 .1 -Basket specification (reporting table)</head><label>6</label><figDesc>Houston anchors the lower bound of the metro spread (≈+3.8h/mo).</figDesc><table><row><cell>Component</cell><cell>Index used</cell><cell>2019</cell><cell>Share</cell><cell>Share</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>baseline</cell><cell>2019</cell><cell>2025</cell><cell></cell></row><row><cell></cell><cell></cell><cell>weight (USD)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Housing</cell><cell>Rent (renter) /</cell><cell>$900</cell><cell>0.601</cell><cell>0.615</cell><cell>Tenure-</cell></row><row><cell></cell><cell>OER (owner)</cell><cell></cell><cell>(60.1%)</cell><cell>(61.5%)</cell><cell>specific</cell></row><row><cell>Food at home</cell><cell>CPI: Food at</cell><cell>$275</cell><cell>0.183</cell><cell>0.175</cell><cell>Groceries</cell></row><row><cell></cell><cell>home</cell><cell></cell><cell>(18.3%)</cell><cell>(17.5%)</cell><cell>only</cell></row><row><cell>Electricity</cell><cell>CPI: Electricity</cell><cell>$90</cell><cell>0.060</cell><cell>0.057</cell><cell>Residential</cell></row><row><cell></cell><cell></cell><cell></cell><cell>(6.0%)</cell><cell>(5.7%)</cell><cell></cell></row><row><cell cols="2">Phone/Internet CPI: Tel +</cell><cell>$85</cell><cell>0.056</cell><cell>0.050</cell><cell>Composite</cell></row><row><cell></cell><cell>Internet</cell><cell></cell><cell>(5.6%)</cell><cell>(5.0%)</cell><cell></cell></row><row><cell></cell><cell>(50:50)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_31"><head>Table 6 .1 -Basket specification (reporting table)</head><label>6</label><figDesc></figDesc><table><row><cell cols="2">Component</cell><cell>Index used</cell><cell>2019</cell><cell>Share</cell><cell>Share</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell></cell><cell>baseline</cell><cell>2019</cell><cell>2025</cell></row><row><cell></cell><cell></cell><cell></cell><cell>weight (USD)</cell><cell></cell><cell></cell></row><row><cell cols="2">Transport</cell><cell>CPI: Gasoline</cell><cell>$150</cell><cell>0.100</cell><cell>0.102</cell><cell>Transit in</cell></row><row><cell></cell><cell></cell><cell>(headline)</cell><cell></cell><cell>(10.0%)</cell><cell>(10.2%)</cell><cell>robustness</cell></row><row><cell cols="7">Populate shares from basket_shares.csv (Chapter 3). Ensure shares sum to 1 within each</cell></row><row><cell cols="2">tenure/year.</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">Data contract for Table 6.1</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">file: basket_table.csv</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>columns:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">component (housing|food_home|electricity|telecom|transport)</cell><cell></cell></row><row><cell cols="2">index_label (text)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">weight_usd_2019 (float)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">share_2019 (float 0-1)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">share_2025 (float 0-1)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>notes</cell><cell>(text)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_32"><head>Table 6 .2 -Survival Hours: 2019 vs 2025 (national)</head><label>6</label><figDesc></figDesc><table><row><cell>Cohort</cell><cell>Hours (2019)</cell><cell>Hours (2025)</cell><cell>Δ Hours</cell><cell>% Change</cell></row><row><cell>D1</cell><cell>119.7</cell><cell>115.3</cell><cell>-4.4</cell><cell>-3.7%</cell></row><row><cell>D3</cell><cell>93.5</cell><cell>90.1</cell><cell>-3.4</cell><cell>-3.7%</cell></row><row><cell>D5</cell><cell>68.0</cell><cell>65.5</cell><cell>-2.5</cell><cell>-3.7%</cell></row><row><cell>D10</cell><cell>37.4</cell><cell>36.0</cell><cell>-1.4</cell><cell>-3.7%</cell></row><row><cell cols="5">Hours are annual averages (2019 vs 2025). Computed from hours_timeseries.csv. CPI source: BLS;</cell></row><row><cell cols="2">wages: CPS/OEWS [1][3].</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">Data contract for Table 6.2</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">file: hours_levels_table.csv</cell><cell></cell><cell></cell><cell></cell></row><row><cell>columns:</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>cohort</cell><cell>(D1|D3|D5|D10)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">hours_2019 (float)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">hours_2025 (float)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">delta_hours (float)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">pct_change (float, percent)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>rules:</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_33"><head>Table 7 .1 -Pre-registered sensitivity grid</head><label>7</label><figDesc></figDesc><table><row><cell>Experim</cell><cell>Parameter</cell><cell>Baselin</cell><cell>Variant(s</cell><cell>Expected</cell><cell>Outco</cell><cell>Notes</cell></row><row><cell>ent</cell><cell>(s)</cell><cell>e</cell><cell>)</cell><cell>direction</cell><cell>me</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>metric</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s</cell><cell></cell></row><row><cell>Basket</cell><cell>q_i</cell><cell>Table</cell><cell>±10% per</cell><cell>Small</cell><cell>ΔMSH</cell><cell>Laspeyres-</cell></row><row><cell>weights</cell><cell></cell><cell>3.1</cell><cell>componen</cell><cell>effects on</cell><cell>(D1,</cell><cell>style</cell></row><row><cell></cell><cell></cell><cell>(2019</cell><cell>t (one-at-</cell><cell>levels;</cell><cell>D3,</cell><cell>robustness per</cell></row><row><cell></cell><cell></cell><cell>USD</cell><cell>a-time</cell><cell>housing</cell><cell>D10),</cell><cell>CPI</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>share</cell><cell>RS,</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_34"><head>Table 7 .1 -Pre-registered sensitivity grid</head><label>7</label><figDesc></figDesc><table><row><cell>Experim</cell><cell>Parameter</cell><cell>Baselin</cell><cell>Variant(s</cell><cell>Expected</cell><cell>Outco</cell><cell>Notes</cell></row><row><cell>ent</cell><cell>(s)</cell><cell>e</cell><cell>)</cell><cell>direction</cell><cell>me</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>metric</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>s</cell><cell></cell></row><row><cell></cell><cell></cell><cell>weights</cell><cell>and all-</cell><cell>moves RS</cell><cell>metro</cell><cell>conventions</cell></row><row><cell></cell><cell></cell><cell>)</cell><cell>together)</cell><cell>most</cell><cell>ranks</cell><cell>[1]</cell></row><row><cell>Transport</cell><cell>Gasoline vs</cell><cell>Gasolin</cell><cell>Switch</cell><cell>Urban/tra</cell><cell>ΔMSH</cell><cell>Use CPI series</cell></row><row><cell>mode</cell><cell>Public</cell><cell>e</cell><cell>mode</cell><cell>nsit</cell><cell>(D3),</cell><cell>CUUR0000SET</cell></row><row><cell></cell><cell>transport</cell><cell>(core),</cell><cell>(hold</cell><cell>metros</cell><cell>RS,</cell><cell>B01 vs</cell></row><row><cell></cell><cell></cell><cell>transit</cell><cell>other</cell><cell>reduce</cell><cell>metro</cell><cell>CUUR0000SET</cell></row><row><cell></cell><cell></cell><cell>in</cell><cell>componen</cell><cell>MSH under</cell><cell>ranks</cell><cell>G [2]</cell></row><row><cell></cell><cell></cell><cell>sensitiv</cell><cell>ts fixed)</cell><cell>transit</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>ity</cell><cell></cell><cell>index</cell><cell></cell><cell></cell></row><row><cell>Wage</cell><cell>w_{g,t}</cell><cell>CPS</cell><cell>Weekly</cell><cell>Smoother</cell><cell>ΔMSH</cell><cell>Document</cell></row><row><cell>measure</cell><cell></cell><cell>deciles;</cell><cell>earnings</cell><cell>path; small</cell><cell>(D1-</cell><cell>conversion</cell></row><row><cell></cell><cell></cell><cell>OEWS</cell><cell>(CPS),</cell><cell>level shifts</cell><cell>D10),</cell><cell>assumptions</cell></row><row><cell></cell><cell></cell><cell>median</cell><cell>linear</cell><cell></cell><cell>gaps</cell><cell>[3]</cell></row><row><cell></cell><cell></cell><cell>s (step-</cell><cell>interpolat</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>hold)</cell><cell>ion for</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>OEWS</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Geograph</cell><cell>Metro vs</cell><cell>Metro</cell><cell>Force</cell><cell>Compressi</cell><cell>Metro</cell><cell>Transparency</cell></row><row><cell>y indices</cell><cell>regional</cell><cell>where</cell><cell>regional</cell><cell>on toward</cell><cell>ranks;</cell><cell>per BLS</cell></row><row><cell></cell><cell>CPI</cell><cell>availabl</cell><cell>proxy for</cell><cell>national</cell><cell>RS</cell><cell>regional</cell></row><row><cell></cell><cell></cell><cell>e</cell><cell>all metros</cell><cell>average</cell><cell></cell><cell>guidance [1]</cell></row><row><cell>Checkout</cell><cell>Uplift_t</cell><cell>0%</cell><cell>TBD-</cell><cell>Linear</cell><cell>ΔMSH</cell><cell>Consumer</cell></row><row><cell>uplift</cell><cell></cell><cell></cell><cell>TBD%</cell><cell>increase in</cell><cell>(D3),</cell><cell>protection</cell></row><row><cell></cell><cell></cell><cell></cell><cell>range</cell><cell>MSH</cell><cell>RS</cell><cell>context (fees)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>(e.g., 1-</cell><cell></cell><cell></cell><cell>[6]</cell></row><row><cell></cell><cell></cell><cell></cell><cell>5%)</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_35"><head>Table 7 .2 -Alternative wage measures (national, D1-D10)</head><label>7</label><figDesc>. For each bootstrap sample, recompute ΔMSH (2019→2025) per cohort.3. Report percentile bands (e.g., 5-95%) as illustrative uncertainty around ΔMSH.</figDesc><table><row><cell cols="2">7.6 Reporting templates</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">• Text template (basket bands): "Across ±10% basket-weight perturbations, D1 MSH in</cell></row><row><cell cols="5">2025 ranges 88.1-92.1 hours/month; qualitative rankings and renter-owner gaps remain</cell></row><row><cell cols="2">unchanged." [1][3]</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">• Text template (transport switch): "Using public-transport indexes instead of gasoline</cell></row><row><cell cols="4">reduces D3 MSH by X-Y hours in NYC/Chicago; car-centric metros show smaller</cell><cell></cell></row><row><cell cols="2">differences." [2]</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">• Footnote (wage measure): "Results hold when using weekly earnings or interpolated</cell></row><row><cell cols="2">OEWS medians; see Table 7.2." [3]</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Cohort</cell><cell>Baseline hours (CPS</cell><cell>Alt hours (weekly</cell><cell>Δ (alt -</cell><cell>Flag</cell></row><row><cell></cell><cell>deciles)</cell><cell>earnings)</cell><cell>base)</cell><cell></cell></row><row><cell>D1</cell><cell>115.3</cell><cell>113.8</cell><cell>-1.5</cell><cell>ok</cell></row><row><cell>D3</cell><cell>90.1</cell><cell>88.6</cell><cell>-1.5</cell><cell>ok</cell></row><row><cell>D5</cell><cell>65.5</cell><cell>64.0</cell><cell>-1.5</cell><cell>ok</cell></row><row><cell>D10</cell><cell>36.0</cell><cell>34.5</cell><cell>-1.5</cell><cell>ok</cell></row><row><cell cols="5">Computed as 2025 annual averages. Weekly earnings series mapped to $/hour using usual</cell></row><row><cell cols="2">hours; see metadata for conversions [3].</cell><cell></cell><cell></cell><cell></cell></row></table><note><p>1. Choose block length B (e.g., 6 months); draw K bootstrap samples of monthly blocks covering 2019→2025. 2</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_36"><head>Table 7 .3 -Metro CPI substitution ledger</head><label>7</label><figDesc></figDesc><table><row><cell>Metro</cell><cell>Housing series</cell><cell>Other</cell><cell>Proxy</cell><cell>Notes</cell></row><row><cell></cell><cell></cell><cell>components</cell><cell>used?</cell><cell></cell></row><row><cell>NYC</cell><cell cols="2">CUURA101SEHA CUURA101SEHC</cell><cell>0</cell><cell>-</cell></row><row><cell>LA</cell><cell>CUURS49ASEHA</cell><cell>CUURS49ASEHC</cell><cell>0/1</cell><cell>OER may be limited; if monthly</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>OER is unavailable, substitute</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>national OER with disclosure.</cell></row><row><cell>Chicago</cell><cell cols="2">CUURA207SEHA CUURA207SEHC</cell><cell>0/1</cell><cell>Full monthly shelter series</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>available (Rent &amp; OER).</cell></row><row><cell cols="3">Houston CUURA318SEHA CUURA318SEHC</cell><cell>0/1</cell><cell>Full monthly shelter series</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>available (Rent &amp; OER).</cell></row><row><cell>Phoenix</cell><cell>CUUSA429SEHA</cell><cell>CUUSA429SEHC</cell><cell>0/1</cell><cell>Phoenix shelter series are often</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>annual/semiannual; base</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>shifted to first available in</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>2019; disclose in metadata.</cell></row><row><cell>Atlanta</cell><cell cols="2">CUURA319SEHA CUURA319SEHC</cell><cell>0/1</cell><cell>Full monthly shelter series</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>available (Rent &amp; OER).</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_37"><head>Table 8 .1 -Phased implementation</head><label>8</label><figDesc></figDesc><table><row><cell>Phase</cell><cell cols="2">Months Lead</cell><cell>Key deliverables</cell><cell>Outputs</cell></row><row><cell>I. Metrics &amp;</cell><cell>0-3</cell><cell>Statistics office</cell><cell>Rebased CPI</cell><cell>C_t dashboard;</cell></row><row><cell>data</cell><cell></cell><cell></cell><cell>components; metro</cell><cell>metadata.json; public</cell></row><row><cell></cell><cell></cell><cell></cell><cell>mappings; baseline</cell><cell>methods note [1]</cell></row><row><cell></cell><cell></cell><cell></cell><cell>basket (2019)</cell><cell></cell></row><row><cell>II.</cell><cell>2-6</cell><cell>Labor dept.</cell><cell>Index rule; glide cap;</cell><cell>Final rule; update</cell></row><row><cell>Rulemaking</cell><cell></cell><cell></cell><cell>small-firm phase-ins</cell><cell>calendar; employer</cell></row><row><cell>(TIMW)</cell><cell></cell><cell></cell><cell></cell><cell>guidance [6]</cell></row><row><cell>III. EHTC</cell><cell>3-9</cell><cell cols="2">Treasury/Revenue Eligibility logic;</cell><cell>Ops manual;</cell></row><row><cell>rails</cell><cell></cell><cell></cell><cell>advance payment</cell><cell>claimant portal;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>system;</cell><cell>fraud controls [8][9]</cell></row><row><cell></cell><cell></cell><cell></cell><cell>reconciliation</cell><cell></cell></row><row><cell>IV. All-in</cell><cell>4-10</cell><cell>Consumer</cell><cell>Definition,</cell><cell>Compliance circular;</cell></row><row><cell>pricing</cell><cell></cell><cell>authority</cell><cell>disclosure, audit</cell><cell>enforcement MOU;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>plan; penalty</cell><cell>EHTC offset account</cell></row><row><cell></cell><cell></cell><cell></cell><cell>schedule</cell><cell>[4]</cell></row><row><cell>V. Pilots &amp;</cell><cell>6-18</cell><cell>Evaluation team</cell><cell>Stepped-wedge</cell><cell>Pre-analysis plan;</cell></row><row><cell>eval</cell><cell></cell><cell></cell><cell>EHTC; TIMW back-</cell><cell>event-study &amp; DiD</cell></row><row><cell></cell><cell></cell><cell></cell><cell>test/forward test</cell><cell>results [11][12]</cell></row><row><cell cols="2">8.7 Stakeholders &amp; RACI</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_38"><head>Table 8 .2 -Roles and responsibilities</head><label>8</label><figDesc></figDesc><table><row><cell>Function</cell><cell>Responsible (R)</cell><cell>Accountable</cell><cell>Consulted (C)</cell><cell>Informed</cell></row><row><cell></cell><cell></cell><cell>(A)</cell><cell></cell><cell>(I)</cell></row><row><cell>Publish C_t &amp;</cell><cell>Stats office</cell><cell>Chief</cell><cell>Labor dept.,</cell><cell>Public,</cell></row><row><cell>methodology</cell><cell></cell><cell>statistician</cell><cell>Treasury</cell><cell>employers</cell></row><row><cell>TIMW indexing &amp;</cell><cell>Labor dept.</cell><cell>Labor</cell><cell>Employers,</cell><cell>Workers</cell></row><row><cell>enforcement</cell><cell></cell><cell>secretary</cell><cell>unions, SMEs</cell><cell></cell></row><row><cell>EHTC advance</cell><cell>Treasury/Revenue</cell><cell>Treasury CFO</cell><cell>Banks, fintechs</cell><cell>Claimants</cell></row><row><cell>disbursement</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>All-in pricing</cell><cell>Consumer authority</cell><cell>Director</cell><cell>AG &amp; local</cell><cell>Firms,</cell></row><row><cell>audits</cell><cell></cell><cell></cell><cell>regulators</cell><cell>consumers</cell></row><row><cell>Impact evaluation</cell><cell>Independent</cell><cell>Policy board</cell><cell>Academics</cell><cell>Public</cell></row><row><cell></cell><cell>evaluators</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_39"><head></head><label></label><figDesc>Core run uses gasoline; transit appears only in robustness. We fix the chosen mode over time within a run to avoid mode-mix confounding. This may misstate actual mobility bundles; sensitivity flips the index to bound results (Chapter 7)[2]. Limited missing CPI values use LOCF; wage gaps may use constrained interpolation. All imputations are flagged in data contracts and metadata.json.</figDesc><table><row><cell>• Telecom composite. A simple average for telephone/internet is a parsimony choice;</cell></row><row><cell>bundle-weight alternatives can shift the telecom contribution modestly (see robustness)</cell></row><row><cell>[1].</cell></row></table><note><p>• Transport choice. • Imputations.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_40"><head></head><label></label><figDesc>Rural areas may have different transport and energy profiles; metro CPI proxies can underrepresent rural price dynamics<ref type="bibr" target="#b0">[1]</ref>. Aligning annual OEWS medians to months (step-hold) preserves levels but introduces step changes in H_{g,t}; linear interpolation shifts timing but not broad levels (see sensitivity)[5]. CPI seasonal adjustment and methodological updates can retroactively alter paths; we version-pin downloads and keep access dates per DataCite guidance<ref type="bibr" target="#b0">[1]</ref><ref type="bibr" target="#b5">[7]</ref>. Do not use MSH to score individual households or to adjudicate benefits eligibility without context; it is a population-level indicator.• When ranking metros, disclose proxy use for CPI and avoid normative judgments about residents or workers<ref type="bibr" target="#b0">[1]</ref>. • Publicly release code and derived data with clear licenses; avoid publishing microdata that could re-identify respondents (CPS microdata protections apply)[4][7].</figDesc><table><row><cell>• Pandemic-era distortions. Rapid shifts in consumption shares and price collection</cell></row><row><cell>methods (2020-2021) may affect comparability across some components [1].</cell></row><row><cell>9.7 Ethics &amp; responsible use</cell></row></table><note><p>• Rural vs urban. • Non-wage income &amp; transfers. Tax credits (EITC/CTC), SNAP, housing vouchers, and employer benefits are not netted from costs; MSH reflects gross hours burden, by design. • Informal &amp; gig work. CPS and OEWS may undercapture informal earnings volatility; hourly equivalents for salaried/contracted occupations embed assumptions [4][5]. 9.6 Time aggregation, revisions &amp; breakpoints • Monthly alignment. • Revisions. • 9.8 Policy design limitations (TIMW &amp; EHTC) • Pass-through &amp; employment effects. TIMW can induce price or employment adjustments; glide caps and phase-ins mitigate but do not eliminate these risks; literature suggests modest average effects with credible designs but heterogeneity remains [10][11]. • Targeting leakage. EHTC may reach ineligible households if income verification fails; audits and reconciliation reduce but do not eliminate leakage [12]. • Administrative capacity. Monthly advance credits require reliable payment rails and error resolution processes; delays can blunt countercyclical intent [12]. • Complementary consumer policy. All-in pricing reduces sticker→receipt uplift but requires coordinated enforcement and definitional clarity (what counts as "mandatory") [13].</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_41"><head>•</head><label></label><figDesc>Quantify uncertainty with block bootstrap for ΔMSH and report percentile bands (Chapter 7).• Run pilot evaluations with pre-analysis plans and modern staggered-DiD estimators; publish raw code and replication packages[8][9].</figDesc><table /><note><p>9.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_42"><head>10 Responsible interpretation (reader guidance) Use MSH as</head><label></label><figDesc>: a transparent, distributional affordability barometer anchored in official statistics. Do not use MSH as: a substitute for individualized budgeting, a cost-of-living index with substitution/quality adjustments, or a sole basis for jurisdictional competitiveness claims without sensitivity context<ref type="bibr" target="#b0">[1]</ref>[3]. Essentials inflation-especially housing, groceries, and utilities-has outpaced wage growth for many workers since 2019. Measured in Monthly Survival Hours (MSH), this converts price and wage movements into the time burden required to afford a fixed essentials basket using official CPI items and CPS/OEWS wages<ref type="bibr" target="#b0">[1]</ref>[2][3]. Tenure effect. The Renter's Surcharge (renter vs owner MSH) is material in coastal metros, consistent with CPI Rent vs OER dynamics and local wage structures<ref type="bibr" target="#b0">[1]</ref>.</figDesc><table><row><cell>Prepared for Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit</cell></row><row><cell>• Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC, New York, NY, USA • ² Independent</cell></row><row><cell>Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0</cell></row><row><cell>Chapter 10 -Conclusion</cell></row><row><cell>Project: Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit •</cell></row><row><cell>2025</cell></row><row><cell>10.1 Synthesis: problem → thesis → contribution</cell></row><row><cell>Contribution. We (i) define MSH with transparent data contracts; (ii) document distributional gaps</cell></row><row><cell>(deciles, renters vs owners); and (iii) propose two implementable levers-Time-Indexed Minimum</cell></row><row><cell>Wage (TIMW) and an Essential Hours Tax Credit (EHTC)-that map measurement to action via</cell></row><row><cell>existing regulatory and tax rails [4][5][6].</cell></row><row><cell>10.2 Key findings</cell></row><row><cell>1. Levels. Lower-decile workers face a larger MSH increase than upper-decile workers since</cell></row><row><cell>2019, with renters most exposed in high-rent metros (housing component dominates the</cell></row><row><cell>price-side contribution). Headline: D1 required 4.4 fewer hours/month; D10 required</cell></row><row><cell>fewer hours over the same period [1][2].</cell></row><row><cell>2. Equity gap. The difference in hours between D1 and D10 widened by -3.0, largely explained</cell></row><row><cell>by housing and electricity indices net of wage growth offsets [1][2].</cell></row><row><cell>3.</cell></row></table><note><p><p><p><p>Problem.</p>Thesis. If society values time, not just prices, then policy should target an explicit hours threshold for essentials. We show that H_{g,t} = C_t / w_{g,t} and the log-change identity Δ ln H ≈ Δ ln C -Δ ln w make the burden auditable, comparable, and administrable across cohorts and metros</p>[3]</p>.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_43"><head></head><label></label><figDesc>• Labor &amp; treasury: test TIMW circular language and EHTC monthly advances on existing rails (EITC/CTC) [5][6]. • Cities &amp; evaluators: host pilots with staggered ZIP rollouts; share anonymized admin data for open replication [8][9].</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_44"><head>Table A .1 -TIMW Back-test (Selected Years, Renter Basket, National)</head><label>A</label><figDesc>C(6m) = 6-month average basket cost; w_req = C(6m) / 120; w_min = applied floor after ≤5% cap; MSH_peak = max MSH within year; ΔH_peak = MSH_peak -120. MSH_peak reflects the renter basket; owners' results are similar but lower due to OER.</figDesc><table><row><cell>Year</cell><cell>Update</cell><cell>C(6m)</cell><cell>w_req</cell><cell>w_min</cell><cell>Cap</cell><cell>MSH_peak</cell><cell>ΔH_peak</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>binds?</cell><cell></cell><cell></cell></row><row><cell>Notes:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.8">Submission readiness checklist</head><p>• Abstract 170-200 words; keywords (10-12); JEL codes present. • Figures &amp; tables match Chapter 6 contracts; captions include sources and units. • Methods include numbered equations; Notation &amp; Units table present. • References resolve to all in-text citations. • Repo: code, data, LICENSE (CC BY 4.0 for text; MIT suggested for code), and reproducibility.md complete.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.1">Positioning this study</head><p>This review situates Monthly Survival Hours (MSH) among (i) inflation and index-number methodologies, (ii) distributional &amp; household-specific price measurement, (iii) wage-floor and income-support literatures, and (iv) consumer-protection work on price transparency. Our approach contributes a time-denominated affordability metric that is auditable (CPI-based), distributional (deciles/occupations), and policy-coupled (TIMW/EHTC).</p><p>Index numbers Distributional inflation Minimum wage Tax credits (EITC/CTC) All-in pricing / fees Housing measurement (OER/Rent) Energy affordability Digital inclusion (telecom)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.2">Inflation measurement &amp; index-number theory</head><p>We adopt a Laspeyres-style aggregation with fixed 2019 weights for transparency and comparability (Ch. <ref type="bibr">[3]</ref><ref type="bibr">[4]</ref>. The CPI handbooks provide item definitions, sampling, and adjustment procedures; superlative indices (e.g., Fisher, Törnqvist) reduce substitution bias at the cost of simplicity. Because our objective is distributional affordability rather than a COLI per se, fixed weights are defensible and sensitivity bands (±10%) guard against composition risk <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr">[2]</ref>.</p><p>• CPI documentation: classification, hedonic adjustments, seasonal factors <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr">[2]</ref>.</p><p>• Weights choice: Laspeyres vs superlatives; we report robustness rather than re-weight monthly.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.3">Distributional &amp; household-specific inflation</head><p>Households experience different inflation paths due to heterogeneous baskets and geography. Prior work constructs household-level or group-specific price indices and documents inflation inequality.</p><p>Our contribution focuses on essentials only (housing, food-at-home, electricity, telecom, transport) and expresses the burden in hours, not dollars, which makes policy thresholds clearer. We localize via metro CPI where available and otherwise use regional proxies with full disclosure <ref type="bibr" target="#b0">[1]</ref>.</p><p>• Group-specific or distributional indices highlight heterogeneity by income or demographics (selected syntheses; add journal citations in numbered during final pass). • Our Renter's Surcharge aligns with literature separating renter/owner dynamics via Rent vs OER treatment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.4">Housing measurement: Rent vs Owners' Equivalent Rent (OER)</head><p>Housing dominates essentials. CPI measures owner costs via OER and renter costs via observed rent, with known dynamics and lags. We mirror this: renter and owner baskets are identical except for the housing component, enabling a tenure gap in hours. Limitations and motivations are documented in CPI references; we treat OER as the accepted proxy and report the renter-owner hours gap as a descriptive equity statistic <ref type="bibr" target="#b0">[1]</ref>[2].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.5">Wage floors &amp; labor-market effects</head><p>A large empirical literature studies minimum-wage impacts on employment and earnings. Recent credible designs (border discontinuities, synthetic controls, modern DiD) find modest average employment effects and significant earnings gains at the bottom, with heterogeneity by sector and place. We build on these by tying the floor to an essentials basket (TIMW), adding glide caps and phase-ins to mediate adjustment costs <ref type="bibr">[3][4]</ref>[5].</p><p>• Evidence reviews &amp; quasi-experimental studies underpin our guardrails and cadence choices.</p><p>• Our back-tests/forward-tests (Ch. 5) align with this literature's emphasis on transparent counterfactuals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.6">Refundable tax credits &amp; monthly advances</head><p>Refundable credits (EITC/CTC) are well-studied; they raise after-tax incomes, reduce poverty, and can be delivered in advances using existing administrative rails. The Essential Hours Tax Credit (EHTC) is a targeted variant that pegs benefits to the hours gap above a threshold, with reconciliation at filing and audit mechanisms similar to EITC practices <ref type="bibr">[6][7]</ref>.</p><p>• Design elements (eligibility, take-up, reconciliation) follow tax-credit playbooks; we contribute a novel hours-based benefit rule.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.7">Consumer fees, all-in pricing &amp; effective costs</head><p>Hidden fees and default tips can widen sticker→receipt gaps, obscuring effective prices. Regulatory guidance on "junk fees" motivates our checkout uplift parameter and all-in pricing complement to TIMW/EHTC. Penalties can be recycled as offsets in budget scoring (Ch. 5) <ref type="bibr" target="#b6">[8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.8">Energy &amp; digital inclusion in essentials</head><p>Electricity and telecom are essential modern services. CPI electricity indexes track service prices; EIA's ¢/kWh series serve as diagnostics. For telecom, CPI tracks "Telephone services" and "Internet/electronic information providers"; we combine them 50:50 absent stronger evidence for bundle shares (Ch. 3-4) <ref type="bibr" target="#b7">[9]</ref>[1].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.9">Gaps our study addresses</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>From prices → time</head><p>We translate CPI prices and wages into hours, a salient currency for households and policymakers. This reframing yields auditable thresholds and guardrails.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>From measurement → action</head><p>We bind a descriptive metric (MSH) to implementable levers (TIMW/EHTC), closing the loop between diagnosis and policy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>From averages → distribution</head><p>We report deciles, occupations, and tenure splits-surfacing equity impacts that aggregate inflation statistics can mask.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>From national → local</head><p>We localize with metro CPI, disclosing proxies; metro comparisons and renter-owner gaps turn national narratives into actionable local dashboards.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.10">Annotated reading list (to be finalized in numbered)</head><p>• Index &amp; CPI methods. BLS handbooks and concept notes cover classification, sampling, hedonic adjustments, and seasonal factors • Replication package (code + processed data): Available in repository; will be archived.</p><p>• Raw or auxiliary data (if any): listed in /data/raw/README.md and archived on OSF.</p><p>• Additional mirror(s): SSRN, ResearchGate, Zenodo (mirror, no new DOI if possible).</p><p>• Project page (explainer &amp; media kit): ThePricer.org/msh.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests:</head><p>The authors declare no competing interests.</p><p>Funding: No specific funding was received for this work.</p><p>12.5 Author contributions (CRediT)  Mirrors: also available on SSRN, ResearchGate, OSF, and Figshare.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="12.10">Contact</head><p>Correspondence: alec@thepricer.org -Website: ThePricer.org</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix: TIMW Back-test (2000-2025)</head><p>This appendix presents the historical back-test of the Time-Indexed Minimum Wage (TIMW) policy, showing how a 120-hour target with a ≤5% glide cap would have performed from 2000 to 2025 for D3 renters. The table shows realistic deviations from the target when the glide cap binds during periods of rapid inflation.</p><p>We simulate a semi-annual Time-Indexed Minimum Wage targeting 120 hours/month. We set the floor each January and July using the prior 6-month average basket cost and enforce a ≤ 5% upward glide cap. When the cap binds (notably in 2021-2022), the floor rises slower than the basket, and MSH temporarily exceeds 120; the table reports the peak deviation within each year. Outside capbinding intervals (e.g., 2014, 2019), MSH stays close to target without overshooting. </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Consumer Price Index (CPI) Handbook</title>
+		<ptr target="https://www.bls.gov/cpi/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+		<respStmt>
+			<orgName>Bureau of Labor Statistics</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://download.bls.gov/pub/time.series/" />
+		<title level="m">CPI Databases &amp; Series IDs</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Labor Force Statistics from the Current Population Survey</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cps/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Occupational Employment and Wage Statistics (OEWS) Methodology</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/oes/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<ptr target="https://www.transit.dot.gov/" />
+		<title level="m">Federal Transit Administration / Bureau of Transportation Statistics. Transit Fares &amp; Data Resources</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Aaa</forename><forename type="middle">Gas</forename><surname>Prices</surname></persName>
+		</author>
+		<ptr target="https://gasprices.aaa.com/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<ptr target="https://www.census.gov/" />
+		<title level="m">CPS ASEC Income Distribution Tables</title>
+		<imprint>
+			<publisher>U.S. Census Bureau</publisher>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><surname>Datacite</surname></persName>
+		</author>
+		<ptr target="https://schema.datacite.org/" />
+		<title level="m">Metadata Schema Documentation</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Consumer Expenditure Surveys (CES): Methodology &amp; Tables</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cex/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Concepts and Methods of the U.S. Consumer Price Index</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cpi/cpiconcepts.htm" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title/>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://download.bls.gov/pub/time.series/" />
+	</analytic>
+	<monogr>
+		<title level="s">CPI Detailed Series</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+			<publisher>Gasoline &amp; Public Transportation</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cpi</surname></persName>
+		</author>
+		<ptr target="https://download.bls.gov/pub/time.series/" />
+		<title level="m">Detailed Series &amp; Item Definitions</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cpi/cpiconcepts.htm" />
+		<title level="m">Concepts and Methods of the U.S. CPI</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Labor Force Statistics from the CPS</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cps/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cpi</surname></persName>
+		</author>
+		<ptr target="https://download.bls.gov/pub/time.series/" />
+		<title level="m">Gasoline &amp; Public Transportation Series</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><surname>Ftc / Cfpb</surname></persName>
+		</author>
+		<ptr target="https://www.ftc.gov/" />
+		<title level="m">Fee Transparency and Junk Fees Reports</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Angrist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-S</forename><surname>Pischke</surname></persName>
+		</author>
+		<title level="m">Mostly Harmless Econometrics</title>
+		<imprint>
+			<publisher>Princeton University Press</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Estimating dynamic treatment effects in event studies with heterogeneous treatment effects</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abraham</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Difference-in-differences with multiple time periods</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Callaway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H C</forename><surname>Sant'anna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<ptr target="https://www.ftc.gov/" />
+		<title level="m">Federal Trade Commission. Junk Fees / All-in Pricing Resources</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">The effect of minimum wages on lowwage jobs</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cengiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dube</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lindner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zipperer</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/qje/qjz014</idno>
+		<ptr target="https://doi.org/10.1093/qje/qjz014" />
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Economics</title>
+		<imprint>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1405" to="1454" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Credible research designs for minimum wage studies</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Allegretto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dube</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Reich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zipperer</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0019793917692943</idno>
+		<ptr target="https://doi.org/10.1177/0019793917692943" />
+	</analytic>
+	<monogr>
+		<title level="j">ILR Review</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="559" to="592" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Impacts of minimum wages: review of the international evidence</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dube</surname></persName>
+		</author>
+		<idno type="DOI">10.15185/izawol.373.v2</idno>
+		<ptr target="https://doi.org/10.15185/izawol.373.v2" />
+	</analytic>
+	<monogr>
+		<title level="j">IZA World of Labor</title>
+		<imprint>
+			<biblScope unit="volume">373</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<ptr target="https://www.irs.gov/" />
+	</analytic>
+	<monogr>
+		<title level="m">Earned Income Tax Credit (EITC): Publication &amp; Program Overview</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<ptr target="https://home.treasury.gov/" />
+		<title level="m">Advanceable Credits Administration</title>
+		<imprint>
+			<publisher>U.S. Treasury / IRS</publisher>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note>CTC/EIP) -Guidance</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Methodology</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/oes/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Estimating dynamic treatment effects in event studies with heterogeneous treatment effects</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abraham</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2020.09.006</idno>
+		<ptr target="https://doi.org/10.1016/j.jeconom.2020.09.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">225</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="175" to="199" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Difference-in-differences with multiple time periods</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Callaway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H C</forename><surname>Sant'anna</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2020.12.001</idno>
+		<ptr target="https://doi.org/10.1016/j.jeconom.2020.12.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">225</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="200" to="230" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Consumer Price Index (CPI) Handbook &amp; Regional/Metro CPI Documentation</title>
+		<ptr target="https://www.bls.gov/cpi/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+		<respStmt>
+			<orgName>Bureau of Labor Statistics</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Labor Force Statistics from the CPS &amp; OEWS Methodology</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<author>
+			<persName><surname>Datacite</surname></persName>
+		</author>
+		<ptr target="https://schema.datacite.org/" />
+		<title level="m">Metadata Schema &amp; Data Citation</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<ptr target="https://www.ftc.gov/" />
+		<title level="m">Federal Trade Commission / CFPB. Junk Fees &amp; All-in Pricing Resources</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Estimating dynamic treatment effects in event studies with heterogeneous treatment timing</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abraham</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2020.09.006</idno>
+		<ptr target="https://doi.org/10.1016/j.jeconom.2020.09.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<ptr target="https://www.ftc.gov/" />
+		<title level="m">Federal Trade Commission. All-in Pricing / Junk Fees Resources</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title/>
+		<ptr target="https://www.irs.gov/" />
+	</analytic>
+	<monogr>
+		<title level="j">Internal Revenue Service. Earned Income Tax Credit (EITC) Program Overview</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<ptr target="https://home.treasury.gov/" />
+		<title level="m">Advanceable Credits Administration (CTC/EIP) -Guidance</title>
+		<imprint>
+			<publisher>U.S. Treasury / IRS</publisher>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Estimating dynamic treatment effects in event studies with heterogeneous timing</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abraham</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2020.09.006</idno>
+		<ptr target="https://doi.org/10.1016/j.jeconom.2020.09.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Difference-in-differences with multiple time periods</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Callaway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H C</forename><surname>Sant'anna</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2020.12.001</idno>
+		<ptr target="https://doi.org/10.1016/j.jeconom.2020.12.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Consumer Price Index (CPI) Handbook &amp; Concepts</title>
+		<ptr target="https://www.bls.gov/cpi/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+		<respStmt>
+			<orgName>Bureau of Labor Statistics</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Consumer Expenditure Surveys (CES) -Methodology &amp; Tables</title>
+		<author>
+			<persName><surname>Bls</surname></persName>
+		</author>
+		<ptr target="https://www.bls.gov/cex/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">The effect of minimum wages on lowwage jobs</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cengiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dube</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lindner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zipperer</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/qje/qjz014</idno>
+		<ptr target="https://doi.org/10.1093/qje/qjz014" />
+	</analytic>
+	<monogr>
+		<title level="j">QJE</title>
+		<imprint>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1405" to="1454" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Consumer Price Index (CPI) Handbook &amp; Regional/Metro CPI</title>
+		<ptr target="https://www.bls.gov/cpi/" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+		<respStmt>
+			<orgName>Bureau of Labor Statistics</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Prepared for Affordability in Hours: A Time-Indexed Minimum Wage and an Essential Hours Credit • Alec Pow and Lora Stonden • ¹ ThePricer Media, LLC</title>
+	</analytic>
+	<monogr>
+		<title level="m">² Independent Researcher • Contact: alec@thepricer.org • © 2025 Alec Pow • CC BY 4.0 12.2 Reproducibility checklist 1. Clone repo and read reproducibility</title>
+		<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint/>
+	</monogr>
+	<note>md</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Inputs: CPI series IDs and CPS/OEWS mappings documented in /metadata</title>
+	</analytic>
+	<monogr>
+		<title level="j">json</title>
+		<imprint/>
+	</monogr>
+	<note>Ch. 2-4</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Make pipeline: make all (or python -m pipelines.run) → exports /out/figures and /out/tables matching Chapter</title>
+		<imprint/>
+	</monogr>
+	<note>contracts</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Archive: push versioned release and update Figshare record. Table 12.1 -Replication package contents Path Description /data/raw/ Downloaded CPI/CPS/OEWS sources; series IDs listed in metadata.json /data/processed/ Rebased indices</title>
+		<imprint/>
+	</monogr>
+	<note>wage panels, basket weights /out/figures/ PNG/SVG for Figs 6.1-6.3 and 7.1-7.3 /out/tables/ CSV for Tables 6.1-6.3, 7.2-7.3 /scripts/ ETL and compute scripts for MSH and robustness reproducibility.md Exact steps, environment specs, and seeds</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">3 Ethics, approvals &amp; privacy This study uses aggregate public data (BLS CPI, CPS/OEWS; EIA electricity). No human subjects research, identifiable information, or proprietary datasets were used; no IRB approval was required</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

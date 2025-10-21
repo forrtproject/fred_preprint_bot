@@ -1,0 +1,1742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Educational Video Transcript Analysis with LLMs: Improving Entity Recognition and Qualitative Insights</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Wei</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Tennessee Knoxville</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Cody</forename><surname>Pritchard</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">University of Tennessee Knoxville</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Joshua</forename><surname>Rosenberg</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">University of Tennessee Knoxville</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Educational Video Transcript Analysis with LLMs: Improving Entity Recognition and Qualitative Insights</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">AE7A409C6188B649C2B79E9B3847508C</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T14:01+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>YouTube Transcript</term>
+					<term>Automatic Speech Recognition</term>
+					<term>Large Language Models</term>
+					<term>Coreference Resolution</term>
+					<term>Named Entity Recognition</term>
+					<term>Qualitative Research</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Digital educational media platforms such as YouTube have become invaluable sources of qualitative data for educational researchers, who increasingly rely on video content to examine classroom interactions, instructional practices, and student engagement at scale. Yet, large-scale qualitative analysis of video content remains hampered by transcription inaccuracies and challenges in extracting structured information. This study introduces an integrated methodological pipeline leveraging Automatic Speech Recognition (ASR), Large Language Models (LLMs) for coreference resolution, and Named Entity Recognition (NER) correction to enhance transcript fidelity and analytical utility. We analyzed 48 episodes from CrashCourse US History, applying multiple ASR systems and LLM-based transcript enhancement to assess large-scale trends in transcription quality, entity extraction, and topic modeling. For evaluation, four episodes were selected for detailed manual annotation, serving as gold-standard benchmarks for validating NER and coreference improvements introduced by the LLM-powered pipeline. Results show that LLM-assisted coreference resolution and NER correction significantly improve the accuracy, recall, and precision of key historical entities, especially for complex event, organization, and law entities. Topic modeling analyses further reveal that LLM-cleaned transcripts yield more coherent and semantically distinct topics, both at the corpus level and in focused case studies, such as the "Reagan Revolution" episode. By comparing traditional ASR pipelines with the proposed LLM-enhanced workflow, we show the value of combining automated language technologies with qualitative research goals. The findings highlight the potential of LLMs as an artificial intelligence tool to advance educational data mining and qualitative inquiry, enabling researchers to increase the reliability of entity recognition in educational videos, facilitate thematic mapping and comparative analyses of teaching practices, classroom interactions, or policy enactment across diverse educational settings.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">INTRODUCTION</head><p>K-12 teachers and university professors are increasingly supplementing their curricula with new online digital resources from Teachers Pay Teachers, Share My Lesson, and YouTube <ref type="bibr" target="#b47">(Polikoff, 2019;</ref><ref type="bibr" target="#b20">Fyfield, 2021;</ref><ref type="bibr" target="#b6">Breslyn &amp; Green, 2022;</ref><ref type="bibr" target="#b58">Tosh et al., 2020)</ref>. YouTube videos are not only used as student-facing resources to show students, but also as pedagogical resources for teachers seeking to build their content knowledge <ref type="bibr" target="#b0">(Adu-Marfo et al., 2024)</ref>. With over 20 million videos uploaded each day to YouTube <ref type="bibr">(YouTube, n.d.)</ref>, it is quickly emerging as a vital repository of qualitative data. Educational researchers increasingly recognize the value of online video content, including instructional videos, documentaries, and educational entertainment, for understanding diverse phenomena such as teaching methods, narrative framing, and cultural representation <ref type="bibr" target="#b58">(Tosh et al., 2020;</ref><ref type="bibr" target="#b47">Polikoff, 2019;</ref><ref type="bibr" target="#b44">Miles et al., 2024;</ref><ref type="bibr" target="#b20">Fyfield, 2021;</ref><ref type="bibr" target="#b37">Lange, 2019)</ref>.</p><p>Despite these opportunities, traditional qualitative analysis methods face significant obstacles when dealing with video-based data. Manual transcription-a foundational step for qualitative inquiry-is notoriously labor-intensive, prone to errors, and cost-prohibitive at scale <ref type="bibr" target="#b17">(Eftekhari, 2024)</ref>. Consequently, qualitative researchers have typically limited their scope to relatively small datasets, constraining the depth, breadth, and generalizability of their findings. Furthermore, once transcribed, the complexity of video narratives, which often feature numerous historical figures, events, and ambiguous references, complicate effective thematic and content analyses <ref type="bibr" target="#b7">(Creswell, 2013)</ref>.</p><p>Recent advances in Natural Language Processing (NLP) and Artificial Intelligence, including Automatic Speech Recognition (ASR), Named Entity Recognition (NER), Coreference Resolution, and Large Language Models (LLMs), have the potential to address these limitations, transforming qualitative researchers' ability to prepare, structure, and analyze large-scale video datasets. ASR enables rapid transcription of extensive video content, NER efficiently identifies and isolates key historical entities and events, and Coreference Resolution accurately associates ambiguous pronouns and indirect references with the correct entities. Additionally, LLMs provide powerful capabilities for refining transcripts, resolving textual ambiguities, and enhancing overall text quality, thereby dramatically improving the fidelity and interpretability of qualitative data.</p><p>This study introduces and evaluates an integrated methodological framework combining these advanced NLP tools, designed explicitly to facilitate large-scale qualitative analyses of educational media content. Using a corpus of 48 episodes from the CrashCourse US History video series as an illustrative case, our study presents technical innovations for qualitative data preparation and demonstrates how qualitative researchers can harness these innovations to undertake richer analyses of educational content.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">PRIOR RESEARCH</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">ASR TRANSCRIPTS IN EDUCATIONAL DATA MINING</head><p>ASR technologies have increasingly become integral to educational data mining <ref type="bibr" target="#b14">(De Vries et al., 2014)</ref>, providing researchers with the capability to transcribe and analyze vast quantities of educational video content efficiently. ASR tools such as Whisper significantly reduce the resource-intensive nature of manual transcription, demonstrating their effectiveness through studies on educational video analysis <ref type="bibr" target="#b50">(Rao, 2023)</ref>. Despite these benefits, ASR-generated transcripts often contain errors that compromise downstream applications, such as sentiment analysis, racial disparities <ref type="bibr" target="#b46">(Olatunji et al., 2023;</ref><ref type="bibr">Koenecke et al., 2020)</ref>, low accuracy in accent recognition <ref type="bibr">(Hinsvark et al., 2021)</ref>, and speech emotion recognition (SER).</p><p>Addressing these limitations, researchers have utilized multimodal approaches, incorporating techniques such as Deep Canonical Correlation Analysis (DCCA), to enhance the robustness of sentiment classification <ref type="bibr" target="#b15">(Dumpala et al., 2018)</ref>. Furthermore, SER research has explored frameworks integrating ASR error correction and modality fusion to mitigate the adverse effects of ASR inaccuracies <ref type="bibr" target="#b39">(Li et al., 2024)</ref>. Additionally, comprehensive corpora, like the Corpus of German Speech (CoGS), illustrate the utility of geolocated ASR transcripts for linguistic and educational analyses, underscoring the expanding role of ASR in educational data mining <ref type="bibr" target="#b10">(Coats, 2023)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">COREFERENCE RESOLUTION AS A KEY NLP STEP</head><p>Coreference resolution is a fundamental task in NLP, essential for a range of downstream applications, including entity linking <ref type="bibr" target="#b33">(Kundu et al., 2018)</ref>, named entity recognition <ref type="bibr" target="#b13">(Dai et al., 2019</ref><ref type="bibr">), question answering (Bhattacharjee et al., 2020)</ref>, sentiment analysis <ref type="bibr" target="#b31">(Krishna et al., 2017;</ref><ref type="bibr" target="#b42">Mao &amp; Li, 2021)</ref>, and the development of dialogue systems such as chatbots <ref type="bibr" target="#b65">(Zhu et al., 2018)</ref>. Coreference resolution clusters entity or event mentions-text spans referring to the same realworld entity or event-within or across documents. This process is essential for information aggregation and supports applications such as contradiction detection, text summarization, and reading comprehension <ref type="bibr" target="#b21">(Ferracane et al., 2016;</ref><ref type="bibr" target="#b31">Khashabi et al., 2018;</ref><ref type="bibr" target="#b63">Welbl et al., 2018)</ref>.</p><p>Coreference resolution contributes to improving the coherence and interpretability of topics generated by accurately clustering references to identical entities across text segments. It clarifies ambiguities inherent in natural language discourse, thus providing clearer narrative structures and enhancing topic coherence <ref type="bibr" target="#b59">(Teng et al., 2023)</ref>. Incorporating discourse semantics, such as centering theory, into coreference systems further improves referential accuracy, particularly in resolving pronouns and maintaining contextual coherence in long-form texts <ref type="bibr">(Chai &amp; Strube, 2021)</ref>. Entity-focused topic modeling methods like EntLDA utilize coreference resolution to integrate semantic entity information, resulting in topics that are contextually richer and semantically precise <ref type="bibr" target="#b1">(Allahyari &amp; Kochut, 2016)</ref>. Consequently, these methodological advancements enable qualitative researchers to conduct more meaningful analyses, providing structured and insightful thematic representations essential for educational inquiry <ref type="bibr">(Harabagiu &amp; Maiorano, 1998;</ref><ref type="bibr" target="#b56">Shi et al., 2010)</ref>. Traditional topic modeling methods often fail to adequately resolve referential ambiguities and typically produce overly generalized topics with limited interpretative depth, particularly in historical educational narratives.</p><p>Effective coreference resolution is essential for accurately associating pronouns and nominal references with their intended entities, a challenge exacerbated by the complexity and density of educational texts <ref type="bibr" target="#b2">(Agarwal et al., 2019)</ref>. Techniques leveraging fine-grained entity classification, memory networks, and structural information significantly improve coreference resolution, thus enhancing information extraction and supporting deeper text comprehension <ref type="bibr" target="#b9">(Cheri &amp; Bhattacharyya, 2017;</ref><ref type="bibr" target="#b32">Kong &amp; Jian, 2019;</ref><ref type="bibr" target="#b55">Sonawane &amp; Kulkarni, 2015;</ref><ref type="bibr" target="#b61">Wang &amp; Li, 2020)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">NAMED ENTITY RECOGNITION</head><p>In addition to coreference resolution, named entity recognition (NER) is another important NLP step. NER is considered a sequence labeling task-one in which a system assigns entity class labels to each token within a given sequence, which refers to the identification of different types of entities, including Person, Event, and Location. These entities serve as referential anchors that structure the semantics of texts and guide their interpretation <ref type="bibr" target="#b18">(Ehrmann et al., 2023)</ref>. NER supports information retrieval by enabling entity-based indexing, which improves the precision of document search and excerpt retrieval <ref type="bibr" target="#b22">(Guo et al., 2009;</ref><ref type="bibr" target="#b36">Lin et al., 2012)</ref>. Empirical evidence indicates that a large proportion of search queries and content-bearing words involve named entities, highlighting their centrality in text analysis <ref type="bibr" target="#b23">(Gey, 2000)</ref>.</p><p>NER enhances qualitative research through efficient identification and categorization of entities within unstructured text, and facilitates systematic extraction of information about individuals, organizations, locations, and other key entities <ref type="bibr" target="#b12">(Colavizza et al., 2019)</ref>. This process assists data coding, thematic analysis, and cross-case comparison by providing consistent reference points across large and heterogeneous datasets. NER further contributes to multilingual and cross-cultural studies by standardizing the recognition of proper nouns and references in different languages <ref type="bibr" target="#b52">(Savaram et al., 2024)</ref>. Research showed the utility of NER encompasses diverse domains such as information extraction, question answering <ref type="bibr" target="#b43">(Mollá et al., 2006)</ref>, monitoring of media content <ref type="bibr" target="#b53">(Steinberger et al., 2009)</ref>, sentiment analysis, automated translation, summarization of texts, and clustering of documents <ref type="bibr" target="#b16">(Escoter et al., 2017)</ref>. In qualitative analysis, NER improves data organization, reduces ambiguity in entity references, and enhances the scalability and reproducibility of research, particularly for extracting and organizing information from unstructured text <ref type="bibr" target="#b24">(Hu et al., 2024;</ref><ref type="bibr">Zhang, 2024)</ref>.</p><p>NER is pivotal for effectively processing educational texts, as it facilitates precise identification and coherent linkage of entities within the discourse. Recent NER methodologies employing advanced architectures such as BERT-BiLSTM-CRF have notably improved the accuracy of entity extraction, overcoming the limitations of traditional rule-based systems <ref type="bibr">(Cheng, 2023;</ref><ref type="bibr" target="#b62">Wei &amp; Wen, 2021)</ref>. The development of domain-specific datasets, such as EduNER, has further enhanced model performance by providing contextually rich training data tailored specifically for educational contexts <ref type="bibr" target="#b40">(Li et al., 2023)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.">LLMS FOR QUALITATIVE RESEARCH ASSISTANCE</head><p>LLMs have created significant possibilities for qualitative research, supporting more effective processing, analysis, and interpretation of complex, unstructured textual data <ref type="bibr" target="#b57">(Tai et al., 2024;</ref><ref type="bibr" target="#b25">Hayes, 2025)</ref>. LLMs trained on extensive corpora demonstrate remarkable capabilities in pattern recognition, coreference resolution <ref type="bibr" target="#b38">(Le &amp; Ritter, 2024)</ref>, thematic extraction, and sentiment analysis, surpassing traditional manual coding methods in both speed and depth <ref type="bibr" target="#b25">(Hayes, 2025)</ref>. Recent applications highlight LLMs' effectiveness in preprocessing historical and educational texts, accurately correcting transcription errors, and extracting targeted information <ref type="bibr" target="#b54">(Schwitter, 2025)</ref>. Despite their transformative potential, the reliance on sophisticated prompt engineering and the risk of model-generated inaccuracies underscores the necessity for rigorous validation processes and ethical guidelines <ref type="bibr" target="#b51">(Rask &amp; Shimizu, 2024;</ref><ref type="bibr" target="#b3">Barros et al., 2024)</ref>. Moreover, while LLMs expedite literature reviews and scientific writing, challenges persist regarding dataset biases and ethical considerations, requiring continued vigilance and methodological refinement <ref type="bibr" target="#b5">(Boyko et al., 2023)</ref>. Notably, existing research seldom explicitly integrates LLM-driven processes with established qualitative methods such as codebook development <ref type="bibr" target="#b4">(Barany et al., 2024)</ref>, thematic analysis, narrative inquiry, and discourse analysis, leaving the interpretative and contextual relevance of automated findings largely unaddressed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.">LIMITATIONS OF EXISTING APPROACHES AND RESEARCH GAP</head><p>Despite the promising advancements outlined above, significant limitations persist in current qualitative educational video research. The scalability of traditional educational video transcript qualitative analyses remains constrained due to reliance on manual coding and transcription methods <ref type="bibr" target="#b48">(Parameswaran et al., 2020)</ref>. Furthermore, the fragmented approach in utilizing ASR, NER, coreference resolution, and LLM-based processing often leads to inaccuracies, unresolved coreferences, inconsistent entity recognition, and overly broad thematic outcomes.</p><p>Instructional video content on platforms like YouTube, including but not limited to history education-presents researchers with complex analytical challenges, such as rich narrative structures, diverse entity references, and extensive use of pronouns and implicit context. While historical educational videos exemplify these challenges due to their dense storytelling and frequent mention of people, events, and organizations, similar issues are pervasive across other forms of educational and instructional video, such as STEM lectures, language tutorials, and policy explainers. We selected CrashCourse US History videos as a case study precisely because they are widely used in classrooms and feature a high density of narrative elements and educational entities, making them an ideal testbed for developing and validating our integrated methodological framework. However, our approach-synergistically combining ASR transcription, LLM-driven transcript cleaning, entity recognition, and coreference resolutionis designed to be broadly applicable to a wide range of instructional video data beyond this case.</p><p>To address these critical gaps, this study presents an integrated methodological framework that combines ASR transcription, LLM-driven transcript cleaning, precise entity recognition, and coreference resolution to significantly enhance the coherence, accuracy, and interpretability of qualitative analyses in educational research contexts.</p><p>Specifically, we systematically investigate the following research questions:</p><p>RQ1: How accurate are ASR-generated transcripts of educational media compared to a human-created "gold standard"? RQ2: What are the effects of employing LLM-based cleaning processes on ASRgenerated transcripts, particularly regarding named entity recognition? RQ3: How does LLM-enhanced NER and coreference resolution affect the thematic coherence and qualitative interpretability of narratives compared to those from unprocessed ASR transcripts?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">DATA</head><p>This study employs the CrashCourse US History video series as its principal dataset, capitalizing on its pedagogical relevance and content richness. CrashCourse, an educational YouTube channel with over 16 million subscribers, is recognized for producing meticulously researched and visually engaging educational videos, as shown in Figure <ref type="figure" target="#fig_0">1</ref>. The US History series has become a staple resource in both K-12 and postsecondary classrooms as well as among informal learners worldwide. Its episodes present a structured, chronological exploration of key events, figures, and themes in American history, integrating multimedia elements and narrative techniques to enhance comprehension and engagement. 48 episodes were selected to represent the breadth of major historical periods and events, ranging from the colonial era and the American Revolution to the Civil War, Reconstruction, and the Civil Rights Movement. This corpus reflects the chronological scope and the thematic complexity of US history. The data collection process involved a multi-step procedure. First, the selected videos were downloaded from YouTube using yt-dlp, a widely adopted open-source utility capable of extracting both video content and associated subtitle files. For each episode, the English autogenerated subtitles-produced via YouTube's embedded ASR system-were retrieved and archived as the primary text source. These ASR-generated transcripts, while immediately accessible and comprehensive, are known to exhibit variable levels of accuracy, especially regarding specialized terminology, proper nouns, and context-dependent phrases prevalent in historical discourse.</p><p>To facilitate robust evaluation and benchmarking, a subset of the corpus was subjected to manual transcription and entity annotation. For this "gold standard" subset, transcripts were produced or corrected by a researcher with subject matter expertise, who systematically crosschecked the auto-generated subtitles against the original video content. Special attention was given to the accurate transcription and identification of named entities, including historical figures, place names, dates, organizations, and legislation. Each identified entity was categorized and recorded following the established NER schema. To ensure the reliability of entity labeling, all annotations were created using the gold standard transcripts: we used the Google Gemini 2.5 Pro LLM to extract an initial list, after which a single researcher checked each named entity against both the text and historical sources. This process resulted in a manually verified NER gold standard: for the selected sample, providing a rigorous benchmark for evaluating the accuracy and performance of automated NER extraction throughout the study. The finalized dataset consists of the original ASR-generated transcripts for all 48 CrashCourse US History videos, along with manually created "gold-standard" transcript samples for four selected episodes. For these four videos, the NER gold standard was also established, including detailed classification and annotation of all named entities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">METHOD</head><p>This study employed a multi-stage methodological pipeline (see abstract for codes and data link), integrating natural language processing tools and a large language model (GPT-4o), to systematically address the three research questions. Each phase of the pipeline was designed to correspond directly to one of the research questions, ensuring clarity and methodological alignment throughout.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">EVALUATING ASR TRANSCRIPT ACCURACY (RQ1)</head><p>To investigate the first research question-how accurate ASR-generated transcripts are when compared to a manually created "gold standard"-we utilized the JiWer evaluation toolkit to quantify transcription fidelity. Multiple state-of-the-art ASR solutions were employed, including yt-dlp, Whisper, TurboScribe, Otter, and Vosk, as detailed in Table <ref type="table" target="#tab_0">1</ref>. These systems were selected for their prominence and representativeness in educational media transcription. For the primary demonstration and validation, we selected a representative video sample, for which ASR-generated transcripts were systematically compared against a meticulously transcribed human gold standard. Evaluation metrics, including word error rate (WER), match error rate (MER), word information lost (WIL), and character error rate (CER), were computed using the Python package JiWER (JiWER, 2025). For readers interested in comprehensive, corpus-wide ASR benchmarking, we provide access to the complete set of video subtitles on our Google Drive repository, along with scripts for reproducing all analyses </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">LLM-BASED COREFERENCE RESOLUTION AND NER ENHANCEMENT FOR RQ2</head><p>The second research question focused on the effects of employing LLM-based cleaning processes-specifically coreference resolution and named entity recognition (NER)-on improving transcript accuracy and the extraction of historical entities. To this end, we applied the state-of-the-art GPT-4o model to all 48 video transcripts in our dataset. The LLM was prompted (see Appendix A.1 for full prompt details) to perform coreference resolution, thereby clarifying ambiguous pronouns and nominal references across the transcripts. Following this step, the model was further prompted (see Appendix A.2 for prompt details) to conduct comprehensive NER, identifying and correcting named entities crucial to historical narratives, including PERSON, ORGANIZATION, GPE, LOC, NORP, EVENT, and LAW categories, as shown in Table <ref type="table" target="#tab_1">2</ref>. To evaluate NER accuracy, we randomly selected four videos from the corpus and constructed a manually validated gold standard of entity annotations. Accuracy, precision, recall, and F1-score were computed for each of the three transcript versions across the seven core NER categories, thereby enabling direct performance comparison and quantifying the improvements brought by LLM-based processing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">THEMATIC MODELING AND QUALITATIVE INTERPRETABILITY FOR RQ3</head><p>The third research question explored how LLM-enhanced NER and coreference resolution affect the thematic coherence and qualitative interpretability of narratives relative to unprocessed ASR transcripts. We applied Latent Dirichlet Allocation (LDA) topic modeling to each of the three transcript versions (raw ASR, coreference-resolved, and NER-enhanced) for all 48 videos. Using pyLDAvis for visualization, we assessed differences in topic structure by examining intertopic distances and the semantic separation between clusters, with the number of topics (K) set to 5 for comparability. This approach allowed us to systematically compare the consistency, clarity, and distribution of themes across preprocessed and post-processed corpora.</p><p>Additionally, we conducted a focused video transcript case on the "Reagan Revolution" episode, matching named entities and their types from each transcript version to a humanvalidated list of core narrative entities. This enabled a detailed, entity-level assessment of how LLM-based processing influences the interpretability and narrative fidelity of qualitative analyses. Through these methods, we demonstrate not only the quantitative improvements in transcript accuracy and entity extraction, but also the tangible benefits for qualitative inquiry in educational research contexts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">RQ1: ASR TRANSCRIPTS ACCURACY VALIDATION</head><p>To address the first research question, we systematically evaluated the accuracy of multiple ASR-generated transcripts against manually curated gold-standard transcripts, employing established metrics including WER, MER, WIL, and CER. Our results reveal considerable variation in transcription quality across the different ASR systems. Among all systems tested, TurboScribe achieved the highest transcription fidelity, recording a WER of 2.43%, MER of 2.42%, WIL of 3.76%, and CER of 0.99%. Both Whisper and yt-dlp exhibited comparable, though marginally higher, error rates (Whisper: WER = 3.42%, MER = 3.40%, WIL = 5.24%, CER = 1.40%; yt-dlp: WER = 3.57%, MER = 3.52%, WIL = 4.89%, CER = 2.07%), confirming their suitability for large-scale educational video transcription tasks.</p><p>In contrast, Otter yielded moderately elevated error rates (WER = 4.16%, MER = 4.08%, WIL = 6.17%, CER = 1.22%), while Vosk performed noticeably worse, with a WER of 15.32%, MER of 14.69%, WIL of 22.84%, and CER of 8.86%. Notably, the overall pattern suggests that proprietary and cloud-based ASR solutions such as TurboScribe and Whisper tend to outperform open-source or offline alternatives, especially in accurately rendering educational terminology and specialized content. This highlights the importance of ASR system selection in educational media research, as even relatively small differences in error rates can have substantial downstream impacts on entity extraction and qualitative analysis. These findings establish a robust baseline for subsequent LLM-enhanced transcript processing and underscore the persistent challenges inherent in automated transcription of educational video content. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">RQ2: LLM-ASSISTED TRANSCRIPT NER VALIDATION</head><p>To address the second research question, we systematically assessed the impact of LLM-based processing on NER performance across three pipeline stages: (1) initial ASR-generated transcripts, (2) transcripts processed with LLM-assisted coreference resolution, and (3) transcripts subjected to comprehensive LLM-based NER correction. Table <ref type="table" target="#tab_2">3</ref> summarizes the comparative results for each core NER category, highlighting both the quantitative gains and category-specific nuances.</p><p>A clear pattern of progressive improvement emerges across most entity types. For EVENT entities, which often present the greatest challenge due to their context-dependent and narrative nature, accuracy increased from 0.06 in the ASR baseline to 0.08 with coreference resolution, and then more than doubled to 0.16 with full LLM-based NER; correspondingly, the F1 score rose from 0.11 (ASR) to 0.15 (coreference) and ultimately 0.27 (NER). LAW and ORG categories also showed substantial advances: for LAW, accuracy improved dramatically from 0.08 (ASR) and 0.08 (coreference) to 0.57 (NER), with the F1 score climbing from 0.15 to 0.73. ORGANIZATION entities saw accuracy grow from 0.12 (ASR) to 0.16 (coreference) and 0.35 (NER), with a corresponding F1 increase from 0.21 to 0.52.</p><p>For PERSON entities, which were among the most reliably recognized, accuracy and F1 both improved, with LLM-based NER achieving an accuracy of 0.63 and an F1 of 0.78, compared to 0.57 and 0.73, respectively, in the ASR baseline. The GPE (geopolitical entities) category, which already benefited from relatively strong ASR performance, still realized gains: accuracy rose from 0.59 (ASR) to 0.70 (NER), and the F1 score from 0.74 to 0.82, suggesting that LLM post-processing can further enhance even robust baseline performance.</p><p>Not all categories benefited equally. LOC (non-political geographic locations) and NORP (nationalities, religious, or political groups) displayed more modest or mixed improvement. LOC accuracy and F1 showed little change, while NORP improved slightly with coreference resolution (accuracy 0.43 to 0.45, F1 0.60 to 0.62), but then declined with full NER correction (accuracy 0.15, F1 0.26), likely due to over-correction or model-specific challenges in distinguishing nuanced group references. Across almost all categories, the introduction of LLM-based coreference resolution led to moderate gains in precision, recall, and F1, while the integration of comprehensive LLM-based NER correction yielded the most pronounced improvements, particularly for those entity types most critical to educational and historical research, such as EVENT, LAW, PERSON, and ORGANIZATION. Our results demonstrate that the LLM-augmented pipeline substantially enhances the reliability and completeness of entity extraction from complex educational transcripts. This is especially significant in the context of large-scale qualitative and thematic analyses, where accurate tracking and interpretation of key historical actors, events, and organizations are foundational for robust educational research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">RQ3: THEMATIC COHERENCE AND INTERPRETIVE VALUE OF TOPIC MODELING WITHIN ASR VERSUS LLM-CLEANED TRANSCRIPTS</head><p>To address the third research question, we applied Latent Dirichlet Allocation (LDA) topic modeling to all 48 episodes' transcripts at three key processing stages: (1) the original ASRgenerated transcripts, (2) the LLM-assisted coreference-resolved transcripts, and (3) the final LLM-based NER-enhanced transcripts. Figure <ref type="figure" target="#fig_2">3</ref>, Appendix Figures B1 and B2 visualize the intertopic distance maps produced by pyLDAvis for each condition (For anyone wishing to reproduce or further explore the interactive topic modeling results, the full codebase and associated data are openly available at: https://github.com/wwang93/JEDM-Paper-Pipeline.git).</p><p>The results reveal a difference in thematic structure and coherence across the three pipelines. In the ASR baseline condition, topics are highly overlapped, as indicated by the significant clustering and intersection of topic bubbles in the left panel. This pattern reflects the semantic diffusion and lack of clear thematic boundaries typical of raw, error-prone transcripts-likely a result of unresolved pronouns and ambiguous references that obscure narrative structure.</p><p>LLM-based coreference resolution stage yields the clearest thematic separation: topics are well separated in semantic space, with almost no overlap among topic clusters. This suggests that accurately resolving referential ambiguity plays a critical role in enabling unsupervised models to disentangle underlying themes-likely because entities and events are more consistently and explicitly tracked throughout the transcript. The LLM-based NER-enhanced condition shows partial improvement relative to the ASR baseline, with reduced topic overlaps and somewhat clearer boundaries, but does not achieve the same level of separation as the coreference-only stage. This outcome suggests that, while named entity normalization helps clarify key concepts and entities, it may also introduce overcorrection or artifact, particularly if entities are forced where context is subtle or ambiguous.</p><p>Taken together, these findings indicate that LLM-powered preprocessing can enhance the clarity and interpretability of thematic structure in educational video corpora, with coreference resolution contributing most substantially to topic coherence and boundary definition. The results also highlight a nuanced trade-off: while both coreference resolution and NER improve unsupervised analysis, excessive or aggressive entity normalization may in some cases reduce thematic distinctiveness. For researchers, this underscores the importance of selecting and tuning LLM-based preprocessing steps to maximize downstream interpretive value in educational qualitative research. To complement the global comparison, we conducted a focused, entity-level analysis using the episode "The Reagan Revolution<ref type="foot" target="#foot_0">1</ref> ," which provides an in-depth overview of the pivotal changes that occurred in American society, politics, and international relations during the presidency of Ronald Reagan. The episode examines the ideological, economic, and cultural shifts initiated under Reagan's leadership, including tax reforms, conservative movements, landmark legislation, Cold War dynamics, and the redefinition of U.S. government and global engagement. Through discussions of key individuals, organizations, laws, and historical events, the video explores how the Reagan era reshaped both domestic policy and America's position on the world stage.</p><p>To evaluate NER systems on this topic, we constructed a gold standard list of core entities that best represent the main narrative and historical context of the Reagan Revolution period. These entities-encompassing people, organizations, locations, geopolitical regions, events, and landmark legislation-were selected and validated by humans. Table <ref type="table" target="#tab_3">4</ref> presents the certified NER gold standard for this US history video.  <ref type="bibr">Korean, Vietnam War, 1960s, 1970s, 1980s, mid-1990s, atomic</ref>  We systematically evaluated the output of three NER pipelines: (1) the baseline ASR transcript, (2) LLMs-assisted coreference resolution, and (3) LLMs-based NER correction. Table <ref type="table" target="#tab_5">5</ref> summarizes the entity-level results for each NER type across these approaches.</p><p>The ASR-generated transcript demonstrated notable limitations. For EVENT and LOC entities, the model failed to identify any relevant mentions, with accuracy, precision, recall, and F1 all scoring zero. PERSON and GPE categories achieved modest results, with accuracies of 0.24 and 0.40 and F1 scores of 0.38 and 0.57, respectively. LAW and ORG entities exhibited lower performance (e.g., ORG F1 = 0.17), and overall recall remained limited, particularly for categories central to the Reagan narrative.</p><p>The LLM-assisted coreference resolution pipeline yielded moderate improvements for several entity types. For example, PERSON recall increased substantially to 0.86, and NORP (nationalities, religious, and political groups) F1 rose to 0.44. EVENT and LOC categories, however, still showed limited gains, reflecting persistent ambiguity or insufficient disambiguation solely through coreference resolution.</p><p>The full LLMs-based NER correction stage produced marked improvements across nearly all categories. Accuracy and F1 scores for EVENT, GPE, LAW, LOC, and PERSON all increased substantially: EVENT F1 improved from 0.00 (ASR) and 0.12 (coreference) to 0.89 (LLMs NER); GPE from 0.57 to 0.95; LAW from 0.40 to 1.00; LOC from 0.00 to 1.00; and PERSON from 0.38 to 0.54. Similarly, the ORG category's F1 increased from 0.17 (ASR) to 0.58 (LLMs NER). Notably, every single entity type reached or approached perfect recall and precision in the LLMs NER stage, demonstrating the transformative effect of the advanced LLM pipeline on entity extraction fidelity.</p><p>This single-case evaluation demonstrates that, while automatic ASR systems alone fail to capture the diversity of historically salient entities, the application of LLM-based coreference resolution and NER correction can recover nearly all key figures, organizations, geopolitical regions, and events central to the episode's narrative. These improvements are especially important for downstream qualitative analysis, as accurate and comprehensive entity extraction directly supports interpretive coding, thematic mapping, and contextualized content analysis in educational research. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">DISCUSSION</head><p>As AI continues to reshape educational research methods, this study assessed the effect of integrating advanced AI-driven techniques-specifically, LLM-based coreference resolution and NER correction-within an ASR transcript pipeline for large-scale qualitative analysis of educational video content. The results indicate that this approach yields improvements in both named entity recognition and thematic modeling, which are foundational to qualitative inquiry in educational research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1.">ADVANCEMENTS IN ENTITY RECOGNITION AND THEMATIC ANALYSIS</head><p>Consistent with prior studies <ref type="bibr" target="#b18">(Ehrmann et al., 2023;</ref><ref type="bibr" target="#b50">Rao, 2023)</ref>, which have highlighted the challenges of entity extraction from historical documents, our study provides empirical evidence that LLM-assisted preprocessing improves the accuracy for key historical entities. Notably, these ganins are most apparent in categories such as PERSON, GPE, EVENT, LAW, and ORG, which are repeatedly underscored in the literature as vital for reconstructing historical narratives <ref type="bibr" target="#b1">(Allahyari &amp; Kochut, 2016;</ref><ref type="bibr" target="#b13">Dai et al., 2019)</ref>. For instance, while baseline ASR transcripts exhibited limited ability to capture complex or context-dependent entities-especially in the case of events and legal documents-LLM-based correction consistently enabled the recovery and accurate clustering of such information, as shown in both corpus-level and single-episode ("Reagan Revolution") analyses. This resulted in a more complete extraction of relevant entities, enhanced consistency, and reduced ambiguity across transcript versions. Topic modeling analyses reinforce these quantitative improvements, as LLM-cleaned transcripts yielded topic clusters that were more coherent, semantically distinct, and aligned with substantive historical themes. Intertopic distance mapping via pyLDAvis revealed reduced topic overlap and clearer thematic boundaries in the LLM-processed data, facilitating more robust qualitative interpretation, addressing the lack of downstream qualitative validation noted by <ref type="bibr" target="#b45">Nelson (2020)</ref>. In practical terms, this allows researchers to identify, trace, and interpret key actors, events, and policy shifts with greater confidence and granularity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.">IMPLICATIONS FOR EDUCATIONAL VIDEO QUALITATIVE RESEARCH USING LLMS</head><p>Recent advances in LLMs have generated excitement for the potential in qualitative research <ref type="bibr" target="#b25">(Hayes, 2025;</ref><ref type="bibr" target="#b4">Barany et al., 2024)</ref>, yet prior studies often lacked a systematic integration of LLMs within pipelines for educational video analysis. Our work directly responds to this gap by automating the resolution of coreference and refining the extraction of named entities. LLMs allow for the analysis of much larger and more diverse corpora than would be feasible with manual transcription and hand-coding alone. This is particularly valuable in the context of contemporary educational research, where the volume and variety of digital video content continue to expand (YouTube, n.d).</p><p>Moreover, the increased fidelity and interpretability of LLM-enhanced transcripts can open new avenues for qualitative approaches such as thematic analysis, discourse analysis, and content mapping <ref type="bibr" target="#b54">(Schwitter, 2025;</ref><ref type="bibr" target="#b60">Than et al., 2025)</ref>. Researchers can more efficiently identify patterns, compare cases, and construct grounded explanations from large-scale data. The improved accuracy of entity-level extraction also facilitates mixed-methods designs, enabling more meaningful integration of quantitative and qualitative findings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3.">REFLECTION ON AUTOMATION AND HUMAN JUDGMENT</head><p>While LLMs provide substantial analytical advantages, their application in qualitative research should be contextualized within the broader interpretive process <ref type="bibr" target="#b60">(Than et al., 2025)</ref>. The automation of entity extraction and topic modeling does not replace the need for judgment in interpreting meaning, nuance, and context. Rather, these tools can be seen as augmenting and accelerating the analytic process, supporting human researchers in focusing on higher-level interpretation, theory-building, and contextualization <ref type="bibr" target="#b30">(Kubsch et al., 2023;</ref><ref type="bibr" target="#b49">Rosenberg &amp; Krist, 2021;</ref><ref type="bibr" target="#b45">Nelson, 2020)</ref>.</p><p>At the same time, researchers must remain attentive to the potential for errors and biases introduced by automated systems. For example, LLMs may occasionally hallucinate entities, misattribute references, or propagate systematic errors present in training data <ref type="bibr">(Huang et al., 2025;</ref><ref type="bibr" target="#b35">Lin et al., 2024)</ref>. Thus, best practice entails combining LLM-augmented analysis with validation steps such as manual audit, triangulation, and sensitivity analysis, especially for highstakes or sensitive research questions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4.">METHODOLOGICAL CONTRIBUTION AND FUTURE DIRECTIONS</head><p>This study contributes an empirically validated, scalable workflow for educational video analysis that bridges advances in NLP with qualitative traditions. It demonstrates how LLMbased processing can move the field beyond the limitations of manual transcription and rulebased entity recognition <ref type="bibr" target="#b29">(Jehangir et al., 2023)</ref>, making possible more rigorous, nuanced, and scalable qualitative analysis of large and complex digital corpora, for example, adapt this LLMaugment pipeline to STEM education videos, where domain-specific Jargon and formulae pose unique challenges for ASR and NER modules <ref type="bibr" target="#b20">(Fyfield, 2021;</ref><ref type="bibr" target="#b10">Coats, 2023)</ref>. Similarly, applying this approach to multilingual educational content, such as bilingual history classes or international YouTube channels, would test the generalizability of LLM-based coreference and entity resolution, given the increased ambiguity in cross-lingual contexts <ref type="bibr" target="#b52">(Savaram et al., 2024)</ref>.</p><p>Another direction would be to examine teacher-generated media or informal learning resources <ref type="bibr" target="#b37">(Lange, 2019)</ref>, where content is less scripted and linguistic structure is highly variable, which may strain even advanced LLMs. As automated LLM-based analysis becomes more prevalent, future studies should investigate how hybrid human-AI coding strategies can help resolve interpretive ambiguities, particularly in sensitive domains such as civics or ethics education. Looking forward, further research should explore the application of this pipeline to other content domains, examine its adaptability across languages and contexts, and deepen the integration of automated and human-centered qualitative approaches. Such efforts will help ensure that methodological advances remain robust and relevant across the rapidly evolving landscape of educational media.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">LIMITATIONS</head><p>First, the evaluation was conducted primarily on the CrashCourse US History series. While this corpus is representative of high-quality, content-rich educational media, results may not generalize to other subjects, video genres, or platforms with different linguistic styles, audio quality, or levels of production. Second, gold standard annotations are based on manual review and expert validation, which, despite rigorous procedures, may still reflect human subjectivity or unrecognized bias. Third, the LLMs employed-while state-of-the-art-are sensitive to prompt design and may occasionally produce errors such as hallucinated entities, false positives, or failures in complex or ambiguous contexts. Fourth, the study focused on English-language transcripts; extending this approach to other languages or multilingual content could pose additional challenges related to model coverage and cultural specificity. Finally, although the integrated workflow improves efficiency, fully automated analysis cannot replace the depth and contextual sensitivity of manual qualitative inquiry, particularly for nuanced interpretation or the analysis of implicit meaning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">CONCLUSION</head><p>This study presents an integrated pipeline that combines ASR, LLM-based coreference resolution, and targeted NER correction to enhance the quality of qualitative analysis for largescale educational video data. Empirical results demonstrate that the proposed workflow substantially improves entity recognition accuracy and thematic coherence in both corpus-wide and single-episode analyses. By addressing the limitations of traditional manual transcription and rule-based extraction, the LLM-augmented pipeline can support more scalable and rigorous analyses of large-scale educational audio and video content.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DECLARATION OF GENERATIVE AI SOFTWARE TOOLS IN THE WRITING PROCESS</head><p>During the preparation of this work, the author(s) used OpenAI's ChatGPT (GPT-4.1) to optimize the language and enhance the clarity of academic writing in sections including Methods, Results, and Discussion. After using this tool, the author(s) thoroughly reviewed and edited the content as needed and took full responsibility for the content of the publication.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Example YouTube CrashCourse US History Video.</figDesc><graphic coords="6,112.00,63.80,387.99,214.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. JiWER Validation Results across Selected ASR Systems.</figDesc><graphic coords="10,120.00,63.80,371.25,215.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. ASR Transcript PyDavis Intertopic Distance Map.</figDesc><graphic coords="12,135.43,227.59,341.15,239.07" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="24,134.82,149.72,342.31,227.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="24,126.57,436.49,358.85,236.55" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Overview of Selected Automatic Speech Recognition Tools.</figDesc><table><row><cell>ASR</cell><cell>Developer</cell><cell>Type</cell><cell>Interface</cell><cell>Features</cell></row><row><cell>yt-dlp</cell><cell>Open-Source Community</cell><cell>Video/Audio Downloader + ASR</cell><cell>CLI (Python-based)</cell><cell>Integrates with various ASR backends; used for extracting and transcribing YouTube &amp; online media audio.</cell></row><row><cell>Whisper</cell><cell>OpenAI</cell><cell>Deep Learning (Transformer) ASR</cell><cell>CLI, API, Python lib</cell><cell>Multilingual support; open-source; supports long-form audio transcription.</cell></row><row><cell>TurboScribe</cell><cell>TurboScribe, Inc.</cell><cell>Proprietary ASR SaaS</cell><cell>Web, Desktop App</cell><cell>User-friendly interface; automated diarization; supports various formats.</cell></row><row><cell>Otter</cell><cell>Otter.ai</cell><cell>Proprietary ASR SaaS</cell><cell>Web, Mobile App</cell><cell>Real-time transcription; speaker identification; searchable, shareable transcripts.</cell></row><row><cell>Vosk</cell><cell>Open-Source Community</cell><cell>Offline Deep Learning ASR</cell><cell>Python, Java, Node.js</cell><cell>Works offline; supports many languages; lightweight for embedded systems and real-time apps.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>Named Entity Recognition Types. For illustration, we present comparative transcript example excerpts, displaying the ASR baseline, the LLM coreference-resolved version, and the final LLM-enhanced NER version. He signed the bill, but he did not anticipate how Congress and the Court would respond." LLM Coreference-Resolved: " President Reagan signed the bill, but President Reagan did not anticipate how Congress and the Supreme Court would respond." LLM NER-Enhanced: " President Ronald Reagan signed the Economic Bill of Rights, but President Ronald Reagan did not anticipate how the United States Congress and the Supreme Court would respond."</figDesc><table><row><cell>Entity Type</cell><cell>Description</cell><cell>Example Entities</cell></row><row><cell>PERSON</cell><cell cols="2">Names of historical figures, individuals, or participants Abraham Lincoln</cell></row><row><cell cols="2">ORGANIZATION Groups, institutions, or companies, etc.</cell><cell>United Nations, IBM</cell></row><row><cell>GPE</cell><cell>Geopolitical entities (countries, cities, states)</cell><cell>United States, Paris, Tennessee</cell></row><row><cell>LOC</cell><cell>Non-GPE locations, mountains, landmarks, etc.</cell><cell>Mount Everest, Mississippi River</cell></row><row><cell>NORP</cell><cell>Nationalities, religious or political groups</cell><cell>American, Protestant, Democrat</cell></row><row><cell>EVENT</cell><cell>Named historical events, wars, movements</cell><cell>World War II, Civil Rights</cell></row><row><cell>LAW</cell><cell>Named laws or legal documents</cell><cell>Constitution, Civil Rights Act</cell></row><row><cell cols="2">ASR Baseline:</cell><cell></cell></row><row><cell>"</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Selected Sample Video Transcripts NER Validation.</figDesc><table><row><cell>NER</cell><cell>ASR</cell><cell></cell><cell></cell><cell cols="3">LLM Coreference</cell><cell></cell><cell>LLM NER</cell></row><row><cell></cell><cell cols="3">Acc Precision Recall F1</cell><cell cols="3">Acc Precision Recall F1</cell><cell cols="3">Acc Precision Recall F1</cell></row><row><cell>EVENT</cell><cell>0.06 0.20</cell><cell>0.07</cell><cell cols="2">0.11 0.08 0.25</cell><cell>0.11</cell><cell>0.15</cell><cell>0.16 0.50</cell><cell>0.19</cell><cell>0.27</cell></row><row><cell>GPE</cell><cell>0.59 0.74</cell><cell>0.75</cell><cell cols="2">0.74 0.54 0.66</cell><cell>0.75</cell><cell>0.70</cell><cell>0.70 1.00</cell><cell>0.70</cell><cell>0.82</cell></row><row><cell>LAW</cell><cell>0.08 0.22</cell><cell>0.11</cell><cell cols="2">0.15 0.08 0.22</cell><cell>0.11</cell><cell>0.15</cell><cell>0.57 0.80</cell><cell>0.67</cell><cell>0.73</cell></row><row><cell>LOC</cell><cell>0.22 0.33</cell><cell>0.40</cell><cell cols="2">0.36 0.22 0.33</cell><cell>0.40</cell><cell>0.36</cell><cell>0.19 0.33</cell><cell>0.30</cell><cell>0.32</cell></row><row><cell>NORP</cell><cell>0.43 0.74</cell><cell>0.50</cell><cell cols="2">0.60 0.45 0.76</cell><cell>0.53</cell><cell>0.62</cell><cell>0.15 0.77</cell><cell>0.16</cell><cell>0.26</cell></row><row><cell>ORG</cell><cell>0.12 0.17</cell><cell>0.28</cell><cell cols="2">0.21 0.16 0.21</cell><cell>0.39</cell><cell>0.27</cell><cell>0.35 0.70</cell><cell>0.41</cell><cell>0.52</cell></row><row><cell cols="2">PERSON 0.57 0.72</cell><cell>0.73</cell><cell cols="2">0.73 0.52 0.64</cell><cell>0.73</cell><cell>0.68</cell><cell>0.63 0.93</cell><cell>0.67</cell><cell>0.78</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Human Reagan Revolution Narrative NER Gold Standard.</figDesc><table><row><cell>NER Type</cell><cell>Entities</cell></row><row><cell>PERSON</cell><cell>Ronald Reagan, Jimmy Carter, George HW Bush, Mikhail Gorbachev, Nancy</cell></row><row><cell></cell><cell>Reagan, John Poindexter, Oliver North</cell></row><row><cell>ORG</cell><cell>Congress, Moral Majority, Supreme Court, NATO, Reagan administration, Sandinista</cell></row><row><cell></cell><cell>government</cell></row><row><cell>GPE</cell><cell>America, US, Soviet Union, Illinois, New York, Western Europe, France, Lebanon,</cell></row><row><cell></cell><cell>Nicaragua</cell></row><row><cell>LOC</cell><cell>Iron Curtain</cell></row><row><cell>NORP</cell><cell>American, African Americans, conservatives, religious conservatives, economic</cell></row><row><cell></cell><cell>conservatives, Cold War hawks, Christian right, anti-government crusaders,</cell></row><row><cell></cell><cell>Democratic, Soviet, Iranian, Middle Eastern</cell></row><row><cell>EVENT</cell><cell>Reagan Revolution, Cold War, Iran-Contra Scandal, New Deal, Great Society,</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 .</head><label>5</label><figDesc>Regan Revolution Narrative NER Validation.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell>ASR</cell><cell></cell><cell></cell><cell cols="2">LLM Coreference</cell><cell></cell><cell></cell><cell cols="2">LLM NER</cell><cell></cell></row><row><cell>NER</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>Acc</cell><cell cols="3">Precision Recall F1</cell><cell>Acc</cell><cell cols="3">Precision Recall F1</cell><cell>Acc</cell><cell cols="3">Precision Recall F1</cell></row><row><cell cols="2">EVENT 0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell cols="2">0.06 0.25</cell><cell cols="3">0.08 0.12 0.8</cell><cell>0.86</cell><cell cols="2">0.92 0.89</cell></row><row><cell>GPE</cell><cell>0.4</cell><cell>0.5</cell><cell></cell><cell cols="3">0.57 0.33 0.45</cell><cell cols="2">0.56 0.5</cell><cell>0.9</cell><cell>0.9</cell><cell>1</cell><cell>0.95</cell></row><row><cell>LAW</cell><cell cols="2">0.25 0.5</cell><cell cols="2">0.33 0.4</cell><cell cols="2">0.25 0.5</cell><cell cols="2">0.33 0.4</cell><cell>1</cell><cell>1</cell><cell>1</cell><cell>1</cell></row><row><cell>LOC</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>0</cell><cell>1</cell><cell>1</cell><cell>1</cell><cell>1</cell></row><row><cell>NORP</cell><cell cols="2">0.24 0.36</cell><cell cols="4">0.42 0.38 0.29 0.4</cell><cell>0.5</cell><cell cols="2">0.44 0.6</cell><cell>0.6</cell><cell>1</cell><cell>0.75</cell></row><row><cell>ORG</cell><cell cols="2">0.09 0.12</cell><cell cols="4">0.29 0.17 0.11 0.13</cell><cell cols="2">0.43 0.2</cell><cell cols="2">0.41 0.41</cell><cell>1</cell><cell>0.58</cell></row><row><cell cols="3">PERSON 0.24 0.26</cell><cell cols="4">0.71 0.38 0.29 0.3</cell><cell cols="4">0.86 0.44 0.37 0.37</cell><cell>1</cell><cell>0.54</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>CrashCourse. (2013, August 14). The Reagan Revolution: Crash Course US History #43[Video]. YouTube. https://www.youtube.com/watch?v=2h4DkpFP_aw</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>APPENDIX A. PROMPT DESIGN AND API IMPLEMENTATION DETAILS</head><p>A.1 COREFERENCE RESOLUTION PROMPT AND IMPLEMENTATION def resolve_coreferences_with_openai(text: str, model="gpt-4o"):</p><p>""" call openai api to resolve coreferences.</p><p>""" prompt = ( "Below is a paragraph of text. \n" "Please replace each pronoun (he, she, they, etc.) with the proper name or noun it refers to. \n" "Keep all other words exactly as they appear.\n\n" + text </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Understanding teachers&apos; usage of YouTube as a pedagogical tool: A qualitative case study of basic school teachers in Ghana. E-Learning and Digital Media</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">O</forename><surname>Adu-Marfo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">A T F</forename><surname>Kwapong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Oheneba-Sakyi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Miller-Young</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note>Advance online publication</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Discovering Coherent Topics with Entity Topic Models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Allahyari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Kochut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Web Intelligence</title>
+		<imprint>
+			<biblScope unit="page" from="26" to="33" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Evaluation of named entity coreference</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Subramanian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nenkova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Roth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Second Workshop on Computational Models of Reference</title>
+		<meeting>the Second Workshop on Computational Models of Reference</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="7" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Barros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Borges Azevedo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">V</forename><surname>Neto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kassab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kalinowski</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dantas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Nascimento</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C G S P</forename><surname>Bandeira</surname></persName>
+		</author>
+		<title level="m">Large Language Model for Qualitative Research -A Systematic Mapping Study</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">ChatGPT for education research: Exploring the potential of large language models for qualitative codebook development</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barany</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Olney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Chounta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">C</forename><surname>Santos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">I</forename><surname>Bittencourt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Artificial Intelligence in Education. AIED 2024. Lecture Notes in Computer Science 14830</title>
+		<editor>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Olney</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Chounta</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">O</forename><forename type="middle">C</forename><surname>Santos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><forename type="middle">I</forename><surname>Bittencourt</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><surname>Boyko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Fox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Veiga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">I</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">-H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Modenesi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Rauch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Tribedi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Visheratina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename></persName>
+		</author>
+		<idno>arXiv.Org, abs/2311.04929</idno>
+		<title level="m">An Interdisciplinary Outlook on Large Language Models for Scientific Research</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Investigating query expansion and coreference resolution in question answering on BERT</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Breslyn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bhattacharjee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Haque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>De Buy Wenniger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Way</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Applications of Natural Language to Information Systems</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2022. 2020</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="47" to="59" />
+		</imprint>
+	</monogr>
+	<note>Learning science with YouTube videos and the impacts of Covid-19</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Creswell</surname></persName>
+		</author>
+		<title level="m">Qualitative inquiry and research design: Choosing among five approaches</title>
+		<imprint>
+			<publisher>Sage</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note>rd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Hours of video uploaded to YouTube every minute as of February 2022. Statista. CHENG, X. 2023. Named Entity Recognition in the Education Domain Based on BERT-BiLSTM-CRF-Using Data Structures as an Example</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ceci</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2023 International Conference on Educational Knowledge and Informatization</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="5" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Towards Harnessing Memory Networks for Coreference Resolution</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cheri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bhattacharyya</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Meeting of the Association for Computational Linguistics</publisher>
+			<biblScope unit="page" from="37" to="42" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">A new corpus of geolocated ASR transcripts from Germany</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Coats</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>Language Resources and Evaluation</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Incorporating Centering Theory into Neural Coreference Resolution</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Strube</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference of the North American Chapter</title>
+		<meeting>the 2022 Conference of the North American Chapter</meeting>
+		<imprint>
+			<publisher>Human Language Technologies</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="2996" to="3002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Index-driven digitization and indexation of historical archives</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Colavizza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ehrmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bortoluzzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Digital Humanities</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Coreference aware representation learning for neural named entity recognition</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twenty-Eighth International Joint Conference on Artificial Intelligence, IJCAI-19</title>
+		<meeting>the Twenty-Eighth International Joint Conference on Artificial Intelligence, IJCAI-19</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4946" to="4953" />
+		</imprint>
+	</monogr>
+	<note>International Joint Conferences on Artificial Intelligence Organization</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A smartphone-based ASR data collection tool for under-resourced languages</title>
+		<author>
+			<persName><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">J</forename><surname>Vries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Davel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Badenhorst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Basson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>De Wet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Barnard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>De Waal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Speech Communication</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="119" to="131" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Dumpala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Sheikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chakraborty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Kopparapu</surname></persName>
+		</author>
+		<title level="m">Sentiment Classification on Erroneous ASR Transcripts: A Multi View Learning Approach. Spoken Language Technology Workshop</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="807" to="814" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Grouping business news stories based on salience of named entities</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Escoter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Pivovarova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Katinskaia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Yangarber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 15th Conference of the European Chapter</title>
+		<meeting>the 15th Conference of the European Chapter<address><addrLine>Long Papers</addrLine></address></meeting>
+		<imprint>
+			<publisher>the Association for Computational Linguistics</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1096" to="1106" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Transcribing in the digital age: qualitative research practice utilising intelligent speech recognition technology</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Eftekhari</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Cardiovascular Nursing</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Named entity recognition and classification in historical documents: A survey</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ehrmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hamdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Pontes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Romanello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Doucet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="1" to="47" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Selection and use of instructional videos by secondary teachers: knowledge and context. Doctoral dissertation</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E B</forename><surname>Fyfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D S</forename><surname>Ba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cert</surname></persName>
+		</author>
+		<idno type="DOI">10.26180/13697608.v1</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<pubPlace>Monash University</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">YouTube in the secondary classroom: How teachers use instructional videos in mainstream classrooms</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fyfield</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Technology, Pedagogy and Education</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="185" to="197" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Leveraging coreference to identify arms in medical abstracts: An experimental study</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ferracane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Marshall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">C</forename><surname>Wallace</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Erk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Seventh International Workshop on Health Text Mining and Information Analysis</title>
+		<meeting>the Seventh International Workshop on Health Text Mining and Information Analysis<address><addrLine>Austin</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="86" to="95" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Named entity recognition in query</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32nd international ACM SIGIR conference on Research and Development in Information Retrieval</title>
+		<meeting>the 32nd international ACM SIGIR conference on Research and Development in Information Retrieval</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="267" to="274" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Research to improve cross-language retrieval-Position paper for CLEF</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">C</forename><surname>Gey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Workshop of the Cross-Language Evaluation Forum for European Languages</title>
+		<meeting><address><addrLine>Berlin Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2000">2000</date>
+			<biblScope unit="page" from="83" to="88" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Research on Named Entity Recognition for Oral History Text</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="368" to="372" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Conversing&quot; with qualitative data: Enhancing qualitative research through large language models (LLMs)</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Hayes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Qualitative Methods</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<date type="published" when="2025">2025. 16094069251322346</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">AND JETTE, M. 2021</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hinsvark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Delworth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Del Rio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Mcnamara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Westerman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2104.10747</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Accented speech recognition: A survey</title>
+		<imprint/>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Knowledge-lean coreference resolution and its relation to textual cohesion and coherence</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Harabagiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Maiorano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Relation of Discourse/Dialogue Structure and Reference</title>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">AND LIU, T. 2025. A survey on hallucination in large language models: Principles, taxonomy, challenges, and open questions</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Information Systems</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="1" to="55" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A survey on named entity recognition-datasets, tools, and methodologies</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Jehangir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Radhakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Agarwal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Natural Language Processing Journal</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">100017</biblScope>
+			<date type="published" when="2023">2023. 2025</date>
+		</imprint>
+	</monogr>
+	<note>JIWER: SPEECH RECOGNITION EVALUATION IN PYTHON</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Distributing epistemic functions and tasks-A framework for augmenting human analytic power with machine learning in science education research</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kubsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Krist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Rosenberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Research in Science Teaching</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="423" to="447" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Looking beyond the surface: A challenge set for reading comprehension over multiple sentences</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Krishna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rahamathulla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Akbar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Khashabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chaturvedi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Upadhyay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Roth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 International Conference on Inventive Communication and Computational Technologies (ICICCT)</title>
+		<title level="s">Long Papers</title>
+		<meeting><address><addrLine>New Orleans</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2017">2017. 2018</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="252" to="262" />
+		</imprint>
+	</monogr>
+	<note>Proceedings of the 2018 Conference of the North American Chapter</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Incorporating Structural Information for Better Coreference Resolution</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Jian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Joint Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="5039" to="5045" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Neural cross-lingual coreference resolution and its application to entity linking</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kundu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Florian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hamza</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 56th Annual Meeting of the Association for Computational Linguistics</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="395" to="400" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">AND GOEL, S. 2020. Racial disparities in automated speech recognition</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Koenecke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Lake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nudell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Quartey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Mengesha</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="7684" to="7689" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Towards trustworthy LLMs: A review on debiasing and dehallucinating in large language models</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence Review</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page">243</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Active objects: Actions for entity-centric search</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Pantel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gamon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kannan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fuxman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 21st international conference on World Wide Web</title>
+		<meeting>the 21st international conference on World Wide Web</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="589" to="598" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Informal learning on YouTube</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Lange</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The international encyclopedia of media literacy</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Are language models robust coreference resolvers?</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">T</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ritter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">First Conference on Language Modeling</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Speech emotion recognition with ASR transcripts: A comprehensive study on word error rate and fusion techniques</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2024 IEEE Spoken Language Technology Workshop (SLT)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="518" to="525" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">EduNER: a Chinese named entity recognition dataset for education research</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Computing and Applications</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="15" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Bridging Context Gaps: Leveraging Coreference Resolution for Long Contextual Understanding</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Du</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Bridging towers of multi-task learning with a gating mechanism for aspect-based sentiment analysis and sequential metaphor identification</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="13534" to="13542" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Named entity recognition for question answering</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mollá</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Zaanen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Australasian Language Technology Association Workshop</title>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="page" from="51" to="58" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Crash Course in the classroom: Exploring how and why social studies teachers use YouTube videos</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Miles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Compton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Herold</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Social Studies Research</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="190" to="203" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Computational grounded theory: A methodological framework</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Nelson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page" from="3" to="42" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Olatunji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Afonja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">F</forename><surname>Dossou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Tonja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Emezue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Rufai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.00253</idno>
+		<title level="m">Afrinames: Most AST models &quot;butcher&quot; African names</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">The supplemental curriculum bazaar: Is what&apos;s online any good? Thomas B</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Polikoff</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<pubPlace>Fordham Institute</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">To live (code) or to not: A new method for coding in qualitative research</title>
+		<author>
+			<persName><forename type="first">U</forename><forename type="middle">D</forename><surname>Parameswaran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Ozawa-Kirk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Latendresse</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Qualitative Social Work</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="630" to="644" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Combining machine learning and qualitative methods to elaborate students&apos; ideas about the generality of their model-based explanations</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Krist</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Science Education and Technology</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="255" to="267" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Transcribing Educational Videos Using Whisper: A preliminary study on using AI for transcribing educational videos</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rao</surname></persName>
+		</author>
+		<idno>arXiv.Org, abs/2307.03200</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Beyond the Average: Exploring the Potential and Challenges of Large Language Models in Social Science Research</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rask</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Shimizu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2024 International Conference on Artificial Intelligence</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Multilingual approaches to named entity recognition</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Savaram</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tabassum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bandu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2024 3rd Edition of IEEE Delhi Section Flagship Conference (DELCON)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="1" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">An introduction to the Europe media monitor</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Steinberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Pouliquen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Der</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Goo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of ACM SIGIR 2009 workshop: Information access in a multilingual world</title>
+		<meeting>ACM SIGIR 2009 workshop: Information access in a multilingual world<address><addrLine>Boston, MA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Using large language models for preprocessing and information extraction from unstructured text: A proof-of-concept application in the social sciences</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Schwitter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Methodological Innovations</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Entity based co-reference resolution with name entity recognition using hierarchical classification</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Sonawane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Kulkarni</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE India Conference</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="6" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">A method of Chinese coreference resolution combined multi-features in discourse</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H.-Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R.-Y</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning and Cybernetics</title>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1311" to="1316" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">An examination of the use of large language models to aid analysis of textual data</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Tai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Bentley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Sitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Fankhauser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Chicas-Mosier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">G</forename><surname>Monteith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Qualitative Methods</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page">16094069241231168</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Digital instructional materials: What are teachers using and what barriers exist? Data note: Insights from the American Educator Panels</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Doan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Henry</surname></persName>
+		</author>
+		<idno>RR-2575/17-BMGF/SFF/OFF</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+		<respStmt>
+			<orgName>RAND Corporation</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Research Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Yang</surname></persName>
+		</author>
+		<title level="m">Coreference Resolution Method Integrating Textual Information and Semantic Assessment</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="397" to="403" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Updating &quot;The Future of Coding&quot;: Qualitative coding with generative large language models</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Than</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Law</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Nelson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mccall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="849" to="888" />
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Coreference resolution improves educational knowledge graph construction</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2020 IEEE International Conference on Knowledge Graph (ICKG)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="629" to="634" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wen</surname></persName>
+		</author>
+		<title level="m">Named Entity Recognition Method for Educational Emergency Field Based on BERT. International Conference on Software Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Constructing datasets for multi-hop reading comprehension across documents</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Welbl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Stenetorp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Riedel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Transactions of the Association for Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="287" to="302" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Getting to Know Named Entity Recognition: Better Information Retrieval</title>
+		<author>
+			<persName><forename type="middle">N D</forename><surname>Youtube</surname></persName>
+		</author>
+		<ptr target="https://blog.youtube/press/ZHANG,B.2024" />
+	</analytic>
+	<monogr>
+		<title level="j">Medical Reference Services Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="196" to="202" />
+		</imprint>
+	</monogr>
+	<note>YouTube Official Blog</note>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Lingke: A fine-grained multiturn chatbot for customer service</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 27th International Conference on Computational Linguistics: System Demonstrations</title>
+		<meeting>the 27th International Conference on Computational Linguistics: System Demonstrations<address><addrLine>Santa Fe</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="108" to="112" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Bill of Rights&apos;).\n\n&quot; &quot;Instructions:\n&quot; &quot;1. For each entity above, correct any errors, misspellings, abbreviations, or ambiguous mentions, replacing them with the full, precise, and canonical historical name.\n&quot; &quot;2. Replace pronouns or vague references with their explicit entity name only when the reference is clear.\n&quot; &quot;3. Do not change any other text</title>
+		<idno>A.2 NER ENHANCEMENT PROMPT prompt =</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Boston Tea Party&apos;).\n&quot; &quot;LAW: Historical legal documents or acts</title>
+		<imprint/>
+	</monogr>
+	<note>Your job is to carefully review the entire text and ensure that all named entities are correctly identified and accurately standardized, focusing on the entity types:\n. Do not add explanations, comments, tags, or notes.\n&quot; &quot;4. Output only the corrected full transcript, preserving the original format and line breaks. Your output should be a fully corrected subtitle file ready for saving as a .txt file.\n\n&quot; &quot;Text to review:\n&quot; + text</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

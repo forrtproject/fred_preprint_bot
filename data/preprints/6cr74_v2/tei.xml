@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Mixture Multigroup Structural Equation Modeling for Ordinal Data</title>
+				<funder ref="#_X7WZRQY">
+					<orgName type="full">Netherlands Organization for Scientific Research (NWO)</orgName>
+				</funder>
+				<funder ref="#_ne3syGt">
+					<orgName type="full">unknown</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Andres</forename><forename type="middle">F</forename><surname>Perez</surname></persName>
+							<idno type="ORCID">0000-0001-9053-9330</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<address>
+									<settlement>Leuven</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jeroen</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yves</forename><surname>Rosseel</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">Ghent University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Kim</forename><surname>De Roover</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<address>
+									<settlement>Leuven</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jeroen</forename><forename type="middle">K</forename><surname>Ve</surname></persName>
+							<idno type="ORCID">0000-0002-4129-4477</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Kim</forename><surname>De Roov</surname></persName>
+							<idno type="ORCID">0000-0002-4129-4477</idno>
+						</author>
+						<title level="a" type="main">Mixture Multigroup Structural Equation Modeling for Ordinal Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8C5255B144F38EEFA21806D7ADDFB4D0</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T13:57+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>ordinal data</term>
+					<term>mixture modeling</term>
+					<term>structural equation modeling</term>
+					<term>structural relations</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Social scientists often compare groups in terms of relations between latent variables (LV) (often called structural relations) using Structural Equation Modeling (SEM). LVs are measured indirectly by questionnaires; thus, measurement invariance must be evaluated before comparisons can be made. To efficiently compare many groups, the recently proposed Mixture Multigroup SEM (MMG-SEM) clusters groups based on their structural relations while accounting for measurement (non-)invariance. However, the current MMG-SEM relies on standard SEM implementations of maximum likelihood (ML) estimation in R, which assume continuous indicators. This can introduce bias when dealing with ordinal data, especially for variables with fewer item categories. In this paper, we extend MMG-SEM to accommodate ordinal data relying on the stepwise Structural-After-Measurement estimation approach. In the first step, we implement a multigroup categorical confirmatory factor analysis (MG-CCFA) with diagonally weighted least squares (DWLS) to estimate the measurement model. The second step uses ML to perform the clustering and estimate cluster-specific structural relations. A simulation study compares the performance of this approach to that of ML-based MMG-SEM under various conditions. The results show a better recovery of measurement model parameters with DWLS, particularly with fewer response categories, whereas both approaches perform similarly regarding the recovery of the clusters and structural relations.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mixture Multigroup Structural Equation Modeling for Ordinal Data 1 Introduction</head><p>Studying the relations between unobservable or 'latent' variables (e.g., emotions, ideology) is common in social sciences. Researchers often want to compare those relations, in the form of regression coefficients, across multiple groups. For instance, <ref type="bibr" target="#b0">Abio et al. (2022)</ref> compared the effect of variables like anxiety and loneliness on suicide ideation across 33 countries. Structural Equation Modeling (SEM; <ref type="bibr" target="#b6">Bollen, 1989)</ref> is the state-of-the-art for doing so, as it allows the estimation of relations between latent variables (LV) based on scores of observed indicators, often questionnaire items. In SEM, the LVs are called 'factors' and the regression coefficients are called 'structural relations'.</p><p>When comparing structural relations across many groups, the two most common approaches within the SEM framework are Multigroup SEM (MG-SEM) and Multilevel SEM. Both approaches are well-established and valid methods for group comparison.</p><p>However, they require pairwise comparisons of group-specific relations to pinpoint differences and similarities between specific groups, which can be a daunting task when many groups are involved. For example, for the 33 groups in <ref type="bibr" target="#b0">Abio et al. (2022)</ref>, 528 pairwise comparisons would be required.</p><p>Mixture modeling <ref type="bibr" target="#b32">(McLachlan et al., 2019)</ref> can efficiently solve this problem by finding subsets or 'clusters' of groups that share the same relations. Before finding clusters of groups with the same structural relations, researchers must deal with the issue of measurement invariance. Since the LVs are indirectly measured by questionnaire items, it is necessary to ensure that the measurement of the factors is equivalent across groups. This equivalence is called 'measurement invariance' (MI; <ref type="bibr" target="#b33">Meredith, 1993)</ref> and is a prerequisite for the comparability of structural relations. It involves evaluating whether the measurement model, indicating which items measure which factors (and to what extent), is the same across all groups. Note that MI can be evaluated at several levels, that is, regarding the equality of different parameters of the measurement model <ref type="bibr" target="#b53">(Vandenberg &amp; Lance, 2000)</ref>.</p><p>When many groups are involved, some measurement parameters likely differ across groups (e.g., <ref type="bibr" target="#b12">Davidov et al., 2014)</ref>. Note that invariance of all measurement parameters is not necessary for the comparability of the structural relations across groups (more details in the Method section). However, failing to account for measurement differences or 'non-invariances' (that is, forcing parameters to be equal across groups when they actually differ) can lead to incorrect estimates of the structural relations <ref type="bibr" target="#b22">(Guenole &amp; Brown, 2014)</ref>, which are part of the so-called structural model. Thus, when looking for clusters of groups with the same structural relations, we should avoid these clusters being (partially) driven by measurement non-invariances.</p><p>To effectively find clusters of groups with equivalent structural relations while also accounting for measurement (non-)invariances, Perez Alonso et al. ( <ref type="formula">2024</ref>) introduced Mixture Multigroup SEM (MMG-SEM). Building on the mixture multigroup approach introduced by De Roover (2021) and De <ref type="bibr" target="#b15">Roover et al. (2022)</ref>, MMG-SEM estimates cluster-specific structural relations, whereas measurement parameters are specific to each group so that the clustering is focused on the structural relations. This is in contrast to other mixture-based SEM methods (e.g., <ref type="bibr" target="#b27">Kim et al., 2016;</ref><ref type="bibr" target="#b55">Vermunt &amp; Magidson, 2005)</ref> that force all measurement model and structural model parameters to be cluster-specific (or equal across clusters) and thus capture clusters of groups with the same structural and measurement model. In elaborate simulation studies, MMG-SEM performed well in terms of recovering clusters of groups with the same structural relations <ref type="bibr" target="#b44">(Perez Alonso et al., 2024)</ref>, and model selection measures to determine the number of clusters (e.g., AIC, BIC) yielded promising results <ref type="bibr" target="#b43">(Perez Alonso et al., 2025)</ref>.</p><p>Up to now, MMG-SEM has been estimated via maximum likelihood (ML). ML is the traditional (or default) SEM estimation method, especially for mixture-based SEM methods, since they often use the expectation maximization (EM) algorithm <ref type="bibr" target="#b16">(Dempster et al., 1977)</ref>, which is specific to ML. In standard SEM software (e.g., lavaan; <ref type="bibr" target="#b47">Rosseel, 2012)</ref>, ML assumes the observed indicators (i.e., questionnaire items) to be continuous and typically normally distributed, whereas, in reality, ordinal variables are predominant in social sciences, where researchers often use Likert scales (e.g., 'disagree', 'neutral', 'agree').</p><p>Several studies have evaluated the effect of ignoring the ordinal nature of observed variables in SEM under different conditions <ref type="bibr" target="#b3">(Beauducel &amp; Herzberg, 2006;</ref><ref type="bibr" target="#b6">Bollen, 1989;</ref><ref type="bibr" target="#b17">DiStefano, 2002;</ref><ref type="bibr" target="#b18">Dolan, 1994;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>. <ref type="bibr" target="#b3">Beauducel and Herzberg (2006)</ref>, <ref type="bibr" target="#b18">Dolan (1994)</ref>, and <ref type="bibr" target="#b25">Johnson and Creech (1983)</ref> showed that the measurement model's parameter estimation is mostly unbiased when using ML for ordinal variables with five or more response categories, even when their distributions deviate from normality. In the case of items with less than five categories, <ref type="bibr" target="#b46">Rhemtulla et al. (2012)</ref> showed that using ML estimation for SEM models led to substantially biased estimates of measurement parameters regardless of their distribution (but even more so in case of non-normality).</p><p>This bias was reduced by using appropriate estimation methods, such as the widely recommended least squares (LS) estimator <ref type="bibr" target="#b6">(Bollen, 1989;</ref><ref type="bibr" target="#b20">Flora &amp; Curran, 2004;</ref><ref type="bibr" target="#b28">Kim &amp; Yoon, 2011)</ref>. Note that no bias was found in the structural parameters; that is, LS and ML correctly estimated the factor correlations.</p><p>Considering that ordinal variables with less than five categories are common in social sciences<ref type="foot" target="#foot_0">1</ref> , and the importance of avoiding biased estimates, extending MMG-SEM to accommodate ordinal variables is an important step and the aim of this paper. MMG-SEM is estimated in a step-wise fashion, following the 'Structural-After-Measurement' (SAM; <ref type="bibr" target="#b48">Rosseel &amp; Loh, 2022)</ref> approach. Specifically, MMG-SEM estimates the measurement model in Step 1 through multigroup confirmatory factor analysis (MG-CFA) and then models the relations between latent variables (and the corresponding clustering of the groups) in Step 2. This step-wise estimation allows for the use of different estimators in each step, making it possible to use an LS estimator for the measurement model in Step 1 while retaining the ML estimation of the cluster memberships and structural relations in Step 2 (using the EM algorithm). Specifically, we propose using multigroup categorical confirmatory factor analysis (MG-CCFA) to estimate the measurement model in MMG-SEM's first step.</p><p>Categorical CFA is a well-established approach to model ordinal variables within the SEM framework. It assumes that there is an underlying continuous response behind the ordinal variables and uses the threshold model for its estimation <ref type="bibr" target="#b39">(Muthén, 1984)</ref>. Then, a standard factor analysis model is applied to the underlying continuous items. Note that SAM facilitates not only model estimation but also model building. The step-wise estimation conveniently allows applied researchers to address measurement model-related issues (e.g., misspecifications, MI, etc.) adequately before turning to their research interest (i.e., comparing structural relations). As discussed in <ref type="bibr" target="#b54">Vermunt (2025)</ref>, this helps prevent interpretational confounding and facilitates complying with standard practices (e.g., assessing model fit when doing a CFA).</p><p>Common software implementations of mixture SEM methods (e.g., Mplus; L. <ref type="bibr" target="#b38">Muthen &amp; Muthen, 2017)</ref> simultaneously estimate all SEM parameters and the cluster memberships via ML, making the implementation of LS estimation unfeasible. Of course, ML-based estimation of a SEM model with ordinal variables is possible, for instance, by modeling the relation between the items and the factors using a generalized linear model with an ordered probit link <ref type="bibr" target="#b2">(Bartholomew et al., 2011;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>, but such ML approaches require numerical integration (e.g., quadrature points), which becomes more computationally demanding as the sample size and number of the factors increase (L. <ref type="bibr" target="#b38">Muthen &amp; Muthen, 2017;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>. Considering MMG-SEM aims to compare structural relations (between at least two factors, but often more) across many groups (i.e., large sample size), the step-wise estimation with LS in the first step is clearly the more time-efficient approach.</p><p>Note that the first step of MMG-SEM could also be estimated using Item Response Theory (IRT), which similarly relies on ML estimation with probit or logit links and is thus also computationally intensive for complex models <ref type="bibr" target="#b21">(Forero &amp; Maydeu-Olivares, 2009)</ref>.</p><p>Other reasons for not considering IRT in this paper are: (1) previous research has shown comparable results between IRT and CCFA when dealing with categorical data <ref type="bibr" target="#b21">(Forero &amp; Maydeu-Olivares, 2009;</ref><ref type="bibr" target="#b28">Kim &amp; Yoon, 2011;</ref><ref type="bibr" target="#b29">Knol &amp; Berger, 1991)</ref>; (2) multigroup (partial) equality constraints for many groups are easier to implement in available software for CCFA than IRT; and (3) MMG-SEM was originally built within the SEM framework, using CFA rather than IRT.</p><p>The remainder of this paper is organized as follows: MMG-SEM and its estimation with a CCFA-based measurement model is described in the Method section. Then, a Simulation Study evaluates its performance and compares it to that of MMG-SEM using the standard ML estimator for the measurement model. Next, we present an empirical application of MMG-SEM to data collected by the Programme for International Student Assessment (PISA) in 2018, following a similar analysis approach to that of OECD (2024).</p><p>The paper concludes with a Discussion section highlighting the study's most relevant results and limitations.  <ref type="bibr" target="#b48">&amp; Loh, 2022)</ref> approach to estimate MMG-SEM. The SAM approach estimates SEM models in two steps. First, the measurement model is estimated, while the structural model is estimated in a second step. Below, we describe these two steps for MMG-SEM. In this paper, the first step (i.e., estimation of the multigroup measurement model) is adjusted to deal with the ordinal nature of the observed variables, whereas the second step (i.e., estimation of the structural model and clustering) stays the same. For a more detailed description of the second step, see the original paper from Perez Alonso et al. (2024).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Step 1: Measurement Model</head><p>The measurement model defines which items measure which LV and to what extent.</p><p>For ordinal data from multiple groups, Multigroup Categorical CFA (MG-CCFA) is commonly used for its estimation. Consider data for items j = 1, . . . , J and individuals n g = 1, . . . , N g within groups g = 1, . . . , G. Then, for individual n g let x ng be a vector of ordinal observed polytomous scores, which can take c = 1, . . . , C possible values. MG-CCFA assumes there is an underlying latent vector of continuous responses x * ng that is discretized to obtain x ng via a set of group-and item-specific threshold parameters τ jg .</p><p>Note that the τ jg parameters are additional parameters in MG-CCFA compared to the standard MG-CFA, for which x ng = x * ng . For each item j, those thresholds divide the scores x * j,ng into C observed categories as follows:</p><formula xml:id="formula_0">x j,ng = c if τ j,c,g &lt; x * j,ng &lt; τ j,c+1,g f or c = 1, . . . , C. (<label>1</label></formula><formula xml:id="formula_1">)</formula><p>Considering factors q = 1, . . . , Q, MG-CCFA defines the vector of continuous scores</p><formula xml:id="formula_2">x * ng of individual n g as x * ng = ν g + Λ g η ng + ϵ ng , (<label>2</label></formula><formula xml:id="formula_3">)</formula><p>where ν g is a J-dimensional vector of group-specific intercepts, Λ g denotes a J × Q matrix of group-specific factor loadings (i.e., item-factor relations), η ng is a Q-dimensional random vector of factor scores, and ϵ ng is a J-dimensional random vector of residuals. We assume that: (1) η ng is distributed according to a multivariate normal distribution M V N (α g , Φ g ), where α g and Φ g are the mean vector and covariance matrix of the factors, respectively, and (2) ϵ ng is distributed according to M V N (0, Θ g ), where Θ g is the covariance matrix of the residuals in group g, which is usually assumed to be diagonal. If we assume that Cov(η ng , ϵ ng ) = 0, the model-implied covariance matrix of group g is given by</p><formula xml:id="formula_4">Σ g = Λ g Φ g Λ ′ g + Θ g .</formula><p>(3)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1">Measurement Invariance</head><p>As mentioned in the Introduction, before comparing structural relations across groups, one must ensure that MI holds. MI can be evaluated at different levels in a step-wise fashion by focusing on different measurement model parameters <ref type="bibr" target="#b52">(Svetina et al., 2020;</ref><ref type="bibr" target="#b53">Vandenberg &amp; Lance, 2000)</ref>. The first step is to test for configural invariance by checking if the model in Equation 2 holds across groups, which evaluates whether the same items measure the same factors for all groups. If the model fit is satisfactory (for details, see <ref type="bibr" target="#b10">Chen, 2007)</ref>, configural invariance holds. The second step is to evaluate threshold invariance by constraining the thresholds τ g to be equal for all groups. It holds if the model fit does not significantly worsen <ref type="bibr" target="#b50">(Rutkowski &amp; Svetina, 2014)</ref> by imposing τ g = τ for each group. The third step pertains to 'metric' invariance, which concerns the equality of the factor loadings Λ g . It holds if imposing Λ g = Λ does not significantly lower the model fit. There are more MI levels (see <ref type="bibr" target="#b52">Svetina et al., 2020;</ref><ref type="bibr" target="#b53">Vandenberg &amp; Lance, 2000)</ref>, but only threshold and metric invariance are a requisite for comparing structural relations <ref type="bibr" target="#b56">(Wu &amp; Estabrook, 2016)</ref>. Therefore, by default, the remaining measurement model parameters (i.e., ν g and Θ g ) are allowed to vary per group in MMG-SEM. Given that 'full' threshold or metric invariance is difficult to attain, it is possible to aim for 'partial' invariance (e.g., a few loadings are free to vary per group; <ref type="bibr" target="#b8">Byrne et al., 1989)</ref>. If some non-invariant loadings and/or thresholds are identified, they should be specified as group-specific parameters in MMG-SEM.</p><p>In CCFA, the introduced latent continuous responses x * ng have unknown scales, which must be set through extra constraints. Several parameterizations are available to ensure model identification; the most common options being the delta <ref type="bibr" target="#b11">(Christoffersson, 1975)</ref> and theta parameterization (L. <ref type="bibr" target="#b38">Muthen &amp; Muthen, 2017)</ref>. Under the delta parameterization, the variance of the observed variables is constrained to be exactly 1, whereas under the theta parameterization, the residual variances are constrained to be 1.</p><p>In both cases, the thresholds τ are freely estimated. When multiple groups are involved, a widely used identification rule was proposed by <ref type="bibr" target="#b34">Millsap and Yun-Tein (2004)</ref>, which fixes the variances of the observed variables to 1 in one reference group, while freely estimating them in the remaining groups. This is achieved by imposing additional constraints across groups (e.g., one loading per factor is fixed to 1, and some thresholds are invariant).</p><p>Although these parameterizations remain valid, we follow the recommendations from <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref> when specifying models for evaluating different levels of MI. As they demonstrated, relying only on the delta parameterization or on the approach from Millsap and Yun-Tein ( <ref type="formula">2004</ref>) may lead to issues when testing for invariance<ref type="foot" target="#foot_1">2</ref> , as different models can yield the same model fit but different parameter estimates depending on the imposed constraints. <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref> partially uses the well-known 'delta' parameterization, but for our required level of MI, they only impose such constraints in the first group (i.e., diag(Σ 1 ) = 1). Additionally, they modify other identification constraints (e.g., on factor variances) based on the evaluated level of MI and the number of response categories.</p><p>To fit the measurement model, the difference between the model-implied covariance matrices Σ g and the observed covariance matrix S g is minimized via Diagonally Weighted Least Squares (DWLS) estimation<ref type="foot" target="#foot_2">3</ref> . The group-specific factor covariance matrices Φ g from the first step are the input for MMG-SEM's second step. To avoid confusion with model-implied factor covariance matrices in Step 2, the covariance matrices Φ g from Step 1</p><p>will have a superscript s1 (i.e., Φ s1 g ) in what follows.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Step 2: Structural Model with Mixture Clustering</head><p>The second step pertains to the estimation of the factors' relations in the structural model and, in MMG-SEM, the clustering of the groups based on those relations. Since MMG-SEM clusters groups as a whole, all observations within a group are assigned to the same cluster. Due to the clustering, the structural model is conditional on the membership of group g to cluster k, which is denoted as z gk and can take on a value of 0 or 1. As the true z gk are unknown, one can only obtain the estimated ẑgk , which is a probability ranging from 0 to 1. Formally, the structural model defines the covariance matrix of the factors Φ gk as:</p><formula xml:id="formula_5">[Φ gk |z gk = 1] = (I -B k ) -1 Ψ gk (I -B k ) -1 ′ , (<label>4</label></formula><formula xml:id="formula_6">)</formula><p>where B k is a non-symmetric Q × Q matrix containing the unstandardized cluster-specific regression coefficients between LVs (structural relations), and Ψ gk is the residual factor covariance matrix. The residual factor covariances Ψ gk are specified as group-and-cluster-specific to ensure a clustering driven solely by the regression coefficients B k , and not by the residual factor covariances<ref type="foot" target="#foot_3">4</ref>,<ref type="foot" target="#foot_4">5</ref> .</p><p>The structural model is fitted via ML by minimizing the differences between the model-implied factor covariance matrices Φ gk in Step 2 (Equation <ref type="formula" target="#formula_5">4</ref>) and the group-specific covariance matrices Φ s1 g from Step 1. Note that the ordinal nature of the indicators was already accounted for in Step 1. Thus, we can safely rely on the default ML estimation for</p><p>Step 2.</p><p>For the mixture clustering, MMG-SEM assumes the factor scores η ng are sampled from a mixture of K multivariate distributions where all η ng in group g -denoted by a matrix H g containing the factor scores -come from the same distribution. Formally, group g is defined as:</p><formula xml:id="formula_7">f (H g ; ϑ) = K k=1 π k f gk (H g ; ϑ gk ) = K k=1 π k Ng ng=1 M V N (η ng ; α g , Φ gk ), (<label>5</label></formula><formula xml:id="formula_8">)</formula><p>where f is the population density function, ϑ is the set of population parameters, π k is the prior probability of a group g belonging to cluster k (where K k=1 π k = 1), f gk is the density function of group g in the kth cluster, and ϑ gk is its corresponding set of parameters.</p><p>Specifically, f gk is a multivariate normal distribution with Φ gk and α g as the covariance matrix and mean vector, respectively. Note that the elements in α g are fixed to 0 following the identification constraints in <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref>. The estimation of the unknown parameters ϑ and the mixture clustering is done by maximizing the following log-likelihood function logL η via an Expectation Maximization algorithm <ref type="bibr" target="#b16">(Dempster et al., 1977;</ref><ref type="bibr" target="#b44">Perez Alonso et al., 2024)</ref>:</p><formula xml:id="formula_9">logL η = G g=1 log   K k=1 π k 1 (2π) Q/2 |Φ gk | 1/2 exp - 1 2 tr(Φ s1 g Φ -1 gk ) Ng   . (<label>6</label></formula><formula xml:id="formula_10">)</formula><p>3 Simulation Study</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Design</head><p>The Simulation Study aimed to compare the performance of the two versions of MMG-SEM -that differ in terms of the estimation method in the first step (i. The number of groups was not manipulated, as previous similar simulation studies <ref type="bibr" target="#b43">(Perez Alonso et al., 2025;</ref><ref type="bibr" target="#b44">Perez Alonso et al., 2024)</ref> have shown it to have little impact on the results. Instead, it was fixed at 36, which is within the generally found number of groups in empirical large-scale international surveys <ref type="bibr" target="#b50">(Rutkowski &amp; Svetina, 2014)</ref>. The It is important to note that, because MMG-SEM aims to compare the structural relations, we did not perform or evaluate MI testing in the simulation. We assumed threshold and metric invariance to hold, and when non-invariances were modeled, we treated them as known rather than identifying them through MI testing<ref type="foot" target="#foot_5">6</ref> . For readers interested in MI testing with ordinal data, we refer to <ref type="bibr" target="#b52">Svetina et al. (2020)</ref> for a comprehensive tutorial on this issue.</p><p>All the data generation and analysis of the results were done using R version 4.3.3 <ref type="bibr" target="#b49">(RStudio Team, 2024)</ref>. The code is openly shared on a GitHub repository that can be accessed at https://github.com/AndresFPA/OrdinalSim.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Data Generation</head><p>The data was generated following the SEM model depicted in </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1</head><p>The model used for the data generation. F1 and F2 are exogenous variables, F3 is dependent and independent at the same time ('mediator'), and F4 is only a dependent variable.</p><p>Each generated data set pertained to 36 groups, and each group contained N g observations following the manipulated factor 'within-group sample size' (i.e., N g equal to 50, 100 or 300). The number of clusters K was either 2 or 4 according to the manipulated factor 'number of clusters' and the number of groups per cluster depended on the manipulated factor 'cluster size'. When the cluster size was 'balanced', all clusters contained the same number of groups. For instance, when K = 4, each cluster contained 36/4 = 9 groups. In contrast, when cluster size was 'unbalanced', there was one larger cluster containing 75% of the groups, and the remaining (smaller) clusters had the same size. Thus, when K = 4, the first cluster contained 27 groups, and the remaining three clusters consisted of three groups each.</p><p>The cluster-specific structural relations were defined as depicted in Figure <ref type="figure">2</ref>. The manipulated factor 'size of the regression parameters' β indicated the size of the coefficients β 1 , β 2 , β 3 , and β 4 . Between-cluster differences in the regression coefficients were created by setting one of them to zero in each cluster. Thus, the size of the between-cluster differences depended on the size of the β. Note that, if K = 2, models three and four in Figure <ref type="figure">2</ref> were not applicable. The resulting cluster-specific regression parameters were gathered in the regression parameter matrix B k .</p><p>The factors' residual variances and covariances in the matrix Ψ gk were obtained by sampling the variances ψ F1 and ψ F2 of factors F1 and F2 from a uniform distribution U (0.6, 0.8) and their covariance ψ F1,F2 from U (-0.3, 0.3) per group g. The total variances of factors F3 and F4 were also sampled from U (0.6, 0.8) for each group g and their residual variance depended on the cluster-specific regression coefficients. For instance, if the total variance of F3 for group g was ϕ F3 , then the residual variance ψ F3 for the group-cluster combination gk was defined as</p><formula xml:id="formula_11">ψ F3 = ϕ F3 -(β 2 2 ψ F1 + β 2 3 ψ F2 + 2β 2 β 3 ψ F1,F2 ).</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 2</head><p>Zero and non-zero regression parameters between the factors depending on the cluster.</p><p>To generate the observed ordinal variables, we followed the MG-CCFA model described in the Method section. That is, we first generated 20 underlying continuous variables from a M V N (µ g , Σ gk ), where the mean vector µ g was a vector of zeros and the observed covariance matrix Σ gk was defined as</p><formula xml:id="formula_12">Σ gk = Λ(I -B k ) -1 Ψ gk (I -B k ) -1 ′ Λ ′ + Θ g , (<label>7</label></formula><formula xml:id="formula_13">)</formula><p>by combining the measurement model from Equation 3 and the structural model of Equation <ref type="formula" target="#formula_5">4</ref>. The parameters from the structural model (i.e., B k , Ψ gk ) were generated as described above, and the measurement model parameters Λ and Θ g were generated aiming for a total variance of 1 per item, following the delta parameterization. To do this, the loadings in Λ were set to √ 0.5 for all groups, and the residual variances in the diagonal of Θ g were defined for each item j in group g, as θ j = 1 -(λ 2 j ψ q ), where ψ q is the corresponding factor's variance.</p><p>To evaluate the impact of loading non-invariances on MMG-SEM's performance, we added between-group differences to Λ. Specifically, for all groups, we applied the non-invariances to each factor's second and third loading (the first loading is fixed to 1 to obtain a marker variable scaling). These non-invariances depended on the manipulated factor 'loadings non-invariance size' and were randomly sampled from a uniform distribution to ensure different values for each non-invariant group. For instance, if the size was 0.4, we sampled from U (0.3, 0.5). Then, it was randomly decided if the non-invariance was added or subtracted from the original loading (i.e., √ 0.5). Note that we ensured that the total item variance remained equal to 1, even for the items with non-invariant loadings.</p><p>After generating a continuous vector x * j,g for each item j per group g, the ordinal vector x j,g was obtained by discretizing x * j,g into c categories using the thresholds τ j,g . Initially, we generated invariant thresholds across groups (i.e., τ j,g = τ j ). The categories c were defined by the manipulated factor 'number of item categories', and the thresholds τ j were defined differently for each item. The first item was treated as an anchor item, and its thresholds were defined using quantiles to ensure that all categories contained at least one observation. For instance, if c = 2, then τ j was the median of x * j . Similarly, if c = 4 or c = 5, we used the quartiles or the quintiles, respectively. Given that it is empirically unrealistic to assume that all items have the same thresholds, the τ j for the remaining items were shifted randomly by -0.3 or 0.3 to ensure that not all items had the same threshold.</p><p>To evaluate the impact of threshold non-invariances on MMG-SEM's performance, we added between-group differences to τ j . We followed a similar approach to the loadings non-invariance. We added a non-invariance to the second and third items of each factor following the manipulated factor 'threshold non-invariance size'. The non-invariances were set to a quarter (0.25) and a half (0.5) standard deviation of the standardized x * j,g to simulate small and large non-invariances, respectively (as in D' <ref type="bibr">Urso et al., 2021)</ref>. It was randomly decided whether these non-invariances were added or subtracted from the original threshold. Note that if the non-invariant item had more than one threshold (e.g., when c = 4, there are three thresholds per item), we added the non-invariance to all the thresholds of the item.</p><p>Lastly, it is worth mentioning that generating a 'valid' data set -that is, where the ordinal variables have at least one observation per category for each group-was difficult in some conditions, for instance, when c = 5 and N g = 50. Whenever a generated data set was not valid, we attempted to resample the data using the same data generation conditions but different random seeds. This procedure was repeated up to 50 times until a valid data set was found.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head><p>To assess the performance of MMG-SEM, we evaluated the estimation of both the measurement model and the structural model. For the measurement model (Step 1 of MMG-SEM), we evaluated the recovery of the loadings 7 , whereas for the structural model (Step 2 of MMG-SEM), we evaluated the recovery of the clustering and the cluster-specific structural relations. We assessed the impact of ignoring and accounting for the ordinal nature of the observed variables by comparing two versions of MMG-SEM, which differed in the estimation of Step 1. Specifically, one version used MG-CFA, and the other used MG-CCFA. To simplify the notation of the results, we refer to the results of both versions of MMG-SEM with a subscript corresponding to the estimator used in its first step (i.e., ML and DWLS, respectively). Before discussing the findings, it is worth noting that disregarding the non-invariances (i.e., forcing them to be equal across groups) did not have a large impact on MMG-SEM's performance. Thus, for brevity, we describe only the results when the non-invariance is included. For more details about the results where we ignored the non-invariances, we refer the reader to Appendix B.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Convergence rate</head><p>Before discussing the results, it is important to mention that MMG-SEM's first step did not reach convergence for all data sets. Specifically, we found convergence problems for 1175 out of 21600 data sets (5.4%). For 732 of them, both MG-CFA and MG-CCFA models had convergence problems, whereas, for the remaining 433 data sets, only MG-CCFA failed to converge. When non-convergence was found, we ran the corresponding version of MMG-SEM one more time but with modified settings in its first step. Specifically, we relied on the bounded estimation (De Jonckere &amp; Rosseel, 2022) implemented in the lavaan package, which has been shown to greatly reduce convergence problems in the presence of small sample sizes without compromising the parameter estimation. After rerunning both models for the mentioned data sets, we reached convergence for almost all of them. Convergence issues were found for only 299 data sets (1.3% of the total 21600).</p><p>Of these, both estimators failed to converge for 259 data sets, while MG-CCFA and MG-CFA individually failed to converge for 25 and 15 data sets, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Recovery of the factor loadings</head><p>We evaluated the recovery of the factor loadings using the Root Mean Squared Error (RMSE), which was computed as:</p><formula xml:id="formula_14">RMSE Λ = G g=1 J j=1 (λ gj -λgj ) 2 GJ (8)</formula><p>where λ gj is the true factor loading of item j and λgj is its corresponding estimate. The recovery was evaluated for both MG-CFA (RMSE ML ) and MG-CCFA (RMSE DWLS ). Note that we generated the data with the first loading of each factor equal to one (i.e., marker variable), whereas the estimation of MG-CCFA, following the guidelines from <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref>, does not use the marker variable approach. Thus, the estimations of all loadings were on a different scale. To correctly evaluate the loadings' recovery, we rescaled them before computing the RMSE. We excluded the first loading of each factor from the computation of RMSE Λ , since they are fixed to one after the rescaling.</p><p>On average, the overall RMSE Λ,ML and RMSE Λ,DWLS were 0.118 and 0.105, respectively. The difference between the two estimators was more pronounced when the number of item categories was 2 (RMSE Λ,ML = 0.213; RMSE Λ,DWLS = 0.118) and decreased when the number of categories was 5 (RMSE Λ,ML = 0.067; RMSE Λ,DWLS = 0.086). The overall better performance of MG-CCFA compared to MG-CFA, especially when the number of item categories is lower than 5, is in line with previous research where the recovery of the measurement parameters was substantially worse when ignoring the ordinal nature of observed variables <ref type="bibr" target="#b18">(Dolan, 1994;</ref><ref type="bibr" target="#b25">Johnson &amp; Creech, 1983;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Cluster recovery</head><p>To evaluate whether MMG-SEM assigned the groups to the correct clusters, we used the Adjusted Rand Index (ARI; <ref type="bibr" target="#b24">Hubert &amp; Arabie, 1985)</ref>. The ARI evaluates the similarity between two partitions (i.e., assignments of the groups to the clusters), and takes a value of 1 for complete agreement and 0 when the agreement is expected by pure chance. Thus, the ARI can take on negative values. Table <ref type="table" target="#tab_0">1</ref> shows the ARI results and the proportion of perfect recovery or 'correct clustering' (CC; i.e., data sets for which the ARI was 1) for the main effects. Across all simulated conditions, the ARI ML was 0.82 and the CC ML was 0.588, whereas the ARI DWLS was 0.837 and the CC DWLS was 0.608. This shows that taking into account the ordinal nature of the variables led to a slightly better cluster recovery. Note. β Size is the size of (difference in) regression parameters, N g is the within-group sample size, K is the number of clusters, Non-inv Size λ is the size of the loadings' non-invariance, Non-inv Size τ is the size of the thresholds' non-invariance, and c is the number of categories for each item.</p><p>The manipulated factors affected MMG-SEM similarly regardless of the estimator used in the first step. The factors that affected the performance the most were the sample size N g and the size of the regression coefficient β, which aligns with the results obtained by Perez Alonso et al. ( <ref type="formula">2024</ref>) 8 . Specifically, the larger the sample size, the better the cluster recovery. When N g = 50, the ARI ML was 0.6, and the ARI DWLS was 0.638. This dramatically improved when N g = 300, for which ARI ML was 0.988, and the ARI DWLS was 0.987. A similar trend can be seen for β, which determines the cluster separability. The ARI ML was 0.642 and 0.939, and the ARI DWLS was 0.675 and 0.943 when β was 0.2 and 0.4, respectively. We also found that the number of categories c of the items greatly affected the cluster recovery for both versions of MMG-SEM. The ARI ML was 0.69 and 0.888, and the ARI DWLS was 0.721 and 0.9 when c was 2 and 5, respectively.</p><p>The interaction between the most important factors can be seen in Figure <ref type="figure">3</ref>. In the most difficult conditions (i.e., N g = 50 and β = 0.2), both versions of MMG-SEM failed to recover the original clustering. When N g increased to 100 or β to 0.3, the ARI dramatically increased for both versions of MMG-SEM if c &gt; 2. In contrast, if c = 2, both versions of MMG-SEM struggled to recover the correct clustering unless the cluster separation was high (i.e., β = 0.4) or the within-group sample size was large (i.e., N g = 300).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 3 Cluster Recovery in function of Within-Group Sample Size, Size of the Regression Parameters, and Item Categories</head><p>The remaining manipulated factors affected the performance of MMG-SEM to a lesser extent. Specifically, with more clusters, unbalanced cluster size, and/or larger non-invariances, the performance of both versions of MMG-SEM decreased.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Regression Parameter Recovery</head><p>To evaluate the recovery of the regression parameters, we used the RMSE. It was defined as</p><formula xml:id="formula_15">RMSE β = K k=1 (β k -βk ) 2 K (<label>9</label></formula><formula xml:id="formula_16">)</formula><p>where K is the number of clusters, β k is the true regression parameter, and βk is the estimated regression parameter. The main effects of the manipulated factors on the RMSE β are shown in Table <ref type="table" target="#tab_1">2</ref>. The overall results are similar for both RMSE β,ML (0.041) and RMSE β,DWLS (0.048). Furthermore, the same trend from the cluster recovery results can be seen here when looking at the main effects. The most important manipulated factors were the within-group sample size N g , the size of the regression parameters β, and the number of categories of the items c. Specifically, RMSE β,ML was 0.068 and 0.019, and RMSE β,DWLS was 0.079 and 0.022 when N g was 50 and 300, respectively. Similarly, when β was 0.2 and 0.4, RMSE β,ML was 0.048 and 0.036, and RMSE β,DWLS was 0.050 and 0.048, respectively. Interestingly, MMG-SEM performed similarly (RMSE = 0.06) if c = 2, regardless of the estimator used in the first step. In contrast, when c = 5, the performance of RMSE β,ML (0.029) was slightly better than RMSE β,DWLS (0.038). Note. β Size is the size of (difference in) regression parameters, N g is the within-group sample size, K is the number of clusters, Non-inv Size λ is the size of the loadings' non-invariance, Non-inv Size τ is the size of the thresholds' non-invariance, and c is the number of categories for each item.</p><p>A deeper look into the interaction between these three manipulated factors is depicted in Figure <ref type="figure">4</ref>. It is clear that RMSE β,ML performed slightly better than RMSE β,DWLS in most conditions. The performance difference between both versions of MMG-SEM decreased when the within-group sample size increased and was reversed when c = 2. Such results are in line with <ref type="bibr" target="#b46">Rhemtulla et al. (2012)</ref>, who found that, even when the observed variables are ordinal, the traditional ML estimation often performs slightly better than LS estimation in terms of structural parameter recovery as the number of categories c increases. This trend can be partially explained by the sample size, as studies such as <ref type="bibr" target="#b20">Flora and Curran (2004)</ref> and <ref type="bibr" target="#b46">Rhemtulla et al. (2012)</ref> showed that LS estimation requires a higher sample size (N g &gt; 200) to produce unbiased structural parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 4 Regression Parameter Recovery in function of Within-Group Sample Size, Size of the Regression Parameters, and Item Categories</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Conclusion</head><p>Through a simulation study, we evaluated the performance of two versions of MMG-SEM: one that accounts for the ordinal nature of the observed variables in its measurement model (i.e., DWLS estimation) and one that does not (i.e., traditional ML estimation). We found that ignoring the ordinal nature of the variables greatly impacted the estimation of the measurement model parameters (i.e., loadings) but only had a minor influence on the estimation of the structural model. Indeed, the cluster and parameter recovery in the second step of MMG-SEM were remarkably similar for both versions.</p><p>These results are in line with previous research, showing that ignoring the ordinal nature of variables mainly affect the measurement model estimation <ref type="bibr" target="#b17">(DiStefano, 2002;</ref><ref type="bibr" target="#b18">Dolan, 1994;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>. Notably, while ML estimation was generally slightly better than DWLS in recovering the structural relations, the DWLS estimation showed superior performance in some scenarios, particularly when c = 2 and N g &gt; 50, which may be due to the substantial bias in the loadings for ML estimation when c = 2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Empirical Application</head><p>In this section, we illustrate the empirical value of MMG-SEM for analyzing ordinal data using data collected by the PISA programme in 2018, conducted by the Organisation for Economic Co-operation and Development <ref type="bibr">(OECD, 2019)</ref>. PISA is a large-scale international survey administered every three years to assess the performance of young students (approximately 15 years old) in academic skills (i.e., mathematics, reading, science) as well as broader aspects of their lives, including family situation, school environment, and well-being, among others. The 2018 survey collected data from 612,005 students across 81 countries.</p><p>For the brief example presented in this paper, we followed part of the analysis reported in OECD ( <ref type="formula">2024</ref>). Specifically, we focused on one of their research question: What is the effect of parental emotional support on the well-being of the students? In their study, the analysis was restricted to 29 OECD countries, and all cases with missing data were removed, resulting in a final sample of 169,961 participants. Parental emotional support was defined as the student's perception of the emotional and material resources provided by their parents. It was measured by three items on a 4-point Likert scale (1 = strongly disagree, 4 = strongly agree). Well-being was defined as students' thoughts and feelings about their lives, encompassing aspects such as a sense of purpose, perceptions of competence, and resilience, among others <ref type="bibr" target="#b4">(Boarini et al., 2006)</ref>. In OECD (2024), well-being was divided into seven subdomains (i.e., belonging to school, attitude towards competition, meaning in life, fear of failure, self-efficacy, positive feelings, and life satisfaction). For simplicity, this empirical example focused solely on self-efficacy, which was measured using five items on a 4-point Likert scale (1 = strongly disagree, 4 = strongly agree). Details about the items and questionnaires used can be found in OECD <ref type="bibr">(2019,</ref><ref type="bibr">2024)</ref>.</p><p>In their original analysis, OECD (2024) used Item Response Theory (IRT) to create composite scores of their variables, which were then used in a linear regression model to examine the effect of parental emotional support on self-efficacy. While valid, this approach has two main limitations. First, the authors did not evaluate measurement invariance 9 , which is essential for ensuring the validity of cross-country comparisons. Second, it is not easy to identify patterns across countries regarding their structural relations. With 29 groups, a total of 406 pairwise comparisons would be required to inspect all the differences and similarities in the structural relations of all countries. To address these issues, we re-analyzed the same data using MMG-SEM. The SEM model we used is shown in Figure <ref type="figure">5</ref>, and an R script with the full analysis is available in the same GitHub repository as the simulation code: https://github.com/AndresFPA/OrdinalSim</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 5</head><p>The SEM model depicting the relation between parental emotional support and self-efficacy. PES stands for parental emotional support, and SE for self-efficacy. The questionnaire items for both latent variables are described in OECD ( <ref type="formula">2019</ref>).</p><p>We analyzed the data with both versions of MMG-SEM: one using MG-CCFA and one using MG-CFA in the first step of its estimation. Because the results were broadly similar (and due to space constraints), we focus on the results using MG-CCFA in this section. The results using MG-CFA are available in Appendix C. Before running MMG-SEM, we conducted a measurement invariance test following the identification constraints proposed by <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref> and the guidelines outlined by <ref type="bibr" target="#b52">Svetina et al. (2020)</ref>. Table <ref type="table" target="#tab_2">3</ref> summarizes the results using scaled model fit indices. First, the configural model presented an acceptable fit (CFI = 0.989 and RMSEA = 0.080). Second, constraining the thresholds to equality across groups led to a decrease in fit (CFI = 0.987 and RMSEA = 0.073) that was within acceptable limits (&lt;0.01) <ref type="bibr" target="#b50">(Rutkowski &amp; Svetina, 2014)</ref>. Finally, when the loadings were constrained to be equal across groups, the model fit (CFI = 0.986, RMSEA = 0.069) decreased minimally again, supporting the presence of metric invariance. After satisfactorily establishing measurement invariance, we proceeded to analyze the structural relations using MMG-SEM. As is common in empirical applications, the 'true' number of clusters was unknown. Following the recommendations of Perez Alonso et al. ( <ref type="formula">2025</ref>), we selected the optimal number of clusters using AIC 3 <ref type="bibr" target="#b7">(Bozdogan, 1994</ref>)-a</p><p>variation of the Akaike Information Criteria (AIC; <ref type="bibr" target="#b1">Akaike, 1974)</ref>-and the Convex Hull scree ratio measure <ref type="bibr" target="#b9">(Ceulemans &amp; Kiers, 2006)</ref>. We compared models with 1 to 6 clusters, and both measures selected the 3-cluster model (see the GitHub repository for additional details)<ref type="foot" target="#foot_8">10</ref> .</p><p>The cluster assignments are shown in Table <ref type="table">4</ref>. While Cluster 1 contained a single isolated country (i.e., South Korea), Clusters 2 and 3 presented some interesting geographical grouping. Cluster 2 primarily consisted of countries from Western Europe, with additional representation from Chile, Japan, and a few Central and Eastern European countries (e.g., Latvia, Poland). In contrast, Cluster 3 primarily consisted of countries from North and Eastern Europe, as well as those from the Americas (i.e., the USA, Mexico, and Colombia).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table 4</head><p>Clustering of the countries based on the regression parameter between parental emotional support and self-efficacy (3-cluster model).</p><p>Cluster Countries Cluster 1 South Korea Cluster 2 Austria, Switzerland, Chile, Germany, Spain, France, United Kingdom, Ireland, Iceland, Japan, Latvia, Netherlands, Poland, Portugal, Slovakia Cluster 3 Colombia, Czech Republic, Estonia, Finland, Greece, Hungary, Lithuania, Luxembourg, Mexico, Slovenia, Sweden, Turkey, United States of America</p><p>The resulting cluster-specific regression parameters are presented in Table <ref type="table">5</ref>.</p><p>Although the size of the effect varied, the relation between parental emotional support and self-efficacy was positive for all three clusters, indicating that higher parental support predicts higher self-efficacy across all 29 countries. Regarding between-cluster differences, South Korea clearly showed the largest regression coefficient (β = 0.469) compared to any other country. In comparison, Cluster 2, comprising mainly Western European countries, presented the smallest effect (β = 0.254), while Cluster 3 had the second-largest regression coefficient (β = 0.335).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table 5</head><p>Regression parameters per cluster for the relation between parental emotional support and self-efficacy.  <ref type="bibr" target="#b42">(Parveva et al., 2020)</ref>, or income inequalities <ref type="bibr" target="#b45">(Qian et al., 2024)</ref>.</p><p>To illustrate this, we conducted a brief explorative comparison of country-level individualism scores across clusters (Figure <ref type="figure">6</ref>). We used the scores from <ref type="bibr" target="#b23">Hofstede (2001)</ref>, which had data for 18 out of the total 29 countries of the empirical example. The scores ranged from 0 to 100, with higher scores indicating more individualistic countries. The boxplot clearly shows mean differences in individualism scores: Cluster 2 had the largest mean individualism score, followed by Cluster 3, and then Cluster 1. Interestingly, this order was the reverse of the regression coefficients per cluster. This may suggest that more individualistic societies display weaker relations between parental emotional support and self-efficacy. However, these results must be interpreted with caution as, for instance, Cluster 3 also contained both the country with the highest (i.e., USA) and lowest (i.e., Colombia) individualism scores. Thus, there may be more variables moderating this relation across countries.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 6</head><p>Individualism scores for the three clusters obtained by MMG-SEM.</p><p>In conclusion, MMG-SEM revealed meaningful cross-country differences in the relation between parental emotional support and self-efficacy. By clustering countries, MMG-SEM simplified the complexity of many-groups comparisons, resulting in three clusters with distinct regression parameters. We also provided an exploratory analysis suggesting that cultural factors, such as individualism, may explain the cross-country variations. Finally, although the results were broadly similar for both versions of MMG-SEM, it is important to note that correctly treating data as ordinal and properly testing for measurement invariance are crucial steps to ensure the validity of cross-country comparisons of the structural relations, which are the main parameters of interest in this kind of research question.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Discussion</head><p>Social scientists often work with ordinal data, such as Likert scales, which pose challenges for conventional ML estimation methods in SEM. When using standard multiple-group methods like MG-SEM to compare structural relations, researchers can use DWLS estimation to deal with ordinal data correctly. However, if one wants to use mixture SEM methods <ref type="bibr" target="#b27">(Kim et al., 2016;</ref><ref type="bibr" target="#b55">Vermunt &amp; Magidson, 2005)</ref> to compare many groups, using DWLS estimation is difficult. Mixture SEM methods usually estimate all SEM parameters and the cluster membership simultaneously via ML, which is very time consuming when taking the ordinal nature of the observed variables into account. In this paper, we extended the recently developed MMG-SEM (Perez Alonso et al., 2024) -for comparing structural relations across many groups-to deal with ordinal data through a combination of DWLS and ML estimation. Specifically, thanks to the stepwise estimation of MMG-SEM, it was possible to implement MG-CCFA with DWLS estimation in the first step (effectively dealing with ordinal data) while maintaining the ML estimation for the structural model and clustering in the second step (using the EM algorithm).</p><p>We provided an empirical example of properly treating data as ordinal when using MMG-SEM, and performed an extensive simulation study to evaluate how the new version of MMG-SEM (using MG-CCFA in the first step) compared to the previous version of MMG-SEM (using MG-CFA in the first step) when analyzing ordinal data. In addition, we examined the impact of correctly modeling or disregarding non-invariances on model estimation. Since disregarding the non-invariances had only minor effects on the estimates, our analyses focused on the models that correctly captured the non-invariances, which can be viewed as partially invariant models. Overall, appropriately dealing with ordinal variables improved MMG-SEM's performance in terms of measurement model parameter recovery. Specifically, the factor loading estimates were considerably more biased when using MG-CFA instead of MG-CCFA, espcially in case of fewer item categories (i.e., c = 2).</p><p>In contrast, using DWLS or ML in MMG-SEM's first step did not significantly affect the results of the second step (i.e., the recovery of the clustering and cluster-specific structural relations), despite building on the estimated factor loadings, which is line with previous research <ref type="bibr" target="#b46">(Rhemtulla et al., 2012)</ref>. Therefore, it might be tempting to always use MG-CFA (i.e., ML estimation) in the first step of MMG-SEM, regardless of the nature of the observed variables. However, to validly evaluate measurement invariance, we recommend using MG-CCFA (i.e., DWLS estimation) in MMG-SEM's first step, as it obtains more accurate measurement model parameters if the observed variables are ordinal, which is especially important when the number of item categories is low. Also, when c = 2, the cluster and regression parameter recovery were slightly worse when ignoring the ordinal nature of the variables.</p><p>The optimistic results should be interpreted in light of the limitations of the simulation study. Specifically, we cannot generalize the obtained results outside the conditions evaluated in the simulation. For simplicity, we generated data with underlying normal distributions and symmetrically distributed ordinal responses, whereas empirical data can present a wide variety of distributions. Previous research shows that non-normality can substantially increase bias in loading estimates under ML estimation, especially with few response categories <ref type="bibr" target="#b18">(Dolan, 1994;</ref><ref type="bibr" target="#b36">Mîndrilă, 2010;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>, whereas LS estimators are more robust to such deviations. However, these findings are based on simple CFA models, and it remains important to examine how non-normality affects MMG-SEM. In this study, we evaluated DWLS in the first step and did not consider ML-based models for ordinal variables (i.e., CFA with probit links or IRT) due to their higher computational demands and comparable performance to LS estimators <ref type="bibr" target="#b21">(Forero &amp; Maydeu-Olivares, 2009;</ref><ref type="bibr" target="#b28">Kim &amp; Yoon, 2011;</ref><ref type="bibr" target="#b30">Liang &amp; Yang, 2014)</ref>. Nonetheless, future research can explore how such estimators perform when dealing with ordinal data in the context of MMG-SEM.</p><p>It should also be noted that our simulation assumed MI and did not test it. As a result, we avoided the challenges inherent in invariance testing, such as selecting the anchor/marker variable and identifying the non-invariant parameters, which are necessary steps to ensure the validity of cross-group comparisons. In our simulation, the non-invariant parameters of the partially invariant models were treated as known. For an in-depth tutorial on traditional MI testing with ordinal data, we refer the readers to <ref type="bibr" target="#b52">Svetina et al. (2020)</ref>.</p><p>Moreover, although partial measurement invariance is commonly used to relax the strict requirements of full invariance, which is difficult to achieve when many groups are involved (e.g., <ref type="bibr" target="#b12">Davidov et al., 2014)</ref>, it remains a topic of debate in the SEM literature.</p><p>For instance, <ref type="bibr" target="#b51">Shi et al. (2019)</ref> showed that structural parameters may be unbiased even when only a single loading (i.e., the marker variable loading) is invariant. However, as they noted, when most of the loadings are non-invariant, it becomes difficult to argue that they measure the same construct. Alternative approaches, such as Bayesian CFA for ordinal data <ref type="bibr" target="#b30">(Liang &amp; Yang, 2014;</ref><ref type="bibr" target="#b40">Muthén &amp; Asparouhov, 2012)</ref>, provide ways to evaluate MI without imposing full (or partial) exact invariance, which would be interesting to explore in the future. Specifically, Bayesian CFA allows for approximate invariance (B. <ref type="bibr" target="#b37">Muthen &amp; Asparouhov, 2013)</ref>, in which parameters are constrained to be approximately, rather than exactly, equal across groups.</p><p>Whereas the loading non-invariance size had minimal impact on cluster recovery when the non-invariances were modeled, it greatly impacts the results when the non-invariances are ignored. Specifically, the ARI ML was 0.829 and 0.740, and the ARI DWLS was 0.833 and 0.767 when λ non-invariance size was 0.2 and 0.4, respectively. Note that threshold non-invariance size showed almost no impact on the cluster recovery results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table B1</head><p>ARI and CC per level of each manipulated factor for both versions of MMG-SEM. Note. β Size is the size of (difference in) regression parameters, N g is the within-group sample size, K is the number of clusters, Non-inv Size λ is the size of the loadings' non-invariance, Non-inv Size τ is the size of the thresholds' non-invariance, and c is the number of categories for each item.</p><p>To better understand the impact of the loading non-invariance size, we inspected its interaction with the most important manipulated factors in Figure <ref type="figure">B1</ref>. While it is clear that both versions of MMG-SEM decreased in performance in the case of larger non-invariances, the effect of ignoring the loadings non-invariance is more notorious when using the ML instead of the DWLS. Specifically, if the loadings non-invariance was 0.4, ARI ML was consistently (slightly) lower than ARI DWLS even when c &gt; 2. and 0.4, respectively. Note. β Size is the size of the (difference in) regression parameters, N g is the within-group sample size, K is the number of clusters, Non-inv Size λ is the size of the loadings' non-invariance, Non-inv Size τ is the size of the thresholds' non-invariance, and c is the number of categories for each item.</p><p>The interaction of the loadings non-invariance size with the within-group sample size and the number of item categories is depicted in Figure <ref type="figure">B2</ref>. Similar to the results in the main text, the RMSE β,M L is consistently lower than RMSE β,DW LS in most conditions.</p><p>Notably, both RMSE β,M L and RMSE β,DW LS performed considerably worse when the loadings non-invariance size increased, but the drop in performance was more notable for RMSE β,M L than for RMSE β,DW LS . countries in the Americas (i.e., Mexico and Colombia) were grouped with the Western European countries.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table C2</head><p>Clustering of the countries based on the regression parameter between parental emotional support and self-efficacy (2-cluster model).</p><p>Cluster Countries Cluster 1 South Korea, Austria, Czech Republic, Estonia, Finland, Greece, Hungary, Iceland, Lithuania, Luxembourg, Slovenia, Sweden, Turkey, United States of America Cluster 2 Switzerland, Chile, Colombia, Germany, Spain, France, United Kingdom, Ireland, Japan, Latvia, Netherlands, Poland, Portugal, Slovakia</p><p>In terms of the regression parameters (Table <ref type="table" target="#tab_2">C3</ref>), the estimates were slightly smaller than those in the main text. However, the overall trend was consistent. Both clusters presented positive effects, with the Eastern European cluster (i.e., Cluster 1) showing a larger coefficient compared to the Western European cluster.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table C3</head><p>Regression parameters per cluster for the relation between parental emotional support and self-efficacy.</p><p>Cluster 1 Cluster 2 Regression parameter 0.218 0.166</p><p>In summary, the results of MMG-SEM using ML estimation in the first step were broadly similar to those obtained using DWLS. The main difference was the model selection step, which identified a different number of clusters. This raises relevant questions about the impact of treating ordinal data as continuous on model selection measures. Such an issue requires further research in the future.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Equation Modeling (MMG-SEM) was proposed by Perez Alonso et al. (2024) as a flexible combination of mixture modeling and MG-SEM. In MMG-SEM, the structural relations are set as cluster-specific parameters, while the differences in the measurement model parameters are captured by group-specific parameters. Since the structural relations are the only cluster-specific parameters, MMG-SEM finds clusters based solely on the structural relations, which are usually the parameters of interest for the research question. Perez Alonso et al. (2024) used the 'Structural-After-Measurement' (SAM; Rosseel</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>e., MG-CFA with ML versus MG-CCFA with DWLS) -when modeling ordinal data. Specifically, we used a Monte-Carlo simulation with seven manipulated factors to evaluate how well each version of MMG-SEM recovered the parameters and clustering. The following factors were manipulated in a complete factorial design: 1. Size of regression parameters β (3 levels): 0.2, 0.3, 0.4; 2. Within-group sample size N g (3 levels): 50, 100, 300; 3. Number of clusters K (2 levels): 2, 4; 4. Cluster size (2 levels): balanced, unbalanced; 5. Loadings non-invariance size (2 levels): 0.2, 0.4; 6. Thresholds non-invariance size (2 levels): 0.25, 0.50; 7. Number of categories of items (3 levels): 2, 4, 5</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>simulation design resulted in 3 (size of regression parameters) × 3 (within-group sample size) × 2 (number of clusters) × 2 (cluster size) × 2 (loadings non-invariance size) × 2 (threshold non-invariance size) × 3 (number of categories) = 432 data generation conditions. For each data generation condition, we generated 50 replications, for a total of 432 × 50 = 21600 data sets. Moreover, for each version of MMG-SEM, two models were considered: one that correctly modeled the non-invariances (i.e., included them in the model; a partially invariant model) and one that disregarded the non-invariances (i.e., constrained all loading and threshold parameters to be equal across groups). Note that, for the version of MMG-SEM with continuous data, thresholds are not part of the measurement model; thus, for this version, the modeling of non-invariances concerns only the loadings. Therefore, each generated data set was analyzed four times, that is, with the two versions of MMG-SEM and with the non-invariances modeled or not. As a result, the Simulation Study included 21600 (data sets) × 4 = 86400 analyses in total.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Figure 1. The model includes four factors, defined as F1, F2, F3, and F4, measured by five indicators each, for a total of 20 observed variables. The structural relations (parameters of interest) are represented by the four regression parameters between the factors.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="14,164.70,75.19,282.60,291.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="15,144.90,343.78,322.20,317.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="21,77.63,235.44,456.75,315.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="24,77.63,75.19,456.75,315.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="26,114.00,256.76,384.00,176.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="29,155.06,317.12,301.88,290.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="43,77.63,75.19,456.75,315.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="45,77.63,75.19,456.75,315.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>ARI and CC per level of each manipulated factor for both versions of MMG-SEM.</figDesc><table><row><cell>Factor</cell><cell>Level</cell><cell>ARI ML</cell><cell>CC ML</cell><cell>ARI DWLS</cell><cell>CC DWLS</cell></row><row><cell></cell><cell>0.2</cell><cell>0.642 (0.39)</cell><cell>0.352 (0.48)</cell><cell>0.675 (0.37)</cell><cell>0.383 (0.49)</cell></row><row><cell>β Size</cell><cell>0.3</cell><cell>0.879 (0.22)</cell><cell>0.629 (0.48)</cell><cell>0.892 (0.21)</cell><cell>0.652 (0.48)</cell></row><row><cell></cell><cell>0.4</cell><cell>0.939 (0.16)</cell><cell>0.781 (0.41)</cell><cell>0.943 (0.15)</cell><cell>0.788 (0.41)</cell></row><row><cell></cell><cell>50</cell><cell>0.600 (0.38)</cell><cell>0.294 (0.46)</cell><cell>0.638 (0.37)</cell><cell>0.320 (0.47)</cell></row><row><cell>N g</cell><cell>100</cell><cell>0.866 (0.22)</cell><cell>0.566 (0.49)</cell><cell>0.881 (0.20)</cell><cell>0.599 (0.49)</cell></row><row><cell></cell><cell>300</cell><cell>0.988 (0.05)</cell><cell>0.895 (0.31)</cell><cell>0.987 (0.06)</cell><cell>0.897 (0.30)</cell></row><row><cell>K</cell><cell>2 4</cell><cell>0.876 (0.26) 0.764 (0.33)</cell><cell>0.699 (0.46) 0.476 (0.49)</cell><cell>0.893 (0.23) 0.781 (0.32)</cell><cell>0.721 (0.45) 0.494 (0.50)</cell></row><row><cell>Cluster size</cell><cell>Bal Unbal</cell><cell>0.838 (0.29) 0.802 (0.31)</cell><cell>0.627 (0.48) 0.549 (0.49)</cell><cell>0.857 (0.27) 0.817 (0.29)</cell><cell>0.651 (0.48) 0.564 (0.49)</cell></row><row><cell>Non-inv Size λ</cell><cell>0.2 0.4</cell><cell>0.823 (0.30) 0.817 (0.30)</cell><cell>0.595 (0.49) 0.580 (0.49)</cell><cell>0.838 (0.28) 0.835 (0.28)</cell><cell>0.615 (0.49) 0.600 (0.49)</cell></row><row><cell>Non-inv Size τ</cell><cell>0.25 0.50</cell><cell>0.819 (0.30) 0.820 (0.29)</cell><cell>0.591 (0.49) 0.584 (0.49)</cell><cell>0.836 (0.29) 0.837 (0.28)</cell><cell>0.609 (0.49) 0.606 (0.49)</cell></row><row><cell>Item categories c</cell><cell>2 4</cell><cell>0.690 (0.33) 0.881 (0.26)</cell><cell>0.342 (0.47) 0.686 (0.46)</cell><cell>0.721 (0.31) 0.890 (0.24)</cell><cell>0.375 (0.48) 0.693 (0.46)</cell></row><row><cell></cell><cell>5</cell><cell>0.888 (0.27)</cell><cell>0.735 (0.44)</cell><cell>0.900 (0.25)</cell><cell>0.755 (0.43)</cell></row><row><cell>Total</cell><cell>-</cell><cell>0.820 (0.30)</cell><cell>0.588 (0.49)</cell><cell>0.837 (0.28)</cell><cell>0.608 (0.49)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2</head><label>2</label><figDesc>RMSE β per level of each manipulated factor for both versions of MMG-SEM.</figDesc><table><row><cell>Factor</cell><cell>Level</cell><cell>RMSE β,ML</cell><cell>RMSE β,DWLS</cell></row><row><cell></cell><cell>0.2</cell><cell>0.048 (0.047)</cell><cell>0.050 (0.054)</cell></row><row><cell>β Size</cell><cell>0.3</cell><cell>0.039 (0.045)</cell><cell>0.046 (0.052)</cell></row><row><cell></cell><cell>0.4</cell><cell>0.036 (0.041)</cell><cell>0.048 (0.060)</cell></row><row><cell></cell><cell>50</cell><cell>0.068 (0.059)</cell><cell>0.079 (0.066)</cell></row><row><cell>N g</cell><cell>100</cell><cell>0.036 (0.032)</cell><cell>0.044 (0.044)</cell></row><row><cell></cell><cell>300</cell><cell>0.019 (0.014)</cell><cell>0.022 (0.035)</cell></row><row><cell>K</cell><cell>2 4</cell><cell>0.024 (0.023) 0.058 (0.053)</cell><cell>0.031 (0.036) 0.065 (0.065)</cell></row><row><cell>Cluster size</cell><cell>Bal Unbal</cell><cell>0.032 (0.035) 0.050 (0.051)</cell><cell>0.039 (0.046) 0.057 (0.062)</cell></row><row><cell>Non-inv Size λ</cell><cell>0.2 0.4</cell><cell>0.040 (0.045) 0.042 (0.044)</cell><cell>0.045 (0.047) 0.051 (0.062)</cell></row><row><cell>Non-inv Size τ</cell><cell>0.25 0.50</cell><cell>0.041 (0.044) 0.041 (0.045)</cell><cell>0.048 (0.056) 0.048 (0.054)</cell></row><row><cell>Item categories c</cell><cell>2 4</cell><cell>0.063 (0.060) 0.031 (0.028)</cell><cell>0.062 (0.066) 0.044 (0.051)</cell></row><row><cell></cell><cell>5</cell><cell>0.029 (0.029)</cell><cell>0.038 (0.042)</cell></row><row><cell>Total</cell><cell>-</cell><cell>0.041 (0.044)</cell><cell>0.048 (0.055)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3</head><label>3</label><figDesc>Model fit resulting from the measurement invariance testing per level.</figDesc><table><row><cell>Measurement Invariance level</cell><cell cols="2">CFI RMSEA</cell></row><row><cell>Configural</cell><cell>0.989</cell><cell>0.080</cell></row><row><cell>Threshold</cell><cell>0.987</cell><cell>0.073</cell></row><row><cell>Metric</cell><cell>0.986</cell><cell>0.069</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table B2</head><label>B2</label><figDesc>RMSE β per level of each manipulated factor for both versions of MMG-SEM.</figDesc><table><row><cell>Factor</cell><cell>Level</cell><cell>RMSE β,ML</cell><cell>RMSE β,DWLS</cell></row><row><cell></cell><cell>0.2</cell><cell>0.053 (0.054)</cell><cell>0.056 (0.054)</cell></row><row><cell>β Size</cell><cell>0.3</cell><cell>0.049 (0.054)</cell><cell>0.054 (0.050)</cell></row><row><cell></cell><cell>0.4</cell><cell>0.051 (0.054)</cell><cell>0.058 (0.051)</cell></row><row><cell></cell><cell>50</cell><cell>0.079 (0.070)</cell><cell>0.086 (0.068)</cell></row><row><cell>N g</cell><cell>100</cell><cell>0.047 (0.046)</cell><cell>0.053 (0.043)</cell></row><row><cell></cell><cell>300</cell><cell>0.030 (0.028)</cell><cell>0.033 (0.024)</cell></row><row><cell>K</cell><cell>2 4</cell><cell>0.029 (0.026) 0.072 (0.064)</cell><cell>0.036 (0.027) 0.075 (0.062)</cell></row><row><cell>Cluster size</cell><cell>Bal Unbal</cell><cell>0.039 (0.041) 0.063 (0.062)</cell><cell>0.045 (0.039) 0.067 (0.060)</cell></row><row><cell>Non-inv Size λ</cell><cell>0.2 0.4</cell><cell>0.041 (0.046) 0.064 (0.060)</cell><cell>0.048 (0.047) 0.066 (0.056)</cell></row><row><cell>Non-inv Size τ</cell><cell>0.25 0.50</cell><cell>0.052 (0.053) 0.050 (0.055)</cell><cell>0.056 (0.050) 0.056 (0.054)</cell></row><row><cell>Item categories c</cell><cell>2 4</cell><cell>0.074 (0.071) 0.040 (0.036)</cell><cell>0.074 (0.072) 0.048 (0.032)</cell></row><row><cell></cell><cell>5</cell><cell>0.036 (0.033)</cell><cell>0.044 (0.031)</cell></row><row><cell>Total</cell><cell>-</cell><cell>0.051 (0.054)</cell><cell>0.056 (0.052)</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>For instance, the Trends in International Mathematics and Science Study (TIMSS) and the Programme for International Student Assessment (PISA).</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>Although this paper does not evaluate MI testing, we still adopt the identification constraints recommended by<ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref> to be consistent with current best practices.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>It is generally recommended to use Unweighted Least Squares or DWLS when dealing with ordinal data but there are no major differences between them in terms of parameter estimation<ref type="bibr" target="#b57">(Yang-Wallentin et al., 2010)</ref>. We used DWLS as it is the default estimator in the software we use (i.e., lavaan).</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>For more details about the specification of Ψ gk , please see the original paper by Perez Alonso et al.(2024).</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_4"><p>The group-cluster specification of Ψ gk is incompatible with some identification constraints recommended by<ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref>. For details on how this was solved, please see Appendix A.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_5"><p>Although the simulation study included dichotomous items, it is important to note that, in empirical research, it is not possible to test for threshold and metric invariance simultaneously for items with only two categories. In such a case, one can only assume that this level of invariance holds, as the corresponding model would be statistically equivalent, in terms of fit, to a configural model (for further details, see<ref type="bibr" target="#b56">Wu &amp; Estabrook, 2016)</ref>.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7" xml:id="foot_6"><p>As the loadings are the most important measurement model parameters affecting the recovery of the structural relations, we omitted studying the residual variances. Previously, Perez Alonso et al.(2024)   found that residual variances had minimal impact on structural relations in MMG-SEM; and prior studies comparing LS and ML estimation have also focused on the assessment of the loadings<ref type="bibr" target="#b18">(Dolan, 1994;</ref><ref type="bibr" target="#b20">Flora &amp; Curran, 2004;</ref><ref type="bibr" target="#b46">Rhemtulla et al., 2012)</ref>.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8" xml:id="foot_7"><p>Note that the results in Perez<ref type="bibr" target="#b44">Alonso et al. (2024)</ref> were generally slightly better, which may be partly due to differences in the simulation design and data generation procedure. Specifically, their data generation procedure involved sampling the group-specific data in such a way that its empirical covariance matrix matched the model-implied covariance matrix of the data generating model. In contrast, in our current simulation, we allow for the empirical covariance matrix to deviate from the data generating one due to sampling variability.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="10" xml:id="foot_8"><p>Interestingly, the two versions of MMG-SEM diverged in model selection: with MG-CCFA, the 3-cluster model was preferred, whereas with MG-CFA, the 2-cluster model was selected (see Appendix C for details).</p></note>
+		</body>
+		<back>
+
+			<div type="funding">
+<div><p>research was funded by a <rs type="grantName">Vidi Grant</rs> (<rs type="grantNumber">VI.Vidi.201.133</rs>) awarded to <rs type="person">Kim De Roover</rs> by the <rs type="funder">Netherlands Organization for Scientific Research (NWO)</rs>. This work used the Dutch national e-infrastructure with the support of the SURF Cooperative using grant no. <rs type="grantNumber">EINF-11355</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_X7WZRQY">
+					<idno type="grant-number">VI.Vidi.201.133</idno>
+					<orgName type="grant-name">Vidi Grant</orgName>
+				</org>
+				<org type="funding" xml:id="_ne3syGt">
+					<idno type="grant-number">EINF-11355</idno>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rescaling the standardized factor variances</head><p>In this paper, we adopted the parameterization approach for categorical CFA models with ordinal data as proposed by <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref> for MMG-SEM's first step. For its implementation, we used the semTools R package <ref type="bibr" target="#b26">(Jorgensen et al., 2024)</ref>. This approach sets the scale of the latent variables by standardizing them--i.e., setting their variances to one. In contrast, the original implementation of the first step in MMG-SEM (i.e., a standard MG-CFA; Perez Alonso et al., 2024) used the marker variable approach (i.e., one loading per factor, by default the first one, is fixed to one), which implies unstandardized factor covariances. As MMG-SEM makes use of the group-and-cluster-specific specification of the residual factor covariances (Equation <ref type="formula">4</ref>) in its second step, it was not appropriate to directly use the standardized factor covariances resulting from the parametrization from <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref>. To solve this problem, the group-specific standardized factor covariances obtained in Step 1 were rescaled to correspond to the marker variable scale before feeding them to Step 2. Formally, the rescaling procedure was defined as follows:</p><p>where q is a latent factor, ϕ std q is factor q's standardized factor variance resulting from the parametrization from <ref type="bibr" target="#b56">Wu and Estabrook (2016)</ref>, ϕ uns q is the unstandardized version of the factor variance, and λ mkr iq is the factor loading of the 'marker' variable i related to factor q.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix B Simulation Results -Ignoring Measurement Non-invariance</head><p>This Appendix briefly outlines the results of the simulation study when the measurement non-invariances were ignored. Specifically, we ignored the loading non-invariances when using MG-CFA and ignored the loading and threshold non-invariances when using MG-CCFA (i.e., these parameters were forced to be equal across groups). The overall results when ignoring the non-invariances are similar to the main text, especially regarding the structural model. However, there are differences in performance, which will be described below. Note that, as in the main text, we use a subscript corresponding to the estimator used in its first step (i.e., ML and DWLS) to distinguish between the two versions of MMG-SEM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Recovery of the factor loadings</head><p>We evaluated the loading recovery using RMSE (Equation <ref type="formula">8</ref>). The average RMSE Λ,ML and RMSE Λ,DWLS were 0.22 and 0.24, respectively, indicating a notable decline in performance for both estimators compared to when the non-invariances were modeled (see Section 4.2). Interestingly, the ML estimator now outperforms the DWLS estimator. This outcome can be explained by the fact that, in MG-CFA, only loading non-invariances are ignored, whereas in MG-CCFA both loading and threshold non-invariances are disregarded, causing a greater negative impact on the performance of the DWLS estimator.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Cluster Recovery</head><p>Table <ref type="table">B1</ref> shows the ARI and CC results for the main effects of all manipulated factors. Across all simulated conditions, the ARI ML was 0.79 and the CC ML was 0.53, while the ARI DWLS was 0.80 and the CC DWLS was 0.56. These results are remarkably similar to (but slightly worse than) the ones found in the main text (Section 4.3) for both versions of MMG-SEM. The main effects of the manipulated conditions on the cluster recovery were also largely the same. Specifically, higher within-group sample sizes N g , larger β parameters, more response categories c, balanced cluster sizes, and fewer clusters K led to better performance for both versions of MMG-SEM. Notably, the main effects of the loading non-invariance size showed important differences compared to the main text.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure B1</head><p>Cluster Recovery in Function of Within-Group Sample Size, Loadings Non-invariance Size, and Item Categories.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Regression Parameter Recovery</head><p>The recovery of the regression parameters was evaluated through RMSE β (Equation <ref type="formula">9</ref>). Table <ref type="table">B2</ref> shows the main effects of all manipulated factors on the RMSE β . Overall, both RMSE β,M L (0.051) and RMSE β,DW LS (0.056) presented similar results. Furthermore, we found the same pattern of results as in the main text. Specifically, higher within-group sample sizes N g , larger β parameters, more response categories c, balanced cluster sizes, and fewer clusters K led to lower RMSE values for both versions of MMG-SEM.</p><p>Remarkably, the trend observed in cluster recovery regarding the loadings non-invariance size is also evident in the regression parameter recovery. When ignoring the non-invariances, the performance of both versions of MMG-SEM decreased as the size of the loadings non-invariance increased. Specifically, the RMSE β,M L was 0.041 and 0.064, and the RMSE β,DW LS was 0.048 and 0.066 when the loadings non-invariance size was 0.2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure B2</head><p>Regression Parameter Recovery in Function of Within-Group Sample Size, Loadings Non-invariance Size, and Item Categories.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix C Empirical Example -Treating Data as Continuous</head><p>This Appendix describes the results of the empirical example when the data was treated as continuous. Specifically, we used the standard ML estimation of MG-CFA in the first step of MMG-SEM. The dataset, research question, and the SEM model are described in detail in Section 5 and Figure <ref type="figure">5</ref>.</p><p>Before applying MMG-SEM, we tested for measurement invariance <ref type="bibr" target="#b53">(Vandenberg &amp; Lance, 2000)</ref>, for which the results are summarized in Table <ref type="table">C1</ref>. Both the configural model (CFI = 0.971, RMSEA = 0.068) and the metric model (CFI = 0.966, RMSEA = 0.065) presented a satisfactory model fit, and the difference between them was deemed as acceptable (&lt;0.01) <ref type="bibr" target="#b50">(Rutkowski &amp; Svetina, 2014)</ref>. Note that, because the data was treated as continuous, thresholds were not included in the model, making it impossible to test for their invariance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table C1</head><p>Model fit resulting from the measurement invariance testing per level. and the Convex Hull scree ratio. Unlike the analysis using MG-CCFA in the main text, which supported a 3-cluster solution, the model selection measures suggested a 2-cluster solution when treating the data as continuous (see the GitHub repository for more details).</p><p>The resulting clusters can be seen in Table <ref type="table">C2</ref>. Although the number of clusters differed, the overall grouping of the countries was strikingly similar across the two approaches. When treating data as continuous, Cluster 1 primarily consisted of Northern and Eastern European countries, now also including South Korea, whereas Cluster 2 mainly comprised Western European countries. A few changes were observed: the Czech Republic, Austria, and Iceland were grouped with the Eastern European cluster, and the</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Cross-national examination of adolescent suicidal behavior: A pooled and multi-level analysis of 193,484 students from 53 LMIC countries</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Owusu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Posti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bärnighausen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Shaikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lowery Wilson</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00127-022-02287-x</idno>
+		<ptr target="https://doi.org/10.1007/s00127-022-02287-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Social Psychiatry and Psychiatric Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1603" to="1613" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A new look at the statistical model identification</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Akaike</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TAC.1974.1100705</idno>
+		<ptr target="https://doi.org/10.1109/TAC.1974.1100705" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Automatic Control</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="716" to="723" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Latent Variable Models and Factor Analysis: A Unified Approach</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Bartholomew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Knott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Moustaki</surname></persName>
+		</author>
+		<ptr target="http://ebookcentral.proquest.com/lib/uvtilburg-ebooks/detail.action?docID=819225" />
+		<imprint>
+			<date type="published" when="2011-01-27">2011. January 27, 2025</date>
+			<publisher>John Wiley &amp; Sons</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">On the Performance of Maximum Likelihood Versus Means and Variance Adjusted Weighted Least Squares Estimation in CFA</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Beauducel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">Y</forename><surname>Herzberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/s15328007sem1302_2</idno>
+		<ptr target="https://doi.org/10.1207/s15328007sem1302_2" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="186" to="203" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Alternative Measures of Well-Being</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Boarini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Å</forename><surname>Johansson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mira D'ercole</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Employment and Migration Working Papers</title>
+		<imprint>
+			<biblScope unit="page">33</biblScope>
+			<date type="published" when="2006">2006</date>
+			<publisher>OECD Social</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Employment and Migration Working Papers</title>
+		<idno type="DOI">10.1787/713222332167</idno>
+		<ptr target="https://doi.org/10.1787/713222332167" />
+		<imprint>
+			<publisher>OECD Social</publisher>
+			<biblScope unit="volume">33</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Bollen</surname></persName>
+		</author>
+		<title level="m">Structural equations with latent variables</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Mixture-Model Cluster Analysis Using Model Selection Criteria and a New Informational Measure of Complexity</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bozdogan</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-94-011-0800-3_3</idno>
+		<ptr target="https://doi.org/10.1007/978-94-011-0800-3_3" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the First US/Japan Conference on the Frontiers of Statistical Modeling: An Informational Approach</title>
+		<editor>
+			<persName><forename type="first">H</forename><surname>Bozdogan</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Sclove</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Gupta</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">D</forename><surname>Haughton</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">G</forename><surname>Kitagawa</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Ozaki</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">K</forename><surname>Tanabe</surname></persName>
+		</editor>
+		<meeting>the First US/Japan Conference on the Frontiers of Statistical Modeling: An Informational Approach<address><addrLine>Netherlands</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="page" from="69" to="113" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Testing for the equivalence of factor covariance and mean structures: The issue of partial measurement invariance</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Byrne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Shavelson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Muthén</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-2909.105.3.456</idno>
+		<ptr target="https://doi.org/10.1037/0033-2909.105.3.456" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="456" to="466" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Selecting among three-mode principal component models of different types and complexities: A numerical convex hull based method</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ceulemans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A L</forename><surname>Kiers</surname></persName>
+		</author>
+		<idno type="DOI">10.1348/000711005X64817</idno>
+		<ptr target="https://doi.org/10.1348/000711005X64817" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Mathematical and Statistical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="133" to="150" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Sensitivity of Goodness of Fit Indexes to Lack of Measurement Invariance</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">F</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705510701301834</idno>
+		<ptr target="https://doi.org/10.1080/10705510701301834" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="464" to="504" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Factor analysis of dichotomized variables</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Christoffersson</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02291477</idno>
+		<ptr target="https://doi.org/10.1007/BF02291477" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<author>
+			<persName><forename type="first">E</forename><surname>Davidov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Meuleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cieciuch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Billiet</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev-soc-071913-043137</idno>
+		<ptr target="https://doi.org/10.1146/annurev-soc-071913-043137" />
+	</analytic>
+	<monogr>
+		<title level="m">Measurement Equivalence in Cross-National Research</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="55" to="75" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Using Bounded Estimation to Avoid Nonconvergence in Small Sample Structural Equation Modeling</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>De Jonckere</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2021.1982716</idno>
+		<ptr target="https://doi.org/10.1080/10705511.2021.1982716" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="412" to="427" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Finding Clusters of Groups with Measurement Invariance: Unraveling Intercept Non-Invariance with Mixture Multigroup Factor Analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>De Roover</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2020.1866577</idno>
+		<ptr target="https://doi.org/10.1080/10705511.2020.1866577" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="663" to="683" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Mixture multigroup factor analysis for unraveling factor loading noninvariance across many groups</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>De Roover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ceulemans</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000355</idno>
+		<ptr target="https://doi.org/10.1037/met0000355" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="281" to="306" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Maximum Likelihood from Incomplete Data Via the EM Algorithm</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Dempster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Laird</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1977.tb01600.x</idno>
+		<ptr target="https://doi.org/10.1111/j.2517-6161.1977.tb01600.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">The Impact of Categorization With Confirmatory Factor Analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Distefano</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/S15328007SEM0903_2</idno>
+		<ptr target="https://doi.org/10.1207/S15328007SEM0903_2" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="327" to="346" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Factor analysis of variables with 2, 3, 5 and 7 response categories: A comparison of categorical variable estimators using simulated data</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">V</forename><surname>Dolan</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2044-8317.1994.tb01039.x</idno>
+		<ptr target="https://doi.org/10.1111/j.2044-8317.1994.tb01039.x" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Mathematical and Statistical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="309" to="326" />
+			<date type="published" when="1994">1994. 1994</date>
+		</imprint>
+	</monogr>
+	<note>tb01039.x</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Scale length does matter: Recommendations for measurement invariance testing with categorical factor analysis and item response theory approaches</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>D'urso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>De Roover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tijmstra</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-021-01690-7</idno>
+		<ptr target="https://doi.org/10.3758/s13428-021-01690-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="2114" to="2145" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">An Empirical Evaluation of Alternative Methods of Estimation for Confirmatory Factor Analysis With Ordinal Data</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Flora</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Curran</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/1082-989X.9.4.466</idno>
+		<ptr target="https://doi.org/10.1037/1082-989X.9.4.466" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="466" to="491" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Estimation of IRT graded response models: Limited versus full information methods</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">G</forename><surname>Forero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maydeu-Olivares</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0015825</idno>
+		<ptr target="https://doi.org/10.1037/a0015825" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="275" to="299" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">The consequences of ignoring measurement invariance for path coefficients in structural equation models</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Guenole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Brown</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2014.00980</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2014.00980" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Culture&apos;s consequences Comparing values, behaviors,institutions, and organizations across nations (2nd)</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hofstede</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Sage Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Comparing partitions</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hubert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Arabie</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF01908075</idno>
+		<ptr target="https://doi.org/10.1007/BF01908075" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Classification</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="193" to="218" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Ordinal Measures in Multiple Indicator Models: A Simulation Study of Categorization Error</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Creech</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2095231</idno>
+		<ptr target="https://doi.org/10.2307/2095231" />
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="398" to="407" />
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">D</forename><surname>Jorgensen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pornprasertmanit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Schoemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=semTools" />
+		<title level="m">semTools: Useful tools for structural equation modeling</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S.-H</forename><surname>Joo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stark</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2016.1196108</idno>
+		<ptr target="https://doi.org/10.1080/10705511.2016.1196108" />
+	</analytic>
+	<monogr>
+		<title level="m">Measurement Invariance Testing Across Between-Level Latent Classes Using Multilevel Factor Mixture Modeling</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="870" to="887" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Testing Measurement Invariance: A Comparison of Multiple-Group Categorical CFA and IRT</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yoon</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2011.557337</idno>
+		<ptr target="https://doi.org/10.1080/10705511.2011.557337" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="212" to="228" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Empirical Comparison Between Factor Analysis and Multidimensional Item Response Models</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Knol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Berger</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/s15327906mbr2603_5</idno>
+		<ptr target="https://doi.org/10.1207/s15327906mbr2603_5" />
+	</analytic>
+	<monogr>
+		<title level="j">Multivariate Behavioral Research</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="457" to="477" />
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">An evaluation of WLSMV and Bayesian methods for confirmatory factor analysis with categorical indicators</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="DOI">10.1504/IJQRE.2014.060972</idno>
+		<ptr target="https://doi.org/10.1504/IJQRE.2014.060972" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Quantitative Research in Education</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">17</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Parental Autonomy Support in Two Cultures: The Moderating Effects of Adolescents&apos; Self-Construals</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Marbell-Pierre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Grolnick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Raftery-Helmer</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/cdev.12947</idno>
+		<ptr target="https://doi.org/10.1111/cdev.12947" />
+	</analytic>
+	<monogr>
+		<title level="j">Child Development</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="825" to="845" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Mclachlan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">X</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">I</forename><surname>Rathnayake</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev-statistics-031017-100325</idno>
+		<ptr target="https://doi.org/10.1146/annurev-statistics-031017-100325" />
+	</analytic>
+	<monogr>
+		<title level="m">Finite Mixture Models</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="355" to="378" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Measurement invariance, factor analysis and factorial invariance</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Meredith</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02294825</idno>
+		<ptr target="https://doi.org/10.1007/BF02294825" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="525" to="543" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Assessing Factorial Invariance in Ordered-Categorical Measures</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Millsap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yun-Tein</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/S15327906MBR3903_4</idno>
+		<ptr target="https://doi.org/10.1207/S15327906MBR3903_4" />
+		<imprint>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+	<note>Publisher: Routledge _eprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.1207/S15327906MBR3903_4</idno>
+		<ptr target="https://doi.org/10.1207/S15327906MBR3903_4" />
+	</analytic>
+	<monogr>
+		<title level="j">Multivariate Behavioral Research</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="479" to="515" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Maximum Likelihood (ML) and Diagonally Weighted Least Squares (DWLS) Estimation Procedures: A Comparison of Estimation Bias with Ordinal and Multivariate Non-Normal Data</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mîndrilă</surname></persName>
+		</author>
+		<idno type="DOI">10.20533/ijds.2040.2570.2010.0010</idno>
+		<ptr target="https://doi.org/10.20533/ijds.2040.2570.2010.0010" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal for Digital Society</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="60" to="66" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Muthen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Asparouhov</surname></persName>
+		</author>
+		<ptr target="http://www.statmodel.com/examples/webnotes/webnote17.pdf" />
+		<title level="m">BSEM Measurement Invariance Analysis</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Muthen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Muthen</surname></persName>
+		</author>
+		<title level="m">Mplus User&apos;s Guide</title>
+		<imprint>
+			<publisher>Muthen &amp; Muthen</publisher>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>Eight Edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">A general structural equation model with dichotomous, ordered categorical, and continuous latent variable indicators</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Muthén</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02294210</idno>
+		<ptr target="https://doi.org/10.1007/BF02294210" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="115" to="132" />
+			<date type="published" when="1984">1984</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Bayesian structural equation modeling: A more flexible representation of substantive theory</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Muthén</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Asparouhov</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0026802</idno>
+		<ptr target="https://doi.org/10.1037/a0026802" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="313" to="335" />
+			<date type="published" when="2012">2012</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Parental emotional support and adolescent well-being: A cross-national examination of socio-economic and gender gaps based on PISA 2018 surveys</title>
+		<idno type="DOI">10.1787/2b7a2ac6-en</idno>
+		<ptr target="https://doi.org/https://doi.org/10.1787/2b7a2ac6-en" />
+	</analytic>
+	<monogr>
+		<title level="m">PISA 2018 Assessment and Analytical Framework</title>
+		<imprint>
+			<publisher>OECD</publisher>
+			<date type="published" when="2019-04">2019, April. 2024</date>
+			<biblScope unit="volume">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Equity in school education in Europe: Structures, policies and student performance. Publications Office of the European Union</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Parveva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Horváth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krémó</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Sigalas</surname></persName>
+		</author>
+		<idno type="DOI">10.2797/658266</idno>
+		<ptr target="https://data.europa.eu/doi/10.2797/658266" />
+		<imprint>
+			<date type="published" when="2020-09-30">2020. September 30, 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Selecting the number of clusters in Mixture Multigroup Structural Equation Modeling</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Perez Alonso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Roover</surname></persName>
+		</author>
+		<idno type="DOI">10.5964/meth.14931</idno>
+		<ptr target="https://doi.org/10.5964/meth.14931" />
+	</analytic>
+	<monogr>
+		<title level="j">Methodology</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="26" />
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Mixture multigroup structural equation modeling: A novel method for comparing structural relations across many groups</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Perez Alonso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>De Roover</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000667</idno>
+		<ptr target="https://doi.org/10.1037/met0000667" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Parental emotional support, self-efficacy, and mental health problems among adolescents in Hong Kong: A moderated mediation approach [Publisher: Frontiers]</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyt.2024.1458275</idno>
+		<ptr target="https://doi.org/10.3389/fpsyt.2024.1458275" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">When can categorical variables be treated as continuous? A comparison of robust continuous and categorical SEM estimation methods under suboptimal conditions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rhemtulla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">É</forename><surname>Brosseau-Liard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Savalei</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0029315</idno>
+		<ptr target="https://doi.org/10.1037/a0029315" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="354" to="373" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">lavaan : An R Package for Structural Equation Modeling</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v048.i02</idno>
+		<ptr target="https://doi.org/10.18637/jss.v048.i02" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">A structural after measurement approach to structural equation modeling</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rosseel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">W</forename><surname>Loh</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000503</idno>
+		<ptr target="https://doi.org/10.1037/met0000503" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<author>
+			<persName><forename type="first">Rstudio</forename><surname>Team</surname></persName>
+		</author>
+		<ptr target="http://www.rstudio.com/" />
+		<title level="m">RStudio: Integrated Development Environment for R</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Assessing the Hypothesis of Measurement Invariance in the Context of Large-Scale International Surveys</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rutkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Svetina</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0013164413498257</idno>
+		<ptr target="https://doi.org/10.1177/0013164413498257" />
+	</analytic>
+	<monogr>
+		<title level="j">Educational and Psychological Measurement</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="31" to="57" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Lewis</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1073191117711020</idno>
+		<ptr target="https://doi.org/10.1177/1073191117711020" />
+	</analytic>
+	<monogr>
+		<title level="m">The Impact of Partial Factorial Invariance on Cross-Group Comparisons</title>
+		<imprint>
+			<publisher>SAGE Publications Inc</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="1217" to="1233" />
+		</imprint>
+	</monogr>
+	<note>Publisher</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Multiple-Group Invariance with Categorical Outcomes Using Updated Guidelines</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Svetina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rutkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rutkowski</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>An Illustration Using</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">A Review and Synthesis of the Measurement Invariance Literature: Suggestions, Practices, and Recommendations for Organizational Research</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Vandenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Lance</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/109442810031002</idno>
+		<ptr target="https://doi.org/10.1177/109442810031002" />
+	</analytic>
+	<monogr>
+		<title level="j">Organizational Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="4" to="70" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Stepwise estimation of latent variable models: An overview of approaches</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1471082X251355693</idno>
+		<ptr target="https://doi.org/10.1177/1471082X251355693" />
+	</analytic>
+	<monogr>
+		<title level="m">Statistical Modelling, 1471082X251355693</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note>Publisher: SAGE Publications India</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Structural Equation Modeling: Mixture Models</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Vermunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Magidson</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/0470013192.bsa600</idno>
+		<ptr target="https://doi.org/10.1002/0470013192.bsa600" />
+	</analytic>
+	<monogr>
+		<title level="m">Encyclopedia of Statistics in Behavioral Science</title>
+		<editor>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Everitt</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Howell</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2005-10">2005, October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Identification of Confirmatory Factor Analysis Models of Different Levels of Invariance for Ordered Categorical Outcomes</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Estabrook</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11336-016-9506-0</idno>
+		<ptr target="https://doi.org/10.1007/s11336-016-9506-0" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1014" to="1045" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<author>
+			<persName><forename type="first">F</forename><surname>Yang-Wallentin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">G</forename><surname>Jöreskog</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Luo</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2010.489003</idno>
+		<ptr target="https://doi.org/10.1080/10705511.2010.489003" />
+	</analytic>
+	<monogr>
+		<title level="m">Confirmatory Factor Analysis of Ordinal Variables With Misspecified Models</title>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="392" to="423" />
+		</imprint>
+	</monogr>
+	<note>Publisher: Routledge _eprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">A meta-analysis of the relations between parental support and children&apos;s career self-efficacy in South Korea and the US</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Youn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Napolitano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rounds</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jvb.2022.103839</idno>
+		<ptr target="https://doi.org/10.1016/j.jvb.2022.103839" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vocational Behavior</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="page">103839</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

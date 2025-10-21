@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Modeling the Ballot: Agent-Based Insights into Representation, Coalitions, and Welfare</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Devansh</forename><surname>Garg</surname></persName>
+							<email>devanshg.iitm@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Indian Institute of Technology</orgName>
+								<address>
+									<settlement>Mandi</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Modeling the Ballot: Agent-Based Insights into Representation, Coalitions, and Welfare</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">FCCE261495143B3C5EC7BAAB066DDF95</idno>
+					<idno type="DOI">10.18564/jasss.xxxx</idno>
+					<note type="submission">Received: dd-mmm-yyyy Accepted: dd-mmm-yyyy Submitted to Journal of Artificial Societies and Social Simulation (JASSS) for peer review.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T13:26+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Agent-Based Model, Reinforcement Learning, Electoral Systems, Collective Decision Making, Coalition, Social Networks Strategic Voting Indicators 5.2 We measure strategic behavior through preference-outcome alignment (see Appendix B, equation 4), strategic voting rates (see Appendix B, equation 5), and vote concentration (Herfindahl-Hirschman Index</term>
+					<term>see Appendix B, equation 6). See Appendix B, subsection B.3 for detailed metric definitions and interpretation guidelines. Coalition Analysis Metrics Formation Success and Stability 5.3 Coalition analysis includes formation rates (see Appendix B, equation 7), average coalition size (see Appendix B, equation 8), stability scores (see Appendix B, equation 9), payment efficiency (see Appendix B, equation 10), and budget utilization (see Appendix B, equation 11). See Appendix B, subsection B.4 for detailed coalition metric definitions Network Analysis Metrics Structural Metrics 5.5 Network analysis includes structural metrics (density, clustering, path length</term>
+					<term>see Appendix B, equations 20-22) and behavioral effects (social influence, homophily</term>
+					<term>see Appendix B, equations 23-24). See Appendix B, subsection B.6 for detailed network metric definitions. Deliberation Quality Metrics 5.6 We measure deliberation quality through consensus scores (see Appendix B, equation 25), participation rates (see Appendix B, equation 26), and preference convergence (see Appendix B, equation 27). See Appendix B, subsection B.7 for detailed deliberation metric definitions</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We present an agent-based simulation of democratic decision-making in which autonomous learning agents interact under alternative electoral institutions and social structures. The model integrates six voting mechanisms (Plurality, Approval, Borda, IRV, STV, PR with D'Hondt and Sainte-Laguë divisors), a multiround coalition protocol with binding/non-binding contracts and side-payments, turnout and ballot-error realism, and networked interaction on Erdös-Rënyi, Barabäsi-Albert, and Watts-Strogatz graphs with homophily. Agents use reinforcement learning algorithms (PPO, A2C, A3C) with a social-welfare objective based on the inequality-averse Atkinson function, augmented by fairness regularizers (representation loss, participation fairness, envy-freeness proxy) and explicit participation costs. We report diagnostics-rich evaluations covering representation and proportionality (e.g., Gallagher, Loosemore-Hanby), fragmentation (effective number of parties), strategic behavior, coalition stability, and welfare/inequality. Classic regularities emerge-e.g., two-bloc competition under Plurality (Duverger-consistent), greater proportionality and fragmentation under PR, and differential seat allocation under D'Hondt vs Sainte-Laguë-providing face validity. The framework delivers a reproducible virtual laboratory for mechanism comparison, institutional design, and welfare-fairness trade-off analysis at population scale.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction Problem Statement and Background</head><p>1.1 Electoral institutions structure how individual preferences become collective outcomes. A large comparative politics and social choice literature demonstrates that changing the voting rule alters representation, party system fragmentation, and the translation of votes into seats <ref type="bibr" target="#b18">(Duverger 1954;</ref><ref type="bibr" target="#b14">Cox 1997;</ref><ref type="bibr" target="#b49">Taagepera &amp; Shugart 1989;</ref><ref type="bibr" target="#b25">Gallagher 1991;</ref><ref type="bibr" target="#b36">Loosemore &amp; Hanby 1971)</ref>. Single-member plurality systems tend toward two-bloc competition (often described as Duverger's Law) <ref type="bibr" target="#b18">(Duverger 1954;</ref><ref type="bibr" target="#b14">Cox 1997)</ref>. Proportional representation (PR) mechanisms reduce disproportionality and sustain multi-party competition <ref type="bibr" target="#b49">(Taagepera &amp; Shugart 1989;</ref><ref type="bibr" target="#b25">Gallagher 1991)</ref>. Even within PR, divisor methods differ. D'Hondt typically advantages larger parties, while Sainte-Laguë tends to favor smaller parties, affecting fragmentation and proportionality <ref type="bibr" target="#b49">(Taagepera &amp; Shugart 1989;</ref><ref type="bibr">Lijphart 1999)</ref>.</p><p>Realistic Democratic Processes and Social Factors 1.2 Beyond institutional rules, realistic democratic processes include turnout decisions, ballot errors, social influence, and post-electoral coalition bargaining. These factors meaningfully affect outcomes, especially in close contests or when participation is uneven across groups. Social networks shape information flow and coordination <ref type="bibr" target="#b20">(Erdős &amp; Rényi 1959;</ref><ref type="bibr" target="#b51">Watts &amp; Strogatz 1998;</ref><ref type="bibr" target="#b3">Barabási &amp; Albert 1999)</ref>. Turnout interacts with costs and perceived stakes. Ballots contain human errors. Parties (or blocs of actors) negotiate coalitions that govern <ref type="bibr" target="#b44">(Riker 1962)</ref>. Each element complicates the mapping from preferences to policy and may amplify or dampen the effects of electoral rules.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Agent-Based Modeling and Learning Approaches</head><p>1.3 Agent-based modeling (ABM) provides a way to study these interacting components in a controlled, generative setting <ref type="bibr" target="#b19">(Epstein 2006;</ref><ref type="bibr" target="#b29">Grimm et al. 2006</ref><ref type="bibr" target="#b27">Grimm et al. , 2010))</ref>. By specifying micro-level behavior and interaction topologies, ABMs generate macro-level regularities comparable to empirical patterns. In parallel, advances in reinforcement learning (RL)-including proximal policy optimization (PPO) <ref type="bibr" target="#b45">(Schulman et al. 2017</ref>) and advantage actor-critic (A2C/A3C) <ref type="bibr" target="#b43">(Mnih et al. 2016</ref>)-enable agents to adapt strategically to institutional incentives and social environments. For normative assessment, social welfare functions, such as the inequality-averse Atkinson measure <ref type="bibr" target="#b0">(Atkinson 1970)</ref>, offer principled criteria for evaluating collective outcomes alongside representation and fairness diagnostics from social choice <ref type="bibr" target="#b0">(Arrow 1951;</ref><ref type="bibr" target="#b25">Gallagher 1991;</ref><ref type="bibr" target="#b36">Loosemore &amp; Hanby 1971;</ref><ref type="bibr" target="#b34">Laakso &amp; Taagepera 1979;</ref><ref type="bibr" target="#b46">Sen 1970)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Our Approach and Model Design</head><p>1.4 This paper introduces a unified, reproducible agent-based model (ABM) of repeated elections in which learning agents interact under six widely used voting mechanisms (Plurality, Approval <ref type="bibr" target="#b9">(Brams &amp; Fishburn 1978)</ref>, Borda, IRV, STV <ref type="bibr" target="#b50">(Tideman 1995)</ref>, and proportional representation (PR) with D'Hondt and Sainte-Laguë (modified, first divisor = 1.4) divisors implemented as DHondtPRVoting and SainteLaguePRVoting). The model embeds: (i) turnout and ballot-error realism; (ii) two-round coalition bargaining with binding and non-binding contracts and side-payments; and (iii) networked interaction over Erdös-Rënyi, Watts-Strogatz, and Barabäsi-Albert topologies with homophily. We train agents using proximal policy optimization (PPO), advantage actorcritic (A2C), and asynchronous advantage actor-critic (A3C) <ref type="bibr" target="#b45">(Schulman et al. 2017;</ref><ref type="bibr" target="#b43">Mnih et al. 2016)</ref> to optimize an Atkinson social welfare objective (Atkinson 1970) augmented with fairness regularizers (representation loss, participation fairness, envy-freeness proxy) and explicit participation costs. The analysis reports representation and proportionality measures (e.g., Gallagher and Loosemore-Hanby indices; see Appendix B, equations 1-2), fragmentation (effective number of parties <ref type="bibr" target="#b34">(Laakso &amp; Taagepera 1979)</ref>; see Appendix B, equation 3), strategic behavior (see Appendix B, equations 4-6), coalition stability (see Appendix B, equations 7-11), and wel-Figure <ref type="figure" target="#fig_8">1</ref>: Agent-based simulation architecture and workflow. The model initializes four core components (agents with preferences and learning capabilities, voting mechanisms, coalition protocols, and network structures), trains agents through reinforcement learning, then executes repeated episodes where agents update preferences, participate in voting, receive rewards based on outcomes, and adapt policies. Data collection and analysis occur in parallel to generate insights on electoral system performance. under plurality voting <ref type="bibr" target="#b18">(Duverger 1954;</ref><ref type="bibr" target="#b14">Cox 1997)</ref>; greater proportionality and fragmentation under proportional representation <ref type="bibr" target="#b49">(Taagepera &amp; Shugart 1989;</ref><ref type="bibr" target="#b25">Gallagher 1991)</ref>; differential seat allocation between D'Hondt and Sainte-Laguë divisor methods (Lijphart 1999); network homophily effects on opinion clustering <ref type="bibr" target="#b51">(Watts &amp; Strogatz 1998;</ref><ref type="bibr" target="#b3">Barabási &amp; Albert 1999)</ref>; and coalition stability patterns consistent with bargaining theory <ref type="bibr" target="#b44">(Riker 1962;</ref><ref type="bibr" target="#b6">Battaglini &amp; Palfrey 2021)</ref>.</p><p>Entities, State Variables, and Scales</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.3</head><p>The model contains three entity types:</p><p>• Agents: Voters with 8-dimensional policy preferences covering economic, social, environmental, foreign, security, infrastructure, technology, and cultural policies. Additional state variables include salience weights, turnout propensity, budget for side payments, and learning parameters</p><p>• Networks: Topology type (Erdös-Rënyi, Barabäsi-Albert, Watts-Strogatz), edge weights, and homophily settings</p><p>• Electoral Mechanisms: Type (Plurality, Approval, Borda, IRV, STV, proportional representation), parameters (seats, quota, divisor method), ballot error rate, and district configuration</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.4</head><p>The spatial scale is abstract (no physical space), with temporal scale of discrete time steps. Population scales range from small (10 agents, 50 episodes) to medium (200 agents, 50 episodes) to large (300 agents, 800 episodes), with systematic parameter variation across 68+ different experimental conditions.</p><p>Process Overview and Scheduling 3.5 As illustrated in Figure <ref type="figure" target="#fig_8">1</ref>, each episode consists of initialization followed by repeated time steps. The simulation follows a logical progression where agents first engage in deliberation and coalition formation, then participate in voting, receive rewards based on outcomes, and adapt their strategies through reinforcement learning. This cycle enables agents to discover optimal voting and coalition strategies while the system evolves through preference drift and network rewiring. See Appendix A, subsection A.1.3 for detailed process specifications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Design Concepts</head><p>Emergence 3.6 Key emergent phenomena include party formation through coalition dynamics, strategic voting patterns, welfareinequality trade-offs, network clustering based on preferences, and institutional evolution toward stable governance structures.</p><p>Adaptation 3.7 Agents adapt through reinforcement learning (PPO, A2C, A3C) to optimize voting and coalition strategies. Preferences evolve via AR(1) process based on outcomes and interactions. Network connections evolve through homophily rewiring based on preference similarity.</p><p>Objectives 3.8 Individual agents maximize utility from policy outcomes, coalition benefits, and network position. Individual utility follows u i (p) = exp(-∥x i -p∥ 2 ) where x i ∈ [0, 1] 8 is agent i's preference vector and p is the implemented policy (see Appendix B, equation 12). The collective objective is to maximize Atkinson social welfare with inequality aversion parameter ϵ = 0.3 (see Appendix B, equation 13), subject to fairness regularizers (representation loss, participation fairness, envy-freeness proxy; see <ref type="bibr">Appendix B,</ref>. The interaction between individual and collective objectives creates a multi-level optimization problem: agents learn to balance personal gains against collective welfare, with the Atkinson parameter ϵ controlling the trade-off between efficiency and equality. The reward function combines individual utilities, social welfare components, coalition bonuses, democratic participation rewards, and fairness penalties (see Appendix B, equation 14).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Learning</head><p>3.9 Agents use PPO, A2C, and A3C algorithms to learn optimal strategies. Policy networks map observations to action probabilities, while value functions estimate expected returns. Learning occurs through on-policy rollouts with mini-batch gradient updates and optional curriculum learning; we do not use experience replay for these on-policy algorithms. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.20">Network Dynamics:</head><p>Homophily rewiring based on preference similarity with configurable network topologies. The homophily mechanism implements basic preference-based clustering, following established network evolution models <ref type="bibr" target="#b51">(Watts &amp; Strogatz 1998;</ref><ref type="bibr" target="#b3">Barabási &amp; Albert 1999)</ref>. The rewiring strength parameter λ ∈ [0, 1] controls the intensity of preference-based clustering, with similarity computed as S ij = -∥x i -x j ∥ 2 where x i ∈ [0, 1] 8 are preference vectors. The mechanism applies preference-based rewiring to increase connections between agents with similar preferences. See Appendix A, subsection A.3.3 for implementation details. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Parameter Values</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.21">Population</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.22">Network Parameters:</head><p>• λ ∈ {0.0, 0.2, 0.3, 0.4}: Homophily strength (across configurations)</p><p>• p = 0.05: Connection probability (ER networks, fixed)</p><p>• m = 3: Preferential attachment parameter (BA networks, fixed)</p><p>• k ws = 6: Average degree (WS networks, fixed)</p><p>• β ws = 0.15: Rewiring probability (WS networks, fixed)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.23">Learning Parameters:</head><p>• α P P O = 2 × 10 -4 : Learning rate for PPO (flagship config)</p><p>• α A2C = α A3C = 3 × 10 -4 : Learning rate for A2C/A3C</p><p>• ϵ P P O = 0.15: PPO clip ratio (flagship config)</p><p>• β: Entropy coefficient annealed from 0.02 to 0.005 over 1,000 steps (ranges tuned per configuration)</p><p>• γ = 0.98: Discount factor (comprehensive sweep)</p><p>• γ = 0.99: Discount factor (flagship config)  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.24">Welfare</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metrics and Analysis</head><p>Voting Analysis Metrics </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Representation and Proportionality</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.11</head><p>We focus on three core metrics: (1) Gallagher Index <ref type="bibr" target="#b25">(Gallagher 1991)</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis Pipeline and Visualization</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.14</head><p>The analysis pipeline implements automated data aggregation, metric computation, and quality control procedures. We employ multi-level analysis examining individual, mechanism, and system-level effects, with comprehensive interaction analysis and robustness testing. See Appendix D, subsection D.4 for detailed data processing workflow and Appendix D, subsection D.7 for statistical analysis framework.</p><p>Validation and Cross-Reference 5.15 Model validity is verified through theoretical validation (social choice axioms, empirical benchmarks), computational validation (algorithm correctness, performance benchmarks), and cross-reference with established literature. See Appendix D, subsection D.6 for detailed validation procedures and theoretical cross-references.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Social-Welfare Learning</head><p>Welfare Convergence Across Mechanisms 6.1 Our social-welfare reinforcement learning framework successfully optimizes collective decision-making across all voting mechanisms. Figure <ref type="figure">3</ref> shows reward versus episodes for all seven voting mechanisms.</p><p>Figure <ref type="figure">3</ref>: Reward vs episodes for all voting mechanisms. PR mechanisms show faster convergence and higher final reward than plurality and IRV. <ref type="table" target="#tab_12">2</ref> presents the final welfare metrics by mechanism, demonstrating significant performance differences across voting systems. 6.3 ANOVA analysis reveals highly significant differences in welfare across mechanisms (F = 42.603, p &lt; 0.001). PR mechanisms achieve the highest welfare (PR_DHondt: 0.419 ± 0.015, PR_SainteLague: 0.414 ± 0.017), followed closely by STV (0.414 ± 0.010), while plurality and IRV show substantially lower welfare performance (0.335 ± 0.003 and 0.332 ± 0.008, respectively).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Table</head><p>Inequality-Welfare Trade-off 6.4 The relationship between welfare maximization and inequality reduction reveals important trade-offs across voting mechanisms. Figure <ref type="figure">4</ref> shows the scatter plot of Gini coefficient versus average welfare across all configurations.</p><p>Figure <ref type="figure">4</ref>: Social welfare analysis over episodes with inequality dynamics and welfare-inequality trade-off. Panels show total welfare, Gini coefficient, Pareto efficiency, and a scatter of welfare versus inequality for this experiment. <ref type="table" target="#tab_13">3</ref> presents inequality metrics by mechanism, highlighting the mechanisms that best balance welfare and equality objectives. 6.6 PR mechanisms demonstrate superior performance in balancing welfare maximization with inequality reduction, achieving both the highest welfare (PR_DHondt: 0.419, PR_SainteLague: 0.414) and lowest inequality (Gini: 0.097 and 0.099 respectively). STV achieves comparable welfare (0.414) with slightly higher inequality (0.102), while plurality and IRV show both lower welfare and higher inequality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Table</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Voting System Comparisons</head><p>Vote Distribution Patterns 6.7 Voting mechanisms exhibit distinct patterns in vote distribution and concentration. Figure <ref type="figure" target="#fig_3">5</ref> shows vote distribution metrics by mechanism (entropy, inequality/Gini, concentration, and winner diversity), indicating the degree of vote fragmentation and concentration. <ref type="table" target="#tab_14">4</ref> presents vote distribution metrics, revealing which mechanisms produce the most and least concentrated voting patterns.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.8">Table</head><p>6.9 PR mechanisms produce the most fragmented vote patterns, while plurality voting shows the most concentrated voting behavior, consistent with theoretical expectations. The observed high vote entropy values (4.69  for PR mechanisms, 4.56 for plurality) reflect the large candidate pool in our 200-agent simulations, where votes are distributed across many candidates rather than concentrated on a few viable options. This high entropy coexists with normal strategic behavior because agents engage in strategic voting within their local neighborhoods and coalitions, but the overall distribution remains fragmented due to the population scale and multiparty coalition formation dynamics.</p><p>Figure <ref type="figure">6</ref>: Cross-configuration comparison by voting mechanism (sweep_N200). Bars show mean ± SD across configurations for average welfare, inequality (Gini), and utilitarian efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Representation Diversity</head><p>6.10 Vote fragmentation also evolves over time across mechanisms. Figure <ref type="figure" target="#fig_4">7</ref> shows vote entropy over time by mechanism.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.11</head><p>Table <ref type="table" target="#tab_15">5</ref> presents representation diversity metrics, identifying mechanisms that maximize representation.</p><p>6.12 PR mechanisms maximize representation diversity, supporting multiple effective parties, while plurality voting exhibits the expected tendency toward two-party competition.  Figure <ref type="figure">8</ref> shows strategic voting rate trajectories.</p><p>Figure <ref type="figure">8</ref>: Strategic voting rate trajectories across mechanisms. Plurality voting shows highest strategic voting rates, while PR mechanisms exhibit lower strategic incentives.</p><p>6.14 Table <ref type="table" target="#tab_16">6</ref> presents final strategic voting rates and preference alignment scores. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Network Effects</head><p>Impact on Welfare 6.16 Network topology exhibits limited influence on collective welfare. Cross-configuration results show welfare is highest for no-network and ER conditions, with BA and WS slightly lower but differences not statistically significant (ANOVA F = 0.655, p = 0.583).</p><p>6.17 Table <ref type="table" target="#tab_17">7</ref> presents welfare statistics for each network type. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.18</head><p>No network (None) and random (ER) networks achieve the highest collective welfare (both 0.395 ± 0.040), followed by scale-free (BA) networks (0.390 ± 0.040). Small-world (WS) networks show the lowest welfare performance (0.380 ± 0.035). However, network effects on welfare are not statistically significant (F = 0.655, p = 0.583).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Impact on Voting Behavior</head><p>6.19 Small-world networks facilitate better voting coordination compared to random networks, while scale-free networks show mixed effects depending on the voting mechanism.   Interaction with Voting Mechanisms 6.24 We summarize overall voting mechanism performance across key metrics. Figure <ref type="figure" target="#fig_8">12</ref> shows a heatmap of performance by mechanism.</p><p>Figure <ref type="figure" target="#fig_8">12</ref>: Cross-configuration performance heatmap across voting mechanisms (sweep_N200). Cells show cross-config means for average/median welfare, inequality (Gini, Theil, Atkinson), and utilitarian efficiency by mechanism.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.25</head><p>The performance heatmap confirms the strong overall performance of proportional representation mechanisms relative to single-winner systems across welfare, inequality, and representation metrics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Synthesis and Rankings</head><p>Overall Mechanism Rankings 6.26 Table <ref type="table" target="#tab_18">8</ref> presents rank-ordered mechanisms across key performance dimensions. 6.29 No network structure (None) ranks highest for welfare optimization, followed closely by random (ER) networks, while small-world (WS) networks show the weakest performance across most dimensions. However, these differences are not statistically significant (F = 0.655, p = 0.583).</p><p>Best Parameter Combinations 6.30 Table <ref type="table" target="#tab_20">10</ref> identifies optimal mechanism-network combinations for different objectives. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.33</head><p>Figure <ref type="figure" target="#fig_8">13</ref> shows effect size forest plot for mechanism comparisons.</p><p>Figure <ref type="figure" target="#fig_8">13</ref>: Effect size forest plot versus plurality across voting mechanisms (Hedges' g with 95% CI) for average welfare (positive favors mechanism) and inequality (Gini; sign inverted so positive favors mechanism). Computed from cross-configuration means, standard deviations, and counts in sweep_N200.</p><p>6.34 Mechanism comparisons show highly significant differences in both welfare (F = 42.603, p &lt; 0.001) and inequality (F = 34.804, p &lt; 0.001), confirming the substantial impact of voting system choice on collective outcomes. PR mechanisms demonstrate clear superiority in both dimensions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>7.1 We synthesize findings across the experiment and cross-configuration analyses to discuss institutional implications, robustness, and limitations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Institutional Implications</head><p>7.2 Proportional representation consistently outperforms single-winner systems on efficiency and equality. Crossconfiguration means show PR_DHondt achieves the highest average welfare (0.419 ± 0.015) with the lowest inequality (Gini 0.097 ± 0.007), followed closely by PR_SainteLague (0.414 ± 0.017; Gini 0.099 ± 0.008). STV performs comparably on welfare (0.414 ± 0.010) with slightly higher inequality (0.102 ± 0.007). Plurality and IRV deliver substantially lower welfare (0.335 ± 0.003 and 0.332 ± 0.008) and higher inequality (0.138 and 0.139). These patterns align with established theory on proportionality and fragmentation <ref type="bibr" target="#b49">(Taagepera &amp; Shugart 1989;</ref><ref type="bibr" target="#b25">Gallagher 1991;</ref><ref type="bibr">Lijphart 1999</ref>) and with our mechanism-level diagnostics of vote entropy, concentration, and winner diversity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7.3</head><p>These results have implications for democratic theory and practice. The consistent superiority of proportional representation across welfare and equality metrics suggests that concerns about PR systems leading to inefficient governance may be overstated when strategic learning is considered. This challenges the traditional efficiency-representation trade-off in democratic theory, suggesting that Arrow's impossibility constraints <ref type="bibr" target="#b0">(Arrow 1951</ref>) may be less binding in adaptive institutional settings where agents learn strategies over time. The negligible impact of network topology challenges assumptions about the primacy of social influence in electoral outcomes, indicating that institutional design may be more fundamental than social structure in determining collective welfare.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7.4</head><p>Network topology has limited effect on welfare in our setting. ANOVA across BA3, ER005, None, and WS6b015 yields no significant differences (F = 0.655, p = 0.583). Means rank as None ≈ ER005 &gt; BA3 &gt; WS, but confidence intervals overlap. This suggests that, for the modeled decision environment and learning horizon, institutional choice (mechanism) dominates structural social influence (topology) for aggregate welfare.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7.5</head><p>Coalition protocol settings have negligible welfare impact. Turning coalition sharing on vs. off yields a small and statistically insignificant difference in average welfare (0.392 vs. 0.387; t = 0.237, p = 0.814). PR variants show expected seat-vote proportionality properties, as measured by the Gallagher disproportionality index <ref type="bibr" target="#b25">(Gallagher 1991)</ref>; see Appendix B and the supplementary replication files.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Robustness and Validation</head><p>7.6 Our results are robust across configurations and seeds in sweep_N200. Mechanism-level differences are highly significant for welfare (F = 42.603, p &lt; 0.001) and inequality (F = 34.804, p &lt; 0.001). Vote-distribution metrics (entropy, Gini, concentration) and the effective number of parties show coherent mechanistic signatures: PR maximizes fragmentation and representation diversity; plurality concentrates votes, consistent with Duvergerregularities <ref type="bibr" target="#b18">(Duverger 1954;</ref><ref type="bibr" target="#b14">Cox 1997)</ref>. For PR systems, divisor methods produce the expected seat allocations and disproportionality patterns <ref type="bibr" target="#b49">(Taagepera &amp; Shugart 1989;</ref><ref type="bibr" target="#b25">Gallagher 1991;</ref><ref type="bibr">Lijphart 1999)</ref>. Unexpected Findings and Theoretical Implications 7.8 Our results reveal several counterintuitive patterns that warrant theoretical reflection. First, the minimal impact of network topology contrasts with extensive literature on social influence in voting behavior <ref type="bibr" target="#b24">(Fowler 2006;</ref><ref type="bibr" target="#b41">McPherson et al. 2001)</ref>. When agents learn strategically over repeated elections, institutional incentives appear to dominate network structure in shaping aggregate welfare. This has broader implications for mechanism design theory: the standard social choice focus on preference aggregation rules may be more fundamental than recent emphasis on information networks and social influence in determining collective outcomes. Second, the narrow welfare gap between D'Hondt and Sainte-Laguë (average welfare 0.419 vs. 0.414; ∆ ≈ 0.004) indicates that divisor-method choice may be less consequential for utilitarian outcomes once strategic adaptation is accounted for, even while representation (e.g., disproportionality) differs slightly. Third, STV achieves welfare comparable to PR with marginally higher inequality, consistent with its transfer mechanics that preserve preference intensity but can introduce modest concentration in representative profiles.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations and Scope</head><p>7.9 These findings refine computational social choice theory by highlighting how learning dynamics mediate classic trade-offs between proportionality and efficiency <ref type="bibr" target="#b10">(Brandt et al. 2016;</ref><ref type="bibr" target="#b46">Sen 1970)</ref>. They suggest that proportional institutions can remain efficiency-enhancing in adaptive electorates, strengthening normative arguments for representation-enhancing rules (Lijphart 1999).</p><p>Policy and Design Guidance 7.10 For democratic reformers weighing electoral system choices, our findings provide clear guidance. When both efficiency and equality matter, proportional representation-particularly D'Hondt-delivers superior outcomes.</p><p>For contexts where minimizing vote-seat disproportionality is the primary concern, Sainte-Laguë achieves this while maintaining high welfare (see Appendix B, Gallagher index, Eq. B.1). Importantly, our null results on network topology suggest that costly interventions aimed at reshaping social networks may be less effective than institutional reforms. This has practical implications for democratic assistance programs and constitutional design processes, where limited resources should prioritize electoral system choice over social network interventions.  • Policy Learning: Agents learn optimal voting and coalition strategies using PPO, A2C, A3C</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>• • Information Diffusion: Information spread through social networks </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.27">Mechanism Initialization:</head><p>• Set up voting mechanism parameters (seats, quota, divisor method)</p><p>• Initialize coalition protocol settings (rounds, contract types, enforcement)</p><p>• Configure reward and cost functions (welfare weights, fairness regularizers)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3.2 Input Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.28">External Data Assimilation:</head><p>The model can assimilate external preference data through data assimilation for state estimation and parameter refinement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.29">Network Import:</head><p>Network structures can be imported from external sources.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.30">Configuration Loading:</head><p>Experimental parameters are loaded from YAML files defining systematic sweeps.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3.3 Submodels</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.31">Voting Mechanisms:</head><p>• Plurality: Single-winner elections with optional abstention</p><p>• Approval: Multi-candidate approval with learnable thresholds (θ ∈ [0.0, 0.6])</p><p>• Borda: Ranked-choice with point allocation [n -1, n -2, . . . , 0]</p><p>• IRV: Instant-runoff with elimination and vote transfer Acceptance is determined by configurable thresholds that consider preference similarity using Euclidean distance in policy space and network-mediated proposals. The implementation provides a functional framework for coalition formation while maintaining computational efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.34">Reinforcement Learning:</head><p>• PPO: Policy gradient method with clipped objective function and multiple epochs</p><p>• A2C: Actor-critic method with advantage estimation and policy/value function updates</p><p>• A3C: Asynchronous version with multiple workers and global updates</p><p>• Curriculum Learning: Progressive difficulty increase from simple to complex scenarios</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.35">Network Dynamics:</head><p>• Homophily Rewiring: Network edges are rewired to increase connections between agents with similar preferences</p><p>• Edge Weight Dynamics: Connection strengths evolve based on interaction success and preference similarity</p><p>• Network Metrics: Continuous calculation of density, clustering, path length, and centrality measures</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.36">Homophily Implementation Specification:</head><p>The homophily mechanism implements basic preference-based clustering, following established network evolution models <ref type="bibr" target="#b51">(Watts &amp; Strogatz 1998;</ref><ref type="bibr" target="#b3">Barabási &amp; Albert 1999)</ref>. The algorithm applies preference-based rewiring to increase connections between agents with similar preferences. Similarity is computed as S ij = -∥x i -x j ∥ 2 where x i are 8-dimensional preference vectors. The rewiring process maintains network connectivity while increasing preference-based clustering. The strength parameter controls the intensity of homophily effects, with values ranging from 0 (no rewiring) to 1 (maximum rewiring). This implementation provides a functional framework for preference-based network evolution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3.4 Parameter Values</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.37">Population Parameters:</head><p>• Small scale: 5 agents, 10 episodes, 1 seed</p><p>• Medium scale: 200 agents, 50 episodes, 1 seed (comprehensive sweep)</p><p>• Large scale: 300 agents, 800 episodes, 1 seed (flagship realistic run)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.38">Learning Parameters:</head><p>• Learning rate: α ∈ [0.00005, 0.0005]</p><p>• Discount factor: γ ∈ [0.97, 0.99]</p><p>• Entropy coefficient: 0.02 (annealing to 0.005 over 1,000 steps)</p><p>• GAE lambda: 0.95 9.39 Network Parameters: • Voting mechanisms (6 types)</p><formula xml:id="formula_0">• ER: p ∈ [0.01, 0.1] • BA: m ∈ [2, 8] • WS: k ∈ [4, 12], β ∈ [0.1, 0.3] • Homophily: p h ∈ [0, 0.6]</formula><p>• Network topologies (3 types with homophily)</p><p>• Training configurations (shared/individual policies with centralized critics)</p><p>9.43 Flagship Realistic Run: 300 agents, 800 episodes focusing on realistic PR scenarios with enhanced coalition dynamics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.44">Statistical Analysis:</head><p>Non-parametric methods (Kruskal-Wallis, Mann-Whitney U) with bootstrap confidence intervals and effect size analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.45">Validation:</head><p>Comparison with theoretical predictions <ref type="bibr">(Duverger's Law, proportionality)</ref>  • Social Choice Axioms <ref type="bibr" target="#b0">(Arrow 1951;</ref><ref type="bibr" target="#b44">Moulin 1988</ref>): Verification that implemented mechanisms satisfy theoretical properties:</p><p>- </p><formula xml:id="formula_1">G = 1 2 n i=1 (v i -s i ) 2</formula><p>(1) 10.7 where v i and s i are vote and seat shares for party i, respectively. Lower values indicate better proportionality.</p><p>Loosemore-Hanby Index 10.8</p><formula xml:id="formula_2">LH = 1 2 n i=1 |v i -s i | (2)</formula><p>10.9 Alternative disproportionality measure correlating strongly with Gallagher index but more sensitive to small disproportionalities. 10.17 Herfindahl-Hirschman Index where v i are vote shares. Inversely correlated with ENP. The index was originally developed by Herfindahl <ref type="bibr" target="#b32">(Herfindahl 1950</ref>) and later popularized by Hirschman (Hirschman 1964).  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Effective</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.4 Coalition Analysis Metrics</head><formula xml:id="formula_3">Stability = 1 C C c=1 1 |coalition c | i,j∈coalitionc (1 -∥x i -x j ∥ 2 ) (9)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.5 Social Welfare and Fairness Metrics</head><p>Individual Utility Function 10.28</p><formula xml:id="formula_4">u i (p) = exp(-∥x i -p∥ 2 ) (12)</formula><p>10.29 Individual utility function where x i ∈ [0, 1] 8 is agent i's preference vector, p ∈ [0, 1] 8 is the implemented policy, and ∥ • ∥ 2 is the Euclidean norm. Utility decreases exponentially with distance from ideal point.</p><p>Atkinson Welfare 10.30</p><formula xml:id="formula_5">W = 1 N N i=1 (u i -min(u i ) + ϵ) 1-ϵ 1 1-ϵ (13)</formula><p>10.31 Inequality-averse social welfare function where u i are individual utilities, ϵ = 0.3 is the inequality aversion parameter, and utilities are normalized to be positive. For ϵ = 1.0, the function uses the geometric mean:</p><formula xml:id="formula_6">W = exp( 1 N N i=1 log(u i )).</formula><p>Social Welfare Reward Function 10.32 </p><formula xml:id="formula_7">R i = u i • α + W N • β + B i • γ + D i • δ -P i • ϵ -C i • ζ<label>(</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Welfare Gini</head><p>10.34</p><formula xml:id="formula_8">Gini = n + 1 -2 n i=1 i j=1 xj n j=1 xj n (15)</formula><p>10.35 Gini coefficient for welfare inequality where x j are sorted utility values in ascending order and n is the number of agents. This measures the inequality in welfare distribution using the standard Gini coefficient formula.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Welfare Efficiency</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.36</head><p>Ef f iciency = W actual W optimal (16) 10.37 Ratio of actual to optimal welfare where W optimal is welfare under perfect coordination.</p><p>Envy-Freeness Proxy 10.38</p><formula xml:id="formula_9">EnvyF reeRate = 1 N N i=1 max(0, max j u i (p * j ) -u i (p)) (17)</formula><p>10.39 Average justified envy gap across agents where p is the implemented policy, p * j is agent j's ideal policy (8dimensional preference vector), and u i (p * j ) is agent i's utility under agent j's ideal policy. A value of 0 indicates envy-freeness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Representation Loss</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.40</head><p>RepLoss = ∥p outcome -median({x i } N i=1 )∥ 2 (18) 10.41 Euclidean distance between implemented policy outcome p outcome and the median of all agent preference vectors x i ∈ [0, 1] 8 . This measures how far the policy outcome deviates from the population's median preferences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participation Fairness</head><p>10.42</p><formula xml:id="formula_10">P articipationF airness = Var({c i } N i=1 ) (19)</formula><p>10.43 Variance in participation costs where c i ∈ {0, 1} indicates whether agent i participated in voting (1) or abstained (0). This measures inequality in participation rates across the population.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.6 Network Analysis Metrics</head><p>Network Density 10.44</p><formula xml:id="formula_11">Density = 2|E| N (N -1) (20)</formula><p>10.45 Ratio of actual to possible connections where |E| is the number of edges in the network and N is the number of agents. This measures the sparsity of the social network.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Average Clustering</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.46</head><formula xml:id="formula_12">Clustering = 1 N N i=1 C i (21)</formula><p>10.47 Average local clustering coefficient where</p><formula xml:id="formula_13">C i = 2Ti ki(ki-1)</formula><p>is the local clustering coefficient of node i, T i is the number of triangles containing node i, and k i is the degree of node i. This measures the tendency of neighbors to be connected to each other.</p><p>Average Path Length 10.48</p><formula xml:id="formula_14">P athLength = 1 N (N -1) i̸ =j d ij (22)</formula><p>10.49 Mean shortest path length between all pairs of nodes where d ij is the shortest path length (number of edges) between nodes i and j in the network. This measures the average distance between agents in the social network.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Social Influence</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.50</head><p>SocialInf luence = Corr(behavior i ,</p><formula xml:id="formula_15">1 |N i | j∈Ni behavior j ) (23)</formula><p>10.51 Correlation between agent behavior and average neighbor behavior where N i is the set of neighbors of agent i, |N i | is the number of neighbors, and behavior i represents agent i's voting or coalition participation behavior.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Homophily Index</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.52</head><formula xml:id="formula_16">Homophily = 1 |E| (i,j)∈E (1 -∥x i -x j ∥ 2 )<label>(24)</label></formula><p>10.53 Average preference similarity among connected agents where x i ∈ [0, 1] 8 is agent i's preference vector, E is the set of edges in the network, and |E| is the number of edges. Values closer to 1 indicate higher preference similarity among connected agents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.7 Deliberation Quality Metrics</head><p>Consensus Score 10.54</p><formula xml:id="formula_17">Consensus = 1 -std({x i } N i=1 ) (25)</formula><p>10.55 Consensus score measuring preference convergence where x i ∈ [0, 1] 8 are agent preference vectors after deliberation and std is the standard deviation across all agents. Values closer to 1 indicate higher consensus.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deliberation Participation</head><p>10.56</p><formula xml:id="formula_18">P articipation = 1 N N i=1 I(agent i participates) (26)</formula><p>10.57 Fraction of agents actively participating in deliberation where I is the indicator function that equals 1 if agent i participates and 0 otherwise. This measures the inclusiveness of the deliberation process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preference Convergence</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10.58</head><formula xml:id="formula_19">Convergence = 1 - Var({x f inal i } N i=1 ) Var({x initial i } N i=1 ) (27)</formula><p>10.59 Degree of preference alignment over time measuring the reduction in preference variance across the population where x initial i and x f inal i are agent i's preference vectors at the beginning and end of deliberation respectively, and Var is the variance across all agents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.8 Temporal Dynamics Metrics</head><p>Institutional Stability 10.60</p><formula xml:id="formula_20">RegimeStability = 1 T -1 T -1 t=1 I(|EN P t -EN P t+1 | &lt; 0.5) (28)</formula><p>10.61 Persistence of voting patterns over episodes where T is the number of episodes, EN P t is the effective number of parties at episode t, and I is the indicator function. This measures the stability of party system fragmentation over time.</p><p>Policy Convergence Rate 10.62</p><formula xml:id="formula_21">ConvergenceRate = 1 T -1 T -1 t=1 ∥x t+1 -x t ∥ 2 ∥x t ∥ 2 (29)</formula><p>10.63 Speed of preference alignment where x t is the population preference vector (centroid of all agent preferences) at episode t, T is the number of episodes, and ∥ • ∥ 2 is the Euclidean norm. This measures the rate of change in population preferences over time.</p><p>Learning Effect Persistence 10.64</p><formula xml:id="formula_22">LearningP ersistence = 1 T /2 T t=T /2</formula><p>Var(strategies t ) (30) 10.65 Stability of learned strategies where strategies t represents agent policy parameters at episode t, T is the number of episodes, and Var is the variance across all agents. This measures the consistency of learned behaviors in the latter half of training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mechanism Learning</head><p>10.66 M echanismLearning = Corr({t} T t=1 , {perf ormance t } T t=1 ) (31) 10.67 Correlation between episode number and performance metric over time where t is the episode number, T is the total number of episodes, perf ormance t is the performance metric (e.g., welfare, efficiency) at episode t, and Corr is the Pearson correlation coefficient. This measures learning progress over time. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Modular</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.7 Statistical Framework</head><p>Non-Parametric Statistical Methods 12.48 Given the complex, non-linear nature of multi-agent learning dynamics:</p><p>12.49 Kruskal-Wallis Test <ref type="bibr" target="#b33">(Kruskal &amp; Wallis 1952</ref>):</p><p>• Overall mechanism comparisons across all configurations using</p><formula xml:id="formula_23">H = 12 N (N +1) k i=1 R 2 i ni -3(N +1</formula><p>) where R i is the sum of ranks for group i, n i is the sample size of group i, k is the number of groups, and N is the total sample size • Robust to non-normal distributions and outliers • Tests for significant differences in performance rankings with χ 2 distribution with k -1 degrees of freedom 12.50 Mann-Whitney U Test <ref type="bibr" target="#b38">(Mann &amp; Whitney 1947)</ref>:</p><p>• Pairwise comparisons between specific mechanisms using U = n 1 n 2 + n1(n1+1)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2</head><p>-R 1 where R 1 is the sum of ranks for group 1, and n 1 , n 2 are sample sizes • Thresholds: 0.2 (small), 0.5 (medium), 0.8 (large) effect sizes</p><p>• Interpretation in context of voting mechanism differences and practical significance 12.54 Eta-squared:</p><p>• Proportion of variance explained by mechanism type computed as η 2 = SS between SS total where SS between is between-group sum of squares and SS total is total sum of squares    </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Agent-based model architecture showing entities and interactions. Agents (voters/parties) have policy preferences, learning capabilities, and network connections. They interact through voting mechanisms, coalition formation, and social networks. The environment provides institutional context, reward signals, and state transitions.</figDesc><graphic coords="6,104.88,56.69,385.50,288.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Parameters: • N = 200: Number of agents • d = 8: Policy dimensions • T = 50: Training episodes (comprehensive sweep) • k ∈ {1, 4, 25}: Number of winners (varies by configuration)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>Parameters: • ϵ Atkinson = 0.3: Inequality aversion parameter • α = 1.0: Utility weight in reward function • β = 1.0: Welfare weight in reward function • γ = 0.25: Coalition bonus weight • δ = 0.1: Democratic bonus weight • ϵ penalty = 0.05: Fairness penalty weight • ζ = 0.02: Participation cost weight 3.25 Key parameters: population size N = 200 (comprehensive sweep) and N = 300 (flagship run); episodes E = 50 (comprehensive) and E = 800 (flagship); learning rate α ∈ [0.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Vote distribution metrics over episodes for this experiment (entropy, concentration, winner diversity, and vote Gini).</figDesc><graphic coords="17,116.22,56.69,362.84,180.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Additional voting metrics over episodes for this experiment (winners per episode, turnout, vote inequality, winner preference centrality, agents participating, and vote entropy over time).</figDesc><graphic coords="18,116.22,56.70,362.82,179.63" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 9 :</head><label>9</label><figDesc>Figure 9: Cross-configuration comparison by network topology (sweep_N200). Bars show mean ± SD across configurations for average welfare and inequality (Gini) by network type.</figDesc><graphic coords="19,150.24,596.87,294.81,116.14" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 10 :</head><label>10</label><figDesc>Figure 10: Coalition count and average size over episodes. Coalition formation stabilizes after initial learning period across all mechanisms.6.21Coalitions form reliably across all mechanisms, with formation rates stabilizing after the initial learning period.Average coalition sizes remain consistent across different voting systems.</figDesc><graphic coords="20,116.22,149.40,362.84,154.42" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 11 :</head><label>11</label><figDesc>Figure 11: Additional coalition metrics (total members, maximum size, size distribution, and evolution). 6.23 Coalitions stabilize following the initial learning period; maximum sizes remain bounded and membership fluctuates moderately across mechanisms.</figDesc><graphic coords="20,70.87,455.95,453.52,224.54" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>8. 1</head><label>1</label><figDesc>We developed a unified agent-based laboratory for institutional comparison across seven voting mechanisms with coalition formation and networked influence, trained agents on social-welfare objectives, and produced research-grade diagnostics. Cross-configuration analysis (200-agent sweep) shows that proportional representation consistently dominates single-winner systems on welfare and inequality, with statistically robust differences, while network topology and coalition toggles exert negligible welfare effects within our design. These results advance theoretical understanding by demonstrating how strategic learning interacts with institutional rules to deliver efficiency and fairness under proportional systems.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>•</head><label></label><figDesc>Preference Evolution: Preferences adapt via AR(1) process based on outcomes • Network Adaptation: Network connections evolve through homophily rewiring • Strategic Adaptation: Agents adapt strategies based on opponent behavior Own State: Complete information about own preferences, budget, history • Network Information: Information about connected agents and network position • Coalition Information: Information about coalition memberships and contracts 9.12 Local Information: • Neighbor States: Information about connected agents' preferences and behaviors • Coalition Summaries: Aggregate information about coalition activities • Deliberation Outcomes: Consensus scores and participation metrics 9.13 Global Information: • Population Statistics: Aggregate population-level statistics • Mechanism Performance: Performance metrics for voting mechanisms • Policy Outcomes: Implemented policy outcomes and their effects</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>•</head><label></label><figDesc>STV: Multi-winner transferable vote with Droop quota (Hare 1861) • PR: Proportional representation with D'Hondt and Sainte-Laguë divisors 9.32 Coalition Formation: • Two-Round Negotiation: Agents engage in two rounds of proposal, acceptance, and refinement (as used in N = 200 sweeps) • Contract Types: Binding, non-binding, and cheap-talk contracts with different enforcement mechanisms • Side Payments: Budget-constrained transfers between coalition members • Enforcement: Automatic penalties for contract violations and compliance monitoring 9.33 Theoretical Foundation: The coalition formation protocol is grounded in established coalition theory (Riker 1962; Battaglini &amp; Palfrey 2021) and implements basic bargaining dynamics. The protocol follows a thresholdbased negotiation process where agents propose coalitions based on preference similarity and network connections.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>•</head><label></label><figDesc>Ballot error rate: p e ∈ [0, 0.04] • Turnout parameters: α = 2.0, β = 2.0 • Preference drift: ϕ = 0.95, σ 2 = 0.01 • Coalition budget: B ∈ [0, 100] Parameter Sweep: 68 distinct configurations systematically varying:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>•</head><label></label><figDesc>Monotonicity: Vote increases never harm candidates -Anonymity: All voters treated equally -Neutrality: All candidates treated equally -Proportionality: Seat allocation proportional to vote shares (for PR) • Empirical Benchmarks: Comparison with established empirical regularities: -Duverger's Law: Two-bloc competition under plurality (Duverger 1954; Cox 1997) -Proportionality Trade-offs: PR vs. majoritarian system effects (Taagepera &amp; Shugart 1989; Gallagher 1991) -Network Effects: Homophily and social influence patterns (Watts &amp; Strogatz 1998; Algorithm Correctness: Verification of implementation accuracy: -Unit Tests: Comprehensive test suite for all voting mechanisms -Integration Tests: End-to-end validation of complete pipeline -Cross-Implementation: Comparison with reference implementations • Performance Benchmarks: Computational efficiency and scalability assessment: -Memory Usage: Memory consumption across population sizes -Execution Time: Computational time scaling with problem size -Convergence Speed: Learning rate and stability across algorithms (Schulman et al. 2017; Mnih et al.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head></head><label></label><figDesc>where s i are seat shares. ENP &lt; 2.5 indicates two-party system, 2.5-4.0 moderate fragmentation, &gt; 4Alignment = Corr(x pop , p outcome ) Percentage of votes differing from sincere preferences. Rates &gt; 0.3 indicate significant strategic behavior.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>10. 23</head><label>23</label><figDesc>Preference similarity within coalitions where x i are agent preference vectors. Average fraction of available budget used.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head></head><label></label><figDesc>14) 10.33 Multi-component reward function for agent i where u i is individual utility, W is social welfare, B i is coalition bonus, D i is democratic participation bonus, P i is fairness penalty, and C i is participation cost. Parameters α = 1.0 (utility weight), β = 1.0 (welfare weight), γ = 0.25 (coalition bonus weight), δ = 0.1 (democratic bonus weight), ϵ = 0.05 (fairness penalty weight), and ζ = 0.02 (participation cost weight) control component weights.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>File•••</head><label></label><figDesc>The implementation follows a modular architecture with clear separation of concerns: 12.3 Core Modules: • agents.py: Agent classes with RL algorithms (PPO, A2C, A3C) • mechanisms.py: Voting mechanism implementations • networks.py: Network topology generation and dynamics • coalitions.py: Coalition formation protocols and negotiation • environment.py: Main simulation environment and state management • rewards.py: Reward function computation and welfare metrics 12.4 Interface Standards: • State Interface: Standardized state representation with preference vectors, network positions, and institutional context • Action Interface: Consistent action space across all voting mechanisms • Data Interface: Hierarchical JSON structure for experiment organization Core simulation modules • src/exp/: Experiment configuration and analysis • src/analysis/: Metric computation and statistical analysis • configs/: YAML configuration files for experiments • data/results/: Hierarchical JSON output files • logs/: Real-time experiment logs and monitoring data 12.6 Data Flow: • Configuration files specify experiment parameters • Simulation generates per-step behavioral data • Episode aggregation computes summary metrics • Results stored in hierarchical JSON structure • Real-time logs provide monitoring and debugging Following the paradigm of (Lowe et al. 2017), we implement centralized critics (enabled in our sweeps unless noted): 12.14 Global State Observation: • Value functions observe complete system state • Includes all agent preferences, network structure, and institutional context • Enables stable learning in multi-agent environments 12.15 Decentralized Policies: • Each agent maintains independent policy network • Policies observe local state and agent-specific information • Enables diverse and adaptive agent behavior Ballot choices and strategic voting indicators • Turnout decisions and participation costs • Preference orderings and sincere vs. strategic votes • Vote transfer dynamics (for IRV/STV) Edge changes and rewiring events • Homophily effects and preference clustering • Centrality evolution and influence patterns • Deliberation participation and consensus formation • Consistent normalization and scaling across all baseline calculations 12.32 Statistical Precision: • 95% confidence intervals computed via percentile bootstrap method with B = 500 resamples • Standard errors: SE = s √ n where s is sample standard deviation • Effect size calculation: Cohen's d = µ1-µ2 σ pooled for baseline comparisons • Statistical significance: All baseline differences significant at p &lt; 0Policy outcome: p random = x + ϵ where ϵ ∼ Uniform(-0.8, 0.8) 8 and x = 1 N N i=1 x i • Theoretical interpretation: Complete lack of strategic behavior with maximum policy uncertainty • Expected welfare: µ = 0.276 with 95% CI [0.225, 0.335], σ = 0.029 • Implementation: Large random offset ensures policy outcomes far from population preferences 12.34 Sincere Voting Baseline: • Policy outcome: p sincere = x + ϵ where ϵ ∼ Uniform(-0.3, 0.3) 8 representing honest voting noise • Theoretical interpretation: Honest preference expression without strategic coordination • Expected welfare: µ = 0.401 with 95% CI [0.376, 0.428], σ = 0.014 • Implementation: Moderate offset represents realistic voting errors and preference heterogeneity 12.35 Perfect Coordination Baseline: • Policy outcome: p perf ect = x = 1 N N i=1 x i (population centroid) • Theoretical interpretation: Maximum achievable welfare through perfect coordination and information • Expected welfare: µ = 0.451 with 95% CI [0.443, 0.460], σ = 0.004 • Implementation: Direct population centroid calculation representing perfect coordination equilibrium 12.36 Nash Equilibrium Baseline: • Policy outcome: p nash = arg max p N i=1 u i (x i , p) subject to institutional constraints • Theoretical interpretation: Strategic equilibrium under different voting mechanism constraints • Expected welfare: µ = 0.451 with 95% CI [0.443, 0.460], σ = 0.004 • Implementation: Computed through iterative best-response dynamics until convergence Theoretical Foundation and Validation 12.37 Theoretical Interpretation: • Random voting represents worst-case scenario with no strategic consideration • Sincere voting represents honest preference expression without coordination • Perfect coordination represents theoretical maximum achievable welfare • Nash equilibrium represents strategic equilibrium under different mechanisms 12.38 Empirical Validation: • Test results range: µ test ∈ [0.387, 0.452] (from cross c onf ig T EST N 10)Baselinerange :µ baseline ∈ [0.276, 0.451] with perfect theoretical coverage • • Alignment verification: Test results fall within theoretical baseline bounds • Methodological consistency: Identical utility and welfare functions used across all calculations 12.39 Statistical Robustness: • Confidence intervals: 95% CI computed via percentile bootstrap with B = 500 resamples • Uncertainty quantification: Standard errors SE = s √ n where s is sample standard deviation • Effect sizes: Cohen's d = µ1-µ2 σ pooled for baseline comparisons • Statistical significance: All baseline differences significant at p &lt; 0.05 level • Sample size justification: n = 100 provides adequate statistical power for baseline comparisons 12.40 Baseline Validation: • Inequality aversion parameter: ϵ = 0.3 matching main experiment configuration • Population size: N = 200 agents matching main experiment scale • Policy dimensions: d = 8 dimensions matching main experiment complexity • Robustness verification: Baseline relationships consistent with theoretical expectations</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>•</head><label></label><figDesc>Bonferroni correction for multiple comparisons with adjusted p-values p adj = p×k where k is the number of comparisons • Controls family-wise error rate at α = 0.05 level 12.51 Bootstrap Confidence Intervals (Efron 1979): • Uncertainty estimation for all metrics using B = 500 bootstrap resamples • 95% confidence intervals computed as CI 95% = [Q 2.5% , Q 97.5% ] where Q p is the p-th percentile of the bootstrap distribution • Standard error computed as SE = -θ) 2 where θb is the statistic from bootstrap sample b • Robust to distributional assumptions and provides non-parametric uncertainty quantification Effect Size Analysis 12.52 Practical significance assessment:12.53 Cohen's d<ref type="bibr" target="#b13">(Cohen 1988</ref>):• Standardized mean difference between groups computed as d = x1-x2 s pooled where s pooled =</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head></head><label></label><figDesc>• R-squared equivalent for non-parametric tests and ANOVA • Practical significance for institutional design and effect size interpretation Multiple Comparison Corrections 12.55 Type I error inflation control: 12.56 Bonferroni Correction: • Conservative approach for family-wise error control with adjusted p-values p adj = min(1, p × k) where k is the number of comparisons • Adjusted p-values for all pairwise comparisons ensuring P (at least one false positive) ≤ α • Ensures strong control of false positives at α = 0.05 level 12.57 Benjamini-Hochberg FDR (Benjamini &amp; Hochberg 1995): • Less conservative than Bonferroni with adjusted p-values p adj = min i≥j min(1, m j p (j) ) where p (j) are ordered p-values and m is the number of tests • Controls false discovery rate at level α ensuring E[ V R ] ≤ α where V is false positives and R is total rejections • Appropriate for exploratory analysis and less stringent than family-wise error control 4-8 parallel workers per configuration • PPO parallelism: Not used in reported sweeps; A3C provides asynchronous parallel workers • Asynchronous gradient updates and synchronization 12.64 Data-Level Parallelism: • Batch processing for neural network updates • Gradient accumulation for large batch sizes • Parallel data collection and aggregation E.4 Network and Social Dynamics</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="5,138.90,89.50,317.47,562.56" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="15,116.22,185.29,362.83,270.33" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="16,116.22,126.70,362.84,180.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="22,177.45,467.38,240.37,240.03" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>Coalitions form dynamically with binding/non-binding/cheap-talk contracts, side payments, and enforcement mechanisms. Network communities emerge through homophily and preference clustering. Voting blocs coordinate through strategic behavior. See Appendix A, subsection A.2.7 for detailed collectives specifications. We sample agent preferences from uniform distribution over [0, 1] 8 or specified prior. Salience weights are uniformly distributed or correlated with preferences. Turnout propensity follows Beta distribution. We allocate budgets for side payments. We generate networks using Erdös-Rënyi, Barabäsi-Albert, or Watts-Strogatz parameters, with optional homophily rewiring based on preference similarity.</figDesc><table><row><cell>Collectives</cell></row><row><cell>3.13 Details</cell></row><row><cell>Initialization</cell></row><row><cell>3.14 Input</cell></row><row><cell>Interaction</cell></row><row><cell>3.11 Direct interactions include deliberation, coalition formation, side payments, and voting. Network-mediated</cell></row><row><cell>interactions include information diffusion, social influence, coordination, and reputation effects. Institutional</cell></row><row><cell>interactions occur through voting mechanisms, coalition protocols, and enforcement systems.</cell></row></table><note><p>Sensing 3.10 Agents observe their own state (preferences, budget, history), connected agents' preferences and behaviors, coalition memberships and contracts, and population-level statistics. Information is bounded by network topology and coalition membership. Stochasticity 3.12 Stochastic elements include preference drift via AR(1) process with persistence parameter ϕ = 0.95 and innovation variance σ 2 = 0.0004; turnout propensity following Beta distribution for realistic participation patterns; ballot errors with Bernoulli probability p e ∈ [0, 0.1]; deliberation noise with normal distribution; network rewiring with homophily probability p h ∈ [0, 1]; and exploration in reinforcement learning using ϵ-greedy policy with decay rate 0.995. Data 3.15 The model can assimilate external preference data through data assimilation for state estimation and parameter refinement. Network structures can be imported from external sources. Configuration parameters are loaded from YAML files defining experimental sweeps. Submodels 3.16 Voting Mechanisms: Six mechanisms implemented (Plurality, Approval, Borda, IRV, STV, proportional representation) with mechanism-specific parameters. See Appendix A, subsection A.3.3 for detailed descriptions. 3.17 Coalition Protocol: Two-round negotiation with three contract types: binding contracts (enforceable with penalties), non-binding contracts (voluntary compliance), and cheap-talk negotiations (no enforcement). Side payments are budget-constrained with realistic transfer costs. Coalition formation follows a threshold-based protocol: agents propose coalitions based on preference similarity and network connections, with acceptance determined by configurable thresholds. The protocol implements basic coalition theory principles (Riker 1962; Battaglini &amp; Palfrey 2021) with preference-based formation criteria and network-mediated proposals. See Appendix A, subsection A.3.3 for protocol details. 3.18 Reinforcement Learning: PPO, A2C, and A3C with centralized critics (enabled in our sweeps unless noted). In the N = 200 sweeps, we anneal the entropy coefficient from 0.02 to 0.005 over 1,000 steps; clip ratio ϵ and learning rate α are fixed per configuration (e.g., ϵ ∈ {0.10, 0.15, 0.20}; α ∈ [1 × 10 -4 , 3 × 10 -4 ]). A2C/A3C use the same entropy annealing schedule unless stated otherwise. See Appendix A, subsection A.3.3 for YAMLspecified hyperparameters. 3.19 Welfare Function: Atkinson welfare with inequality aversion parameter ϵ (see Appendix B, equation 13) and fairness regularizers for representation loss, participation fairness, and envy-freeness (see Appendix B, equations 17-19).</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>and Methods Experimental Configurations and Parameter Sweeps</head><label></label><figDesc></figDesc><table><row><cell>sures sufficient learning convergence while maintaining comprehensive coverage across the parameter space.</cell></row><row><cell>Network parameters (connection probability p=0.05 for ER, preferential attachment m=3 for BA, degree k=6 and</cell></row><row><cell>rewiring β = 0.15 for WS) are chosen to represent realistic social network structures with varying clustering and</cell></row><row><cell>connectivity patterns. See Appendix C, subsection C.1 for complete experimental configurations.</cell></row><row><cell>Flagship Realistic Run</cell></row><row><cell>4.3 The flagship experiment (flagship_300.yaml) focuses on realistic PR scenarios with enhanced coalition dy-</cell></row><row><cell>namics, larger population (300 agents), and deeper learning convergence (800 episodes). The 300-agent pop-</cell></row><row><cell>ulation represents a realistic medium-sized electoral district, while 800 episodes ensure deep learning conver-</cell></row><row><cell>gence for complex coalition strategies. PR parameters (4% threshold, Sainte-Laguë divisors with standard divi-</cell></row><row><cell>sors, 20% representation rate) mirror European electoral systems, providing external validity. Network topol-</cell></row><row><cell>ogy (Watts-Strogatz with k=12, β = 0.15) captures realistic small-world social structures, while coalition pa-</cell></row><row><cell>rameters (two-round negotiation, binding contracts, side payments) reflect actual parliamentary coalition for-</cell></row><row><cell>mation dynamics. See Appendix C, subsection C.2 for detailed configuration.</cell></row><row><cell>Training Setup and Hyperparameters</cell></row><row><cell>Reinforcement Learning Algorithms</cell></row><row><cell>4.4 We implement three state-of-the-art RL algorithms with multi-agent adaptations: PPO (Schulman et al. 2017),</cell></row><row><cell>A2C (Mnih et al. 2016), and A3C (Mnih et al. 2016). See Appendix D, subsection D.2 for detailed hyperparameters</cell></row><row><cell>and implementation details.</cell></row><row><cell>Multi-Agent Coordination</cell></row><row><cell>4.5 Multi-agent coordination is achieved through centralized critics (enabled in our sweeps unless noted; value</cell></row><row><cell>functions observe global state while policies remain decentralized) and shared policy networks (when enabled).</cell></row><row><cell>See Appendix D, subsection D.3 for implementation details.</cell></row></table><note><p>0002, 0.0003]; discount factor γ ∈ [0.98, 0.99]; inequality aversion ϵ ∈ [0, 2]; homophily strength λ ∈ [0, 0.3]; ballot error rate p e ∈ [0.01, 0.02]; and coalition budget B ∈ [0.2, 1.0]. See Appendix C, subsection C.1 for complete parameter tables and experimental configurations. Implementation 3.26 We implement the model in Python using PyTorch for neural networks, NetworkX for graph operations, and NumPy for numerical computations. The modular architecture separates agent learning, voting mechanisms, network dynamics, and coalition protocols. Components integrate through standardized interfaces for state observations, actions, and data collection. We stream results to JSON files with hierarchical organization by experiment, run, episode, and step. The complete implementation is available at [repository URL available upon request to the corresponding author ]. Experimental Design 4.1 Our experimental design employs a systematic parameter sweep approach to comprehensively evaluate the interaction effects between voting mechanisms, social networks, and learning algorithms. The main experiment consists of a medium-scale comprehensive sweep with 68 distinct configurations, supplemented by a large-scale flagship run for realistic scenarios. Comprehensive Parameter Sweep 4.2 The primary experimental sweep (medium_200_comprehensive.yaml) systematically varies three key dimensions: voting mechanisms (six major electoral systems), network topologies (ER/BA/WS with homophily), and training configurations (shared/individual policies with centralized critics). Population size of 200 agents balances computational feasibility with realistic electoral district scales, while 50 episodes per configuration en-</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Convergence Criteria and Training Termination 4.6</head><label></label><figDesc>Training terminates when episode reward stabilizes with early stopping criteria. Maximum limits: 50 episodes for comprehensive sweep, 800 episodes for flagship run. See Appendix D, subsection D.2 for detailed convergence criteria and sensitivity analysis.</figDesc><table><row><cell>Baseline Comparisons</cell></row><row><cell>4.7 We establish three rigorous theoretical baselines for performance evaluation using the same utility function</cell></row><row><cell>and welfare metrics as the main experiment: Random voting (welfare 0.26±0.02) represents agents making</cell></row><row><cell>completely random policy choices without any strategic consideration; Sincere voting (welfare 0.401±0.014)</cell></row><row><cell>represents agents voting according to their true preferences without strategic coordination; and Perfect coor-</cell></row><row><cell>dination (welfare 0.44±0.01) represents the theoretical optimum where all agents coordinate perfectly on the</cell></row><row><cell>population centroid. These baselines are derived from systematic Monte Carlo sampling of preference distribu-</cell></row><row><cell>tions and provide rigorous theoretical bounds for evaluating mechanism performance. All voting mechanisms</cell></row><row><cell>are expected to perform between random and optimal baselines, with the Atkinson welfare function (see Ap-</cell></row><row><cell>pendix B, equation 12) providing the normative framework for comparison. The baseline calculations use the</cell></row><row><cell>exact same utility function (u i = exp(-||x i -p|| 2 )) and welfare metrics as the main experiment, ensuring</cell></row><row><cell>methodological consistency. See Appendix D, subsection D.5 for detailed baseline calculation methodology.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Data Collection and Aggregation Real-Time Data Streaming 4.8</head><label></label><figDesc>The experiment pipeline implements comprehensive data collection with minimal computational overhead, generating detailed behavioral data at each simulation step and aggregating per-episode summaries. See Appendix D, subsection D.4 for detailed data collection procedures.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Statistical Power and Sample Size Justification 4.9 Systematic</head><label></label><figDesc></figDesc><table><row><cell>parameter variation across 68 configurations provides broader coverage than random sampling, fol-</cell></row><row><cell>lowing Latin hypercube sampling principles (McKay et al. 1979). Each configuration represents a distinct point</cell></row><row><cell>in the high-dimensional parameter space, ensuring comprehensive exploration while maintaining computa-</cell></row><row><cell>tional feasibility.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Potential Confounding Factors and Controls 4.10 We control for several potential confounding factors: Initial conditions are randomized across seeds to en- sure results are not artifacts of specific preference distributions; Learning convergence is monitored</head><label></label><figDesc></figDesc><table><row><cell>through</cell></row><row><cell>reward stability to prevent premature termination effects; Network topology effects are isolated through sys-</cell></row><row><cell>tematic variation and statistical controls; Coalition budget constraints are standardized across conditions to</cell></row><row><cell>prevent wealth effects from dominating outcomes; and Preference drift is controlled through consistent AR(1)</cell></row><row><cell>parameters to ensure comparable preference evolution across mechanisms. These controls ensure that ob-</cell></row><row><cell>served differences in mechanism performance reflect institutional effects rather than confounding variables.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Statistical Analysis and Hypothesis Testing Non-Parametric Statistical Framework 4.11 Given</head><label></label><figDesc></figDesc><table><row><cell>the complex, non-linear nature of multi-agent learning dynamics and non-normal distributions of out-</cell></row><row><cell>comes, we employ non-parametric statistical methods: Kruskal-Wallis test (Kruskal &amp; Wallis 1952) for overall</cell></row><row><cell>mechanism comparisons, Mann-Whitney U test (Mann &amp; Whitney 1947) for pairwise comparisons with Bonfer-</cell></row><row><cell>roni correction, and bootstrap confidence intervals (Efron 1979) for uncertainty estimation. See Appendix D,</cell></row><row><cell>subsection D.7 for complete statistical framework and effect size analysis.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Real-Time Experiment Monitoring 4.12 The</head><label></label><figDesc>system generates comprehensive logs containing voting results, coalition data, social welfare metrics, and strategic behavior indicators. Enhanced winner information includes party affiliations and coalition participation, providing insights into the relationship between individual electoral success and collective political organization. See Appendix E, subsection E.1 for detailed log interpretation guidelines and Appendix F, subsection F.1 for monitoring procedures.</figDesc><table><row><cell>Practical Monitoring Guidelines</cell></row><row><cell>4.13 Key patterns include high vote fragmentation but seat concentration in PR systems, near-universal strategic</cell></row><row><cell>voting, and moderate coalition participation. Warning signs include extreme disproportionality (&gt;0.95; see Ap-</cell></row><row><cell>pendix B, equation 1), low coalition participation (&lt;50%; see Appendix B, equation 7), and high inequality (&gt;0.2</cell></row><row><cell>Gini; see Appendix B, equation 15). See Appendix F, subsection F.2 for comprehensive monitoring guidelines.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Reproducibility and Validation Computational Reproducibility 4.14 Complete</head><label></label><figDesc>reproducibility is ensured through deterministic seeds, complete environment specifications with version pinning, and version-controlled experimental configurations.</figDesc><table><row><cell>Theoretical Validation</cell></row><row><cell>4.15 We assess model validity through multiple validation checks: Duverger's Law validation, proportionality vali-</cell></row><row><cell>dation, network effect validation, and learning convergence validation.</cell></row><row><cell>Implementation Validation</cell></row><row><cell>4.16 Code correctness is verified through comprehensive unit tests covering all voting mechanisms, network algo-</cell></row><row><cell>rithms, and RL implementations. See Appendix D, subsection D.6 for detailed validation procedures.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Computational Infrastructure 4.17 The experimental pipeline requires 8-16 GB RAM for medium-scale experiments (200 agents) and 32+ GB for large-scale runs (300+ agents). Computational time ranges from 5-8 hours per configuration (per config, with 6 configs running in parallel), with the complete experimental sweep requiring approximately 68-91 total hours (Assuming 6 configs running in parallel). See Appendix C, subsection C.4 for detailed compute information.</head><label></label><figDesc></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head>Proportionality and Representation Measures 5.1</head><label></label><figDesc>We employ standard social choice metrics to evaluate voting mechanism performance: Gallagher Index (Gallagher 1991)  for disproportionality (see Appendix B, equation 1), Loosemore-Hanby Index<ref type="bibr" target="#b36">(Loosemore &amp; Hanby 1971)</ref> for alternative disproportionality measures (see Appendix B, equation 2), and Effective Number of Parties (ENP)<ref type="bibr" target="#b34">(Laakso &amp; Taagepera 1979)</ref> for party system fragmentation (see Appendix B, equation 3). Model validity is assessed through multiple validation checks: Duverger's Law validation (two-bloc competition under plurality), proportionality validation (PR mechanisms achieving lower Gallagher indices), and network effect validation (homophily increasing preference clustering). See Appendix D, subsection D.6 for detailed validation procedures. We implement detection algorithms for major voting paradoxes: Condorcet Paradox (de Condorcet 1785) (cyclical majority preferences; see Appendix B, equation 33), No-Show Paradox<ref type="bibr" target="#b21">(Fishburn 1974)</ref> (abstention improving outcomes; see Appendix B, equation 34), and monotonicity violations (vote increases harming candidates; see Appendix B, equation 35). See Appendix B, subsection B.9 for complete paradox detection algorithms.</figDesc><table><row><cell>Theoretical Validation Criteria</cell></row><row><cell>5.8 Voting Paradox Detection</cell></row><row><cell>Classic Voting Paradoxes</cell></row><row><cell>5.9</cell></row></table><note><p>Proportionality Paradoxes 5.10 Proportionality paradoxes include threshold effects (impact of minimum vote thresholds on representation; see Appendix B, equation 36) and seat allocation bias (systematic bias in seat allocation methods; see Appendix B, equation 37). See Appendix B, subsection B.9 for complete paradox detection algorithms.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_12"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table><row><cell>Mechanism</cell><cell>Total Welfare</cell><cell>Avg Welfare</cell><cell cols="2">Median Welfare Utilitarian Efficiency</cell></row><row><cell>PR_DHondt</cell><cell>83.23 ± 2.93</cell><cell>0.419 ± 0.015</cell><cell>0.410 ± 0.016</cell><cell>0.419</cell></row><row><cell>PR_SainteLague</cell><cell>82.41 ± 3.18</cell><cell>0.414 ± 0.017</cell><cell>0.406 ± 0.018</cell><cell>0.414</cell></row><row><cell>STV</cell><cell>82.35 ± 3.21</cell><cell>0.414 ± 0.010</cell><cell>0.405 ± 0.012</cell><cell>0.414</cell></row><row><cell>Borda</cell><cell>80.15 ± 5.95</cell><cell>0.405 ± 0.023</cell><cell>0.396 ± 0.026</cell><cell>0.405</cell></row><row><cell>Approval</cell><cell>78.33 ± 6.45</cell><cell>0.399 ± 0.023</cell><cell>0.389 ± 0.026</cell><cell>0.399</cell></row><row><cell>Plurality</cell><cell>66.52 ± 1.25</cell><cell>0.335 ± 0.003</cell><cell>0.321 ± 0.003</cell><cell>0.335</cell></row><row><cell>IRV</cell><cell>65.91 ± 1.71</cell><cell>0.332 ± 0.008</cell><cell>0.318 ± 0.008</cell><cell>0.332</cell></row></table><note><p>Final welfare metrics by voting mechanism (mean ± SD)</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_13"><head>Table 3 :</head><label>3</label><figDesc>Inequality metrics by voting mechanism (mean ± SD)</figDesc><table><row><cell>Mechanism</cell><cell>Gini Coefficient</cell><cell>Theil Index</cell><cell>Atkinson (=1)</cell></row><row><cell>PR_DHondt</cell><cell>0.097 ± 0.007</cell><cell cols="2">0.016 ± 0.003 0.015 ± 0.003</cell></row><row><cell>PR_SainteLague</cell><cell>0.099 ± 0.008</cell><cell cols="2">0.017 ± 0.003 0.016 ± 0.003</cell></row><row><cell>STV</cell><cell>0.102 ± 0.007</cell><cell cols="2">0.017 ± 0.003 0.017 ± 0.003</cell></row><row><cell>Borda</cell><cell>0.106 ± 0.013</cell><cell cols="2">0.018 ± 0.005 0.018 ± 0.005</cell></row><row><cell>Approval</cell><cell>0.108 ± 0.013</cell><cell cols="2">0.019 ± 0.005 0.019 ± 0.005</cell></row><row><cell>Plurality</cell><cell>0.138 ± 0.002</cell><cell cols="2">0.033 ± 0.001 0.030 ± 0.001</cell></row><row><cell>IRV</cell><cell>0.139 ± 0.002</cell><cell cols="2">0.034 ± 0.001 0.031 ± 0.001</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_14"><head>Table 4 :</head><label>4</label><figDesc>Vote distribution metrics by mechanism (mean ± SD)</figDesc><table><row><cell>Mechanism</cell><cell>Vote Entropy</cell><cell>Vote Gini</cell><cell>Vote Concentration</cell></row></table><note><p>PR_SainteLague 4.69 ± 0.05 0.538 ± 0.025 0.025 ± 0.005 PR_DHondt 4.69 ± 0.05 0.538 ± 0.025 0.024 ± 0.004 STV 3.71 ± 0.68 0.772 ± 0.106 0.137 ± 0.092 Approval 4.46 ± 0.64 0.529 ± 0.071 0.020 ± 0.039 Borda 2.71 ± 0.35 0.158 ± 0.021 0.672 ± 0.102 Plurality 4.56 ± 0.66 0.239 ± 0.022 0.037 ± 0.061 IRV 1.87 ± 0.18 0.308 ± 0.031 0.398 ± 0.045</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_15"><head>Table 5 :</head><label>5</label><figDesc>Representation diversity metrics by mechanism (mean ± SD)</figDesc><table><row><cell>Mechanism</cell><cell cols="2">Effective Parties Winner Diversity</cell></row><row><cell>PR_SainteLague</cell><cell>4.82 ± 0.65</cell><cell>0.26 ± 0.03</cell></row><row><cell>PR_DHondt</cell><cell>4.76 ± 0.58</cell><cell>0.26 ± 0.03</cell></row><row><cell>STV</cell><cell>4.68 ± 0.52</cell><cell>0.15 ± 0.10</cell></row><row><cell>Approval</cell><cell>3.94 ± 0.48</cell><cell>0.00 ± 0.00</cell></row><row><cell>Borda</cell><cell>3.78 ± 0.52</cell><cell>0.75 ± 0.09</cell></row><row><cell>Plurality</cell><cell>1.95 ± 0.18</cell><cell>0.00 ± 0.00</cell></row><row><cell>IRV</cell><cell>1.89 ± 0.22</cell><cell>0.39 ± 0.06</cell></row></table><note><p>Strategic Voting Behavior 6.13 Strategic voting rates evolve differently across mechanisms, reflecting varying incentives for strategic behavior.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_16"><head>Table 6 :</head><label>6</label><figDesc>Strategic voting behavior by mechanism (mean ± SD) Plurality voting exhibits the highest strategic voting rates, while PR mechanisms show lower strategic incentives, consistent with theoretical predictions about strategic voting in different electoral systems.</figDesc><table><row><cell>Mechanism</cell><cell cols="2">Strategic Vote Rate Preference Alignment</cell></row><row><cell>PR_SainteLague</cell><cell>0.24 ± 0.08</cell><cell>0.78 ± 0.09</cell></row><row><cell>PR_DHondt</cell><cell>0.26 ± 0.07</cell><cell>0.76 ± 0.08</cell></row><row><cell>STV</cell><cell>0.28 ± 0.09</cell><cell>0.74 ± 0.10</cell></row><row><cell>Approval</cell><cell>0.35 ± 0.12</cell><cell>0.68 ± 0.11</cell></row><row><cell>Borda</cell><cell>0.42 ± 0.15</cell><cell>0.62 ± 0.13</cell></row><row><cell>Plurality</cell><cell>0.68 ± 0.18</cell><cell>0.45 ± 0.12</cell></row><row><cell>IRV</cell><cell>0.72 ± 0.21</cell><cell>0.41 ± 0.14</cell></row><row><cell>6.15</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_17"><head>Table 7 :</head><label>7</label><figDesc>Welfare statistics by network topology (mean ± SD)</figDesc><table><row><cell>Network</cell><cell>Avg Welfare</cell><cell cols="2">Gini Coefficient Pareto Efficiency</cell></row><row><cell>None</cell><cell>0.395 ± 0.039</cell><cell>0.110 ± 0.019</cell><cell>1.000 ± 0.000</cell></row><row><cell>ER005</cell><cell>0.395 ± 0.040</cell><cell>0.110 ± 0.019</cell><cell>1.000 ± 0.000</cell></row><row><cell>BA3</cell><cell>0.390 ± 0.040</cell><cell>0.110 ± 0.018</cell><cell>1.000 ± 0.000</cell></row><row><cell cols="2">WS6b015 0.380 ± 0.035</cell><cell>0.118 ± 0.018</cell><cell>1.000 ± 0.000</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_18"><head>Table 8 :</head><label>8</label><figDesc>Overall mechanism rankings by performance dimension PR mechanisms consistently rank highest across all performance dimensions, with PR_DHondt achieving the best welfare (0.419) and lowest inequality (0.097), followed closely by PR_SainteLague and STV. Plurality and IRV rank lowest in most categories with substantially lower welfare and higher inequality.</figDesc><table><row><cell>Dimension</cell><cell>1st</cell><cell>2nd</cell><cell>3rd</cell></row><row><cell>Welfare Maximization</cell><cell cols="3">PR_DHondt PR_SainteLague STV</cell></row><row><cell>Equality Promotion</cell><cell cols="3">PR_DHondt PR_SainteLague STV</cell></row><row><cell>Representation Diversity</cell><cell cols="3">PR_DHondt PR_SainteLague STV</cell></row><row><cell cols="4">Strategic Voting Reduction PR_DHondt PR_SainteLague STV</cell></row><row><cell>6.27 Overall Network Rankings</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">6.28 Table 9 presents rank-ordered networks by performance metrics.</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_19"><head>Table 9 :</head><label>9</label><figDesc>Overall network rankings by performance dimension</figDesc><table><row><cell>Dimension</cell><cell>1st</cell><cell>2nd</cell><cell>3rd</cell></row><row><cell cols="4">Welfare Optimization None ER005 BA3</cell></row><row><cell>Voting Coordination</cell><cell cols="3">None ER005 BA3</cell></row><row><cell cols="4">Coalition Facilitation None ER005 BA3</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_20"><head>Table 10 :</head><label>10</label><figDesc>Best mechanism-network combinations by objective PR_DHondt without network structure consistently achieves the best outcomes across multiple objectives, providing both the highest welfare (0.419) and lowest inequality (0.097).</figDesc><table><row><cell>Objective</cell><cell></cell><cell cols="3">Optimal Combination</cell></row><row><cell>Welfare Maximization</cell><cell></cell><cell cols="3">PR_DHondt + None</cell></row><row><cell>Equality Optimization</cell><cell></cell><cell cols="3">PR_DHondt + None</cell></row><row><cell cols="2">Representation Maximization</cell><cell cols="3">PR_DHondt + None</cell></row><row><cell>6.31 Statistical Significance &amp; Effect Sizes</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Mechanism ANOVA (Welfare)</cell><cell cols="2">42.603</cell><cell>&lt; 0.001</cell><cell>Large</cell></row><row><cell>Mechanism ANOVA (Inequality)</cell><cell cols="2">34.804</cell><cell>&lt; 0.001</cell><cell>Large</cell></row><row><cell>Network ANOVA (Welfare)</cell><cell></cell><cell>0.655</cell><cell>0.583</cell><cell>Small</cell></row><row><cell>Coalition T-Test (Welfare)</cell><cell></cell><cell>0.237</cell><cell>0.814</cell><cell>Negligible</cell></row></table><note><p><p>6.32</p>Table 11 summarizes ANOVA and pairwise test results for main metrics. Table 11: Statistical significance tests for main metrics Comparison F/T Statistic P-Value Effect Size</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_21"><head></head><label></label><figDesc>We abstract from real-world districting, candidate lists, and issue salience schedules; we model closed-list PR with national aggregation and optional compensation seats. Social networks follow canonical ER/BA/WS generators with optional homophily rewiring; real social graphs may exhibit richer community structure. Preferences</figDesc><table /><note><p>7.7 are 8-dimensional and stationary within episodes, and the learning horizon (50 episodes at N=200) bounds long-run institutional evolution. These design choices are explicit in our ODD and enable controlled, applesto-apples comparisons; future work can relax them (e.g., endogenous parties, open lists, dynamic salience, endogenous turnout).</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_22"><head>2 Adaptation 9.7 Individual Adaptation:</head><label></label><figDesc>Complete replication materials are provided in the supplementary files (configurations, analysis scripts, and generated tables/figures). Future research should extend this framework in several directions. First, incorporating realistic geographic districting and candidate selection processes would enhance external validity. Second, modeling endogenous party formation and coalition dynamics would capture how institutional rules shape political organization. Third, exploring dynamic preference evolution and issue salience would address long-term institutional effects. Finally, comparative analysis across different welfare functions and fairness criteria would test the robustness of PR advantages across normative frameworks. We expect this laboratory to facilitate systematic and reproducible evaluation of institutional designs and to inform debates in democratic theory about the conditions under which proportional rules enhance collective welfare.</figDesc><table><row><cell>A.1.3 Process Overview and Scheduling</cell></row><row><cell>9.4 Episode-Level Process Flow:</cell></row><row><cell>1. Initialization Phase: Agent state initialization, network initialization, mechanism configuration</cell></row><row><cell>2. Per-Step Process: Deliberation (3 rounds), coalition formation (two-round negotiation), voting (turnout</cell></row><row><cell>determination, ballot casting), reward calculation (individual utilities, social welfare, fairness penalties),</cell></row><row><cell>learning update (observation update, policy update), state evolution (preference drift, network evolution)</cell></row><row><cell>3. Episode Termination: Maximum steps reached, data collection, reset for next episode</cell></row><row><cell>9.5 Temporal Dynamics:</cell></row><row><cell>• Time Scales: Step level (individual decision-making), episode level (complete learning episodes), exper-</cell></row><row><cell>iment level (multiple episodes across seeds)</cell></row><row><cell>• Synchronization: Deliberation, coalition formation, and voting synchronized across agents</cell></row><row><cell>• Asynchronous Elements: A3C workers, network effects, preference drift, data assimilation</cell></row><row><cell>A.2 Design Concepts</cell></row><row><cell>A.2.1 Emergence</cell></row><row><cell>9.6 Emergent Phenomena:</cell></row></table><note><p>8.2 • Party Formation: Stable political parties emerge from coalition dynamics • Strategic Voting: Agents develop sophisticated voting strategies • Welfare-Inequality Trade-offs: Natural trade-offs between efficiency and equality • Network Clustering: Preference-based clustering in social networks • Institutional Evolution: Emergence of stable institutional arrangements A.2.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_24"><head>6 Data Collection and Analysis 9.46 Per-Step Data:</head><label></label><figDesc>Agent states, voting behavior, coalition dynamics, network evolution, deliberation outcomes.</figDesc><table><row><cell>9.47 Per-Episode Aggregation: Performance metrics, behavioral patterns, institutional effects, learning trajecto-</cell></row><row><cell>ries.</cell></row><row><cell>9.48 Cross-Experiment Analysis: Mechanism comparisons, network effects, coalition stability, welfare-fairness trade-</cell></row><row><cell>offs.</cell></row><row><cell>9.49 Statistical Framework: Non-parametric tests, effect size analysis, multiple comparison corrections, uncer-</cell></row><row><cell>tainty quantification.</cell></row><row><cell>A.3.7 Validation and Verification</cell></row><row><cell>9.50 Theoretical Validation:</cell></row></table><note><p><p>and empirical patterns.</p>A.3.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_25"><head></head><label></label><figDesc>Percentage of episodes with successful coalition formation. Mean number of members per coalition where C is the number of coalitions formed.</figDesc><table><row><cell>Formation Rate</cell><cell></cell><cell></cell><cell></cell></row><row><cell>10.18</cell><cell>F ormationRate =</cell><cell cols="3">Episodes with coalitions Total episodes</cell></row><row><cell>(7)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>10.19 Average Coalition Size</cell><cell></cell><cell></cell><cell></cell></row><row><cell>10.20</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>AvgSize =</cell><cell>1 C</cell><cell>C c=1</cell><cell>|coalition c |</cell></row><row><cell>(8)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>10.21 Coalition Stability Score</cell><cell></cell><cell></cell><cell></cell></row><row><cell>10.22</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_26"><head>5 Performance Indicators Welfare and Fairness Metrics 13.10</head><label></label><figDesc>Network logs show preference clustering and social influence patterns. Homophily networks exhibit higher clustering coefficients and shorter average path lengths compared to random networks. Social influence is measured through behavioral correlation between connected agents. Deliberation logs track participation rates, consensus formation, and preference convergence. High-quality deliberation is characterized by active participation, preference convergence, and consensus building. Poor deliberation shows low participation and preference divergence. Welfare logs track aggregate social welfare, inequality measures, and fairness indicators. Atkinson welfare provides inequality-averse social welfare assessment, while Gini coefficients measure distributional inequality. Fairness regularizers track representation loss and participation fairness. Strategic voting rates indicate the proportion of votes that differ from sincere preferences. High rates suggest sophisticated agent behavior and mechanism learning. Preference-outcome alignment measures the correlation between population preferences and implemented policies.</figDesc><table><row><cell>Homophily Effects</cell></row><row><cell>13.8 Deliberation Quality</cell></row><row><cell>13.9 Strategic Behavior Indicators</cell></row><row><cell>13.11</cell></row></table><note><p><p>E.</p>E.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_27"><head>6 Warning Signs and Anomalies Extreme Disproportionality 13.12 Gallagher</head><label></label><figDesc>indices exceeding 0.95 indicate severe disproportionality, often caused by small district sizes, threshold effects, or strategic coordination. Such values suggest institutional failure in representing diverse preferences. Participation rates below 50% indicate coalition formation difficulties, often due to high preference heterogeneity, insufficient budgets, or institutional constraints. This may lead to unstable governance and poor policy outcomes. Gini coefficients above 0.2 indicate significant welfare inequality, suggesting that the voting mechanism or coalition formation process favors certain groups over others. This may indicate fairness issues in the institutional design.</figDesc><table><row><cell>Low Coalition Participation</cell></row><row><cell>13.13 High Inequality</cell></row><row><cell>13.14</cell></row></table><note><p>F.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_28"><head>1 Real-Time Monitoring Framework Key Performance Indicators 14.1</head><label></label><figDesc>Monitor these critical metrics in real-time to assess system health and performance:</figDesc><table><row><cell>F.5 Data Quality Assurance</cell></row><row><cell>Log Validation</cell></row><row><cell>14.15 Completeness Checks:</cell></row><row><cell>14.2 Voting Mechanism Performance: • Gallagher Index: Target &lt; 0.3 for PR systems, &lt; 0.5 for majoritarian systems • All episodes logged with complete data</cell></row><row><cell>• Effective Number of Parties: Expect 2-4 for majoritarian, 4-8 for PR systems • No missing values in critical metrics</cell></row><row><cell>• Strategic Voting Rate: Normal range 0.2-0.7 depending on mechanism complexity • Consistent timestamp sequences</cell></row><row><cell>14.3 Coalition Formation Success: • Proper hierarchical organization</cell></row><row><cell>• Formation Rate: Target &gt; 60% for stable governance 14.16 Consistency Validation:</cell></row><row><cell>• Average Coalition Size: Expect 2-4 members for most scenarios • Metric relationships follow expected patterns</cell></row><row><cell>• Payment Efficiency: Target &gt; 80% for effective side payment mechanisms • No contradictory values in related fields</cell></row><row><cell>14.4 Social Welfare and Fairness:</cell></row><row><cell>• Atkinson Welfare: Monitor for consistent improvement over episodes</cell></row><row><cell>• Welfare Gini: Target &lt; 0.2 for acceptable inequality levels</cell></row><row><cell>• Representation Loss: Target &lt; 0.3 for good preference representation</cell></row><row><cell>F.2 Network and Behavioral Monitoring</cell></row><row><cell>Network Health Indicators</cell></row><row><cell>14.5 Structural Metrics:</cell></row><row><cell>• Network Density: Should remain stable within 10% of initial values</cell></row><row><cell>• Clustering Coefficient: Expect increase in homophily networks</cell></row><row><cell>• Average Path Length: Should decrease in small-world networks</cell></row><row><cell>14.6 Behavioral Effects:</cell></row><row><cell>• Social Influence: Correlation should be positive and stable</cell></row><row><cell>• Homophily Index: Should increase over time in homophily networks</cell></row><row><cell>• Deliberation Participation: Target &gt; 70% for effective deliberation</cell></row><row><cell>F.3 Learning and Convergence Monitoring</cell></row><row><cell>Training Stability</cell></row><row><cell>14.7 Convergence Indicators:</cell></row><row><cell>• Episode Reward: Should stabilize within 5% over 10 episodes</cell></row><row><cell>• Policy Entropy: Should decrease and stabilize over time</cell></row><row><cell>• Value Function: Should converge to stable estimates</cell></row><row><cell>14.8 Learning Quality:</cell></row><row><cell>• Strategic Behavior: Should increase and then stabilize</cell></row><row><cell>• Preference Alignment: Should improve over training episodes</cell></row><row><cell>• Coalition Stability: Should increase with learning</cell></row></table><note><p><p><p>• Proper scaling and normalization</p>• Logical consistency in agent behaviors</p>Appendix G:</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_29"><head>Detailed Results Tables and Additional Figures 15</head><label></label><figDesc></figDesc><table /><note><p><p>.1 This appendix provides comprehensive statistical tables, detailed metric breakdowns, and additional visualizations that support the main results presented in Section 4. All data is derived from cross-configuration analysis of 68+ experiment configurations.</p>G.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_30"><head>1 Full Statistical Tables G.1.1 ANOVA Results for All Pairwise Comparisons 15.2</head><label></label><figDesc>Table 13 presents complete ANOVA results for all metrics across voting mechanisms.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_31"><head>Table 13 :</head><label>13</label><figDesc>Complete ANOVA results for all metrics across voting mechanisms</figDesc><table><row><cell>Metric</cell><cell cols="4">F-Statistic P-Value Effect Size (2) Significance</cell></row><row><cell>Total Welfare</cell><cell>42.603</cell><cell>&lt; 0.001</cell><cell>0.821</cell><cell>***</cell></row><row><cell>Average Welfare</cell><cell>42.603</cell><cell>&lt; 0.001</cell><cell>0.821</cell><cell>***</cell></row><row><cell>Median Welfare</cell><cell>38.245</cell><cell>&lt; 0.001</cell><cell>0.795</cell><cell>***</cell></row><row><cell>Gini Coefficient</cell><cell>34.804</cell><cell>&lt; 0.001</cell><cell>0.773</cell><cell>***</cell></row><row><cell>Theil Index</cell><cell>31.678</cell><cell>&lt; 0.001</cell><cell>0.751</cell><cell>***</cell></row><row><cell>Atkinson Index</cell><cell>30.294</cell><cell>&lt; 0.001</cell><cell>0.745</cell><cell>***</cell></row><row><cell>Vote Entropy</cell><cell>28.547</cell><cell>&lt; 0.001</cell><cell>0.731</cell><cell>***</cell></row><row><cell>Vote Concentration</cell><cell>26.892</cell><cell>&lt; 0.001</cell><cell>0.718</cell><cell>***</cell></row><row><cell>Winner Diversity</cell><cell>24.356</cell><cell>&lt; 0.001</cell><cell>0.693</cell><cell>***</cell></row><row><cell>Strategic Vote Rate</cell><cell>22.184</cell><cell>&lt; 0.001</cell><cell>0.672</cell><cell>***</cell></row><row><cell>G.1.2 Pairwise T-Test Results</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note><p><p>15.3</p>Table 14 shows pairwise t-test results with p-values and effect sizes (Cohen's d) for all mechanism comparisons.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_32"><head>Table 14 :</head><label>14</label><figDesc>Pairwise t-test results for mechanism comparisons (p-values and Cohen's d) Table 15 presents statistical tests for network topology effects.</figDesc><table><row><cell>Comparison</cell><cell cols="6">Welfare Inequality Vote Entropy Winner Diversity Strategic Rate Overall</cell></row><row><cell>PR_S vs PR_D</cell><cell>0.783</cell><cell>0.845</cell><cell>0.892</cell><cell>0.934</cell><cell>0.672</cell><cell>0.823</cell></row><row><cell>PR_S vs STV</cell><cell>0.967</cell><cell>0.724</cell><cell>0.756</cell><cell>0.845</cell><cell>0.691</cell><cell>0.796</cell></row><row><cell>PR_S vs Approval</cell><cell>0.045</cell><cell>0.023</cell><cell>0.034</cell><cell>0.067</cell><cell>0.012</cell><cell>0.036</cell></row><row><cell>PR_S vs Borda</cell><cell>0.124</cell><cell>0.089</cell><cell>0.156</cell><cell>0.234</cell><cell>0.089</cell><cell>0.138</cell></row><row><cell>PR_S vs Plurality</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>PR_S vs IRV</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>PR_D vs STV</cell><cell>0.845</cell><cell>0.672</cell><cell>0.834</cell><cell>0.912</cell><cell>0.756</cell><cell>0.804</cell></row><row><cell>PR_D vs Approval</cell><cell>0.023</cell><cell>0.012</cell><cell>0.089</cell><cell>0.145</cell><cell>0.034</cell><cell>0.061</cell></row><row><cell>PR_D vs Borda</cell><cell>0.067</cell><cell>0.034</cell><cell>0.234</cell><cell>0.345</cell><cell>0.156</cell><cell>0.167</cell></row><row><cell>PR_D vs Plurality</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>PR_D vs IRV</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>STV vs Approval</cell><cell>0.089</cell><cell>0.067</cell><cell>0.145</cell><cell>0.234</cell><cell>0.089</cell><cell>0.125</cell></row><row><cell>STV vs Borda</cell><cell>0.234</cell><cell>0.156</cell><cell>0.345</cell><cell>0.456</cell><cell>0.234</cell><cell>0.285</cell></row><row><cell>STV vs Plurality</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>STV vs IRV</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>Approval vs Borda</cell><cell>0.456</cell><cell>0.567</cell><cell>0.634</cell><cell>0.723</cell><cell>0.456</cell><cell>0.567</cell></row><row><cell cols="2">Approval vs Plurality &lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>Approval vs IRV</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>Borda vs Plurality</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>Borda vs IRV</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell><cell>&lt; 0.001</cell></row><row><cell>Plurality vs IRV</cell><cell>0.834</cell><cell>0.912</cell><cell>0.789</cell><cell>0.856</cell><cell>0.723</cell><cell>0.823</cell></row><row><cell cols="3">G.1.3 Network Effect Statistical Tests</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>15.4</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_33"><head>Table 15 :</head><label>15</label><figDesc>Statistical tests for network topology effects</figDesc><table><row><cell>Metric</cell><cell cols="4">F-Statistic P-Value Effect Size (2) Significance</cell></row><row><cell>Welfare (Network ANOVA)</cell><cell>0.655</cell><cell>0.583</cell><cell>0.031</cell><cell>ns</cell></row><row><cell>Inequality (Network ANOVA)</cell><cell>0.802</cell><cell>0.498</cell><cell>0.037</cell><cell>ns</cell></row><row><cell>Vote Entropy (Network ANOVA)</cell><cell>0.423</cell><cell>0.738</cell><cell>0.020</cell><cell>ns</cell></row><row><cell>Coalition Formation (Network ANOVA)</cell><cell>1.245</cell><cell>0.301</cell><cell>0.057</cell><cell>ns</cell></row><row><cell>BA vs ER (Welfare)</cell><cell>-0.458</cell><cell>0.649</cell><cell>0.122</cell><cell>ns</cell></row><row><cell>BA vs WS (Welfare)</cell><cell>0.892</cell><cell>0.378</cell><cell>0.298</cell><cell>ns</cell></row><row><cell>BA vs None (Welfare)</cell><cell>-0.325</cell><cell>0.747</cell><cell>0.087</cell><cell>ns</cell></row><row><cell>WS vs ER (Welfare)</cell><cell>-1.234</cell><cell>0.223</cell><cell>0.412</cell><cell>ns</cell></row><row><cell>WS vs None (Welfare)</cell><cell>-1.578</cell><cell>0.122</cell><cell>0.525</cell><cell>ns</cell></row><row><cell>ER vs None (Welfare)</cell><cell>-0.034</cell><cell>0.973</cell><cell>0.009</cell><cell>ns</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_34"><head>Detailed Metric Tables by Configuration G.2.1 Per-Mechanism Welfare Breakdown 15.5</head><label></label><figDesc>Table 16 provides detailed welfare metrics for each voting mechanism across all network configurations.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_35"><head>Table 16 :</head><label>16</label><figDesc>Detailed welfare metrics by mechanism across all network configurations</figDesc><table><row><cell>Mechanism</cell><cell>Network</cell><cell>Avg Welfare</cell><cell>Median Welfare</cell><cell>Gini</cell><cell>Pareto Eff.</cell></row><row><cell>PR_SainteLague</cell><cell>None</cell><cell>0.425 ± 0.018</cell><cell>0.415 ± 0.019</cell><cell>0.095 ± 0.008</cell><cell>1.000</cell></row><row><cell>PR_SainteLague</cell><cell>ER005</cell><cell>0.419 ± 0.016</cell><cell>0.408 ± 0.017</cell><cell>0.098 ± 0.007</cell><cell>1.000</cell></row><row><cell>PR_SainteLague</cell><cell>BA3</cell><cell>0.408 ± 0.015</cell><cell>0.398 ± 0.016</cell><cell>0.103 ± 0.009</cell><cell>1.000</cell></row><row><cell cols="3">PR_SainteLague WS6b015 0.402 ± 0.014</cell><cell>0.392 ± 0.015</cell><cell>0.106 ± 0.008</cell><cell>1.000</cell></row><row><cell>PR_DHondt</cell><cell>None</cell><cell>0.428 ± 0.016</cell><cell>0.418 ± 0.017</cell><cell>0.092 ± 0.007</cell><cell>1.000</cell></row><row><cell>PR_DHondt</cell><cell>ER005</cell><cell>0.422 ± 0.015</cell><cell>0.412 ± 0.016</cell><cell>0.095 ± 0.008</cell><cell>1.000</cell></row><row><cell>PR_DHondt</cell><cell>BA3</cell><cell>0.415 ± 0.014</cell><cell>0.405 ± 0.015</cell><cell>0.099 ± 0.008</cell><cell>1.000</cell></row><row><cell>PR_DHondt</cell><cell cols="2">WS6b015 0.409 ± 0.013</cell><cell>0.399 ± 0.014</cell><cell>0.103 ± 0.009</cell><cell>1.000</cell></row><row><cell>STV</cell><cell>None</cell><cell>0.420 ± 0.012</cell><cell>0.410 ± 0.013</cell><cell>0.098 ± 0.007</cell><cell>1.000</cell></row><row><cell>STV</cell><cell>ER005</cell><cell>0.418 ± 0.011</cell><cell>0.408 ± 0.012</cell><cell>0.101 ± 0.008</cell><cell>1.000</cell></row><row><cell>STV</cell><cell>BA3</cell><cell>0.412 ± 0.010</cell><cell>0.402 ± 0.011</cell><cell>0.105 ± 0.007</cell><cell>1.000</cell></row><row><cell>STV</cell><cell cols="2">WS6b015 0.408 ± 0.009</cell><cell>0.398 ± 0.010</cell><cell>0.108 ± 0.008</cell><cell>1.000</cell></row><row><cell>Approval</cell><cell>None</cell><cell>0.408 ± 0.025</cell><cell>0.395 ± 0.027</cell><cell>0.104 ± 0.013</cell><cell>1.000</cell></row><row><cell>Approval</cell><cell>ER005</cell><cell>0.405 ± 0.024</cell><cell>0.392 ± 0.026</cell><cell>0.107 ± 0.012</cell><cell>1.000</cell></row><row><cell>Approval</cell><cell>BA3</cell><cell>0.398 ± 0.023</cell><cell>0.385 ± 0.025</cell><cell>0.112 ± 0.013</cell><cell>1.000</cell></row><row><cell>Approval</cell><cell cols="2">WS6b015 0.388 ± 0.022</cell><cell>0.375 ± 0.024</cell><cell>0.118 ± 0.014</cell><cell>1.000</cell></row><row><cell>Borda</cell><cell>None</cell><cell>0.412 ± 0.024</cell><cell>0.402 ± 0.026</cell><cell>0.102 ± 0.013</cell><cell>1.000</cell></row><row><cell>Borda</cell><cell>ER005</cell><cell>0.408 ± 0.023</cell><cell>0.398 ± 0.025</cell><cell>0.105 ± 0.012</cell><cell>1.000</cell></row><row><cell>Borda</cell><cell>BA3</cell><cell>0.401 ± 0.022</cell><cell>0.391 ± 0.024</cell><cell>0.109 ± 0.013</cell><cell>1.000</cell></row><row><cell>Borda</cell><cell cols="2">WS6b015 0.395 ± 0.021</cell><cell>0.385 ± 0.023</cell><cell>0.113 ± 0.014</cell><cell>1.000</cell></row><row><cell>Plurality</cell><cell>None</cell><cell>0.339 ± 0.004</cell><cell>0.325 ± 0.004</cell><cell>0.135 ± 0.002</cell><cell>1.000</cell></row><row><cell>Plurality</cell><cell>ER005</cell><cell>0.336 ± 0.003</cell><cell>0.322 ± 0.003</cell><cell>0.137 ± 0.002</cell><cell>1.000</cell></row><row><cell>Plurality</cell><cell>BA3</cell><cell>0.332 ± 0.003</cell><cell>0.318 ± 0.003</cell><cell>0.140 ± 0.002</cell><cell>1.000</cell></row><row><cell>Plurality</cell><cell cols="2">WS6b015 0.328 ± 0.002</cell><cell>0.314 ± 0.003</cell><cell>0.143 ± 0.002</cell><cell>1.000</cell></row><row><cell>IRV</cell><cell>None</cell><cell>0.338 ± 0.009</cell><cell>0.324 ± 0.009</cell><cell>0.136 ± 0.003</cell><cell>1.000</cell></row><row><cell>IRV</cell><cell>ER005</cell><cell>0.334 ± 0.008</cell><cell>0.320 ± 0.008</cell><cell>0.138 ± 0.002</cell><cell>1.000</cell></row><row><cell>IRV</cell><cell>BA3</cell><cell>0.330 ± 0.008</cell><cell>0.316 ± 0.008</cell><cell>0.141 ± 0.003</cell><cell>1.000</cell></row><row><cell>IRV</cell><cell cols="2">WS6b015 0.325 ± 0.007</cell><cell>0.311 ± 0.008</cell><cell>0.144 ± 0.003</cell><cell>1.000</cell></row></table><note><p>JASSS, xx(x) x, 20xx http://jasss.soc.surrey.ac.uk/xx/x/x.html Doi: 10.18564/jasss.xxxx G.2.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_36"><head>2 Per-Network Voting Behavior Breakdown 15.6</head><label></label><figDesc>Table 17 provides detailed voting behavior metrics for each network topology across all voting mechanisms.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_37"><head>Table 17 :</head><label>17</label><figDesc>Detailed voting behavior metrics by network topology across all mechanisms</figDesc><table><row><cell>Network</cell><cell>Mechanism</cell><cell>Vote Entropy</cell><cell>Vote Gini</cell><cell cols="2">Vote Concentration Winner Diversity</cell></row><row><cell>None</cell><cell>PR_SainteLague</cell><cell>2.89 ± 0.32</cell><cell>0.132 ± 0.016</cell><cell>0.751 ± 0.084</cell><cell>0.89 ± 0.09</cell></row><row><cell>None</cell><cell>PR_DHondt</cell><cell>2.94 ± 0.29</cell><cell>0.135 ± 0.015</cell><cell>0.756 ± 0.079</cell><cell>0.87 ± 0.08</cell></row><row><cell>None</cell><cell>STV</cell><cell>2.91 ± 0.25</cell><cell>0.139 ± 0.013</cell><cell>0.742 ± 0.069</cell><cell>0.86 ± 0.07</cell></row><row><cell>None</cell><cell>Approval</cell><cell>2.79 ± 0.33</cell><cell>0.149 ± 0.019</cell><cell>0.688 ± 0.096</cell><cell>0.79 ± 0.08</cell></row><row><cell>None</cell><cell>Borda</cell><cell>2.74 ± 0.36</cell><cell>0.155 ± 0.022</cell><cell>0.675 ± 0.105</cell><cell>0.76 ± 0.09</cell></row><row><cell>None</cell><cell>Plurality</cell><cell>1.95 ± 0.16</cell><cell>0.291 ± 0.026</cell><cell>0.425 ± 0.039</cell><cell>0.43 ± 0.05</cell></row><row><cell>None</cell><cell>IRV</cell><cell>1.90 ± 0.19</cell><cell>0.305 ± 0.032</cell><cell>0.402 ± 0.047</cell><cell>0.40 ± 0.06</cell></row><row><cell>ER005</cell><cell>PR_SainteLague</cell><cell>4.69 ± 0.05</cell><cell>0.538 ± 0.025</cell><cell>0.025 ± 0.005</cell><cell>0.26 ± 0.03</cell></row><row><cell>ER005</cell><cell>PR_DHondt</cell><cell>4.69 ± 0.05</cell><cell>0.538 ± 0.025</cell><cell>0.024 ± 0.004</cell><cell>0.26 ± 0.03</cell></row><row><cell>ER005</cell><cell>STV</cell><cell>4.46 ± 0.20</cell><cell>0.635 ± 0.067</cell><cell>0.040 ± 0.018</cell><cell>0.25 ± 0.02</cell></row><row><cell>ER005</cell><cell>Approval</cell><cell>4.75 ± 0.05</cell><cell>0.456 ± 0.013</cell><cell>0.009 ± 0.0002</cell><cell>0.23 ± 0.02</cell></row><row><cell>ER005</cell><cell>Borda</cell><cell>5.26 ± 0.03</cell><cell>0.149 ± 0.061</cell><cell>0.008 ± 0.001</cell><cell>0.24 ± 0.03</cell></row><row><cell>ER005</cell><cell>Plurality</cell><cell>4.68 ± 0.05</cell><cell>0.252 ± 0.016</cell><cell>0.025 ± 0.004</cell><cell>0.00 ± 0.00</cell></row><row><cell>ER005</cell><cell>IRV</cell><cell>3.98 ± 0.54</cell><cell>0.739 ± 0.095</cell><cell>0.128 ± 0.104</cell><cell>0.00 ± 0.00</cell></row><row><cell>BA3</cell><cell>PR_SainteLague</cell><cell>4.61 ± 0.06</cell><cell>0.580 ± 0.030</cell><cell>0.030 ± 0.007</cell><cell>0.21 ± 0.12</cell></row><row><cell>BA3</cell><cell>PR_DHondt</cell><cell>4.62 ± 0.06</cell><cell>0.572 ± 0.028</cell><cell>0.029 ± 0.006</cell><cell>0.21 ± 0.12</cell></row><row><cell>BA3</cell><cell>STV</cell><cell>2.99 ± 0.59</cell><cell>0.890 ± 0.080</cell><cell>0.260 ± 0.114</cell><cell>0.25 ± 0.05</cell></row><row><cell>BA3</cell><cell>Approval</cell><cell>4.75 ± 0.05</cell><cell>0.456 ± 0.013</cell><cell>0.009 ± 0.0002</cell><cell>0.24 ± 0.02</cell></row><row><cell>BA3</cell><cell>Borda</cell><cell>5.25 ± 0.03</cell><cell>0.150 ± 0.060</cell><cell>0.008 ± 0.001</cell><cell>0.26 ± 0.03</cell></row><row><cell>BA3</cell><cell>Plurality</cell><cell>4.68 ± 0.05</cell><cell>0.252 ± 0.016</cell><cell>0.025 ± 0.004</cell><cell>0.00 ± 0.00</cell></row><row><cell>BA3</cell><cell>IRV</cell><cell>3.98 ± 0.54</cell><cell>0.739 ± 0.095</cell><cell>0.128 ± 0.104</cell><cell>0.00 ± 0.00</cell></row><row><cell cols="2">WS6b015 PR_SainteLague</cell><cell>4.69 ± 0.05</cell><cell>0.536 ± 0.025</cell><cell>0.024 ± 0.004</cell><cell>0.14 ± 0.14</cell></row><row><cell>WS6b015</cell><cell>PR_DHondt</cell><cell>4.67 ± 0.05</cell><cell>0.547 ± 0.025</cell><cell>0.025 ± 0.005</cell><cell>0.14 ± 0.14</cell></row><row><cell>WS6b015</cell><cell>STV</cell><cell>4.49 ± 0.31</cell><cell>0.615 ± 0.081</cell><cell>0.043 ± 0.042</cell><cell>0.26 ± 0.02</cell></row><row><cell>WS6b015</cell><cell>Approval</cell><cell>4.75 ± 0.04</cell><cell>0.447 ± 0.011</cell><cell>0.009 ± 0.0002</cell><cell>0.26 ± 0.02</cell></row><row><cell>WS6b015</cell><cell>Borda</cell><cell>5.24 ± 0.02</cell><cell>0.183 ± 0.027</cell><cell>0.009 ± 0.0005</cell><cell>0.24 ± 0.02</cell></row><row><cell>WS6b015</cell><cell>Plurality</cell><cell>4.69 ± 0.05</cell><cell>0.248 ± 0.015</cell><cell>0.025 ± 0.004</cell><cell>0.00 ± 0.00</cell></row><row><cell>WS6b015</cell><cell>IRV</cell><cell>4.34 ± 0.30</cell><cell>0.669 ± 0.086</cell><cell>0.057 ± 0.042</cell><cell>0.00 ± 0.00</cell></row><row><cell>G.3</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_38"><head>Parameter Sensitivity Analyses G.3.1 Turnout Setting Effects 15.7</head><label></label><figDesc>Table 18 presents detailed analysis of turnout setting effects on all key metrics.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_39"><head>Table 18 :</head><label>18</label><figDesc>Turnout setting effects on key metrics (paired t-test results) Table19presents detailed analysis of coalition setting effects on all key metrics.</figDesc><table><row><cell>Metric</cell><cell>Turnout On</cell><cell>Turnout Off</cell><cell cols="2">T-Statistic P-Value</cell></row><row><cell>Average Welfare</cell><cell cols="2">0.392 ± 0.039 0.378 ± 0.032</cell><cell>1.245</cell><cell>0.218</cell></row><row><cell>Gini Coefficient</cell><cell cols="2">0.111 ± 0.018 0.120 ± 0.017</cell><cell>-1.834</cell><cell>0.071</cell></row><row><cell>Vote Entropy</cell><cell>2.45 ± 0.68</cell><cell>2.38 ± 0.72</cell><cell>0.523</cell><cell>0.603</cell></row><row><cell>Winner Diversity</cell><cell>0.72 ± 0.28</cell><cell>0.69 ± 0.31</cell><cell>0.385</cell><cell>0.701</cell></row><row><cell>Strategic Vote Rate</cell><cell>0.41 ± 0.23</cell><cell>0.44 ± 0.26</cell><cell>-0.678</cell><cell>0.499</cell></row><row><cell>Coalition Formation Rate</cell><cell>0.91 ± 0.15</cell><cell>0.89 ± 0.18</cell><cell>0.534</cell><cell>0.595</cell></row><row><cell>G.3.2 Coalition Setting Effects</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>15.8</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_40"><head>Table 19 :</head><label>19</label><figDesc>Coalition setting effects on key metrics (paired t-test results) Table20presents representative episode logs from one configuration per voting mechanism family.</figDesc><table><row><cell>Metric</cell><cell cols="4">Coalition On Coalition Off T-Statistic P-Value</cell></row><row><cell>Average Welfare</cell><cell cols="2">0.392 ± 0.038 0.387 ± 0.038</cell><cell>0.237</cell><cell>0.814</cell></row><row><cell>Gini Coefficient</cell><cell cols="2">0.111 ± 0.019 0.112 ± 0.017</cell><cell>-0.155</cell><cell>0.877</cell></row><row><cell>Vote Entropy</cell><cell>2.52 ± 0.71</cell><cell>2.48 ± 0.69</cell><cell>0.324</cell><cell>0.747</cell></row><row><cell>Winner Diversity</cell><cell>0.75 ± 0.29</cell><cell>0.73 ± 0.27</cell><cell>0.412</cell><cell>0.682</cell></row><row><cell>Strategic Vote Rate</cell><cell>0.42 ± 0.24</cell><cell>0.43 ± 0.25</cell><cell>-0.198</cell><cell>0.843</cell></row><row><cell>Coalition Formation Rate</cell><cell>0.93 ± 0.16</cell><cell>0.00 ± 0.00</cell><cell>18.453</cell><cell>&lt; 0.001</cell></row><row><cell cols="3">G.4 Representative Episode Logs &amp; Learning Curves</cell><cell></cell><cell></cell></row><row><cell>G.4.1 Sample Episode Metrics</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>15.9</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_41"><head>Table 20 :</head><label>20</label><figDesc>Representative episode logs (Episode 5, Seed 42) from one configuration per mechanism Table21presents key metrics evolution over the first 10 episodes for representative configurations.</figDesc><table><row><cell cols="2">Mechanism Turnout</cell><cell>Winner</cell><cell cols="3">Welfare Inequality Strategic Rate</cell></row><row><cell>Plurality</cell><cell>85%</cell><cell>Agent 42</cell><cell>0.334</cell><cell>0.138</cell><cell>68%</cell></row><row><cell>Approval</cell><cell>88%</cell><cell>Agent 156</cell><cell>0.401</cell><cell>0.109</cell><cell>35%</cell></row><row><cell>PR</cell><cell>92%</cell><cell>Agent 78</cell><cell>0.421</cell><cell>0.096</cell><cell>24%</cell></row><row><cell>STV</cell><cell>91%</cell><cell>Agent 134</cell><cell>0.416</cell><cell>0.101</cell><cell>27%</cell></row><row><cell>IRV</cell><cell>87%</cell><cell>Agent 93</cell><cell>0.331</cell><cell>0.140</cell><cell>71%</cell></row><row><cell>Borda</cell><cell>89%</cell><cell>Agent 165</cell><cell>0.407</cell><cell>0.105</cell><cell>41%</cell></row><row><cell cols="2">G.4.2 Learning Convergence Analysis</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>15.10</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_42"><head>Table 21 :</head><label>21</label><figDesc>Key metrics evolution over first 10 episodes (representative configurations)</figDesc><table><row><cell cols="7">Episode Welfare Inequality Vote Entropy Winner Diversity Strategic Rate Coalition Count</cell></row><row><cell>1</cell><cell>0.315</cell><cell>0.158</cell><cell>1.85</cell><cell>0.38</cell><cell>0.15</cell><cell>8</cell></row><row><cell>2</cell><cell>0.342</cell><cell>0.142</cell><cell>2.12</cell><cell>0.45</cell><cell>0.28</cell><cell>12</cell></row><row><cell>3</cell><cell>0.368</cell><cell>0.128</cell><cell>2.34</cell><cell>0.52</cell><cell>0.41</cell><cell>15</cell></row><row><cell>4</cell><cell>0.385</cell><cell>0.118</cell><cell>2.48</cell><cell>0.58</cell><cell>0.52</cell><cell>18</cell></row><row><cell>5</cell><cell>0.398</cell><cell>0.112</cell><cell>2.56</cell><cell>0.63</cell><cell>0.61</cell><cell>21</cell></row><row><cell>6</cell><cell>0.407</cell><cell>0.108</cell><cell>2.61</cell><cell>0.67</cell><cell>0.68</cell><cell>23</cell></row><row><cell>7</cell><cell>0.413</cell><cell>0.105</cell><cell>2.64</cell><cell>0.70</cell><cell>0.73</cell><cell>24</cell></row><row><cell>8</cell><cell>0.417</cell><cell>0.103</cell><cell>2.66</cell><cell>0.72</cell><cell>0.77</cell><cell>25</cell></row><row><cell>9</cell><cell>0.419</cell><cell>0.102</cell><cell>2.67</cell><cell>0.73</cell><cell>0.79</cell><cell>25</cell></row><row><cell>10</cell><cell>0.420</cell><cell>0.101</cell><cell>2.68</cell><cell>0.74</cell><cell>0.81</cell><cell>26</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_0"><p>JASSS, xx(x) x, 20xx http://jasss.soc.surrey.ac.uk/xx/x/x.html Doi: 10.18564/jasss.xxxx</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>Doi: 10.18564/jasss.xxxx</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Ideal Points: 8-dimensional policy preferences x i ∈ [0, 1] 8 covering economic, social, environmental, foreign, security, infrastructure, technology, and cultural policy domains</p><p>• Salience Weights: Optional issue importance weights w i ∈ [0, 1] 8</p><p>• Turnout Propensity: Beta-distributed participation probability p turnout ∼ Beta(α, β)</p><p>• Budget: Available resources for side payments and coalition activities</p><p>• Learning Parameters: Policy network weights, value function parameters</p><p>• Memory: Historical outcomes, coalition experiences, deliberation records</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.2">Environment State Variables:</head><p>• Voting Mechanism: Plurality, IRV, Borda, Approval, STV, PR variants with mechanism-specific parameters</p><p>• Network Configuration: ER, BA, WS topologies with homophily settings and edge weights   <ref type="bibr">]</ref> 8 : Agent j's ideal policy (preference vector) • x t : Population preference vector at episode t (centroid of all x i ) 10.3 Functions:   • None: No network structure (baseline control)</p><p>• Erdös-Rënyi <ref type="bibr" target="#b20">(Erdős &amp; Rényi 1959</ref>): Random graph with p = 0.05 (sparse connectivity)</p><p>• Barabäsi-Albert <ref type="bibr" target="#b3">(Barabási &amp; Albert 1999)</ref>: Scale-free network with m = 3 (preferential attachment)</p><p>• Watts-Strogatz <ref type="bibr" target="#b51">(Watts &amp; Strogatz 1998)</ref>: Small-world network with k = 6, β = 0.15 (local clustering)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.4">Dimension 3: Training Configurations (3 levels)</head><p>• Shared Policy: All agents use identical policy networks • Plurality: Abstention probability p abstain ∈ [0, 0.3]</p><p>• Approval: Threshold learning rate α θ = 0.001</p><p>• Borda: Preference learning with temperature τ = 0.1 • Identical utility function:</p><p>• Same preference space: 8-dimensional vectors in [0, 1] 8 with Euclidean distance metric</p><p>• Same policy outcome representation and calculation methods as main experiment</p><p>• Utility normalization: u i ∈ [0, 1] with exponential decay ensuring positive utilities 12.31 Welfare Metrics Consistency:</p><p>• Atkinson welfare: Appendix E: Log Interpretation Guidelines </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E.3 Coalition Formation Logs</head><p>Formation Success Patterns 13.5 Successful coalition formation is indicated by high participation rates and stable coalition structures. Logs show proposal acceptance rates, negotiation rounds, and final coalition compositions. Failed formations often correlate with high preference heterogeneity or insufficient side payment budgets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contract Type Analysis</head><p>13.6 Binding contracts show higher compliance rates but lower formation rates due to commitment costs. Nonbinding contracts exhibit higher formation rates but may show instability over time. Cheap-talk negotiations often result in temporary coalitions with frequent renegotiation. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Side</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Social Choice and Individual Values</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Arrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Atkinson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0022-0531(70)90039-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Theory</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="244" to="263" />
+			<date type="published" when="1951">1951. 1970</date>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+	<note>On the measurement of inequality</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Coalition bargaining time and governments&apos; policy-making productivity</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bäck</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/1475-6765.12651</idno>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Balinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">P</forename><surname>Young</surname></persName>
+		</author>
+		<title level="m">Fair representation: Meeting the ideal of one man, one vote</title>
+		<imprint>
+			<publisher>Brookings Institution Press</publisher>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Emergence of scaling in random networks</title>
+		<author>
+			<persName><forename type="first">A.-L</forename><surname>Barabási</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Albert</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.286.5439.509</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">286</biblScope>
+			<biblScope unit="issue">5439</biblScope>
+			<biblScope unit="page" from="509" to="512" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Bargaining in legislatures</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Baron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Ferejohn</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1961664</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1181" to="1206" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Voting schemes for which it can be difficult to tell who won the election</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Bartholdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Tovey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Trick</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF00303169</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Social Choice and Welfare</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="157" to="165" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Coalition formation in legislative bargaining</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Battaglini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Palfrey</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+		<respStmt>
+			<orgName>National Bureau of Economic Research</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Tech. Rep. 25664</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Controlling the false discovery rate: A practical and powerful approach to multiple testing</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Benjamini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Hochberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1995.tb02031.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="289" to="300" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Voting contagion: Modeling and analysis of a century of u.s. presidential elections</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Braha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A M</forename><surname>De Aguiar</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0177970</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">177970</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Approval voting</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Brams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Fishburn</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1955105</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="831" to="847" />
+			<date type="published" when="1978">1978</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Handbook of Computational Social Choice</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Brandt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Conitzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Endriss</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lang</surname></persName>
+		</author>
+		<editor>J. &amp; Procaccia, A. D.</editor>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>Cambridge University Press</publisher>
+			<pubPlace>Cambridge</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Fair algorithms for selecting citizens&apos; assemblies</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Budón</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Loewen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41586-021-03788-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">596</biblScope>
+			<biblScope unit="issue">7866</biblScope>
+			<biblScope unit="page" from="548" to="553" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Agent-based modeling in political science</title>
+		<author>
+			<persName><forename type="first">L.-E</forename><surname>Cederman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Political Methodologist</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="16" to="22" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Statistical Power Analysis for the Behavioral Sciences</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1988">1988</date>
+			<publisher>Lawrence Erlbaum Associates</publisher>
+			<pubPlace>Hillsdale, NJ</pubPlace>
+		</imprint>
+	</monogr>
+	<note>2nd edn</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Making Votes Count: Strategic Coordination in the World&apos;s Electoral Systems</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Cox</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/CBO9781139174954</idno>
+		<imprint>
+			<date type="published" when="1997">1997</date>
+			<publisher>Cambridge University Press</publisher>
+			<pubPlace>Cambridge</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Mémoire sur les élections au scrutin</title>
+		<author>
+			<persName><forename type="first">J.-C</forename><surname>De Borda</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Histoire de l&apos;Académie Royale des Sciences</title>
+		<imprint>
+			<biblScope unit="page" from="657" to="665" />
+			<date type="published" when="1781">1781</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Essai sur l&apos;application de l&apos;analyse à la probabilité des décisions rendues à la pluralité des voix</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>De Condorcet</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1785">1785</date>
+			<publisher>Imprimerie Royale</publisher>
+			<pubPlace>Paris</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Reaching a consensus</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Degroot</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1974.10480137</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">345</biblScope>
+			<biblScope unit="page" from="118" to="121" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Political Parties: Their Organization and Activity in the Modern State</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Duverger</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/aos/1176344552</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Statistics</title>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Methuen Efron</surname></persName>
+		</editor>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="26" />
+			<date type="published" when="1954">1954. 1979</date>
+			<pubPlace>London</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Bootstrap methods: Another look at the jackknife</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Generative Social Science: Studies in Agent-Based Computational Modeling</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Epstein</surname></persName>
+		</author>
+		<idno type="DOI">10.18564/jasss.xxxx</idno>
+		<ptr target="http://jasss.soc.surrey.ac.uk/xx/x/x.htmlDoi:10.18564/jasss.xxxx" />
+	</analytic>
+	<monogr>
+		<title level="m">xx(x) x, 20xx</title>
+		<meeting><address><addrLine>Princeton</addrLine></address></meeting>
+		<imprint>
+			<publisher>Princeton University Press JASSS</publisher>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">On random graphs</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Erdős</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rényi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Publicationes Mathematicae</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="290" to="297" />
+			<date type="published" when="1959">1959</date>
+		</imprint>
+	</monogr>
+	<note>Original publication in Hungarian</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Paradoxes of voting</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Fishburn</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1959501</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="537" to="546" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Counterfactual multi-agent policy gradients</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Foerster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Farquhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Afouras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Nardelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Whiteson</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v32i1.11794</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="2974" to="2982" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">An experiment on coordination in multi-candidate elections: The many are strong</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Forsythe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Palfrey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Plott</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2118338</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Economics</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="525" to="547" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Connecting the congress: A study of cosponsorship networks</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Fowler</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/mpl002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="456" to="487" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Proportionality, disproportionality and electoral systems</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gallagher</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0261-3794(91)90004-C</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral Studies</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="33" to="51" />
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Forecasting elections with agent-based modeling: Two live experiments</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0270194</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">270194</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The odd protocol: A review and first update</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Grimm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Berger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Deangelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Polhill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Giske</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">F</forename><surname>Railsback</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ecolmodel.2010.08.019</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ecological Modelling</title>
+		<imprint>
+			<biblScope unit="volume">221</biblScope>
+			<biblScope unit="issue">23</biblScope>
+			<biblScope unit="page" from="2760" to="2768" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The odd protocol for describing agent-based and other simulation models: A second update to improve clarity, replication, and structural realism</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Grimm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">F</forename><surname>Railsback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Vincenot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Berger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gallagher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Polhill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Wijermans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Deangelis</surname></persName>
+		</author>
+		<idno type="DOI">10.18564/jasss.4259</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Artificial Societies and Social Simulation</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A standard protocol for describing individual-based and agent-based models</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Grimm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Revilla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Berger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Jeltsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M</forename><surname>Mooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">F</forename><surname>Railsback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H.-H</forename><surname>Thulke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Weiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wiegand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Deangelis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ecolmodel.2006.04.023</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ecological Modelling</title>
+		<imprint>
+			<biblScope unit="volume">198</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="115" to="126" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Policy preferences in coalition formation and the stability of minority and surplus governments</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Gschwend</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Gračiūnaité</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/687928</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1185" to="1201" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">The Election of Representatives, Parliamentary and Municipal</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hare</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1861">1861</date>
+			<publisher>Longman</publisher>
+			<pubPlace>London; Green, Longman, and Roberts</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The paternity of an index</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">C</forename><surname>Herfindahl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Concentration in the U.S. Steel Industry</title>
+		<meeting><address><addrLine>New York Hirschman</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1950">1950. 1964</date>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="761" to="762" />
+		</imprint>
+		<respStmt>
+			<orgName>Columbia University</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Ph.D. thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Use of ranks in one-criterion variance analysis</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Kruskal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Wallis</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1952.10483441</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">260</biblScope>
+			<biblScope unit="page" from="583" to="621" />
+			<date type="published" when="1952">1952</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Effective number of parties: A measure with application to west europe</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Laakso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Taagepera</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001041407901200101</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="27" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Patterns of Democracy: Government Forms and Performance in Thirty-Six Countries</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Laver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Sergenti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Party Competition: An Agent-Based Model</title>
+		<meeting><address><addrLine>Princeton; New Haven</addrLine></address></meeting>
+		<imprint>
+			<publisher>Yale University Press</publisher>
+			<date type="published" when="1999">2011. 1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The theoretical limits of maximum distortion: Some analytic expressions for electoral systems</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Loosemore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">J</forename><surname>Hanby</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S000712340000925X</idno>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="467" to="477" />
+			<date type="published" when="1971">1971</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Multi-agent actor-critic for mixed cooperative-competitive environments</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Lowe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tamar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Harb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mordatch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="6379" to="6390" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">On a test of whether one of two random variables is stochastically larger than the other</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">B</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Whitney</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/aoms/1177730491</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="50" to="60" />
+			<date type="published" when="1947">1947</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Xx</forename><surname>Jasss</surname></persName>
+		</author>
+		<idno type="DOI">10.18564/jasss.xxxx</idno>
+		<ptr target="http://jasss.soc.surrey.ac.uk/xx/x/x.htmlDoi:10.18564/jasss.xxxx" />
+		<imprint>
+			<biblScope unit="page">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">A comparison of three methods for selecting values of input variables in the analysis of output from a computer code</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Mckay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Beckman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Conover</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00401706.1979.10489755</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Technometrics</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="239" to="245" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Birds of a feather: Homophily in social networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mcpherson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Smith-Lovin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Cook</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev.soc.27.1.415</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="415" to="444" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Agent-based simulation of district-based elections</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mitra</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2205.14400</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Asynchronous methods for deep reinforcement learning</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Badia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Lillicrap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Harley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 33rd International Conference on Machine Learning</title>
+		<meeting>the 33rd International Conference on Machine Learning</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="1928" to="1937" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">The emergence of parties: An agent-based simulation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Moulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Riker</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1065912913487258</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Axioms of Cooperative Decision Making</title>
+		<meeting><address><addrLine>Cambridge; New Haven</addrLine></address></meeting>
+		<imprint>
+			<publisher>Yale University Press Schreiber, D</publisher>
+			<date type="published" when="1962">1988. 1962. 2014</date>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="page" from="136" to="151" />
+		</imprint>
+	</monogr>
+	<note>The Theory of Political Coalitions</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wolski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Klimov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1707.06347</idno>
+		<title level="m">Proximal policy optimization algorithms</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Collective choice and social welfare</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Sen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1970">1970</date>
+			<pubPlace>Holden-Day</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Agent-based simulation of districtbased elections with population distributions</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shinde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tiwari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chakraborty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Bhonde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ravindran</surname></persName>
+		</author>
+		<idno type="DOI">10.5555/3545946.3599059</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 International Conference on Autonomous Agents and Multiagent Systems (AAMAS)</title>
+		<meeting>the 2023 International Conference on Autonomous Agents and Multiagent Systems (AAMAS)</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Multiagent systems: Algorithmic, game-theoretic, and logical foundations</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shoham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Leyton-Brown</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Seats and Votes: The Effects and Determinants of Electoral Systems</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Taagepera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Shugart</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989">1989</date>
+			<publisher>Yale University Press</publisher>
+			<pubPlace>New Haven</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">The single transferable vote</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">N</forename><surname>Tideman</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/jep.9.1.27</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Perspectives</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="27" to="38" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Collective dynamics of &apos;small-world&apos; networks</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Watts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Strogatz</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/30918</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">393</biblScope>
+			<biblScope unit="issue">6684</biblScope>
+			<biblScope unit="page" from="440" to="442" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Mou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wei</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2410.20746</idno>
+		<idno type="arXiv">arXiv:2410.20746</idno>
+		<title level="m">Electionsim: Massive population election simulation powered by large language model driven agents</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

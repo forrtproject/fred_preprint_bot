@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Contextual semantic effects in compound processing</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Annika</forename><surname>Schebesta</surname></persName>
+							<email>annika.schebesta@uni-siegen.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of English linguistics</orgName>
+								<orgName type="institution">University of Siegen</orgName>
+								<address>
+									<addrLine>Adolf-Reichwein-StraSSe 2</addrLine>
+									<postCode>57068</postCode>
+									<settlement>Siegen</settlement>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Department of English linguistics</orgName>
+								<orgName type="institution">University of Siegen</orgName>
+								<address>
+									<addrLine>Adolf-Reichwein-StraSSe 2</addrLine>
+									<postCode>57068</postCode>
+									<settlement>Siegen</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jessica</forename><surname>Nieder</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of English linguistics</orgName>
+								<orgName type="institution">University of Siegen</orgName>
+								<address>
+									<addrLine>Adolf-Reichwein-StraSSe 2</addrLine>
+									<postCode>57068</postCode>
+									<settlement>Siegen</settlement>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Department of English linguistics</orgName>
+								<orgName type="institution">University of Siegen</orgName>
+								<address>
+									<addrLine>Adolf-Reichwein-StraSSe 2</addrLine>
+									<postCode>57068</postCode>
+									<settlement>Siegen</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Contextual semantic effects in compound processing</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">4E802F670054A1B2DCC24C874323C5E6</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-21T13:59+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>compound processing</term>
+					<term>acoustic duration</term>
+					<term>distributional semantics</term>
+					<term>contextual embeddings</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This study investigates how semantic transparency influences the phonetic realization of triconstituent nominal compounds (NNN) in English. Building on earlier work that employed averaged (static) embeddings, we use contextualized BERT representations derived from the exact carrier and context sentences presented to participants in a production experiment. This method aligns computational measures of semantic similarity with the experimental context guiding speakers' interpretations. Our analyses reveal a branching-sensitive asymmetry, indicating that contextualized semantic information affects phonetic realization selectively, depending on structural configuration. More broadly, the results highlight how computational embeddings can enrich experimental data by capturing semantic dimensions that are not directly accessible through traditional methods.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Experimental linguistics has long relied on human behavioural and acoustic data to investigate how language is produced and processed. Following this tradition, phonetic and psycholinguistic studies typically explore language processing by analysing speech, response latencies, or judgments elicited in controlled experimental settings. Although this approach has successfully yielded rich insights into the structure of the mental lexicon, its reliance on observable behaviour often poses a challenge: crucial semantic information is frequently latent and must be inferred indirectly, or it needs to be incorporated into the study design in advance. Since many studies interested in morphological processing focus primarily on the interplay between morphology and phonetics (see e.g., <ref type="bibr" target="#b22">Kunter and Plag, 2016;</ref><ref type="bibr" target="#b26">Plag et al., 2017;</ref><ref type="bibr" target="#b30">Schebesta and Kunter, 2022)</ref>, an interplay that is already complex on its own, semantic factors are often not explicitly incorporated into experimental designs and, thus, remain unexamined.</p><p>Recent advances in computational linguistics offer new tools to address this gap, e.g., in the form of post-hoc statistical analyses. This is particularly intriguing in those cases where semantic predictors were not included explicitly. In particular, distributional semantic models, for example those derived from large pre-trained neural language models such as Bidirectional Encoder Representations from Transformers (BERT, <ref type="bibr" target="#b10">Devlin et al., 2019)</ref>, provide vector-based representations that approximate aspects of human semantic knowledge. These computational embeddings have begun to enrich experimental analyses by quantifying semantic relationships that would otherwise remain opaque to traditional modelling <ref type="bibr" target="#b6">(Buchanan et al., 2025;</ref><ref type="bibr" target="#b24">Nieder et al., 2024)</ref>. As such, they offer a powerful way to operationalise theoretical constructs like semantic transparency in a quantifiable and replicable manner.</p><p>One linguistic domain where such enrichment of experimental data can be particularly valuable is compound processing <ref type="bibr" target="#b31">(Schebesta and Nieder, 2024)</ref>. Compounds, especially multi-constituent nominal compounds, pose unique challenges for theories of lexical representation. Their internal morphological structure often interacts with both phonetic realisation and semantic compositionality. This complexity is increased in triconstituent NNN compounds (e.g., work accident factor, guest account service), where multiple possible bracketing structures introduce ambiguity both in form and interpretation <ref type="bibr" target="#b29">(Schebesta, 2024;</ref><ref type="bibr" target="#b31">Schebesta and Nieder, 2024)</ref>. Crucially, these compounds additionally show varying degrees of semantic transparency, a factor long known for playing a pivotal role in compound processing <ref type="bibr" target="#b8">(Creemers and Embick, 2022;</ref><ref type="bibr" target="#b23">Libben et al., 2003;</ref><ref type="bibr" target="#b36">Zwitserlood, 1994)</ref>.</p><p>Previous research has shown that both the morphological structure and the phonological context affect the phonetic signal of compounds <ref type="bibr" target="#b2">(Bell et al., 2021;</ref><ref type="bibr" target="#b33">Tomaschek et al., 2021;</ref><ref type="bibr" target="#b30">Schebesta and Kunter, 2022)</ref>. More recently, <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref> demonstrated that semantic transparency, operationalised through word embeddings from a BERT model, predicts phonetic variation in triconstituent compounds. Specifically, they found that the acoustic duration of the third constituent (N3) in such compounds decreases as semantic transparency increases. These results provide novel computationally derived evidence that meaning, not just morphological or phonological factors, can influence phonetic realisation, thus complementing the earlier experimental findings on semantic transparency in compound processing.</p><p>However, the method used in the study by <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref> relied on static embeddings<ref type="foot" target="#foot_0">1</ref> , which average over many contexts of use in the BERT model. This means that while the embeddings provide a general sense of meaning similarity, they fail to reflect the specific contextual semantics relevant to a given utterance. Human speakers, by contrast, interpret compounds in concrete discourse contexts that guide how constituent meanings combine and disambiguate. This is specifically important for experimental studies where speakers are often confronted with novel word forms or compound structures whose interpretation is intentionally shaped by context sentences designed to elicit specific morphological and semantic configurations such as different branching structures.</p><p>In the present study, we build on this prior work by moving from averaged or 'static' to contextualized BERT word embeddings. Using BERT, we extract vector representations of compound constituents as they appear in the exact experimental sentences seen by participants in the production study reported in <ref type="bibr" target="#b29">Schebesta (2024)</ref> and <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref>. This allows us to model semantic transparency in a way that more closely reflects the actual linguistic input that speakers processed during production. Crucially, it ensures that both human speakers and the computational model are exposed to the same contextual data, aligning their semantic representations more directly.</p><p>By incorporating these contextualised measures into a regression analysis of constituent durations, we investigate whether this more fine-grained semantic modelling enhances our understanding of the interaction between meaning and phonetic realisation. This approach offers a principled way to bridge experimental phonetics with distributional semantics and pushes forward the integration of computational models into psycholinguistic and phonetic research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Experimental data</head><p>This study is based on experimentally elicited data from a production task with native speakers of North American English at the University of Alberta, Edmonton <ref type="bibr">(Schebesta, 2024, ch. 8</ref>). The production study investigates whether and how the morphology-driven branching direction of English NNN compounds affects the phonetic signal of the three nominal compound constituents. That is, the order of compound formation is assumed to be determinative of the phonetic realization of NNN compounds. The study tests the prediction that the morphologically embedded compound constituents are more phonetically reduced than the pertinent free compound constituent.</p><p>Previous research has shown that the branching direction of compounds containing three nominal constituents (N1, N2, and N3) is co-determined by the lexical bigram frequency of compound constituents and the overall morphological structure of the compounds <ref type="bibr" target="#b22">(Kunter and Plag, 2016;</ref><ref type="bibr" target="#b30">Schebesta and Kunter, 2022)</ref>. This is reflected in statistically significant three-way interactions between the constituent number, the morphological branching and the lexical bigram frequency. In order to disentangle this effect, the NNN compounds in the production task were designed in such a way that the lexical bigram frequencies of the bigrams N1N2 and N2N3 were very low, i.e., &lt; 12 hits in the reference corpus COCA <ref type="bibr" target="#b9">(Davies, 2008)</ref>. Doing so, an effect of lexical frequency on the phonetic signal of morphologically complex words (see e.g., <ref type="bibr" target="#b14">Hay, 2001;</ref><ref type="bibr" target="#b3">Bien et al., 2005;</ref><ref type="bibr" target="#b15">Hay, 2007)</ref> is ruled out to the largest possible extent. A third determinant of branching direction, namely the orthographic form of a compound (Sanchez-Stockhammer, 2018), was controlled for by spelling all bigrams involved in the experimental study with spaces.</p><p>In total, 25 W1W2 pairs such as accident W1 factor W2 were formed and served as the basis of NNN compounds. Each W1W2 pair was accompanied by a third -preceding or following -nominal constituent, resulting in 50 different NNN compounds, e.g., work N1 accident W1 factor W2 and accident W1 factor W2 survey N3 .</p><p>The newly created NNN compounds (which did not exist in COCA) were embedded in short text passages. These contained one context sentence, whose semantics determined the branching direction of the NNN compounds, and a carrier sentence. (1) illustrates the text passage for the left-branching NNN compound [work N1 accident N2 ] factor N3 : In the context sentence, the embedded constituents work N1 and accident N2 form part of the sentence-initial Noun Phrase, while the free constituent factor N3 follows at the end. The distances between the three compound constituents is supposed to suggest that the NNN compound is left-branching. The context sentence was followed by the carrier sentence that holds the NNN compound work N1 accident N2 factor N3 in Subject position.</p><p>(1)</p><p>The accidents at work are in particular related to one factor.</p><p>The [work N1 accident N2 ] factor N3 has been analysed by an expert.</p><p>For each of the 50 NNN compounds, two text passages were created in such a way that each NNN compound occurred once as left-branching and once as right-branching in the data set. The 42 participants (37 female, 5 male) were recorded which reading aloud the 100 text passages containing the compounds. After a manual acoustic analysis of the speech recordings with PRAAT <ref type="bibr" target="#b4">(Boersma and Weenink, 2017)</ref>, the data was statistically analysed using R (R Core Team, 2023). A linear mixed-effects regression model <ref type="bibr" target="#b1">(Bates et al., 2015)</ref> predicted constituent durations and segment durations. The statistical model included a number of phonological (pitch measurements, number of phonemes and syllables), lexical (unigram frequency, phonological neighborhood density) and extra-linguistic (speech rate, repetitions of NNN) noise variables, and incorporated two random intercepts for the speaker and the compound constituent. The analysis showed that in both left-and right-branching NNN compounds, N1 and N2 constituents have the same duration and are significantly shorter than N3 constituents. The findings suggest that the morphological structure of NNN compounds does not manifest itself in the phonetic signal, whereas most of the noise variables show the predicted effect: More accented constituents are longer than unaccented constituents, constituents are produced shorter after three and four repetitions, and constituents with a high number of phonological neighbors are produced shorter than those with fewer phonological neighbors. The question arises whether semantics, which has been shown to be indicative of phonetic variation, can be used to explain the duration pattern N1, N2 &lt; N3 in NNN compounds.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Computational pre-processing</head><p>To obtain contextualised measures of semantic transparency, we represented each constituent by the final-layer [CLS] embedding of a masked carrier+context input, treating this sentence-level vector as a proxy for the constituents contextualised meaning. Following <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref> and <ref type="bibr" target="#b7">Buijtelaar and Pezzelle (2023)</ref>, we employed the pre-trained bert-base-uncased model from the Hugging Face Transformers library to generate vector representations for each target word. The embedding pipeline was implemented in Python using PyTorch. Embeddings were processed using NumPy and stored in .csv format. These vectors were later used to compute cosine similarity-based semantic transparency.</p><p>Each NNN compound in the data set, e.g., work accident factor, was accompanied by a context sentence and a carrier sentence from the original ex-perimental design. These were concatenated into a single string that served as the input to the BERT model. The complete BERT input for the left-branching interpretation of the compound work accident factor was thus:</p><p>(2)</p><p>BERT input: The accidents at work are in particular related to one factor. The work accident factor has been analysed by an expert.</p><p>This approach ensured that the computational model accessed the same information as human participants, maintaining a consistent representational basis. For each compound, we extracted embeddings for its three constituents. For the left-branching compound work accident factor, this resulted in a word embedding vector for the free constituent factor (v free ), a vector for the first embedded constituent work (v embed1 ) and a vector for the second embedded constituent accident (v embed2 ).</p><p>To isolate each constituents contextualized meaning, we created three masked versions of the full input by replacing one constituent at a time with a [MASK] token. For example, to extract the contextual representation of factor, the input string was modified to:</p><p>(3)</p><p>The accidents at work are in particular related to one factor. The work accident <ref type="bibr">[MASK]</ref> has been analysed by an expert.</p><p>Each masked input was passed through BERT, and the output embedding corresponding to the [CLS] token in the final hidden layer was extracted as a summary representation of the sentence with the masked word. This process was repeated for all three constituents in every item. The resulting 768dimensional CLS embeddings for each constituent were stored alongside metadata (constituent labels, context and carrier text, masking success) until all embeddings were successfully extracted.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Semantic transparency calculation</head><p>To quantify semantic transparency (ST), we followed the cosine similarity-based approach introduced by Buijtelaar and Pezzelle (2023) adapted to triconstituent compounds by <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref>.</p><p>We first computed an average embedding for the two embedded constituents (v embed1 and v embed2 ), and then calculated the cosine similarity between this combined vector and the embedding of the free constituent. This value represents how well the meaning of the free constituent aligns with the semantic content of the embedded pair:</p><p>(4)</p><formula xml:id="formula_0">ST(c) = v free • v embed 1 +v embed 2 2 ∥v free ∥ • v embed 1 +v embed 2 2</formula><p>In addition to the composite ST score, we also computed pairwise cosine similarities between each pair of constituents:</p><p>(5)</p><formula xml:id="formula_1">v embed1 -v free v embed2 -v free v embed1 -v embed2</formula><p>All cosine similarity computations were performed with L2-normalized vectors.</p><p>In the final dataset, all items contained valid embeddings for all three constituents. The similarity measures were added to the dataset for subsequent statistical modelling.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Statistical modelling</head><p>We ran a linear mixed-effects regression model in R (R Core Team, 2023) using the R package lme4 <ref type="bibr" target="#b1">(Bates et al., 2015)</ref>. The model in ( <ref type="formula">6</ref>) illustrates the final model, which predicts the Duration of the three constituents N1, N2 and N3 in seconds (sec). The random intercepts Speaker and Constituent account for speaker-specific effects and individual variation introduced by a given constituent into the regression model. In order to address our research question whether semantic similarity impacts the constituent duration of left-and right-branching NNN compounds, it is inevitable to incorporate the predictor Member containing the three levels N1, N2 and N3, which correspond to the three compound constituents, and the predictor rated Branching, which has the levels left-branching and right-branching. rated Branching indicates the branching direction of each of the 100 NNN compounds as it has been assessed in a rating task with 38 native speakers of North American English <ref type="bibr">(Schebesta et al., prep)</ref>. Thirdly, the semantic similarity of compound constituents is encoded in three different similarity measures which, however, strongly correlated during preliminary modeling. In order to minimize the risk of collinearity, we opted for a Principal Component Analysis <ref type="bibr" target="#b18">(James et al., 2013)</ref>, which generated the output variables PC1 cosineSimilarity and PC2 cosineSimilarity. Thus, the statistical model incorporates the two three-way interactions Member × PC1 cosineSimilarity × rated Branching and Member × PC2 cosi-neSimilarity × rated Branching. With these interactions, the statistical model is able to predict a potential effect of the semantic similarity between embedded and free constituents on N1, N2 and N3, even if the effect is different for left-branching and right-branching NNN compounds.</p><p>( The statistical model is complemented with a group of noise variables, namely lgUnigramFreq which corresponds to the lexical frequency of individual constituents (log-transformed to the base 10), the Speech rate at which a NNN compound was produced, and Repetition which indicates the number of repetitions of the contained W1W2 pairs (max. four repetitions per W1W2 pair, max. two repetitions per NNN). In addition, a set of pitch measurements, that have been generated during the acoustic analysis, were incorporated in the regression model in order to account for a potential effect of prominence patterns or accentuation on the duration of constituents. Information about the phonological neighborhood density of N1, N2 and N3 was generated from the English Lexicon Project <ref type="bibr" target="#b0">(Balota et al., 2007)</ref> and encoded in two additional predictor variables. Another four predictors informed about the number of phonological segments (i.e. phonemes and syllables) of both the whole NNN compound as well as the compound constituents. However, due to strong correlations between (i) the pitch measurements, (ii) the two predictors with the number of phonological segments in <ref type="bibr">NNN compounds, and (iii)</ref> the predictors informing about the phonological length and the number of phonological neighbors of the individual compound constituents, we performed three Principal Component Analyses <ref type="bibr" target="#b18">(James et al., 2013)</ref> in order to avoid collinearity. Thus, instead of the input variables, the Principal Components PC1 phonological setup and PC2 phonological setup inform about the phonological setup of the compound constituents, PC1NNN phonological segments indicates the number of phonological segments of the whole NNN compounds, and PC1 pitch, PC2 pitch and PC3 pitch contain information about the pitch contours of compound constituents.</p><p>The distribution of residuals of the initial model did not meet the normality assumption of linear regression so that the dependent variable Duration was Box-Cox-transformed <ref type="bibr" target="#b5">(Box and Cox, 1964)</ref> using an exponent of λ = 0.02. 65 outliers from a total of 10,710 observations from 3,573 NNN compounds were excluded from the data set (0.6%). After the reduction of the data set and the transformation of the dependent variable Duration, we used the vif() function from the car package <ref type="bibr" target="#b11">(Fox and Weisberg, 2019)</ref> to check for correlated predictors, which did not reveal any collinearity. In order to minimize the risk of Type I errors and overfitting, we did not reduce the regression model further (see <ref type="bibr" target="#b13">Harrell, 2001;</ref><ref type="bibr">Winter, 2020 for a discussion)</ref>. Table <ref type="table">1</ref> provides a summary of the dependent and independent variables incorporated in the initial regression model, including the Principal Components.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head><p>The results of our linear mixed-effects regression model (R 2 marg. 0.566, R 2 cond.</p><p>0.802, AIC -96550.363) are displayed in Table <ref type="table">2</ref>. The coefficient estimates indicated in the first column correspond to the predicted Box-Cox-transformed duration of N1, N2 and N3 constituents. The Intercept indicates the estimated constituent duration for the underlying reference level Member=N1, rated Branching=left, Repetition=1. Fig. <ref type="figure" target="#fig_0">1</ref> illustrates the statistically significant partial effects of the noise variables Speech Rate, Repetition, PC1 phonological setup and PC2 pitch on constituent duration on the y-axis (in seconds). The significant effects of Speech Rate and Repetition go in the expected direction: As can be seen in the top row of fig. <ref type="figure" target="#fig_0">1</ref>, a higher speaking rate of the participants and more repetitions of a W1W2 pair lead to shorter constituent durations. Note that with each repetition cycle, the duration of compound constituents decreases significantly compared to the previous repetition. The results are in agreement with previous findings on shortening effects of Speech Rate <ref type="bibr" target="#b19">(Johnson et al., 1993)</ref> and Repetition <ref type="bibr" target="#b17">(Jacobs et al., 2015;</ref><ref type="bibr" target="#b20">Kahn and Arnold, 2015)</ref>.</p><p>The bottom-left plot displays a lengthening effect of PC1 phonological setup on constituent durations. According to the loadings in that Principal Component, an increase of that variable indicates an increase of the number of phonemes and syllables and the simultaneous decrease of the number of phonological neighbors of a given compound constituent. Thus, the effect of PC1 </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Interactions</head><p>Member × PC1 cosineSimilarity × rated Branching Member × PC2 cosineSimilarity × rated Branching</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random effects</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Speaker Constituent</head><p>Tab. 1: Summary of variables contained in the initial regression model predicting NNN constituent durations (N=10,645). phonological setup is in accordance with previous research which reports more phonetic reduction in lexical units in denser phonological neighborhoods <ref type="bibr" target="#b12">(Gahl et al., 2012)</ref>.</p><p>In the bottom-right plot, the effect of PC2 pitch on constituent duration is illustrated. Note that the Principal Component is mostly informed by a negative loading of accentuation, that is, the decrease of PC2 pitch corresponds to an increase of accentuation of a given compound constituent. Accordingly, accented constituents with a lower PC2 pitch value are overall longer than unaccented constituents with a higher PC2 pitch value, which has also been reported in <ref type="bibr" target="#b34">Turk and White (1999)</ref>.</p><p>The effect of semantic similarity (on the x-axis) on the Duration of compound constituents (on the y-axis) in the two branching directions is displayed in Fig. <ref type="figure" target="#fig_1">2</ref>. Note that PC1 cosineSimilarity can be interpreted in such a way that a low value (left edge in each plot) indicates more similarity between the compound constituents, and a high value (right edge in each plot) indicates less similarity. The top row illustrates the interaction plots for the three left-branching compound constituents N1, N2 and N3, and the right-branching constituents N1, N2 and N3 are presented in the bottom row. Although a first glimpse at the regression lines might suggest otherwise, there is no statistically significant difference between the left-branching constituents and the pertinent right-branching counterparts. That is, the effect of PC1 cosineSimilarity is as strong on N1 in left-branching as in right-branching compounds, and the same holds for N2 and N3.</p><p>Within the left-branching NNN compounds, N3 constituents are significantly longer when the compound constituents are semantically more similar. In contrast, N1 and N2 are unresponsive towards semantic similarity. Apparently, the free constituent behaves differently from the embedded constituents in leftbranching NNN compounds. In right-branching compounds, semantic similarity has no significant effect on the duration of any of the three compound constituents. Although the slope of all three regression lines appears to be reasonably steep, the right-branching compound constituents are unresponsive towards PC1 cosineSimilarity. As a result, the behavior of the right-branching embedded and free constituents differs from that of the left-branching compounds reported before. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head><p>The present study set out to examine whether contextualized semantic embeddings can account for phonetic variation in triconstituent NNN compounds more precisely than averaged embeddings. Compared to earlier work <ref type="bibr" target="#b31">(Schebesta and Nieder, 2024)</ref>, which relied on averaged (or 'static') BERT representations, the present results suggest a more differentiated role of semantics in compound processing.</p><p>In the study by <ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref>, semantic transparency was found to predict reduced durations of the free constituent (N3): the more transparent a compound, the shorter N3 became. This pattern pointed to a global effect of meaning similarity, independent of branching direction. By contrast, our contextualized approach revealed that semantic influences are more selective. We observed a significant effect only in left-branching compounds, where N3 lengthened as the embedded and free constituents became more semantically similar. Right-branching compounds, in turn, showed no semantic effect at all. This branching-sensitive asymmetry highlights two important points. First, it indicates that contextualized embeddings, which mirror the actual input available to participants, do not merely replicate static similarity measures but in-stead capture semantic factors that are shaped by the syntactic-morphological configuration. Second, it suggests that the free constituent in left-branching compounds is particularly sensitive to semantic integration, potentially because the embedded pair forms a more cohesive semantic unit that places interpretive or processing demands on N3. The absence of a corresponding effect in rightbranching compounds may reflect the looser semantic cohesion of the initial constituents in that configuration.</p><p>Crucially, this finding aligns with the observation that left-branching structures were not only preferred by participants in the rating task, but are also the preferred pattern in English compounding more generally. Indeed, previous research has shown that left-branching NNN compounds are generally more frequent than right-branching NNN compounds in English: <ref type="bibr" target="#b16">Huber (2023)</ref> shows in her usage-based investigation of English NNN compounds that 63% of the compounds in her data set are left-branching and 37% are right-branching NNN. According to the semantic analysis in <ref type="bibr" target="#b21">Kösling and Plag (2009)</ref>, 73% of the NNN compounds in their data set (elicited from the Boston University Radio Speech Corpus, <ref type="bibr" target="#b25">(Ostendorf et al., 1997)</ref> are left-branching while 27% are analysed as right-branching. The stronger sensitivity of left-branching compounds to semantic similarity may therefore reflect the fact that these structures constitute the default configuration in English, and thus provide a more stable basis for speakers to integrate semantic information into their phonetic realization.</p><p>Taken together, these findings refine our understanding of how meaning modulates the phonetic signal in complex words. While both of our studies converge on the idea that semantic relationships cannot be ignored in compound processing, the present results emphasize that such effects are conditional on structural context. More broadly, they demonstrate the utility of contextualized embeddings as a tool for linking distributional semantics with experimental data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Limitations</head><p>Our approach necessarily operationalizes semantic relationships in a specific way, namely through the [CLS] representation of masked carrier+context sentences. This choice provides a consistent, usage-based summary of the constituents meaning, but it also means that our measures reflect one particular projection of distributional information in the BERT model. Other ways of representing constituent meaning (e.g., directly at the token position without masking) may highlight different aspects of semantic relatedness. More generally, distributional embeddings are proxies for meaning: they can capture certain dimensions of se-mantic similarity but cannot exhaustively represent the interpretive processes available to speakers. The present findings should therefore be understood as evidence that contextualized semantic cues can play a role in shaping the phonetic realization of compounds, without implying that the specific embedding method employed here captures all linguistically relevant aspects of transparency. We leave it up to future studies to explore other embedding methods.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Fig. 1: Partial effects of Speech Rate, Repetition, PC1 phonological setup, and PC2 pitch on Duration (back-transformed (in sec), numeric predictors at median, categorical predictors at most frequent category).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Fig. 2: Effect of Member × PC1 cosineSimilarity × rated Branching on Duration (back-transformed (in sec), numeric predictors at median, categorical predictors at most frequent category).</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Note that the embeddings were nevertheless derived from a contextual model.<ref type="bibr" target="#b31">Schebesta and Nieder (2024)</ref> used the model in a 'static' capacity by retrieving the average embeddings directly from BERT.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Balota</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Yap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cortese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Hutchison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Loftis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Neely</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Nelson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">B</forename><surname>Simpson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Treiman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The English Lexicon Project. Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="445" to="459" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Fitting linear mixed-effects models using lme4</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mächler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Walker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="48" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">How morphological structure affects phonetic realisation in English compound nouns</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Bell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ben Hedia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Plag</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Morphology</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="87" to="120" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Frequency effects in compound production</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J M</forename><surname>Levelt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Baayen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences of the United States of America</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="issue">49</biblScope>
+			<biblScope unit="page" from="17876" to="17881" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">P</forename><surname>Boersma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weenink</surname></persName>
+		</author>
+		<ptr target="http://www.praat.org/" />
+		<title level="m">Praat: Doing phonetics by computer</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An analysis of transformations</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Box</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Cox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="211" to="256" />
+			<date type="published" when="1964">1964</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Measuring the Semantic Priming Effect Across Many Languages</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Buchanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Cuccolo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Heyman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Van Berkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Coles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Iyer</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/q4fjy</idno>
+		<ptr target="https://doi.org/10.31219/osf.io/q4fjy.OSFPreprint" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A Psycholinguistic Analysis of BERT&apos;s Representations of Compounds</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Buijtelaar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pezzelle</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics</title>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Vlachos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><surname>Augenstein</surname></persName>
+		</editor>
+		<meeting>the 17th Conference of the European Chapter of the Association for Computational Linguistics<address><addrLine>Dubrovnik, Croatia</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="2230" to="2241" />
+		</imprint>
+	</monogr>
+	<note>Association for Computational Linguistics</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The role of semantic transparency in the processing of spoken compound words</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Creemers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Embick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="734" to="751" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Davies</surname></persName>
+		</author>
+		<ptr target="https://www.english-corpora.org/coca/" />
+		<title level="m">The Corpus of Contemporary American English (COCA)</title>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M.-W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Toutanova</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference of the North American Chapter</title>
+		<title level="s">Long and Short Papers</title>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Burstein</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">C</forename><surname>Doran</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Solorio</surname></persName>
+		</editor>
+		<meeting>the 2019 Conference of the North American Chapter<address><addrLine>Minneapolis, Minnesota</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="4171" to="4186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">An R Companion to Applied Regression</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Weisberg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<pubPlace>Sage, Thousand Oaks CA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>third edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Why reduce? Phonological neighborhood density and phonetic reduction in spontaneous speech</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Johnson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Memory and Language</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="789" to="806" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Regression modeling strategies: With applications to linear models, logistic regression, and survival analysis</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">E</forename><surname>Harrell</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Springer</publisher>
+			<pubPlace>New York, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Lexical frequency in morphology: Is everything relative?</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1041" to="1070" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The phonetics of &apos;un</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Lexical creativity, texts and contexts</title>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Munat</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Benjamins, Amsterdam</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="page" from="39" to="57" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Tri-Constituent Compounds. A Usage-Based Account of Complex Nominal Compounding</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Huber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>De Gruyter Mouton</publisher>
+			<pubPlace>Berlin, Boston</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Why are repeated words produced with reduced durations? Evidence from inner speech and homophone production</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Jacobs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Yiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Watson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Dell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Memory and Language</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="page" from="37" to="48" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">An introduction to statistical learning with applications in R</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Witten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Springer</publisher>
+			<pubPlace>New York, 6</pubPlace>
+		</imprint>
+	</monogr>
+	<note>th printing 2015 edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Individual differences in vowel production</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ladefoged</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lindau</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of the Acoustical Society of America</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">2 Pt 1</biblScope>
+			<biblScope unit="page" from="701" to="714" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Articulatory and lexical repetition effects on durational reduction: speaker experience vs. common ground. Language</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Kahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Arnold</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition and Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="103" to="119" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Does branching direction determine prominence assignment? An empirical investigation of triconstituent compounds in English</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kösling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Plag</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Corpus Linguistics and Linguistic Theory</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="201" to="239" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Morphological embedding and phonetic reduction: the case of triconstituent compounds</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kunter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Plag</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Morphology</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="201" to="227" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Compound fracture: The role of semantic transparency and morphological headedness</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Libben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gibson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">B</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sandra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Brain and Language</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="50" to="64" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Emerging Roots: Investigating Early Access to Meaning in Maltese Auditory Word Recognition</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nieder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van De Vijver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ussishkin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Science</title>
+		<imprint>
+			<biblScope unit="page" from="48" to="e70004" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ostendorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Price</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shattuck-Hufnagel</surname></persName>
+		</author>
+		<title level="m">Boston University Radio Speech Corpus LDC96S36. Linguistic Data Consortium</title>
+		<meeting><address><addrLine>Philadelphia, PA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Homophony and morphology: The acoustics of word-final S in English</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Plag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Homann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">181216</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<author>
+			<persName><forename type="first">Team</forename><surname>Core</surname></persName>
+		</author>
+		<title level="m">R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing</title>
+		<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">English compounds and their spelling</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sanchez-Stockhammer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Studies in English language</title>
+		<meeting><address><addrLine>Cambridge</addrLine></address></meeting>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schebesta</surname></persName>
+		</author>
+		<title level="m">NNN compounds in English: Investigating the interface of morphology, lexical frequency and the phonetic signal</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+		<respStmt>
+			<orgName>Universität Siegen</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">PhD thesis</note>
+	<note>Unpublished doctoral dissertation</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Constituent durations in English NNN compounds: A case of strategic speaker behavior</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schebesta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Phonetics</title>
+		<imprint>
+			<biblScope unit="page">94</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Semantic transparency affects the phonetic signal</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schebesta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nieder</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/xtm9j.OSFPreprint</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/xtm9j.OSFPreprint" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Predicting compound branching directions with distributional semantics</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schebesta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nieder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Saito</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+	<note>in prep</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Phonetic effects of morphology and context: Modeling the duration of word-final S in English with naïve discriminative learning</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tomaschek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Plag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ernestus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Baayen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="123" to="161" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Structural influences on accentual lengthening in English</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Turk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>White</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Phonetics</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="171" to="206" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Statistics for linguists: An introduction using R</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Winter</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Routledge Taylor &amp; Francis Group</publisher>
+			<pubPlace>New York and London</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The role of semantic transparency in the processing and representation of Dutch compounds</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zwitserlood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Language and Cognitive Processes</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="341" to="368" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
