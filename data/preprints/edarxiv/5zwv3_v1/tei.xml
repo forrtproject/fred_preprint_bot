@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LLM Based Math Tutoring: Challenges and Dataset</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Pepper</forename><surname>Miller</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Kristen</forename><surname>Dicerbo</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Khan</forename><surname>Academy</surname></persName>
+						</author>
+						<title level="a" type="main">LLM Based Math Tutoring: Challenges and Dataset</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">3F3ED124BF6493BB1495BCF3EEBABF3B</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:35+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Large Language Models (LLMs) face documented challenges in solving mathematical problems. While substantial work has been done to quantify and improve LLMs' abilities to solve static math problems, evaluating their performance in real-time math tutoring scenarios presents distinct challenges that remain underexplored. This paper specifically addresses the accuracy of LLMs in performing math correctly while tutoring students. It highlights the unique difficulties of this context, classifies types of interactions students may have with an LLM, presents a dataset, Conversation-Based Math Tutoring Accuracy Dataset (CoMTA Dataset), for evaluating the mathematical accuracy in tutoring scenarios, and discusses techniques to address these issues. Additionally, it evaluates the mathematical accuracy of a range of models in LLM-based tutoring.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>LLMs are increasingly utilized in educational settings, particularly for tutoring <ref type="bibr" target="#b0">[1]</ref>. However, the act of using an LLM as a tutor to help students with their math difficulties is a unique problem that has yet to be fully investigated. Unlike solving math problems directly, tutoring requires the LLM to track student progress through a problem or series of problems and guide the student's thought process without simply providing answers. This involves inferring the steps the student has performed, evaluating those steps against the correct methodology (or methodologies as there can be multiple solution paths), and identifying any mistakes. Furthermore, the tutor must discern which step the student is currently on and navigate various subtleties in the student's approach and understanding. These challenges make the task of using LLMs for math tutoring particularly complex. Existing benchmark datasets such as MATH and GSM8K have focused primarily on evaluating LLMs' ability to solve math problems accurately <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3]</ref>. While these datasets provide valuable insights, they do not address the complexities of using LLMs in a tutoring context. This paper addresses these challenges and proposes a benchmark dataset to evaluate LLM performance in tutoring scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Problem Definition</head><p>Tutoring in math differs significantly from solving math problems. The primary goal of a tutor is to help the student understand and solve problems independently, rather than just providing the correct answer. This distinction brings numerous challenges:</p><p>• Guiding the learning process without giving away solutions: Effective tutoring involves helping students find the answers themselves, which can be difficult for LLMs that are optimized to provide direct answers.</p><p>• Understanding the student's problem-solving process is crucial:</p><p>The tutor needs to track the student's progress, identify misunderstandings, and provide targeted guidance, requiring the LLM to have a nuanced understanding of the student's approach and where they might be going wrong.</p><p>• Managing multiple and shifting problems during a tutoring session: Students might introduce new problems or switch between problems during a session. The LLM needs to adapt to these shifts and keep track of different problems simultaneously, as human tutors do.</p><p>• Handling ambiguity in students' language and maintaining engagement and motivation: Students often express themselves ambiguously or unclearly. The LLM must interpret these inputs correctly and maintain the student's engagement and motivation throughout the tutoring session.</p><p>• Resisting students' attempts to extract answers from the LLM through various means: In a tutoring context, students might try to get the answers from the LLM through direct requests, repeated questions, or by asking for step-by-step assistance without truly engaging with the material. The LLM must navigate these interactions to provide support without simply giving away the answers.</p><p>3 Challenges</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Student Behavior</head><p>• Asking for the Answer: Students may directly request answers, once or repeatedly, which the tutor must avoid giving. This requires the LLM to redirect the student's focus towards problem-solving techniques rather than simply providing the answer.</p><p>• Interpreting Incorrect Answers: Students may repeatedly provide wrong answers hoping the tutor will eventually reveal the correct one.</p><p>However, these repeated wrong answers could also be a result of the student being lost, and the tutor needs to understand which scenario is occurring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Tutor's Understanding</head><p>• Student's Process: The tutor must understand the student's approach and progress in solving the problem. This includes recognizing the student's current step in the problem-solving process and any potential errors they might have made.</p><p>• Shifting Problems: Recognizing when the focus shifts between different problems or sub-problems. The LLM must keep track of the original problem, any introduced sub-problems, and the context of the student's questions and answers.</p><p>• Language Ambiguity: Parsing unclear or ambiguous student inputs effectively. The LLM must be able to interpret vague or poorly phrased questions and guide the student towards clarity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Tutor's Response</head><p>• Providing Elaborated Feedback: Providing an accurate indication of the correctness of the student's response. The LLM must provide the appropriate level of information about why the student's response is or is not correct <ref type="bibr" target="#b3">[4]</ref>.</p><p>• Tutoring Moves: Providing the right next response from a large range of possibilities, from summarizing to pushing for more explanation, that will promote learning <ref type="bibr" target="#b4">[5]</ref>.</p><p>• Contextually Appropriate: Using grade level appropriate concepts and not invoking more advanced material than necessary.</p><p>• Motivation and Support: Balancing engagement and the level of support to keep the student motivated. The LLM must provide enough support and hints to keep the student motivated without making the problemsolving process too easy or too difficult <ref type="bibr" target="#b5">[6]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">LLM-Specific Issues</head><p>• Subtle Mistakes: One of the challenges for LLMs in a tutoring context is identifying and correcting answers that are nearly correct. These subtle mistakes require the LLM to not only recognize the error but also understand the correct solution to guide the student appropriately.</p><p>• Fixation on Errors: Another issue is the fixation on errors, where the LLM might focus on a mistake made by the student, even after the student has corrected it. The tutor must be able to recognize when a student has corrected a mistake and shift the focus to further learning rather than repeatedly addressing the past error.</p><p>• Maintain the Problem: When a problem is a near variant of common or more straightforward problems, the LLM can shift to answering and tutoring that more common problem. It can lose context of the variation, particularly in longer conversations.</p><p>• Taking Student's Word: LLMs must be capable of challenging incorrect assertions made by students. If a student incorrectly insists that their answer is correct, the LLM must be able to effectively question and guide the student towards the correct understanding, rather than simply accepting the incorrect information <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Benchmark Dataset</head><p>The many challenges outlined above demonstrate the complexity of tutoring.</p><p>In our piloting of Khanmigo we observed a fundamental problem; the model sometimes provides incorrect evaluation information to the student. That is, it indicates the student is correct when they are wrong or incorrect when they are right. This is not merely an artifact of the model incorrectly computing an answer, but is the result of many of the other factors described above. We propose a benchmark dataset designed to evaluate the accuracy of mathematical response evaluation of LLMs in tutoring scenarios. This dataset comprises 188 dialogues between an LLM tutor and a student. Each conversation is truncated at the point where the student makes a mathematical claim. Some of these claims are correct, while others are incorrect. This dataset can be used to assess an LLM's ability to evaluate math in the tutoring context by having the LLM generate a response to the student's claim and determining if it correctly identifies mistakes or accurately acknowledges correct statements. The full CoMTA Dataset can be found at at https://github.com/Khan/tutoringaccuracy-dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Dataset Composition</head><p>• Expected Result: Whether the tutor should accept or correct the student's final statement.</p><p>• Math Level: The educational level of the math problem (Elementary, Algebra, Geometry, Trigonometry, Calculus).</p><p>• Conversation Data: A list of conversation entries, with roles specified as student or tutor.</p><p>• Test ID: Unique identifier for the test case.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Dataset Statistics</head><p>This benchmark dataset comprises 188 conversations, with the breakdown shown in Tables <ref type="table" target="#tab_0">1,</ref><ref type="table" target="#tab_1">2</ref>, and 3. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Math</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Anonymization Process</head><p>Creating a diverse, realistic dataset of this type is highly difficult. The problem space that we want to evaluate is very large. The only way to create a dataset that is truly representative of how conversations unfold between a student and a tutor is to start with actual conversations. In order to address privacy concerns regarding use of personal data, each data entry is anonymized and modified to create representative data that cannot be associated with a specific individual. This process includes manual review to ensure that no personal identifiers are included in the conversation, modification of the conversation to alter the phrasing of the question, without changing any of the math or any of the mathematical terms in the conversation, and a final manual review to ensure the math has stayed consistent and that the entry does not include any personally identifying information. Each entry is assigned a unique, non-personal identifier of the conversation. The dataset entry is then labeled with the expected output from the LLM. The labels used are:</p><p>• Answer Accepted: The LLM should not indicate the answer is wrong.</p><p>This can take the form of telling the student good job, or just moving on to the next part of the conversation.</p><p>• Answer Not Accepted: The LLM should notice that the student made a mistake in the previous message. This typically takes the form of pointing out the error and guiding the user towards the right answer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Evaluation Scenarios</head><p>The conversations are structured in a binary format where the LLM either identifies the student's claim as correct or incorrect. This setup was to simplify the evaluation of the LLM's response. Tutoring scenarios can be complex, subtle, and nuanced, with significant variation across different interactions. By structuring the dataset this way, we provide a straightforward, binary method for evaluating responses. This approach not only simplifies the evaluation process but also potentially facilitates better automation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Metric Results</head><p>The dataset was employed to assess using several models. To ensure impartial scoring, an LLM-based evaluation was employed. The prompt shown in Listing 1 was used for the evaluation, with the following model settings:</p><p>Model Settings:</p><p>• Model: gpt-4-turbo-2024-04-09</p><p>• Temperature: 0.0</p><p>It is important to note that while this prompt and its settings provide a consistent scoring method, it is not perfectly accurate. A sampling indicated that it was approximately 90% accurate. A note on the process: OpenAI models display variability in results, even with a temperature setting of zero. Consequently, each test item was run ten times for OpenAI models to account for this variation. In contrast, Anthropic models and Phi returned consistent results and were therefore run only once. All temperatures were set to zero.</p><p>A note on the Phi model: A fine-tuned version of Phi-3-medium was used in this analysis, it's in private preview and hasn't integrated content data from Khan Academy yet. Phi-3 is Microsoft's family of small language models (SLMs).</p><p>Table <ref type="table" target="#tab_3">4</ref> presents the overall results. A consistent pattern emerges, indicating that LLMs perform better in scenarios where the student is correct than in situations requiring correction of the student's mistakes. Proper prompting can potentially mitigate this skew, although specific prompting techniques are beyond the scope of this paper.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Limitations</head><p>We acknowledge that this dataset only evaluates one aspect of tutoring behavior, the evaluation of student responses. It does not in any way evaluate whether the model returns good tutor moves, for example. There is more work to be done to evaluate the many other aspects of tutoring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10">Acknowledgments</head><p>We would like to express our sincere gratitude to everyone who contributed to the creation of this dataset. Your efforts in gathering, processing, and validating the data were invaluable. Special thanks to Charlie Auen, Karen Shapiro, Nick Kokkinis, and Victoria Cheng for their dedicated support and effort for this project. Your contributions have been instrumental in making this work possible. This work was made possible through the support of the Learning Engineering Virtual Institute (LEVI), a sponsored project of the Walton Family Foundation and Rockefeller Philanthropy Advisors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11">Conclusion</head><p>Using LLMs for math tutoring presents unique challenges that go beyond solving math problems. The proposed benchmark dataset aims to provide a robust framework for evaluating and improving accuracy of LLMs when evaluating math in tutoring contexts. By addressing this specific challenges, we can develop AI tutors that are not only supportive but also mathematically accurate in realtime tutoring scenarios, thereby enhancing the overall effectiveness of LLMs in assisting students with their math difficulties.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Listing 1 :</head><label>1</label><figDesc>Tutor Evaluation Prompt This text is a tutor replying to a student ' s work : { full_c onvers ation } Based on the final response ===== { airesponse } ===== did the tutor say or imply that the student made a mistake when the student said : { student_response } Answer with 'yes ' or 'no '</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Distribution of Math Levels in the Dataset</figDesc><table><row><cell cols="2">Level Distribution Number of Conversations</cell></row><row><cell>Elementary</cell><cell>52</cell></row><row><cell>Algebra</cell><cell>45</cell></row><row><cell>Geometry</cell><cell>26</cell></row><row><cell>Trigonometry</cell><cell>30</cell></row><row><cell>Calculus</cell><cell>35</cell></row><row><cell cols="2">Expected Result Distribution Number of Instances</cell></row><row><cell>Answer Accepted</cell><cell>106</cell></row><row><cell>Answer Not Accepted</cell><cell>82</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Distribution of Expected Outcomes</figDesc><table><row><cell>Conversation Length Statistics</cell><cell>Value</cell></row><row><cell>Average conversation length</cell><cell>10.77 entries</cell></row><row><cell>Maximum conversation length</cell><cell>43 entries</cell></row><row><cell>Minimum conversation length</cell><cell>3 entries</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 :</head><label>3</label><figDesc>Conversation Length Statistics</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 :</head><label>4</label><figDesc>Model Overall Performance (pct)</figDesc><table><row><cell></cell><cell cols="3">Student Incorrect Student Correct Total</cell></row><row><cell>gpt-4o-2024-05-13</cell><cell>68.5</cell><cell>85.8</cell><cell>78.3</cell></row><row><cell>Fine-tuned Phi-3-medium</cell><cell>72.0</cell><cell>81.1</cell><cell>77.1</cell></row><row><cell>gpt-4-turbo-2024-04-09</cell><cell>62.6</cell><cell>86.6</cell><cell>76.1</cell></row><row><cell>claude-3-opus-20240229</cell><cell>56.1</cell><cell>89.6</cell><cell>75.0</cell></row><row><cell>gpt-4-0613</cell><cell>54.9</cell><cell>84.8</cell><cell>71.8</cell></row><row><cell>claude-3-5-sonnet-20240620</cell><cell>50.0</cell><cell>88.7</cell><cell>71.8</cell></row><row><cell>gpt-3.5-turbo-0125</cell><cell>41.1</cell><cell>87.7</cell><cell>67.4</cell></row><row><cell>claude-2.1</cell><cell>31.7</cell><cell>91.5</cell><cell>65.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 5</head><label>5</label><figDesc>details per-subject level results. While GPT 4o scores the highest score overall, it is not universally the best across all domains. GPT 4 Turbo significantly out performs GPT 4o in calculus. GPT 4 outperformed in trigonometry. The fine tuned Phi 3 outperforms in calculus and trigonometry.</figDesc><table><row><cell>Model</cell><cell cols="6">Ele. Algebra Geometry Trig Calc Total</cell></row><row><cell>gpt-4o-2024-05-13</cell><cell>85.2</cell><cell>83.1</cell><cell>73.8</cell><cell>75.0</cell><cell>68.0</cell><cell>78.3</cell></row><row><cell>Fine-tuned Phi-3-medium</cell><cell>80.8</cell><cell>71.1</cell><cell>73.1</cell><cell>80.0</cell><cell>80.0</cell><cell>77.1</cell></row><row><cell>gpt-4-turbo-2024-04-09</cell><cell>79.6</cell><cell>77.8</cell><cell>70.8</cell><cell>70.3</cell><cell>77.7</cell><cell>76.1</cell></row><row><cell>claude-3-opus-20240229</cell><cell>82.7</cell><cell>75.6</cell><cell>69.2</cell><cell>70.0</cell><cell>71.4</cell><cell>75.0</cell></row><row><cell>gpt-4-0613</cell><cell>73.7</cell><cell>73.6</cell><cell>68.5</cell><cell>80.3</cell><cell>61.7</cell><cell>71.8</cell></row><row><cell cols="2">claude-3-5-sonnet-20240620 76.9</cell><cell>68.9</cell><cell>76.9</cell><cell>70.0</cell><cell>65.7</cell><cell>71.8</cell></row><row><cell>gpt-3.5-turbo-0125</cell><cell>74.6</cell><cell>73.1</cell><cell>60.8</cell><cell>67.7</cell><cell>54.0</cell><cell>67.4</cell></row><row><cell>claude-2.1</cell><cell>80.8</cell><cell>64.4</cell><cell>65.4</cell><cell>56.7</cell><cell>51.4</cell><cell>65.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 :</head><label>5</label><figDesc>Model Subject Level Performance (pct)</figDesc><table /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">ChatGPT has entered the classroom: how LLMs could transform education</title>
+		<idno type="DOI">10.1038/d41586-023-03507-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">623</biblScope>
+			<biblScope unit="page" from="474" to="477" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Measuring Mathematical Problem Solving With the MATH Dataset</title>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2103.03874</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Training Verifiers to Solve Math Word Problems</title>
+		<author>
+			<persName><forename type="first">Karl</forename><surname>Cobbe</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2110.14168</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Focus on formative feedback</title>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">J</forename><surname>Shute</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Educational Research</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="153" to="189" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Collaborative dialogue patterns in naturalistic one-to-one tutoring</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Graesser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Person</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Magliano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="495" to="522" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Mind in Society: The Development of Higher Psychological Processes</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">S</forename><surname>Vygotsky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1978">1978</date>
+			<publisher>Harvard University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Language Models are Few-Shot Learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><forename type="middle">B</forename><surname>Brown</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2005.14165</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Fine-Tuning Language Models from Human Preferences</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><forename type="middle">M</forename><surname>Ziegler</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.08593</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

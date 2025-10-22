@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Advancing Personalized Computer Science Education: An Information Retrieval Perspective</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Lois</forename><surname>Wong</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Computer Science Department</orgName>
+								<orgName type="institution">Johns Hopkins University</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Amanda</forename><surname>Ferber</surname></persName>
+							<email>aferber2@jhu.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Computer Science Department</orgName>
+								<orgName type="institution">Johns Hopkins University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Advancing Personalized Computer Science Education: An Information Retrieval Perspective</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">58FA01ABEAF4D29263F161A68B362415</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:23+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>To support Computer Science self-learners in finding their ideal course from the extensive selection of online learning resources, we leverage web crawling and Huggingface's Sentence-Transformers to recommend open-access CS courseware from users' plain text requests.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Data &amp; Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Web Crawling for Data Collection</head><p>To centralize and organize existing learning resources, this platform leverages web crawling to gather open-access Computer Science courses names and descriptions from MIT OpenCourse-Ware and Coursera. We consider web crawling the optimal approach for this task because it allows us to efficiently gather a wide range of upto-date information from diverse sources, ensuring our database is comprehensive and current. Additionally, web crawling offers the advantage of automating the data collection process, saving valuable time and resources compared to manual entry methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1">Web Crawling Statement</head><p>We acknowledge the importance of good robot "citizenship" and are committed to ensuring that our web robot operates within the guidelines set by the websites we visit. Our web crawler adheres to the directives specified in the robots.txt files of the websites and complies with the restrictions and limitations imposed by the website administrators. We have limited the scope of our web crawling activities to only the segments of the web that are directly relevant to our research purposes. For this project, we access each course webpage from the results of the educational sites' course search filtered to "Computer Science" results and collect the course title and description.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Course Recommendation</head><p>For the task of recommending courses to users, we provide the user with two methods of searching through our course database.</p><p>The first option begins by prompting the user to enter a token, which could be a keyword or phrase of interest. Subsequently, it filters our database of courses to include only those whose title or description contains the user input. This approach differs from existing platforms like Coursera, which often suggest related courses when a keyword doesn't yield exact matches. In contrast, this search method only returns courses directly relevant to the user's query, thus preventing the user from sifting through potentially irrelevant results. By providing more precise recommendations, this method saves users valuable time and effort in finding the most suitable courses for their needs.</p><p>Our second method begins by prompting the user to input their goals and objectives for an online Computer Science course. We utilize Hugging-Face's SentenceTransformer model, paraphrase-MiniLM-L6-v2, to compute sentence embeddings for both our scraped course descriptions and the user's stated goals. Finally, we compute the Cosine similarity between each course description in our database and the user prompt and return the courses that best match the query, sorted in descending order.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">How to Use our Code</head><p>Users who wish to navigate the open-source CS course landscape can run open-cs-courserecommender.ipynb on Colab or Jupyter in order to engage with the database we have created. This notebook allows for three main functionalities: (1) viewing all listings in our database, (2) searching the database via string input, and (3) entering a description of one's CS goals. Each functionality occurs by running one or more code blocks grouped by functionality heading ("Public Access Computer Science Course Database", "Search the database", and "Finding courses that suit your goals").</p><p>Functionality (1) allows the user to view all courses in the database, ten courses at a time. For each course, the title, description, link, and source (either MIT OpenCourseware or Coursera) is displayed. After viewing ten courses, the user can expand the output in order to view ten more courses. Functionality (2) allows the user to enter a token. After the token is entered, our program will search the title and description of each course for the appearance of that token. Courses containing the token in their titles or descriptions will be outputted, ten courses at a time. If the token does not appear in any course title or description, our program will output "No Matches." Functionality (3) allows the user to enter a description of their learning goals for their CS education. After they enter this description, the course descriptions that have the highest cosine similarity score to the user-entered description will be outputted in ranked order.      Figure <ref type="figure">7</ref>: After running the code blocks required to search the courses for a given token, the user has the option to enter a description of their learning goals in the field of Computer Science. Once they enter this description, courses will be outputted that match these goals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Example Use Case and Project Functionalities</head><p>Figure <ref type="figure">8</ref>: The above courses yield the highest similarity score to the query "I want to learn how to build a website."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Evaluation</head><p>To evaluate our system, we compare the course recommendation results of our second course search system with those from the original open-source learning platforms for three prompts over the top 5, top 10, and top 15 search results, and calculate precision at each level. We consider precision to be the appropriate metric for evaluating our system because it reflects our goal of ensuring users find the most relevant courses quickly and efficiently.</p><p>Given that users are unlikely to look beyond the top few search results, optimizing for precision ensures that the courses recommended by our system align closely with user search intent, ultimately enhancing the user experience and increasing the likelihood of successful course discovery. To evaluate our system, we manually tag each platform's search results as relevant if they align closely with the user search intent and provide valuable content. Precision at each level is calculated as the ratio of relevant courses retrieved by a system to the total number of courses retrieved at each level of search.</p><p>Prompts:</p><p>1. I have no coding experience and want to learn how to code 2. I want to learn about Artificial Intelligence and Machine Learning 3. I want to learn to build a ChatBot Prompt Precision at 5 Precision at 10 Precision at 15 1 0.0 0.0 0.07 2 1.0 0.9 0.8 3 0.0 0.0 0.0 This not only saves time but also ensures that users have access to a comprehensive range of options.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Areas for Improvement</head><p>We have identified several areas for improvement in our project:</p><p>1. Expand Dataset: We plan to expand the number of open courseware sites we scrape to ensure a more comprehensive dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Prompt Engineering Experimentation:</head><p>We intend to experiment with prompt engineering techniques to enhance the quality of our search results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Alternative Similarity Metrics Exploration:</head><p>We plan to explore alternative similarity metrics beyond Cosine, as it could lead to better results.</p><p>4. User Feedback Incorporation: We hope to incorporate user feedback by conducting evaluations to help us refine our approach to ensure it satisfies user needs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Future Work</head><p>We intend to continue this project by developing an LLM Retrieval Augmented Generation Chat-Bot that empowers people to achieve their goals by generating personalized learning pathways consisting of open-access courses tailored to individuals' specific backgrounds, needs, and ambitions. The system will additionally allow the user to provide feedback on the generated learning path, which can be used to further refine the recommendations.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Our database of all Computer Science courses on MITOpenCourseware and Coursera. The title, description, link, and source of each course is displayed. The user has the option to click "Show More Rows," allows the user to see more course entries from the database.</figDesc><graphic coords="2,306.14,160.39,226.77,305.82" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Upon clicking "Show More Rows" and scrolling to the bottom of the list, the user will have seen the next ten courses in the database. The user can click "Show More Rows" until all course listings have been displayed.</figDesc><graphic coords="2,306.14,623.59,226.76,77.69" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure3: After running the code blocks that display the entire database, the user has the option to provide a token with which to search the database. If the token appears in the title or description of a course, that course will be outputted.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: No courses contain the string "intro python" in their title or description.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Figure5: The above courses contain the word "discrete" in their titles, descriptions, or both. The courses are outputted in the same manner as the entire database.</figDesc><graphic coords="3,70.87,562.94,226.76,162.26" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: The user has the option to click "Show More Rows" and view more courses containing the token for which they searched in the title or description.</figDesc><graphic coords="3,306.14,70.87,226.78,295.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Amanda's Relevancy Judgement of MIT Open-Courseware</figDesc><table><row><cell cols="4">Prompt Precision at 5 Precision at 10 Precision at 15</cell></row><row><cell>1</cell><cell>0.8</cell><cell>0.5</cell><cell>0.5</cell></row><row><cell>2</cell><cell>1.0</cell><cell>0.8</cell><cell>0.73</cell></row><row><cell>3</cell><cell>0.4</cell><cell>0.3</cell><cell>0.2</cell></row><row><cell cols="3">Table 2: Amanda's Relevancy Judgement of Coursera</cell><cell></cell></row><row><cell cols="4">Prompt Precision at 5 Precision at 10 Precision at 15</cell></row><row><cell>1</cell><cell>0.8</cell><cell>0.7</cell><cell>0.6</cell></row><row><cell>2</cell><cell>1.0</cell><cell>1.0</cell><cell>1.0</cell></row><row><cell>3</cell><cell>0.4</cell><cell>0.5</cell><cell>0.6</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 3 :</head><label>3</label><figDesc>Amanda's Relevancy Judgement of our system</figDesc><table><row><cell cols="4">Prompt Precision at 5 Precision at 10 Precision at 15</cell></row><row><cell>1</cell><cell>0.0</cell><cell>0.0</cell><cell>0.13</cell></row><row><cell>2</cell><cell>0.8</cell><cell>0.5</cell><cell>0.4</cell></row><row><cell>3</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell></row><row><cell cols="3">Table 4: Lois' relevancy judgement of MIT Open</cell><cell></cell></row><row><cell>Courseware</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">Prompt Precision at 5 Precision at 10 Precision at 15</cell></row><row><cell>1</cell><cell>0.6</cell><cell>0.57</cell><cell>0.57</cell></row><row><cell>2</cell><cell>0.6</cell><cell>0.4</cell><cell>0.27</cell></row><row><cell>3</cell><cell>0.4</cell><cell>0.2</cell><cell>0.13</cell></row><row><cell cols="3">Table 5: Lois' relevancy judgement of Coursera</cell><cell></cell></row><row><cell cols="4">Prompt Precision at 5 Precision at 10 Precision at 15</cell></row><row><cell>1</cell><cell>0.8</cell><cell>0.8</cell><cell>0.87</cell></row><row><cell>2</cell><cell>0.8</cell><cell>0.9</cell><cell>0.67</cell></row><row><cell>3</cell><cell>0.4</cell><cell>0.2</cell><cell>0.13</cell></row><row><cell cols="3">Table 6: Lois' relevancy judgement of our system</cell><cell></cell></row><row><cell>6 Discussion</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">6.1 Achievements</cell><cell></cell><cell></cell></row><row><cell cols="3">The strengths and achievements of our projects are</cell><cell></cell></row><row><cell cols="2">enumerated below:</cell><cell></cell><cell></cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

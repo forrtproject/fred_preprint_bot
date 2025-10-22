@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">PLOD: Predictive Learning Optimal Data Discovery</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Thomas</forename><surname>Hoang</surname></persName>
+							<email>hoang_t2@denison.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Denison University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">PLOD: Predictive Learning Optimal Data Discovery</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">1A4F4DE55D6E6FF6B2193517EC252415</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Inspired by the BOD: Blindly Optimal Data Discovery method [10], our algorithm inherits the benefits of its predecessor, which addresses the challenge of an unknown utility function and integrates human input for attribute ranking just once, thus avoiding the repetitive and time-consuming loop process. Additionally, our machine learning approach predicts the desired utility function from the data more accurately than BOD. Furthermore, existing methods such as [7] require precise knowledge of the utility function, which is not ideal. In contrast, our PLOD algorithm successfully predicts outcomes based on the data without needing the exact utility function, highlighting the potential of PLOD: Predictive Learning Optimal Data Discovery in contemporary data science and analytics.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Getting to know what data can do from large datasets is the main goal of predicting application in many data science applications. Data analysts and scientists want to get to the point where they have valid data candidates in terms of no missing, duplicate, and all are integers. After combining or augmenting all the datasets together vertically as there are sufficient instances in each dataset with different attributes, scientists want to predict what comes after understanding the data. For example, taking predicting housing prices problem which could be predicted based on several factors including location (the house may be near urban center and the criminal free status is low, etc), home values (whether the size of the house is big, medium or small; whether the house is modern style or old money style), the policy of the government in the area (the tax may a big concern for citizens). In order to predict the price of the house, scientists may use their particular domain knowledge to This work is licensed under the Creative Commons BY-NC-ND 4.0 International License. Visit https://creativecommons.org/licenses/by-nc-nd/4.0/ to view a copy of this license. For any use beyond those covered by this license, obtain permission by emailing info@vldb.org. Copyright is held by the owner/author(s). Publication rights licensed to the VLDB Endowment. Proceedings of the VLDB Endowment, Vol. 18, No. 1 ISSN 2150-8097. doi:XX.XX/XXX.XX rank the attributes of the datasets and the algorithm will try to match the predicting utility function using machine learning.</p><p>Based on certain scenarios, with their domain knowledge, scientists prioritize one attribute over others. For example, an apartment in a city center like New York City (with low criminal status, and the apartment is modern with stylish furniture, along with the building has its own guards and camera surveillance which makes the safety standards high) compared to a house dated from 100 years ago in a middle of nowhere would be an easy bet and a good investment even they want to sell it in the future for a person with enough money to buy the apartment in a city center. But in a case where another apartment in the nearby area in New York City appears to be the same as the first one but in a kinda suburban area with a lower price, whether this is still a good investment after many years? And may other factors like friendly neighborhoods or peaceful surrounding environments could be a good factor for the buyers. These differences in the relatively important attributes model by a utility function define all the attributes and the degree to which they matter to the scientists and analysts when it comes to predicting the housing price markets.</p><p>The previous algorithms using machine learning required users to know their exact utility function beforehand which is not an optimal approach for many users. The BOD: Blindly Optimal Data Discovery <ref type="bibr" target="#b9">[10]</ref> asks users to rank the attributes and filter out the sufficient tuples in which the number of returned tuples still has some distinguishable tuples that are the result of the predicting utility function does not highly match with the intended-to-figure-out utility function. The PLOD helps solve these stated problems by asking the user to rank the attributes beforehand and apply machine learning techniques to predict the utility function. The algorithm then outputs all the tuples based on the predicted utility function.</p><p>The work of algorithms: The algorithm asks user to rank the attributes then narrows down each coefficient in each attribute in the range of {0, 1} based on the highest to the lowest ranked attributes. The coefficients will be estimated in each equaled range in the range of {0, 1} based on the total number of 𝑛 attributes. After that, the algorithm estimates the synthetic utility function based on the coefficients obtained from previous estimation. Then the algorithm estimates the real coefficients for the estimated </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED STUDIES</head><p>Machine Learning. The previous algorithms like in the work <ref type="bibr" target="#b6">[7]</ref> asks for the user's utility function as an input. Nevertheless, this approach is limited in many cases that user does not understand or realize their utility function. Other works of machine learning techniques such as <ref type="bibr">[1] [2]</ref> [21] also assume the functions that have limitations in some cases in housing predicting approaches.</p><p>Top-k. Many works such as <ref type="bibr" target="#b5">[6]</ref> [12] <ref type="bibr" target="#b12">[13]</ref> [22] <ref type="bibr" target="#b23">[24]</ref> has been studied and developed with their applications in the filed. Nevertheless, these algorithms asks for the user with utility function which is not applicable in real life in many cases.</p><p>Skyline. there have been many developments such as <ref type="bibr" target="#b11">[12]</ref>  <ref type="bibr" target="#b27">[28]</ref> that output a few subsets among many tuples in the datasets. However, the output size is still large that lack of control, meaning there are still many tuples that are out of interested for the user. The advanced work that combines the technique of top-k and Skyline algorithms is <ref type="bibr" target="#b16">[17]</ref> helps with controlling the output's size.</p><formula xml:id="formula_0">[14] [16] [3] [4] [26] [25] [19] [8]</formula><p>OLAP-like Aggregation. The work by Gray et al. introduced the Data Cube, a relational aggregation operator that aims to generalize the operations of Group-By, Cross-Tab, and Sub-Total <ref type="bibr" target="#b8">[9]</ref>. This work helps make the multidimensional data analysis efficient, which makes it useful for OLAP (Online Analytical Processing). However, like Top-k algorithms, this method assumes the user can define the utility function needed for data aggregation and analysis. The Data Cube provides a mechanism for summarizing data but does not inherently solve the challenge of identifying the most relevant data subsets without explicit utility functions. In detail, this assumption limits its applicability when users cannot precisely define their preferences or utility functions, which often happens in real-world applications.</p><p>Probabilistic Approximation. The algorithm introduced by Vitter <ref type="bibr" target="#b26">[27]</ref> on random sampling provides an efficient method for probabilistic approximation in large datasets, which is helpful when dealing with large datasets where full data processing is computationally expensive. In detail, the algorithm ensures that each sample is likely to be included, even in scenarios where the total dataset size is unknown in advance. Although efficient in terms of time, similar to Topk and Skyline methods, this approach still relies on users understanding some forms of utility function. The disadvantage is that While it addresses scalability and efficiency, it does not address users' lack of knowledge about their utility functions.</p><p>Multi-objective Optimization. The NSGA-II algorithm by Deb et al. <ref type="bibr" target="#b4">[5]</ref> aims for solving multi-objective optimization problems and is effective in scenarios with multiple conflicting objectives and seeks to find solutions that represent trade-offs among these objectives (the Pareto front). However, similar to other algorithms like Skyline, this method can result in many potential solutions, many of which may not align with the user's preferences. Like other optimization and selection techniques, NSGA-II assumes that users can clearly define their objectives and utility functions. In practice, this assumption is often invalid, limiting the algorithm's usability in real-world applications where user preferences are not explicitly known or difficult to articulate.</p><p>Blindly Optimal Data Discovery. The advantage of BOD <ref type="bibr" target="#b9">[10]</ref> is directly getting to understand the data or the goal of data and this could be achieved without knowing the utility function. However, this approach still outputs subsets that are uninterested in predicting mathematical problems. In order to output better subsets that are highly predicting the outcome based on datasets, we present PLOD which takes advantage of machine learning to help with predicting the actual utility function in order to output the right tuples.</p><p>Predictive learning Optimal Data Discovery. The algorithm asks the user to rank each attribute in all the attributes and then estimates the coefficients of the utility function. When obtained the synthetic predicting utility function, the algorithms estimate the actual predicting utility function using machine learning linear regression <ref type="bibr" target="#b14">[15]</ref>, <ref type="bibr" target="#b19">[20]</ref>, <ref type="bibr" target="#b22">[23]</ref>. Then the algorithm uses the actual predicting utility function to output the predicting tuples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">PROBLEM DEFINITION</head><p>Given the set of relations, 𝑆 𝑖 in a total of 𝐷 relations, 𝑖 ∈ 𝐷, having a total of 𝑇 tuples for all the relations, we want to get out of a goal of what the datasets can do or we want to predict something based on the datasets applying machine learning algorithm, Linear Regression, without knowing the exact utility function. An example of this could be predicting housing prices, in which it depends on several factors (for The relation 𝑖th 𝑒</p><p>The total coefficients of a relation 𝑒 𝑖</p><p>The 𝑖th coefficient of a relation 𝑡 a subset of T example: location, home values, the policy of the governments, etc), which represent several relations. In each of these relations, there are many small factors (for example, for location, we have the factors of near urban, criminal-free, etc). Using machine learning Linear Regression without a previously defined utility function could be a tough problem, we solve this by introducing PLOD: Predictive Learning Optimal Data Discovery.</p><p>This paper presents the Predictive Learning Optimal Data Discovery (PLOD) algorithm, an advancement over the previously developed Blindly Optimal Data Discovery (BOD). PLOD eliminates the necessity for users to predefine a utility function, utilizing machine learning to predict this function instead, which can significantly streamline the data analysis process. The method is especially pertinent to large-scale data environments where such predefined knowledge is not practical.</p><p>This algorithm asks the scientists with their domains to rank the attributes in each relation then narrows down each value in the range of {0, 1} based on the highest to the lowest ranked in each attribute. After obtaining a relation 𝑆, we apply machine learning linear regression algorithm to estimate the synthetic utility function. Below is the linear function:</p><p>Let 𝑆 𝑖 for 𝑖 ∈ N denote an 𝑖th relation that has 𝑛 𝑖 attributes such that there are 𝐷 relations with a total of 𝑑 attributes. The set 𝑇 of all tuples that have relations (𝑆 1 , . . . , 𝑆 𝑛 ), in which each relation has the same 𝑇 tuples, in case there are no missing or duplicate tuples.</p><p>Linear function:</p><formula xml:id="formula_1">• 𝐿𝐼 𝑁 𝐸𝐴𝑅 = {𝑓 |𝑓 (𝑥) = 𝑑 𝑖=1 𝑓 (𝑥 𝑖 )</formula><p>{where each 𝑓 (𝑥 𝑖 ) is a linear function.}</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MATHEMATICAL PROOF OF LINEAR REGRESSION COEFFICIENTS</head><p>Based on notable work on linear regression <ref type="bibr" target="#b10">[11]</ref>, we aim to find the best-fitting line for given datasets after the scientist ranks the attributes. The best-fitting line is the one that minimizes the sum of the squared differences between the observed values and the values predicted by the line. This method is known as the least squares method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Model Representation</head><p>The linear regression model can be represented as:</p><formula xml:id="formula_2">𝑦 𝑖 = 𝛽 0 + 𝛽 1 𝑥 𝑖 + 𝜖 𝑖</formula><p>for 𝑖 = 1, 2, . . . , 𝑛, where:</p><p>• 𝑦 𝑖 is the dependent variable.</p><p>• 𝑥 𝑖 is the independent variable. • 𝛽 0 is the y-intercept.</p><p>• 𝛽 1 is the slope.</p><p>• 𝜖 𝑖 is the error term.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Objective</head><p>The objective is to find the coefficients 𝛽 0 and 𝛽 1 that minimize the sum of the squared errors (SSE):</p><formula xml:id="formula_3">𝑆𝑆𝐸 = 𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -ŷ𝑖 ) 2 = 𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -(𝛽 0 + 𝛽 1 𝑥 𝑖 )) 2</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Derivation of Coefficients</head><p>To find the optimal values of 𝛽 0 and 𝛽 1 , we take the partial derivatives of 𝑆𝑆𝐸 with respect to 𝛽 0 and 𝛽 1 and set them to zero. </p><formula xml:id="formula_4">𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -𝛽 0 -𝛽 1 𝑥 𝑖 ) = 0 𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -𝛽 0 -𝛽 1 𝑥 𝑖 )𝑥 𝑖 = 0</formula><p>These can be rewritten as:</p><formula xml:id="formula_5">𝑛 ∑︁ 𝑖=1 𝑦 𝑖 = 𝑛𝛽 0 + 𝛽 1 𝑛 ∑︁ 𝑖=1 𝑥 𝑖 𝑛 ∑︁ 𝑖=1 𝑦 𝑖 𝑥 𝑖 = 𝛽 0 𝑛 ∑︁ 𝑖=1 𝑥 𝑖 + 𝛽 1 𝑛 ∑︁ 𝑖=1 𝑥 2</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>𝑖</head><p>Solving for 𝛽 0 and 𝛽 1 , we get:</p><formula xml:id="formula_6">𝛽 1 = 𝑛 𝑛 𝑖=1 𝑦 𝑖 𝑥 𝑖 -𝑛 𝑖=1 𝑦 𝑖 𝑛 𝑖=1 𝑥 𝑖 𝑛 𝑛 𝑖=1 𝑥 2 𝑖 -( 𝑛 𝑖=1 𝑥 𝑖 ) 2 𝛽 0 = 𝑛 𝑖=1 𝑦 𝑖 -𝛽 1 𝑛 𝑖=1 𝑥 𝑖 𝑛</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Final Formulas</head><p>The formulas for the coefficients are:</p><formula xml:id="formula_7">𝛽 1 = 𝑛 𝑖=1 (𝑥 𝑖 -x)(𝑦 𝑖 -ȳ) 𝑛 𝑖=1 (𝑥 𝑖 -x) 2 𝛽 0 = ȳ -𝛽 1</formula><p>x where x and ȳ are the means of 𝑥 and 𝑦, respectively. This derivation follows the standard approach described in Introduction to Statistical Learning <ref type="bibr" target="#b10">[11]</ref>.</p><p>Then the algorithm estimates the real coefficients. After that, based on the estimated real utility function, the algorithm returns all the subsets that satisfy the predicted utility function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1 Predictive Learning Optimal Data Discovery</head><p>Require: The set of relations 𝑆 𝑖 for 𝑖 ∈ 𝐷 that has 𝑇 tuples. Ensure: return a subset 𝑡 of 𝑇 .</p><p>1: Let 𝐷 𝑖 = 1 2: while 𝐷 𝑖 ≤ 𝐷 do</p><formula xml:id="formula_8">3:</formula><p>for 𝑑 𝑖 in relation 𝐷 𝑖 th (or 𝑆 𝑖 ) do Ask the scientist to rank each 𝑑 𝑖 in each table 𝑆 𝑖 based on their domain knowledge 5:</p><p>If scientist ranks 𝑑 𝑖 as 1st then 𝑒 𝑖 = 1 6:</p><p>If scientist ranks 𝑑 𝑖 as the least then 𝑒 𝑖 = 0 7:</p><p>Else, calculate 𝑒 𝑖 based on ranking by dividing the number of attributes in 𝑆 𝑖 with the rank 8:</p><p>𝐷 𝑖 + = 1 9: Concatenate 𝑆 𝑖 horizontally along columns with 𝑇 tuples. 10: for 𝑑 𝑖 ∈ 𝑑 do 11:</p><p>Find the maximum value in 𝑑 𝑖 , called 𝑚𝑎𝑥 𝑖 Line 1 -8, the algorithm asks the user to rank the attributes and then narrows down each coefficient in each attribute in the range of {0, 1} based on the highest to the lowest ranked attributes. The coefficients will be estimated in each equaled range in the range of {0, 1} based on the total number of attributes. Line 9 -13, the algorithm concatenates all the relations and then scales down the values in each cell in the range of {0, 1}. Line 14 -15, the algorithm estimates the synthetic utility function based on the coefficients obtained from previous estimations. Then, the algorithm estimates the real coefficients for the estimated utility function based on the synthetic utility function using machine learning. Line 16, the query then outputs all the subsets that have utility satisfied the predicting utility function.   In the precision analysis shown in Figure <ref type="figure" target="#fig_5">3</ref>, we observe that the PLOD (Predictive Learning Optimal Data Discovery) algorithm demonstrates higher precision than other algorithms when the number of tuples is smaller. However, as the number of tuples increases, the precision of PLOD decreases slightly but stabilizes around a specific value. In contrast, other algorithms like Skyline and OLAP show more fluctuation in precision, with Skyline notably decreasing as the number of tuples increases.</p><p>In Figure <ref type="figure" target="#fig_6">4</ref>, we compare the runtime of PLOD with other algorithms as the number of tuples increases. PLOD consistently runs faster than BOD (Blindly Optimal Data Discovery) across all tested dataset sizes. In addition, the runtime of Skyline significantly increases with the number of tuples, making it the slowest among the tested algorithms. On the other hand, PLOD shows a near-linear increase in runtime but remains the most efficient, closely followed by Top-k and OLAP, which also show efficient scaling with the number of tuples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Precision and Stability comparison</head><p>using Boston Housing data <ref type="bibr" target="#b17">[18]</ref> Figure <ref type="figure">5</ref>: Precision comparison with Boston Housing Data.</p><p>The precision comparison is shown in Figure <ref type="figure">5</ref> using the Boston Housing dataset. The Predictive Linear Optimization Decision-making (PLOD) algorithm demonstrates the highest precision at 0.6, outperforming others such as OLAP, Approximation, and Multi-objective, each of which achieves a precision of 0.5. However, algorithms like BOD (Three Rounds), Top-k, and Multi-objective show significantly lower precision, indicating their limitations in their application to this dataset. Figure <ref type="figure" target="#fig_7">6</ref> illustrates the runtime performance of these algorithms over 1000 runs. In detail, the Skyline algorithm is the most computationally expensive since its median runtime is approximately 0.2661. In real-time applications, the OLAP and Approximation methods have the fastest execution times, with median runtimes as low as 0.0005 seconds. Thus, this makes them more suitable for scenarios where computational efficiency is important, as opposed to the other methods, which may be much slower. The stability comparison of algorithms, as illustrated in Figure <ref type="figure" target="#fig_8">7</ref>, shows the consistency across multiple executions. Thus, lower variance indicates higher stability, in this analysis, the PLOD, BOD (Three Rounds), Top-k, Skyline, and OLAP algorithms demonstrated good stability, with nearzero precision variance, indicating their robust performance across different runs. Besides, the Approximation and Multiobjective algorithms demonstrate higher variance, with the Multi-objective algorithm showing the highest instability at a variance of 0.013019. This suggests that these algorithms are more sensitive to changes in the dataset, which causes fluctuations in precision across runs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">CONCLUSION</head><p>The advantage of the algorithm PLOD: Predictive Learning Optimal Data Discovery is its estimation for highly accurate utility function without asking for the user's utility function and the running time compared to other approaches before it. The open questions for other later findings may be: 1, Can a vector database be applied with machine learning for such an approach like PLOD? 2, If there are other types of data not like integers, can we apply a vector database? or 3, How can we transform these types of data, including text, audio, etc., into the {0, 1} range and use machine learning or another approach?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CITATIONS</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Augmenting tables for applying machine learning to predict the utility function based on the human's ranking for variables</figDesc><graphic coords="2,70.87,111.94,214.80,120.83" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>3. 3 . 1 ((</head><label>31</label><figDesc>Partial Derivative with Respect to 𝛽 0 . 𝑦 𝑖 -(𝛽 0 + 𝛽 1 𝑥 𝑖 )) 2 = -2 𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -(𝛽 0 + 𝛽 1 𝑥 𝑖 )) 3.3.2 Partial Derivative with Respect to 𝛽 1 . 𝑦 𝑖 -(𝛽 0 + 𝛽 1 𝑥 𝑖 )) 2 = -2 𝑛 ∑︁ 𝑖=1 (𝑦 𝑖 -(𝛽 0 + 𝛽 1 𝑥 𝑖 ))𝑥 𝑖 3.3.3 Solving the Equations. We now have two normal equations:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>12 :</head><label>12</label><figDesc>Scale down all values by dividing 𝑚𝑎𝑥 𝑖 13: Update new 𝑆 14: Using Linear Regression Machine Learning to estimate actual coefficients for actual utility function based on synthetic coefficient 𝑒 15: Using estimated actual utility function to filter only a subsets 𝑡 16: return 𝑡 4 PLOD: PREDICTIVE LEARNING OPTIMAL DATA DISCOVERY</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Sample on datasets on actual and estimated utility function</figDesc><graphic coords="4,309.59,111.94,214.82,176.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Precision comparison with changes in number of tuples.</figDesc><graphic coords="4,309.59,573.79,214.81,138.89" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Runtime comparison with changes in number of tuples.</figDesc><graphic coords="5,70.87,111.94,214.82,138.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Runtime comparison with Boston Housing Data.</figDesc><graphic coords="5,309.59,224.16,214.81,161.55" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Stability Comparison of Algorithms on Boston Housing Data (Precision Variance over 100 runs).</figDesc><graphic coords="5,331.07,538.28,171.85,128.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Notation and meaning</figDesc><table><row><cell>𝑇</cell><cell>The set of all tuples</cell></row><row><cell>𝐷</cell><cell>The number (interger) of all relations</cell></row><row><cell>𝐷 𝑖</cell><cell>The relation 𝑖th in number interger</cell></row><row><cell>𝑑</cell><cell>The total attributes of all the relations combined</cell></row><row><cell>𝑑 𝑖</cell><cell>The attribute 𝑖th of a relation</cell></row><row><cell cols="2">𝑆 The relation that is a result after combining all relations</cell></row><row><cell>𝑆 𝑖</cell><cell></cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The source code, data, and/or other artifacts have been made available at https://github.com/Thomas12012002/MOD.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">TensorFlow: A system for large-scale machine learning</title>
+		<author>
+			<persName><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianmin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthieu</forename><surname>Devin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjay</forename><surname>Ghemawat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Irving</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Isard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Manjunath</forename><surname>Kudlur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Josh</forename><surname>Levenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rajat</forename><surname>Monga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sherry</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><forename type="middle">Gordon</forename><surname>Murray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benoit</forename><surname>Steiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">A</forename><surname>Tucker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Vasudevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pete</forename><surname>Warden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Wicke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoqiang</forename><surname>Zhang</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="m">USENIX Symposium on Operating Systems Design and Implementation</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">6287870</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">An Inquiry into Machine Learning-based Automatic Configuration Tuning Services on Real-World Database Management Systems</title>
+		<author>
+			<persName><forename type="first">Dana</forename><surname>Van Aken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongsheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastien</forename><surname>Brillard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ari</forename><surname>Fiorino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bohan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Billian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Pavlo</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="m">Proc. VLDB Endow</title>
+		<meeting>VLDB Endow</meeting>
+		<imprint>
+			<date type="published" when="2021">2021. 2021</date>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">232328277</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Finding k-dominant skylines in high dimensional space</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jagadish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM SIGMOD International Conference on Management of Data</title>
+		<meeting>the ACM SIGMOD International Conference on Management of Data</meeting>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">On high dimensional skylines</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jagadish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Database Technology-EDBT 2006</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="page" from="478" to="495" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A fast and elitist multiobjective genetic algorithm: NSGA-II</title>
+		<author>
+			<persName><forename type="first">Kalyanmoy</forename><surname>Deb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amrit</forename><surname>Pratap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sameer</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Meyarivan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on evolutionary computation</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="182" to="197" />
+			<date type="published" when="2002">2002. 2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Top-k bounded diversification</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fraternali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Martinenghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tagliasacchi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2012 International Conference on Management of Data</title>
+		<meeting>the 2012 International Conference on Management of Data</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Metam: Goal-Oriented Data Discovery</title>
+		<author>
+			<persName><forename type="first">Sainyam</forename><surname>Galhotra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raul</forename><forename type="middle">Castro</forename><surname>Fernandez</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE 39th International Conference on Data Engineering (ICDE) (2023)</title>
+		<imprint>
+			<date type="published" when="2023">2023. 2023</date>
+			<biblScope unit="page">258187398</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Top-k skyline: a unified approach</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goncalves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">On the Move to Meaningful Internet System</title>
+		<imprint>
+			<date type="published" when="2005">2005. 2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Data cube: A relational aggregation operator generalizing group-by, cross-tab, and sub-total</title>
+		<author>
+			<persName><forename type="first">Jim</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Bosworth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Layman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hamid</forename><surname>Pirahesh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Data mining and knowledge discovery</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="29" to="53" />
+			<date type="published" when="1996">1996. 1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">BOD: Blindly Optimal Data Discovery</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Hoang</surname></persName>
+		</author>
+		<idno>ArXiv abs/2401.05712</idno>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+		<imprint>
+			<date type="published" when="2024">2024. 2024</date>
+			<biblScope unit="page">266933015</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">Gareth</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniela</forename><surname>Witten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<title level="m">An Introduction to Statistical Learning: with Applications in R</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Personalized top-k skyline queries in high-dimensional space</title>
+		<author>
+			<persName><forename type="first">Jongwuk</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="45" to="61" />
+			<date type="published" when="2009">2009. 2009</date>
+		</imprint>
+	</monogr>
+	<note>Gae won You, and Seung won Hwang</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Top-k dominating queries in uncertain databases</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Lian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Extending Database Technology: Advances in Database Technology</title>
+		<meeting>International Conference on Extending Database Technology: Advances in Database Technology</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Selecting stars: The k most representative skyline operator</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Data Engineering</title>
+		<meeting>International Conference on Data Engineering</meeting>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<author>
+			<persName><forename type="first">Dastan</forename><surname>Hussen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maulud</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adnan</forename><surname>Mohsin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdulazeez</forename></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+		<title level="m">A Review on Linear Regression Comprehensive in Machine Learning</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">231748167</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Discovering relative importance of skyline attributes</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mindolin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chomicki</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the VLDB Endowment</title>
+		<meeting>the VLDB Endowment</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Marrying Top-k with Skyline Queries: Relaxing the Preference Input While Producing Output of Controllable Size</title>
+		<author>
+			<persName><forename type="first">Kyriakos</forename><surname>Mouratidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keming</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 International Conference on Management of Data (Virtual Event, China) (SIG-MOD/PODS &apos;21)</title>
+		<meeting>the 2021 International Conference on Management of Data (Virtual Event, China) (SIG-MOD/PODS &apos;21)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="1317" to="1330" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><forename type="first">Altavish</forename><surname>Nair</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/datasets/altavish/boston-housing-dataset" />
+		<title level="m">Boston Housing Dataset</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Progressive skyline computation in database systems</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Papadias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Seeger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">In ACM Transactions on Database Systems (TODS)</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="41" to="82" />
+			<date type="published" when="2005">2005</date>
+			<publisher>ACM</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">House Price Prediction Using Linear Regression Model</title>
+		<author>
+			<persName><forename type="first">Jaykumar</forename><surname>Parekh</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal For Multidisciplinary Research</title>
+		<imprint>
+			<biblScope unit="page">266805860</biblScope>
+			<date type="published" when="2023">2023. 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">External vs. Internal: An Essay on Machine Learning Agents for Autonomous Database Management Systems</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Pavlo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Butrovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ananya</forename><surname>Joshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prashanth</forename><surname>Menon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dana</forename><surname>Van Aken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lisa</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruslan</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Data Eng. Bull</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page">202548908</biblScope>
+			<date type="published" when="2022">2022. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Diversifying top-k results</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the VLDB Endowment</title>
+		<meeting>the VLDB Endowment</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">House Price Prediction Using Linear Regression</title>
+		<author>
+			<persName><forename type="first">Samkit</forename><surname>Saraf</surname></persName>
+		</author>
+		<ptr target="https://api.semanticscholar.org/CorpusID" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal for Research in Applied Science and Engineering Technology</title>
+		<imprint>
+			<biblScope unit="page">240448667</biblScope>
+			<date type="published" when="2021">2021. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Top-k query processing in uncertain databases</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Soliman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ilyas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen-Chuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Data Engineering</title>
+		<meeting>International Conference on Data Engineering</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="896" to="905" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Distance-based representative skyline</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Data Engineering</title>
+		<meeting>International Conference on Data Engineering</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Efficient Skyline and Top-k Retrieval in Subspaces</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pei</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+	<note>In TKDE</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Random sampling with a reservoir</title>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Scott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vitter</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Mathematical Software (TOMS)</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="37" to="57" />
+			<date type="published" when="1985">1985. 1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">On skylineing with flexible dominance relation</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Data Engineering</title>
+		<meeting>International Conference on Data Engineering</meeting>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

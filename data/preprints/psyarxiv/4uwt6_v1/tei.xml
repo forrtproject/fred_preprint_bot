@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Detecting Spurious Effects in Cross-Lagged Panel Models: Triangulation is Not a Valid Test</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Richard</forename><forename type="middle">E</forename><surname>Lucas</surname></persName>
+							<email>lucasri@msu.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">Michigan State University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Rebekka</forename><surname>Weidmann</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">Brigham Young University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mark</forename><forename type="middle">J</forename><surname>Brandt</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">Michigan State University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">316 Physics Rd</orgName>
+								<orgName type="institution">Michigan State University</orgName>
+								<address>
+									<postCode>48823</postCode>
+									<settlement>East Lansing</settlement>
+									<region>MI</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Detecting Spurious Effects in Cross-Lagged Panel Models: Triangulation is Not a Valid Test</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">550953B347A91E20E0D59D8F775A19A0</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:19+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>cross-lagged panel model</term>
+					<term>causal inference</term>
+					<term>longitudinal</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The cross-lagged panel model (CLPM) is an analytic technique used to examine the reciprocal causal effects of two or more variables assessed on two or more occasions.</p><p>Although widely used, the CLPM has been criticized for relying on implausible assumptions, the violation of which can often lead to biased estimates of causal effects. Recently, a triangulation method has been proposed to identify spurious effects in simple CLPM analyses (e.g., Sorjonen &amp; Melin, 2024b). We use simulations and a discussion of the formulas underlying regression coefficients to show that this method does not provide a valid indicator of spuriousness. This method identifies true causal effects as spurious in realistic situations and should not be used to diagnose whether a causal effect estimated from the CLPM is spurious or not. There are clear reasons to doubt causal estimates from the CLPM, but the results of the triangulation method do not add information about whether such estimates are spurious.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Detecting Spurious Effects in Cross-Lagged Panel Models: Triangulation is Not a Valid Test Scientific investigations often proceed by first identifying robust associations between theoretically meaningful variables and then clarifying the causal processes that underlie these associations. Ideally, these causal effects can be established definitively through carefully designed experimental interventions, but for many scientific questions, the hypothetical causal variables cannot be manipulated. This could be due to practical or ethical reasons, and in such cases, observational methods must be used.</p><p>Establishing causality with observational methods is difficult, and a great deal of methodological literature across the social (and other) sciences addresses the challenges of these approaches. Researchers often turn to longitudinal data to help establish causality when experiments are not possible. This is because longitudinal data-with appropriate analytic techniques-allow researchers to control for certain types of common confounds (specifically, time-invariant confounds like socioeconomic status or personality traits).</p><p>Longitudinal methods also allow certain assumptions to be relaxed when estimating causal effects (for a discussion, see <ref type="bibr" target="#b13">Rohrer &amp; Murayama, 2021)</ref>.</p><p>Despite their clear strengths, longitudinal methods must be applied thoughtfully. As is true for all quantitative methods, the interpretation of estimates from longitudinal models rests on specific assumptions. Many of these assumptions are not testable, at least in the same data used to examine the causal question. Commonly used methods for examining causal effects can result in biased estimates if assumptions are violated, and debates about the plausibility of assumptions that underlie these methods are common (e.g., <ref type="bibr" target="#b4">Hamaker, Kuiper, &amp; Grasman, 2015;</ref><ref type="bibr" target="#b8">Lucas, 2023;</ref><ref type="bibr" target="#b9">Lüdtke &amp; Robitzsch, 2022)</ref>.</p><p>One widely used method for analyzing causal effects in longitudinal data is the cross-lagged panel model (CLPM, see <ref type="bibr" target="#b2">Duncan, 1969;</ref><ref type="bibr" target="#b3">Finkel, 1995;</ref><ref type="bibr" target="#b5">Heise, 1970)</ref>. The CLPM can be used to estimate causal effects when two or more variables are assessed at two or more waves. For instance, if two variables X and Y are assessed on two occasions, then the causal effect of X on Y can be estimated (again, with certain assumptions) by regressing Time 2 Y (henceforth, Y2 ) on Time 1 X (henceforth, X1 ), controlling for Time 1 Y (henceforth, Y1 ).</p><p>The causal effect of Y on X can be estimated by regressing X2 on Y1, controlling for X1.</p><p>Unfortunately, the CLPM rests on assumptions-such as the absence of trait-like confounders-that are unlikely to be true, which means that spurious results are likely when this model is used <ref type="bibr" target="#b4">(Hamaker et al., 2015;</ref><ref type="bibr" target="#b8">Lucas, 2023)</ref>. For this reason, researchers have advocated for alternative models that account for the unobserved heterogeneity that is likely to exist as a way to reduce bias in the estimated causal effects (e.g., <ref type="bibr" target="#b0">Berry &amp; Willoughby, 2017;</ref><ref type="bibr" target="#b1">Dishop &amp; DeShon, 2021;</ref><ref type="bibr" target="#b4">Hamaker et al., 2015;</ref><ref type="bibr" target="#b8">Lucas, 2023;</ref><ref type="bibr" target="#b26">Zyphur et al., 2020)</ref>.</p><p>Importantly, the proposed improvements to the CLPM all require at least three waves of data. There is not enough information in two waves of data to isolate the causal effects; the same correlation matrix is equally consistent with data-generating models with and without true causal effects <ref type="bibr" target="#b8">(Lucas, 2023</ref>; also see <ref type="bibr" target="#b11">Ployhart &amp; MacKenzie, 2014;</ref><ref type="bibr" target="#b12">Rogosa, 1995)</ref>.</p><p>Recently, Sorjonen, Melin, and colleagues proposed a triangulation method for determining whether a causal effect estimated using the CLPM is likely to be spurious (e.g., <ref type="bibr" target="#b17">Sorjonen, Ingre, Melin, &amp; Nilsonne, 2024;</ref><ref type="bibr">Sorjonen &amp; Melin, 2024b)</ref>. These authors noted that spurious lagged effects can emerge due to regression to the mean and the effects of time-invariant confounding variables (including effects of unmeasured stable trait variance), and they proposed a series of regression-based analyses that can be used to check for spuriousness. Importantly, their triangulation method can be applied when only two waves of data are available, which means that if valid, the method could establish confidence in causal effects without relying on more sophisticated models with more intensive data requirements than the simple CLPM. Sorjonen, Melin, and their colleagues have used this triangulation method repeatedly to refute causal claims made using the CLPM <ref type="bibr" target="#b15">(Sorjonen, Ingre, Melin, &amp; Nilsonne, 2022a</ref><ref type="bibr" target="#b16">, 2022b;</ref><ref type="bibr" target="#b24">Sorjonen &amp; Melin, 2023a</ref><ref type="bibr" target="#b20">, 2023c</ref><ref type="bibr">, 2023b</ref><ref type="bibr" target="#b21">, 2024a</ref><ref type="bibr">, 2024b;</ref><ref type="bibr" target="#b23">Sorjonen, Nilsonne, Ingre, &amp; Melin, 2022;</ref><ref type="bibr" target="#b25">Sorjonen, Nilsonne, &amp; Melin, 2023b</ref><ref type="bibr" target="#b24">, 2023a;</ref><ref type="bibr"></ref> sorjonen_spurious_2024-2?). Step 3: Difference Test The coefficient for X1</p><p>predicting the difference between Y2 and Y1 should be 0 or positive Negative coefficients can be expected for true causal effects when X1 and Y1 are correlated (see Figure <ref type="figure" target="#fig_2">3</ref>)</p><p>The triangulation method involves running a series of regression analyses and comparing specific estimated coefficients with logically-derived expectations. The steps involved in this method are summarized in Table <ref type="table" target="#tab_0">1</ref>. To evaluate the causal effect of X on Y, for instance, one would first regress Y2 on X1 and Y1, focusing on the coefficient for X1. If there was a true (positive) causal effect, this coefficient should be positive. Note that this step is equivalent to the critical causal test when using the standard CLPM. As the authors of the triangulation method (and other critics of the CLPM) have noted, the problem with this test is that a positive lagged association can be found even when there is no true causal effect.</p><p>The next step (which we refer to as the reversal test from this point forward) is to reverse this regression analysis and to predict Y1 from Y2 and X1. In this case, the authors argue, if there was a true causal effect, the sign should be reversed from that found in the previous step. So for a true causal positive effect of X on Y, the sign for this reversed regression should be negative. A positive coefficient from the reversal test should, according to the authors, be interpreted as evidence that the effect is spurious.</p><p>The final step (which we refer to as the difference test) is to calculate the difference between Y2 and Y1 (Y2 -Y1 ) and to regress this difference on X1. The authors argue that when true causal effects exist, the coefficient for this difference-score analysis will be positive (this is equivalent to a gain-score analysis, see <ref type="bibr" target="#b6">Kim &amp; Steiner, 2021</ref>, for a discussion of when gain scores like this can and cannot be used to estimate causal effects). A coefficient that is negative or zero would, according to the authors, provide evidence that the effect was spurious.</p><p>As an example, <ref type="bibr">Sorjonen and Melin (2024b)</ref> reanalyzed data from a previously published meta-analysis examining the reciprocal associations between work experiences and self-esteem <ref type="bibr">(Krauss &amp; Orth, 2022)</ref>. Krauss and Orth reported results of a meta-analytic CLPM, which was conducted using estimated correlations from prior research. The authors of this prior study interpreted the positive cross-lagged effects as evidence both for effects of self-esteem on later work experiences and of work experiences on later self-esteem. Sorjonen and Melin (2024b) used their triangulation method and found results that were consistent with their predictions for spurious effects. They then concluded that their "reanalyses found prospective effects between work experiences and self-esteem to be spurious" (p. 539).</p><p>However, Sorjonen et al.'s claim that their triangulation method identifies spurious effects is not justified (as we explain below).</p><p>The authors of the triangulation method have presented two types of evidence to support its validity. First, they showed that in situations where there is no true causal effect, their method can detect spurious effects that would otherwise be treated as causal evidence (e.g., <ref type="bibr">Sorjonen &amp; Melin, 2024b)</ref>. Second, they showed (through logic and an actual experiment) that when there is a true causal effect, the predicted pattern for non-spurious effects emerges <ref type="bibr" target="#b14">(Sorjonen, Arshamian, Lager, Nilsonne, &amp; Melin, 2024)</ref>. We agree with each piece of evidence that they provided. Indeed, the method might at first appear to be a promising approach to detecting spuriousness because the authors' predictions are correct in the two situations they examined: (a) when there is a true causal effect and the predictor and initial measure of the outcome are uncorrelated (as in a true experiment) (b) when there is no true causal effect and the predictor and initial measure of the outcome are correlated.</p><p>Unfortunately, as we show below, the triangulation method cannot detect spurious effects in situations where the CLPM is most likely to be used. Specifically, the method cannot distinguish true from spurious effects when the predictor and initial measure of the outcome are correlated. In this paper we show that with many plausible data-generating models, the proposed triangulation method signals spurious effects when these effects are in fact real. We also review the mathematics underlying the triangulation method to further support our conclusions. Based on these simulations and mathematical deductions, we propose that the triangulation method is not diagnostic regarding whether a specific effect is spurious.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Detecting Spurious Effects</head><p>The argument in support of the triangulation method appears to be the same across the many papers published by these authors. Here we focus on <ref type="bibr">Sorjonen and Melin (2024b)</ref>, published in the European Journal of Personality, which addresses the question of whether work experiences affect self-esteem and vice versa. When justifying their method, the authors use a specific hypothetical data-generating model to illustrate how their method works. They specify two (latent) variables, X and Y, that correlate strongly (in this case, .80). They then simulate two indicators of the latent Y variable-Y1 and Y2, each of which has a reliability of .80. This data-generating model is shown in Panel A of Figure <ref type="figure" target="#fig_0">1</ref>. Next, <ref type="bibr">Sorjonen and Melin (2024b)</ref> use an analysis that is equivalent to the CLPM to predict Y2 from X and Y1. They show that this analysis leads to a spurious path from X to Y2 after controlling for Y1, even though there is no causal effect in the data-generating model. In other words, the authors test and find support for the model in Panel B of Figure <ref type="figure" target="#fig_0">1</ref> (in which there is a true causal effect), despite the fact that the data were generated using the model shown in Panel A (where there is no causal effect).</p><formula xml:id="formula_0">X Y Y 1 Y 2 Panel A: Correlated Trait Model Y 1 Y 2 X Panel B: Causal Effect Model</formula><p>Finally, they use their triangulation method to show that when the regression equation is reversed to predict Y1 from X and Y2, the coefficient for X is positive. They then reason that if this coefficient is positive when the data were generated from a model with no causal effect, then the existence of this positive coefficient must signal a spurious effect. This conclusion, however, is incorrect. The existence of a positive coefficient when reversing the regression equation should only be interpreted as a signal of a spurious effect if the coefficient is positive if and only if the estimated causal effect is spurious. Although we agree that the sign will be positive when the estimated causal effect is spurious, it will also be positive in many cases where a true causal effects exist. Thus, the triangulation method suffers from low specificity, as it provides false positives when evaluating CLPM findings.</p><p>The authors' own hypothetical example illustrates the problem with their approach. Panel B of Figure <ref type="figure" target="#fig_0">1</ref> is a diagram of a data-generating model that incorporates a true causal effect of a latent variable X on Y2. The problem with two-wave longitudinal studies is that the exact same correlation matrix can be consistent with these two very different underlying data-generating models, one that includes a causal effect and one that does not <ref type="bibr" target="#b8">(Lucas, 2023)</ref>. There is simply not enough information in the three correlations in this three-variable correlation matrix to distinguish between these two plausible models<ref type="foot" target="#foot_0">1</ref> . And although it is true that the method proposed by Sorjonen, Melin, and colleagues will detect a spurious causal effect when the true data-generating model is that specified in Panel A; it will also necessarily detect a spurious effect when the true data-generating model is that specified in Panel B, where there is a true causal effect. Again, this is due to the fact that the correlation matrix underlying their regression tests will be the same in either case. Thus, although the proposed pattern of coefficients does emerge when estimated causal effects from the CLPM are spurious, this pattern will also emerge when true causal effects exist. Thus, the test is not diagnostic for spurious effects. In later sections, we conduct simulations to show what conditions affect these coefficients and explain these simulations by considering the links between coefficients in multiple regression and their underlying correlations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Detecting True Effects</head><p>Recently, <ref type="bibr" target="#b14">Sorjonen, Arshamian, et al. (2024)</ref> developed an additional line of argumentation to support the validity of their approach. Instead of showing that the procedure correctly identifies spurious results, in this paper, they used an experiment to demonstrate that the model can also correctly identify true causal effects. The experiment they conducted was straightforward: They began with cups filled with different amounts of water, and thus had had different weights. These initial weights serve as the initial measure of the outcome variable (Y1 ). They then added different amounts of water to different cups, a manipulation (X1 ) that has a causal effect on the final weight of the cups (Y2 ). They showed that in this situation, their set of regression analyses correctly identified that the causal effect was not spurious. The effect of X1 on Y2 controlling for Y1 was positive, the effect of X1 on Y1 controlling for Y2 was negative, and the effect of X1 on the difference between Y2 and Y1 was positive. The authors argued that this demonstrates the validity of their approach.</p><p>We agree that in this situation, the pattern of coefficients that signals a true causal effect will emerge. However, this example highlights an important flaw in the approach. The CLPM estimates the effect of a predictor on an outcome, controlling for an earlier measure of this outcome. This procedure is used specifically to remove the effects of confounds that simultaneously affect the predictor and outcome. In other words, the CLPM is useful when the association between the predictor and outcome is confounded by some third variable; longitudinal data can help address some of these confounds <ref type="bibr" target="#b13">(Rohrer &amp; Murayama, 2021)</ref>. In the authors' example, there can be no confounds that need to be controlled. X1, by design, is uncorrelated with the initial measure of Y, so in this example, Y1 does not need to be controlled. Regressing Y2 on X1 recovers the true causal effect, even without controlling for the earlier measure of Y.</p><p>This can be verified in the authors' own data (available here: https://osf.io/dpvzr/). We downloaded their data and tested a model predicting the final weight of the cups (i.e., Y2 ) from the manipulation (amount added; i.e., X1 ) and the resulting coefficient was 14.33.</p><p>The coefficient from a model that controls for Y1, initial weight (which is, of course, highly correlated with the outcome), was 14.40 (these estimates are not identical because there was measurement error and thus, the correlation between the two predictors was not precisely 0).</p><p>In other words, this example demonstrates that the method for detecting spurious causal effects works in a situation where the CLPM would not be needed. As with the hypothetical examples used in earlier papers, this example does not speak to whether the method can distinguish true from spurious effects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulating Different Data-Generating Models</head><p>To clarify when the proposed test for spuriousness incorrectly detects true causal effects as spurious, we simulated data from a broad range of data-generating models. Specifically, we generated data that varied in: (a) how strongly the initial predictor and outcome were correlated, (b) how stable the outcome variable was, (c) the size of the cross-lagged effect, and (d) how much residual variance there was in the final measure of the outcome variable. These are not the only parameters we could simulate, but we believe that, together, they highlight some of the critical problems with the triangulation method.</p><p>We created a function to generate data according to the four parameters described above (all code for the simulation is available at our OSF site: https://osf.io/u49q5/). We generated data for four values of the initial correlation (0, .3, .6, and .9), five values of the stability coefficient (0, .25, .50, .75, and 1), five values of the cross-lagged effect (0, .25, .50, .75, and 1), and three values of the residual variance (.3, .6, and .9). For all parameters, we wanted to examine a broad range of values that ranged from no association to a strong association. For the initial correlation we did not include a value of 1 because it did not make sense to include a model where the predictor and initial outcome were perfectly correlated. Therefore, we included equally spaced values from 0 to .9. For the stability and cross-lagged effects we did want to include both 0 and 1 to capture associations ranging from no effect to an effect where a one unit change in the predictor leads to a one-unit change in the outcome. Therefore, we included five equally spaced values from 0 to 1. For the residual variance, the meaning of the specific values depends on the standard deviation of the simulated variables. The standard deviation for the predictor and initial measure of the outcome were set to be 1; the relative contribution of the residual variance depends on the size of the corresponding stability and cross-lagged paths. We created 20 datasets, each with a sample of 10,000 simulated participants, for each set of the 300 possible combinations of these four parameters. For simplicity sake, we only simulated variables that were positively correlated with one another (or uncorrelated). Because the triangulation procedure involves predictions of sign reversals, it is easier to keep track of these predictions if all associations have the same sign. The principles we identify, however, generalize to situations where the variables have negative correlations.</p><p>We focus on the second and third tests from the triangulation method. The first step is not used to detect spuriousness (it is the typical estimate of the causal effect that one might suspect to be spurious) and it will be equivalent to the specified cross-lagged parameter value in our data-generating model because the regression equation that is being tested is identical to the data-generating model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reversal Test.</head><p>Figure <ref type="figure" target="#fig_1">2</ref> shows the simulations for the reversal test: the estimates for the reversed regression predicting Y1 from X1 and Y2. Because all effects in this simulation were specified to be positive, this coefficient should be negative when true lagged effects exist according to the triangulation method. In other words, for all results in this figure (with the exception of the leftmost values in each panel, where the causal effect is 0), the reversal test specifies that the coefficients should be negative, due to the fact that there are true causal effects. The dashed line in the figure indicates a coefficient of zero, so anything above this line is a true causal effect that would be detected as spurious (i.e., as a false positive) when using the triangulation method. Consistent with our argument above, this prediction for the reversal test only holds when the predictor and the initial measure of the outcome are uncorrelated. The correlations between X1 and Y1 are 0 for all simulations in Row 1 of the figure, and indeed, all coefficients are negative in this row. Remember, however, that when the predictor and outcome are uncorrelated, the CLPM would not need to be used as there are no confounds to control. The other rows show that as soon as a correlation between X1 and Y1 is introduced, positive coefficients are possible, even in the presence of true causal effects.</p><p>A slightly unrealistic (but not implausible) example highlights one reason why positive coefficients from the reversal test emerge when the X and Y1 are correlated. Consider a case where X1 and Y1 are correlated .4, where there is a true effect of X1 on Y2 of .6, but there is no stability of Y from Y1 to Y2 (independent of the stability due to the correlation between Y1 and X1 and the effect of X1 on Y ). We simulated data from this data-generating model (with X1 and Y1 having a mean of 0 and SD of 1 and Y2 having a residual variance of .5), which resulted in the correlation matrix in the top panel of Table <ref type="table" target="#tab_1">2</ref>.</p><p>If you fit a regression model to these data predicting Y2 from Y1 and X1, you recover the parameters from the data-generating model (the coefficient for X1 is 0.60 and for Y1 is 0.00). However, if you conduct the reversal test from the triangulation method, the coefficient for X1 predicting Y1, controlling for Y2 is 0.39. In this model, we know there is actually a causal effect (because we specified it in the data-generating model), but the prediction of a negatively signed coefficient for a true effect is not confirmed. The reason is that if there is a correlation between X1 and Y1, but Y2 is uncorrelated with Y1 (independent of X1 ), the reversal regression reduces to an estimate of the zero-order correlation between X1 and Y1 (in this case, 0.38; the estimate is not exactly the same because of measurement error in Y2 ).</p><p>The solid black line in each panel of Figure <ref type="figure" target="#fig_1">2</ref> represents the models where stability was 0, and in these cases, the coefficient from the reversal test is always equal to the correlation between X1 and Y1, regardless of the other parameters used to simulate the data. Consider the equation for a regression coefficient, a discussion of which can help with the interpretation of the coefficient from the reversal test. The formula linking the underlying correlations (predicting Y1 from X1 controlling for Y2 ) to the coefficient is as follows:</p><formula xml:id="formula_1">β R = r X1,Y 1 -r Y 1,Y 2 × r X1,Y 2 1 -r 2 X1,Y 2</formula><p>In this equation, r X1,Y 1 is the correlation between X1 and Y1, r Y 1,Y 2 is the correlation between Y1 and Y2 (the stability of Y), and r X1,Y 2 is the correlation between X1 and Y2</p><p>(or the correlation between the two predictors in the model for the reversal test).</p><p>The sign of this coefficient-a critical test in the triangulation method-will be determined by the numerator of this equation. In the case that Sorjonen, Arshamian, et al.</p><p>(2024) highlight, the case of a true experiment, r X1,Y 1 will be 0, which means that the coefficient will be negative (unless one other pair of variables is also uncorrelated, in which case, it will be 0). In the case we highlighted, where the stability of the Y variables is 0, the second term in the numerator will reduce to zero, resulting in a coefficient that is equivalent to the correlation between X1 and Y1. This equation shows that-holding the correlation between X1 and Y1 constant-anything that reduces the second term in the numerator will make the coefficient less negative/more positive. In other words, for (positively) correlated predictors in a standard CLPM, the coefficient for this reversal test will be more likely to be positive as (a) stability of the outcome measure decreases, (b) the true cross-lagged effect decreases, and (c) the amount of residual variance in the Time 2 outcome increases (which would reduce the correlation between the Time 2 outcome and either variable in the model).</p><p>Each of these patterns can be seen in Figure <ref type="figure" target="#fig_1">2</ref> <ref type="foot" target="#foot_2">2</ref> .</p><p>One response to our critique of the triangulation method might be to highlight that although it is not necessarily true that spurious effects will lead to negative coefficients, they might often do so. Indeed, for many panels in Figure <ref type="figure" target="#fig_1">2</ref>, the majority of simulated coefficients were negative, especially as the true causal effect increased in size. However, this argument requires some knowledge about which of the parameter values we used in the simulation matches reality, and that is something that we believe is unknowable at this time. In fact, <ref type="bibr" target="#b10">Orth et al. (2022)</ref> meta-analytically summarized effect sizes from cross-lagged panel studies, and the vast majority of these effects were below .12, which was the 75th percentile for effects. Focusing only on the simulated coefficients for true causal effects of this size, positive coefficients are common.</p><p>Difference Test. Figure <ref type="figure" target="#fig_2">3</ref> shows the results for the difference test proposed by the proponents of the triangulation method, in which the difference between Y2 and Y1 is regressed on X1. In this case, the prediction is that for true effects, this coefficient should be positive. The equation for the regression coefficient for the difference test is <ref type="bibr">(Sorjonen &amp; Melin, 2024b)</ref>:</p><formula xml:id="formula_2">β D = r X1,Y 2 -r X1,Y 1 2(1 -r Y 1,Y 2 )</formula><p>Again, the sign of this test is determined by the numerator of the equation, and it will be negative (signaling a spurious effect) when the correlation r X1,Y 2 is smaller than the correlation r X1,Y 1 . This can happen in the presence of true causal effects if there is a substantial correlation between X1 and Y1, low stability from Y1 to Y2, and weak effects of X1 on Y2. The simulations shown in Figure <ref type="figure" target="#fig_2">3</ref> highlight these patterns. The factors that lead to negative coefficients in the presence of true causal effects are: stronger correlations between X1 and Y1, smaller true causal effects of X1, and weaker stability of Y. The effect of increasing residual variance in Y2 is less pronounced as compared to the effect for the reversal test. Again, these simulations (and the formula for the regression coefficient) show that the difference test is not diagnostic of spurious effects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Methodologists and researchers who use quantitative methods in applied settings will prefer to use methods that provide answers to theoretically interesting questions as efficiently as possible<ref type="foot" target="#foot_3">3</ref> . The CLPM has been widely used precisely because it requires so little-just two variables assessed on two occasions-to do so much. The hope is that simply by controlling for prior measures of an outcome variable, most of the confounding effect off third variables can be controlled, resulting in unbiased estimates of causal effects. Unfortunately, the method is not up to this task; because of unmeasured heterogeneity and other statistical issues, estimated lagged effects can often be found, even when no true causal effect exists <ref type="bibr" target="#b4">(Hamaker et al., 2015;</ref><ref type="bibr" target="#b8">Lucas, 2023)</ref>. Sorjonen, Melin, and their colleagues proposed a triangulation method that maintains the efficiency of the CLPM, while purportedly providing additional evidence about whether the estimates from this model are spurious or not. If valid, this approach would solve a critical problem in the field, as most other solutions to the statistical problems of the CLPM require additional waves of data (e.g., <ref type="bibr" target="#b4">Hamaker et al., 2015)</ref>, making them more data intensive, more expensive, and less efficient than the CLPM (at least with its minimal requirements). Unfortunately, the triangulation method cannot be used to diagnose spurious effects. The problem is that the same correlation matrix-in particular, one that is consistent with a spurious effect resulting from regression to the mean or the effects of unobserved heterogeneity-can also be consistent with a data-generating process that includes a true causal effect. Thus, conclusions about whether a specific effect is spurious should not be drawn from the triangulation method.</p><p>In this paper, we used simulations and the formulas for regression coefficients from multiple-regression analyses to show that predictions from the triangulation method are only guaranteed to hold in situations where the CLPM and related methods are not needed-when the initial measures of the two variables under investigation are not correlated. As soon as a correlation between these two variables is introduced, which is precisely when models like the CLPM and its more sophisticated alternatives are needed, the predictions from the proposed triangulation method will not hold. Specifically, when these variables are correlated, the predicted negative coefficient from the reversal test will become more positive as (a) the stability of the outcome gets weaker, (b) the true causal effect gets smaller, and (c) (in most cases) as more residual variance is included in the subsequent measure of the outcome. Importantly, the parameter values chosen for our simulations cover a range of arguably realistic values.</p><p>We want to be clear that our critique of the triangulation method should not be interpreted as a defense of the CLPM or studies that use it. Like the authors of the triangulation method, we believe that the use of the CLPM is likely to lead to evidence for causal effects when they do not exist, due to regression to the mean and unobserved heterogeneity. However, the triangulation method does not add information about the likelihood that an effect is spurious. The pattern of results that the authors claim provides evidence for spuriousness is equally consistent with data-generating models that include true causal effects as those for which no such effects exist.</p><p>In short, although the goals of the triangulation method are commendable, the method does not provide valid evidence about whether an effect from the CLPM is spurious or not.</p><p>The advocates of this approach have published many papers reanalyzing data from publications that used the CLPM, typically concluding that those results were spurious.</p><p>Because of widely known limitations of the CLPM, we do not wish to defend the conclusions from the original papers. However, the application of the triangulation method to them does not provide any new information, and claims about spuriousness are not justified.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1 . Two possible data-generating models that can produce indistinguishable correlation matrices. Panel A is a correlated-trait model with no causal effects; Panel B is a causal-effects model where X is correlated with Y1 but also has a causal effect on Y2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2 . Coefficients from the reversal test, predicting the initial measure Y1 from X1 and Y2. Correlation is the initial correlation between Y1 and X1. Residual is the residual variance of Y2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3 . Coefficients from the difference test, predicting the difference between Y2 and Y1 from X1. Correlation is the initial correlation between X1 and Y1 ; residual is the residual variance in Y2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>Summary of the Triangulation Method, Its Predictions for True Causal Effects, and TheCritique from the Present Paper. For simplicity, predictions are only presented for positively correlated variables.</figDesc><table><row><cell></cell><cell>Predictions from the</cell><cell></cell></row><row><cell></cell><cell>Triangulation Method Given</cell><cell></cell></row><row><cell>Triangulation Method</cell><cell>a True Causal Effect</cell><cell>Critique</cell></row><row><cell>Step 1: Cross-Lagged</cell><cell>X1 positively predicts Y2</cell><cell>This pattern is consistent with</cell></row><row><cell>Effect</cell><cell>controlling for Y1</cell><cell>many true and spurious causal</cell></row><row><cell></cell><cell></cell><cell>effects</cell></row><row><cell>Step 2: Reversal Test</cell><cell>X1 negatively predicts Y1</cell><cell>Positive coefficients can be</cell></row><row><cell></cell><cell>controlling for Y2</cell><cell>expected for true causal effects</cell></row><row><cell></cell><cell></cell><cell>when X1 and Y1 are correlated</cell></row><row><cell></cell><cell></cell><cell>(see Figure 2)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2</head><label>2</label><figDesc>Estimates from the Reversal test when the stability of Y is 0. The first panel shows the correlation matrix; the second panel shows the standard test from the CLPM; the third panel shows the results of the reversal test.</figDesc><table><row><cell></cell><cell>Y1</cell><cell>X</cell><cell>Y2</cell></row><row><cell cols="4">Y1 1.00 0.38 0.29</cell></row><row><cell cols="4">X 0.38 1.00 0.76</cell></row><row><cell cols="4">Y2 0.29 0.76 1.00</cell></row><row><cell>term</cell><cell cols="3">estimate std.error</cell></row><row><cell>(Intercept)</cell><cell></cell><cell>0.0</cell><cell>0.00</cell></row><row><cell>X</cell><cell></cell><cell>0.6</cell><cell>0.01</cell></row><row><cell>Y1</cell><cell></cell><cell>0.0</cell><cell>0.01</cell></row><row><cell>term</cell><cell cols="3">estimate std.error</cell></row><row><cell>(Intercept)</cell><cell></cell><cell>0.01</cell><cell>0.01</cell></row><row><cell>X</cell><cell></cell><cell>0.39</cell><cell>0.01</cell></row><row><cell>Y2</cell><cell></cell><cell>-0.01</cell><cell>0.02</cell></row><row><cell cols="4">Indeed, this example provides hints as to why the reversal test of spuriousness fail.</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Note that in their example, there is just one measure of X. Adding an additional observation of X at Time</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>does not help, though adding a third wave for both X and Y does<ref type="bibr" target="#b8">(Lucas, 2023)</ref>.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_2"><p>Note that the patterns of increasing or decreasing coefficients are mostly consistent across panels of Figure2, but there are some exceptions when the correlations between X1 and Y1 are weak and when the residual variance in Y2 is low. This appears to be due to the scaling factor (the denominator) in the equation for regression coefficients.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_3"><p>To be clear, we are using the term "efficient" not in the statistical sense but in the common-language sense in which a task is accomplished more quickly and with fewer resources.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head><p>Richard E. Lucas conceptualized the study and wrote the initial analysis code and the first draft of the paper.</p><p>Rebekka Weidmann and Mark Brandt contributed to the conceptualization and edited the text.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflicts of Interest</head><p>The authors declare that there were no conflicts of interest with respect to the authorship or the publication of this article.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prior Versions</head><p>A preprint of this paper was posted on the PsyArXiv preprint server: https://osf.io/preprints/psyarxiv/.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">On the Practical Interpretability of Cross-Lagged Panel Models: Rethinking a Developmental Workhorse</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Berry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Willoughby</surname></persName>
+		</author>
+		<ptr target="https://doi.org/gbf8jt" />
+	</analytic>
+	<monogr>
+		<title level="j">Child Development</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1186" to="1206" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A tutorial on Bollen and Brand&apos;s approach to modeling dynamics while attending to dynamic panel bias</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Dishop</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P</forename><surname>Deshon</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000333</idno>
+		<ptr target="https://doi.org/10.1037/met0000333" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Some linear models for two-wave, two-variable panel analysis</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">D</forename><surname>Duncan</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0027876</idno>
+		<ptr target="https://doi.org/10.1037/h0027876" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="177" to="182" />
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Causal Analysis with Panel Data</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Finkel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1995">1995</date>
+			<publisher>Sage Publications, Inc</publisher>
+			<pubPlace>Thousand Oaks, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A critique of the cross-lagged panel model</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Hamaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Kuiper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P P P</forename><surname>Grasman</surname></persName>
+		</author>
+		<ptr target="https://doi.org/f67cvh" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="102" to="116" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Causal Inference from Panel Data</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Heise</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/270780</idno>
+		<ptr target="https://doi.org/10.2307/270780" />
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methodology</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="3" to="27" />
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Gain Scores Revisited: A Graphical Models Perspective</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Steiner</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0049124119826155</idno>
+		<ptr target="https://doi.org/10.1177/0049124119826155" />
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1353" to="1375" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Work Experiences and Self-Esteem Development: A Meta-Analysis of Longitudinal Studies</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Krauss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Orth</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/08902070211027142</idno>
+		<ptr target="https://doi.org/10.1177/08902070211027142" />
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Personality</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="849" to="869" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Why the Cross-Lagged Panel Model Is Almost Never the Right Choice</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Lucas</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/25152459231158378</idno>
+		<ptr target="https://doi.org/10.1177/25152459231158378" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Methods and Practices</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A comparison of different approaches for estimating cross-lagged effects from a causal inference perspective</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Lüdtke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Robitzsch</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/gcvb4</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/gcvb4" />
+	</analytic>
+	<monogr>
+		<title level="j">PsyArXiv</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Effect Size Guidelines for Cross-Lagged Effects</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Orth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Meier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Buhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Dapp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Krauss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Messerli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Robins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Two Waves of Measurement Do Not a Longitudinal Study Make</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Ployhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">I</forename><surname>Mackenzie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">More Statistical and Methodological Myths and Urban Legends</title>
+		<editor>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Lance</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Vandenberg</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Routledge</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="85" to="99" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Myths about longitudinal research&quot; plus supplemental questions</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Rogosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Analysis of Change</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gottman</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Mahwah, NJ</addrLine></address></meeting>
+		<imprint>
+			<publisher>Lawrence Erlbaum Associates</publisher>
+			<date type="published" when="1995">1995</date>
+			<biblScope unit="page" from="3" to="66" />
+		</imprint>
+	</monogr>
+	<note>Myths and methods</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">These are not the effects you are looking for: Causality and the within-/between-person distinction in longitudinal data analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Rohrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Murayama</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/25152459221140842</idno>
+		<ptr target="https://doi.org/10.1177/25152459221140842" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Methods and Practices in Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">In aqua veritas: Triangulation of cross-lagged effects for improved causal inference</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Arshamian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Lager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/ztwy6</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/ztwy6" />
+	</analytic>
+	<monogr>
+		<title level="j">OSF</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Prospective associations between self-esteem and quality of social relations may be spurious: Reanalysis of a meta-analysis of longitudinal studies</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ingre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/kusft</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/kusft" />
+		<imprint>
+			<date type="published" when="2022">2022a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Questioning the reciprocal effects model of academic self-concept and achievement: A reanalysis of a meta-analysis of longitudinal studies and a simulation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ingre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/qd4bj</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/qd4bj" />
+		<imprint>
+			<date type="published" when="2022">2022b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Questioning the reciprocal effects model of academic self-concept and achievement: A reanalysis of a meta-analysis of longitudinal studies and a simulation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ingre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/qd4bj</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/qd4bj" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Prospective associations between social support and posttraumatic stress disorder may be spurious: A re-meta-analysis of longitudinal studies and a simulation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jad.2023.08.014</idno>
+		<ptr target="https://doi.org/10.1016/j.jad.2023.08.014" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Affective Disorders</title>
+		<imprint>
+			<biblScope unit="volume">340</biblScope>
+			<biblScope unit="page" from="174" to="180" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Spurious prospective effect of perfectionism on depression: Reanalysis of a meta-analytic cross-lagged panel analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/rfs3u</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/rfs3u" />
+		<imprint>
+			<date type="published" when="2023">2023b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Spurious prospective effect of self-efficacy on academic performance: Reanalysis of a meta-analytic cross-lagged panel analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/qgcu5</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/qgcu5" />
+		<imprint>
+			<date type="published" when="2023">2023c</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Prospective effects of mindfulness on anxiety and depressive symptoms may be spurious: Simulated reanalysis of a meta-analytic cross-lagged panel analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0302141</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0302141" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">302141</biblScope>
+			<date type="published" when="2024">2024a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Spurious prospective effects between general and domain-specific self-esteem: A reanalysis of a meta-analysis of longitudinal studies</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0298158</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0298158" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">298158</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Questioning the vulnerability model: Prospective associations between low self-esteem and subsequent depression ratings may be spurious</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ingre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jad.2022.08.003</idno>
+		<ptr target="https://doi.org/10.1016/j.jad.2022.08.003" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Affective Disorders</title>
+		<imprint>
+			<biblScope unit="volume">315</biblScope>
+			<biblScope unit="page" from="259" to="266" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Distorted meta-analytic findings on peer influence: A reanalysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.heliyon.2023.e21458</idno>
+		<ptr target="https://doi.org/10.1016/j.heliyon.2023.e21458" />
+	</analytic>
+	<monogr>
+		<title level="j">Heliyon</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page">21458</biblScope>
+			<date type="published" when="2023">2023a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sorjonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nilsonne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/szkt8</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/szkt8" />
+		<title level="m">Spurious peer influence: Reanalysis of a meta-analysis of longitudinal studies</title>
+		<imprint>
+			<date type="published" when="2023">2023b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">From Data to Causes II: Comparing Approaches to Panel Data Analysis</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Zyphur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Voelkle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Allison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Preacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Diener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename></persName>
+		</author>
+		<ptr target="https://doi.org/gf8rt7" />
+	</analytic>
+	<monogr>
+		<title level="j">Organizational Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="688" to="716" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

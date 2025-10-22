@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Extracting Keywords from Unlabeled Corpora using Word Embeddings</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-11">July 11, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Patrick</forename><forename type="middle">J</forename><surname>Chester</surname></persName>
+							<email>patrickjchester@gmail.com</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>San Diego</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">UC</orgName>
+								<address>
+									<country>San Diego China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Extracting Keywords from Unlabeled Corpora using Word Embeddings</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-11">July 11, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">15FAB5A3010DA93884234EA35AD63CC2</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:26+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Researchers frequently need to extract information, such as events or target topics, from large corpora. One common solution involves applying semantically-related keywords to identify tweets, news articles, or other documents of interest. However, it is rarely the case that dictionaries of relevance to the topic, event, or language both exist and are accessible. Existing algorithms for extracting dictionaries, require many userprovided seed words or hand-coded documents to generate useful results. Additionally, they do not incorporate contextual information from natural language. In this paper, I present a novel algorithm, conclust, that extracts keywords from unlabeled text using a small number of user-provided seed words and a fitted word embeddings model. Compared to existing methods of lexicon extraction, conclust requires few seed words, is computationally efficient, and takes word context into account. I describe this algorithm's properties and benchmark its performance with existing methods of lexical dictionary extraction, comparing differences in user labor, conceptual clarity, and the ability to replicate existing keyword dictionaries.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>In the social sciences, there is a significant mismatch between the supply and the demand for keywords. Researchers who perform sentiment analysis, machine learning, and data exploration with text data frequently find themselves in need of high-quality dictionaries that are relevant to their research questions and are appropriate fits for the text in their possession.</p><p>Many researchers have responded to this problem by using pre-defined keywords sets.</p><p>However, this approach is ill-advised as the semantics of words can differ dramatically across different contexts and corpora <ref type="bibr" target="#b12">(Quinn et al. 2010)</ref>. Alternatively, many researchers have compiled targeted keyword sets using a combination of intuition and subject knowledge.</p><p>While this method is capable of producing valauble and relevant outputs, it is too costly and time-consuming to be practical in most use-cases. Existing semi-supervised methods for producing dictionaries can involve a significant amount of human labor either to identify conceptually related terms or to hand code documents for the consumption of a machine learning algorithm, such as the model described by <ref type="bibr" target="#b7">King, Lam, and Roberts (2017)</ref>.</p><p>Unsupervised machine learning methods offer some promising options to address this need. In particular, word embeddings, numeric representations of the semantic meaning of words, have been used to produce sentiment dictionaries and compare how concepts are associated in text <ref type="bibr" target="#b13">(Rice and Zorn 2021)</ref>. One advantage of the embeddings-based approach is that it is possible for models to incorporate semantic information from domain-specific corpora. Additionally, they require minimal input from researchers to generate high quality results. In sum, they represent a potential improvement in both the efficiency and quality of keyword production over alternative methods.</p><p>In this paper, I extend existing work that applies word embedding methods to generate sentiment dictionaries to the more general objective of producing conceptual dictionaries, also known as keywords <ref type="bibr" target="#b7">(King, Lam, and Roberts 2017)</ref>. I do so using a novel algorithm called conclust, which takes seed words as an input and produces a set of keywords that are semantically similar to one another and the seeds.<ref type="foot" target="#foot_0">2</ref> Using the Turing test approach, I use a set of human-coded terms to examine how conclust performs over several parameter specifications <ref type="bibr" target="#b15">(Turing 2012;</ref><ref type="bibr" target="#b14">Spirling and Rodriguez 2021)</ref>. Additionally, I benchmark its performance against a well-documented set of conceptual dictionaries produced by the WordNet project <ref type="bibr" target="#b10">(Miller 1995)</ref>. This paper is structured as follows, first I review the methods that have been used to generate keywords in the past, examining their advantages and limitations. Second, I describe the conclust algorithm, the inputs it requires and its properties. Third, I compare dictionaries produced by conclust with labeled terms to identify how to best apply it.</p><p>Finally, I validate this approach by comparing conclust dictionaries with those produced by more traditional methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Literature</head><p>Keyword and conceptual dictionaries have been a part of social scientific research for decades.</p><p>They are used in a variety of ways: identifying documents relevant to event extraction <ref type="bibr" target="#b3">(Goldstein and Pevehouse 1997)</ref>; topic labeling, extraction, and analysis <ref type="bibr" target="#b8">(Laver and Garry 2000)</ref>; and as target and attribute words for embedding analysis <ref type="bibr" target="#b16">(Yang and Roberts 2021;</ref><ref type="bibr" target="#b1">Chester 2023)</ref>.</p><p>Currently, keywords tend to be generated using three distinct approaches. First, human coders are frequently used to compile and validate keywords. This approach has some advantages, including its incorporation of human judgement into the dictionary generation process. This is the procedure used to generate many well documented and validated semantic dictionaries, such as WordNet <ref type="bibr" target="#b10">(Miller 1995;</ref><ref type="bibr" target="#b2">Fellbaum 2010)</ref>. On the other hand, it is quite costly to implement, which is a potentially significant barrier to entry for smaller research operations.</p><p>The second common method for generating keywords is to use supervised machine learn-ing methods <ref type="bibr" target="#b7">(King, Lam, and Roberts 2017)</ref>. The benefit of this approach is that it can be customized to specific subcorpora and is significantly less costly to implement compared to using human coders. That said, this process still requires both the provision of humanprovided seed words and documents that are hand-coded by researchers.</p><p>Third, scholars, such as <ref type="bibr" target="#b6">Häffner et al. (2023)</ref>, have explored using deep learning as a tool for generating dictionaries. Their approach leverages the weights of a fitted deep learning model and their association with a continuous outcome variable to identify words whose weights are predictive of the target topic. It bears some similarities to that of <ref type="bibr" target="#b7">King, Lam, and Roberts (2017)</ref>, though the weights of a neural network model have the advantage of representing non-linear relationships between text and an outcome of interest. However, the utility of this methodology is largely limited to cases where a large corpus is paired with a variable of interest to the researcher.</p><p>Finally, in recent years, researchers have increasingly turned to word embeddings as a tool for accomplishing a similar task: the creation of sentiment dictionaries. To do so, they leverage a core feature of word embedding methods, that they generate word vectors that represent the semantic meaning of words as they appear in a given text corpus. They take seed words that represent opposite poles of a sentiment spectrum, a fitted word embedding model, and identify words that lie on a continuum between the chosen seed words <ref type="bibr" target="#b13">(Rice and Zorn 2021</ref>). It's worth noting that thus far embedding-based methods have been limited to the specialized task of creating polarized sentiment dictionaries. In contrast, keywords do not have any polarity and can represent nominal concepts, such as "politics," "science," or "ethnicity."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>conclust</head><p>The conclust algorithm is designed with a core question in mind: how can we produce semantically-related keywords in a way that is labor and cost-efficient, is customizable to specific languages or text corpora, and is reproducible by other researchers? In this section I describe the design of the algorithm, its features, and the ways in which it can be applied to add. This algorithm is designed to replicate the advantages of the embedding-based model developed by <ref type="bibr" target="#b13">Rice and Zorn (2021)</ref> to generate semantically-related sets of keywords. In their words, embeddings have the potential to make the process of generating keywords more generalizable and efficient. This is because keywords produced by embeddings are generalizable, as they can be applied to any corpus of interest to the researcher. The process is also highly efficient compared to using supervised methods or human production, as embeddings do not require human labor to produce and they can produce results with minimal inputs. Whereas <ref type="bibr" target="#b13">Rice and Zorn (2021)</ref> applied embeddings to produce sentiment dictionaries, I hope to apply this approach towards the creation of more general keyword sets that represent concepts of value to researchers.</p><p>What value do embeddings add to the production of sets of keywords? The main benefit is that high-quality fitted word embedddings model contains word vectors that can be used to represent the semantic meaning of words given the corpus that model was fitted upon. These semantic meanings can be used to identify similarities between words given the contexts in which they appear <ref type="bibr" target="#b9">(Mikolov et al. 2013)</ref>. The conclust algorithm (see Algorithm 1) leverages these semantic word vectors to obtain the set of keywords that are iteratively most similar to a user-provided set of seed words.</p><p>Conclust requires several inputs: seed words, a fitted embedding model, and user provided size and similarity thresholds. In this context, seed words refer to a set of user-provided words that represent the target concept. Typically, they vary in size from two to eight words, with larger sets of seed words generally increasing the likelihood that the target concept will be represented in conclust output. The fitted embedding model can be represented as a n × m matrix where n is the number of tokens in the fitted model and m is the number of embedding dimensions.<ref type="foot" target="#foot_1">3</ref> Finally, the model takes two user inputs that shape the model's stopping point. The size threshold is the maximum number of tokens that can be output from the conclust model. The similarity threshold, t, indicates the minimum average cosine similarity to the current set of dictionary words that a new word must have to be added to it.</p><p>Higher thresholds ensure that the resulting dictionary will be smaller but more co-similar; lower thresholds will do the opposite.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1: conclust</head><p>Input: Seed words: S; Embedding model M ; Size threshold: n; Similarity threshold: t Result: Keyword set:</p><formula xml:id="formula_0">K K = S; while |K| ≥ n do m = ∀m ∈ M max(sim(K, m)); if mean(sim(K, m)) ≥ t then K = K ∪ m; else break; end end</formula><p>When conclust is provided these inputs, it computes the cosine similarity between the seed word set and the remaining words in the fitted word embeddings model. The word that has the highest average similarity to the seed set, m, is identified and added to that set. This process continues until either the size (n) or similarity thresholds (t) are met. The end results of this process is a set of words that are iteratively co-similar in semantic meaning. This process is deterministic, so that given the same inputs the model will generate identical results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation</head><p>When discussing any new text as data method, our focus should be first validating that it works as intended and is an improvement on existing and commonly used alternatives <ref type="bibr" target="#b12">(Quinn et al. 2010;</ref><ref type="bibr" target="#b5">Grimmer and Stewart 2013)</ref>. In this section I validate conclust in several ways. First, I present sets of keywords produced by conclust that are designed to represent concepts that could plausibly be of value to users. Second, I describe how I use human subjects to generate comparison keyword sets with which conclust's keywords can be compared. Third, I examine how the quality of conclust's keywords varies over various relevant parameters: the number of seed words provided and the keyword size threshold. <ref type="foot" target="#foot_2">4</ref>Finally, I examine how conclust's keyword sets compare to those produced by human coders at the WordNet project <ref type="bibr" target="#b10">(Miller 1995)</ref>.</p><p>To evaluate the quality of keywords produced by conclust, it is necessary to have a reference group of terms that both are and are not relevant to target concepts. To create these comparison words, I utilize human coders.<ref type="foot" target="#foot_3">5</ref> Why human coders? Despite the progress that has been made in the application of machine learning to the generation of sentiment and conceptual dictionaries, human coders remain a popular tool in the generation of highquality targeted dictionaries. Accordingly, human-coded dictionaries represent an effective benchmark against which dictionaries can and should be compared. However, there is no question that there is a degree of subjectivity in the decision to assign a word to a concept, even among the best trained research assistants. Concurrently, this is the rationale for including WordNet dictionaries (see Table <ref type="table" target="#tab_0">1</ref>) as a comparison group. Ideally, conclust will produce dictionaries that are of are rated to be of comparable quality to WordNet by the human evaluators. Should human evaluators be indifferent or even prefer the conclust dictionaries to those of WordNet, then one could argue that they pass the Turing test as it applies to text as data analysis <ref type="bibr" target="#b15">(Turing 2012</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Note:</head><p>All available WordNet tokens for each concept were included with the exception of entries that included more than one token.</p><p>Each human coder was provided with a set of five concepts and a list of terms 2800 tokens.</p><p>The tokens included a mixture of terms that had been identified by conclust, WordNet, and some that were randomly selected from the same word embedding model used to by conclust. 7 The human coders were instructed to assign these tokens into one or more of 6 I also evaluate the performance of human coders against a random subset of 100 words that were labeled by the author, i.e., a gold standard set of words. The human coders have performed reasonably well against this benchmark, achieving an F1-score of 0.75 relative to the gold standard.</p><p>7 The inclusion of randomly selected terms was done to determine what types of conceptually-relevant these five categories, or a neutral category if none of the concepts provided were a close match. Additionally, the human coders were provided definitions of the respective concepts and instructed to be conservative in their allocation of words to concepts; i.e. they were told that type 2 classification errors were preferable to type 1. The rationale for this instruction is to minimize noise caused by the misclassification of irrelevant terms. Additional details about the instructions provided to human coders are provided in the Appendix.</p><p>To examine how the quality of keywords sets generated by conclust varies over various model inputs, I created a set of five seed words (see Table <ref type="table" target="#tab_1">2</ref>) for each of the five target concepts: biology, economy, executive, government, and sport. 8 The conclust algorithm generated a separate keyword set for each combination of seed words for each concept for a total of 155 separate sets of 50 keywords. The word embedding model used by conclust to generate dictionaries was the pretrained FastText model that was fitted on the English version of Wikipedia and data from the Common Crawl Project <ref type="bibr" target="#b4">(Grave et al. 2018)</ref>. This model was selected largely because it is algorithm is efficient enough to run on most laptops, it is designed to generate high quality embeddings even for rarely occurring words, and Meta has produced pre-fitted FastText models for 157 languages <ref type="bibr" target="#b0">(Bojanowski et al. 2017</ref>).</p><p>Pre-trained models are typically fit with minimal to no pre-processing and this was also tokens were missed by both WordNet and conclust. It also provides a means by which recall may be computed for cross-keyword set comparisons. 8 These concepts were selected to represent several distinct domains of knowledge and they each have corresponding dictionaries of at least 10 words from WordNet (see Table <ref type="table" target="#tab_0">1</ref>). The seed words were selected to represent the author's understanding of these concepts.</p><p>the case for the FastText models. As a consequence, the model included vectors for multiple tenses and forms of root words, as well as punctuation, and stop words. As the goal of any keyword generator should be to generate keyword sets with minimal redundancy and waste, I droped word vectors from the model that were associated with punctuation and stop words, and averaged vectors for tokens that included different types of capitalization or shared a root lemma. Additionally, as WordNet uses nouns exclusively in each of its keyword sets, I also remove all non-noun words from the FastText embedding model.</p><p>To compare keyword quality across various model parameterizations, I evaluate the degree to which users have correctly identified terms relevant to the target concepts using the precision, recall, and F1-score performance metrics. In this context, they each have interesting interpretations worth discussing. Precision is the ratio of true positives to the sum of true positives and false positives (TP/(TP + FP)). In the context of evaluating keywords, it tells us the proportion of words that were identified by a given methodology that were relevant to a given target concept. Conversely, recall is the proportion of true positives to true positives and false negatives (TP/(TP + FN)); here, this indicates what proportion of the broader set of relevant words were missed using a given keyword-generation method. Finally, the F1-score gives us the harmonic mean of precision and recall. High F1-Scores for a keyword set would indicate that they contain mostly relevant words and a high proportion of the total relevant words in the provided embedding model (see Equation <ref type="formula">1</ref>).<ref type="foot" target="#foot_4">9</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">× Precision</head><formula xml:id="formula_1">× Recall Precision + Recall (1)</formula><p>How will the quality of keywords produced by conclust perform given varying number of seeds and over varying lengths of keyword sets? My expectation is that as the number of seeds the algorithm will have more information about the semantic cluster of interest to the researcher; accordingly, the quality -both precision and recall -of keywords produced by conclust should monotonically increase with the number of seeds provided. That said, each keyword provided to conclust represents a unit of labor from users of the algorithm; therefore, we can say the algorithm is efficient if it we observe it achieve peak performance with a minimal number of seeds.</p><p>For the keyword length parameter, we would expect that recall will increase monotonically with longer keyword outputs from conclust. This follows the simple intuition that for every word included in a keyword set, there exists some non-zero probability that it is relevant to the user's target concept. However, if the algorithm works as intended, the first words added to the keyword set will be more relevant than words added later; therefore, as keyword set length increases, precision should decrease.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>In this section, I evaluate the quality of keyword sets generated by conclust relative to the evaluations made by human coders over the variation of several parameters: seed count and dictionary length. I then benchmark these dictionaries against the performance of relevant dictionaries from WordNet.</p><p>Below is Figure <ref type="figure">1</ref>, which shows how the average F1-score, precision, and recall of keywords varies over the number of seed words used to produce them. Each point represents the average performance of keyword sets across all combinations relative to human keyword evaluations.</p><p>For instance, the F1-score for the concept biology with two seed words represents the average F-1 score across all keyword sets generated by each possible pairing of the seeds presented in   <ref type="table" target="#tab_1">2</ref>. In each case where there was more than a single combination of seeds, the average across each combination is shown. They y-axis represents performance metrics of these keyword sets relative to evaluations made by human coders.</p><p>Across the three of the five concepts evaluated, there appear to be three general patterns.</p><p>First, it is clear that for sport keyword sets, there is negligible improvement in the quality of keywords produced by two or more seeds. Coincidentally, keyword sets associated with this concept also have the highest overall F1-score compared to the four other concepts. Second, we see that the biology, executive, and economy show a gradual increase across all three measures of performance as the number of seeds increase. Finally, the government concept appears to increase in performance for the first two seeds, followed by a decline when four or five seed words were used. Additionally, the results shown in Table <ref type="table" target="#tab_3">3</ref> indicate that my performance metrics are understating the quality of keyword sets produced by conclust; of the top 30 terms of each concept, few appear to be irrelevant to the target concepts. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Note:</head><p>Each dictionary was generated by conclust using the five seed words shown in Table <ref type="table" target="#tab_1">2</ref> for each respective target concept.</p><p>Overall, these results are generally consistent with expectations: as the number of seed words increases, the overall quality of the keywords produced by conclust increases. However, the precision of keyword sets appears to plateau in three out of five cases with three seed words. This indicates that users of conclust may find little improvement in the overall quality of their dictionaries if they use more than three or four seed words. This suggests that conclust requires minimal information from users to produce quality results; i.e. it is efficient from a user's perspective.</p><p>The second parameter that we use to evaluate conclust is dictionary length. Generally, I expect that the longer a keyword set is, the smaller percentage of its words will be relevant (lower precision), yet the higher percentage of the total relevant words in the corpus will be included (higher recall). To test whether this is the case, I assess the performance of conclust over variable lengths of keyword sets (see Figure <ref type="figure">2</ref> below). 10 Consistent with expectations, we see increases in recall and decreases in precision as dictionary length increases. However, the trends are not symmetric: while recall consistently across all five concepts, precision is relatively constant for government and it follows a concave 10 To simplify the analysis of dictionary length, it was limited to the average performance scores of dictionaries produced using three seed words. The results for alternative seed words were largely consistent with this analysis. pattern for biology. When examining the F1-score, for three out of five concepts' gains in recall are roughly counterbalanced by losses in precision when dictionaries are 30 to 40 elements in length. However, for biology and sport, F1-scores continue to increase even for keyword sets of up to 50 elements. This suggests that the optimal dictionary length is highly dependent on the target concept in question. For some highly complex concepts that include large numbers of relevant words, a researcher would benefit from setting very large keyword length thresholds. On the other hand, some concepts -such as executive and governmentappear to be sparser, i.e. they have fewer relevant words, and thus they see have the highest F1-score at shorter dictionary lengths (10 or so elements).</p><p>In sum, when determining dictionary length, researchers should be mindful of the scope of the concept that they are targeting: is it a narrow topic or one that is multi-faceted?</p><p>For narrow topics, researchers are likely better off setting lower thresholds of thirty or fewer words. On the other hand, when creating keywords for topics that are quite large in scope, researchers should feel comfortable setting the threshold considerably higher: at 50 words or more.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Validation with WordNet</head><p>Given our hand-coded data, how do the dictionaries produced by conclust perform relative to human-produced WordNet dictionaries? In Figure <ref type="figure" target="#fig_3">3</ref>  The results presented in Figure <ref type="figure" target="#fig_3">3</ref> suggest that in most cases conclust performs at least as well as WordNet according to human coders. As we saw before, we generally see performance of conclust increase with the number of seed words. In particular, when using three seed words, each concept has as least as high an F1-score as WordNet. Moreover, conclust's Seed words (mean) Score economy and sport keyword sets appear to perform strictly better than WordNet's all seed counts.</p><p>When we decompose the F1-score, conclust dictionaries appear to perform particularly well according to the precision metric. Across all seed counts greater than three, conclust produces keyword sets that are in greater agreement with the human evaluations than those produced by WordNet. However, according to the recall metric, WordNet performs on par with conclust for biology and government concepts when five and three seeds are used, respectively. This suggests that while conclust is generally more likely to produce dictionaries that are consistent with the priors of independent human observers, researchers should experiment with their seed words to obtain dictionaries that capture the maximally relevant words from the corpus. Overall, it appears as though conclust produces dictionaries that perform at least as well as WordNet across most concepts, model configurations, and metrics, which suggests that it passes the Turing test.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>In this paper, I have presented a novel algorithm based on word embeddings that can quickly and efficiently generate custom keywords for researchers. Given that it has a foundation in word embedding models, it has the advantage of generalizability, as it can be used to produce keywords specific to any corpus of sufficient size to fit a word embedding model. Should the researcher be uninterested in fitting their own embedding model, they could also use pretrained embeddings models, as was done in this paper. The conclust algorithm is also highly labor efficient, as there is no requirement for researchers to label documents or to draw upon additional sources of data; instead, it can create high-quality keywords with 2-4 seeds provided by the user. I also evaluated my models across multiple model configurations, finding that while more seed words generally improves model performance, the optimal size of a keyword set is highly dependent on the target concept and how well represented it is in </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Note:</head><p>Each dictionary was generated using all five seed words for each respective concept as represented in Table <ref type="table" target="#tab_1">2</ref> </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure</head><label></label><figDesc>Figure 1: Conclust Performance over Seed Word Count</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure</head><label></label><figDesc>Figure 2: Conclust Performance over Dictionary Length</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>each cell represents the precision, recall, or F1-score each of the five concepts; the horizontal blue line represents how the human coders evaluated the WordNet dictionaries, while the black line represents their evaluations of conclust at various seed levels. 11</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Conclust Performance over Seed Length Compared to WordNet</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>; Spirling and Rodriguez 2021). 6 Full Set of WordNet Keywords</figDesc><table><row><cell>ID biology</cell><cell>economy</cell><cell>executive</cell><cell cols="2">government sport</cell></row><row><cell>1 biology</cell><cell>economy</cell><cell>director</cell><cell>government</cell><cell>sport</cell></row><row><cell>2 science</cell><cell>market</cell><cell>business</cell><cell>regime</cell><cell>rock</cell></row><row><cell>3 botany</cell><cell>enterprise</cell><cell>chairman</cell><cell>state</cell><cell>contact</cell></row><row><cell>4 ecology</cell><cell>capitalism</cell><cell>board</cell><cell>bureaucracy</cell><cell>field</cell></row><row><cell>5 space</cell><cell>capitalist</cell><cell>chief</cell><cell>court</cell><cell>exercise</cell></row><row><cell>6 forestry</cell><cell>venture</cell><cell>officer</cell><cell>empire</cell><cell>track</cell></row><row><cell cols="2">7 microbiology socialism</cell><cell>ceo</cell><cell>commission</cell><cell>water</cell></row><row><cell cols="2">8 biotechnology socialist</cell><cell>operating</cell><cell>plan</cell><cell>row</cell></row><row><cell>9 biotech</cell><cell cols="2">communism cfo</cell><cell>town</cell><cell>archery</cell></row><row><cell>10 engineering</cell><cell>nazism</cell><cell>insider</cell><cell>meeting</cell><cell>horseback</cell></row><row><cell>11 recombinant</cell><cell>mercantile</cell><cell>president</cell><cell>palace</cell><cell>cycling</cell></row><row><cell>12 dna</cell><cell></cell><cell>minister</cell><cell>puppet</cell><cell>blood</cell></row><row><cell>13 technology</cell><cell></cell><cell>government</cell><cell>welfare</cell><cell>game</cell></row><row><cell>14 morphology</cell><cell></cell><cell>cabinet</cell><cell></cell><cell>judo</cell></row><row><cell>15 anatomy</cell><cell></cell><cell>chancellor</cell><cell></cell><cell>spectator</cell></row><row><cell>16 topology</cell><cell></cell><cell>secretary</cell><cell></cell><cell>team</cell></row><row><cell>17 neuroscience</cell><cell></cell><cell>home</cell><cell></cell><cell>boxing</cell></row><row><cell>18 brain</cell><cell></cell><cell>state</cell><cell></cell><cell>wrestling</cell></row><row><cell>19 physiology</cell><cell></cell><cell>lord</cell><cell></cell><cell>golf</cell></row><row><cell>20 zoology</cell><cell></cell><cell>treasury</cell><cell></cell><cell>football</cell></row><row><cell>21 shell</cell><cell></cell><cell>finance</cell><cell></cell><cell>baseball</cell></row><row><cell>22</cell><cell></cell><cell>surgeon</cell><cell></cell><cell>basketball</cell></row><row><cell>23</cell><cell></cell><cell>vice-president</cell><cell></cell><cell>tennis</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Seed Words Used to Generate Conceptual Dictionaries</figDesc><table><row><cell>biology</cell><cell cols="4">economy executive government sport</cell></row><row><cell>biology</cell><cell>economy</cell><cell>president</cell><cell>government</cell><cell>sport</cell></row><row><cell>dna</cell><cell>gdp</cell><cell>ceo</cell><cell>policy</cell><cell>baseball</cell></row><row><cell>organism</cell><cell>capital</cell><cell>manager</cell><cell>law</cell><cell>football</cell></row><row><cell>evolution</cell><cell>job</cell><cell>chairman</cell><cell>legislator</cell><cell>ball</cell></row><row><cell cols="3">phenotype investment minister</cell><cell>president</cell><cell>tennis</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc>Table 2 column 1: [biology, dna], [biology, organism], [dna, organism], and so on. For reference, I also include the top 30 terms for each concept in Table 3 (the full set of 50 terms</figDesc><table /><note><p>are included in the Appendix); the keyword sets in this table were produced by using all five seed words for each respective concept.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 :</head><label>3</label><figDesc>Top 30 Conclust Keywords Generated using All Five Seed Words</figDesc><table><row><cell>ID biology</cell><cell>economy</cell><cell>executive</cell><cell cols="2">government sport</cell></row><row><cell>1 recombinant</cell><cell>equity</cell><cell cols="2">commissioner statute</cell><cell>soccer</cell></row><row><cell>2 mrna</cell><cell>mortgage</cell><cell>legislator</cell><cell>legislation</cell><cell>goalkeeper</cell></row><row><cell>3 protein</cell><cell>lender</cell><cell>elect</cell><cell>amendment</cell><cell>goalie</cell></row><row><cell>4 gene</cell><cell>finance</cell><cell>chairperson</cell><cell>mandate</cell><cell>championship</cell></row><row><cell>5 rna</cell><cell>security</cell><cell>governor</cell><cell>regulation</cell><cell>basketball</cell></row><row><cell>6 cdna</cell><cell>investor</cell><cell>committee</cell><cell>enact</cell><cell>player</cell></row><row><cell>7 peptide</cell><cell>liquidity</cell><cell>treasurer</cell><cell>constitution</cell><cell>coach</cell></row><row><cell>8 enzyme</cell><cell>creditor</cell><cell>mayor</cell><cell>enactment</cell><cell>preseason</cell></row><row><cell>9 mutation</cell><cell>debt</cell><cell>secretary</cell><cell>prohibition</cell><cell>playoff</cell></row><row><cell>10 kinase</cell><cell>loan</cell><cell>council</cell><cell>decree</cell><cell>volleyball</cell></row><row><cell>11 allele</cell><cell>financing</cell><cell>deputy</cell><cell>statutory</cell><cell>tournament</cell></row><row><cell>12 synthase</cell><cell>banking</cell><cell cols="2">vice-president ordinance</cell><cell>scorer</cell></row><row><cell>13 molecule</cell><cell>asset</cell><cell>comptroller</cell><cell>stipulate</cell><cell>hockey</cell></row><row><cell>14 ligand</cell><cell>insolvency</cell><cell>delegate</cell><cell>provision</cell><cell>scrimmage</cell></row><row><cell>15 methylation</cell><cell>bank</cell><cell>appoint</cell><cell>state</cell><cell>teammate</cell></row><row><cell>16 chromosome</cell><cell>borrower</cell><cell>senator</cell><cell>enforce</cell><cell>postseason</cell></row><row><cell>17 biosynthesis</cell><cell>banker</cell><cell>politician</cell><cell>prohibit</cell><cell></cell></row><row><cell>18 genome</cell><cell>holding</cell><cell cols="2">congressman authority</cell><cell>softball</cell></row><row><cell>19 biochemistry</cell><cell>company</cell><cell>incumbent</cell><cell>ratification</cell><cell>team</cell></row><row><cell cols="2">20 polymorphism debtor</cell><cell>officer</cell><cell>jurisdiction</cell><cell>handball</cell></row><row><cell cols="2">21 dehydrogenase refinance</cell><cell>government</cell><cell>govern</cell><cell>tourney</cell></row><row><cell>22 receptor</cell><cell>issuer</cell><cell>councillor</cell><cell>declaration</cell><cell>goaltender</cell></row><row><cell>23 polymerase</cell><cell cols="2">repayment director</cell><cell>authorize</cell><cell>lacrosse</cell></row><row><cell>24 tyrosine</cell><cell cols="2">shareholder legislature</cell><cell>ratify</cell><cell>rookie</cell></row><row><cell>25 metabolite</cell><cell>valuation</cell><cell>supervisor</cell><cell>agreement</cell><cell>quarterback</cell></row><row><cell>26 pcr</cell><cell>income</cell><cell>adviser</cell><cell>clause</cell><cell>squad</cell></row><row><cell>27 plasmid</cell><cell cols="2">corporation leader</cell><cell>amend</cell><cell>roster</cell></row><row><cell>28 histone</cell><cell>insurer</cell><cell>councilman</cell><cell>legislature</cell><cell>fullback</cell></row><row><cell>29 sequence</cell><cell>fund</cell><cell>lawmaker</cell><cell>treaty</cell><cell>matchup</cell></row><row><cell>30 actin</cell><cell>citigroup</cell><cell>re-election</cell><cell>obligation</cell><cell>midfield</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0"><p>This algorithm has been implemented in conclust an R package that is available on github.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_1"><p>Conclust does not require that the embedding model be produced by any specific model. Thus far, I have experimented with word2vec, GloVe, and FastText models and they have all performed comparably well. More important than the model type is the size and quality of the data upon which they were fitted<ref type="bibr" target="#b9">(Mikolov et al. 2013;</ref><ref type="bibr" target="#b11">Pennington, Socher, and Manning 2014;</ref><ref type="bibr" target="#b0">Bojanowski et al. 2017</ref>).</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_2"><p>I will analyze the impact of changes to the similarity threshold in a future draft of this paper.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_3"><p>Two undergraduate students at University of California, San Diego were responsible for producing the human-coded terms used to evaluate the conclust and WordNet keywords.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="9" xml:id="foot_4"><p>Of these performance metrics, I expect the one that will be most relevant to users is precision, as most users will likely prefer to use dictionaries that contain a minimal number of irrelevant words. Recall will be relevant for users who intend to identify as many conceptually relevant terms in a given corpus as possible, even if some of those terms are not relevant to the concept of interest.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="11" xml:id="foot_5"><p>For each concept, the conclust dictionary was limited to size of each respective WordNet dictionary to ensure comparability.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>the data. Finally, when compared to dictionaries generated by human coders, it performs at least as well, if not better according to blind human evaluations. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix Supplemental Tables</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Research Assistant Training Materials</head><p>Research assistants were provided the following instructions for assigning terms to concepts:</p><p>• There are 2800 terms total and 6 categories (including other) that they should be classified into.</p><p>• Use a "1" to indicate that you consider a term to fall within a given concept and "0" to indicate that it does not.</p><p>• Try to use a narrow definition of the overriding concept; i.e, don't include a term under that classification if there is another category that would fit it significantly better.</p><p>• However, if a single term can be reasonably considered to belong to more than one of concept, input a "1" for each respective concept.</p><p>• If you can imagine a concept which is a better fit for the term than the 5 provided, input a "1" under the "Other" column.</p><p>• If you encounter any cases that you have difficulty classifying, please make note of it and reach out for guidance.</p><p>Additionally, research assistants were provided with the following definitions of the core concepts obtained from Webster Dictionary:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Biology</head><p>• a branch of knowledge that deals with living organisms and vital processes</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Economy</head><p>• the structure or conditions of economic life in a country, area, or period</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Executive</head><p>• one that exercises administrative or managerial control</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Government</head><p>• the complex of political institutions, laws, and customs through which the function of governing is carried out</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sport</head><p>• physical activity engaged in for pleasure</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Enriching Word Vectors with Subword Information</title>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edouard</forename><surname>Grave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<idno>ArXiv:1607.04606</idno>
+		<ptr target="http://arxiv.org/abs/1607.04606" />
+		<imprint>
+			<date type="published" when="2017-06">2017. June. Accessed April 5, 2023</date>
+		</imprint>
+	</monogr>
+	<note>in en</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Framing Democracy: Characterizing China&apos;s Negative Legitimation Propaganda using Word Embeddings</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><forename type="middle">J</forename><surname>Chester</surname></persName>
+		</author>
+		<idno type="DOI">10.7765/9781847794550.00007</idno>
+		<ptr target="https://doi.org/10.7765/9781847794550.00007" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">WordNet</title>
+		<author>
+			<persName><forename type="first">Christiane</forename><surname>Fellbaum</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-90-481-8847-5_10</idno>
+		<ptr target="https://doi.org/10.1007/978-90-481-8847-5_10" />
+	</analytic>
+	<monogr>
+		<title level="m">Theory and Applications of Ontology: Computer Applications</title>
+		<editor>
+			<persName><forename type="first">Roberto</forename><surname>Poli</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Michael</forename><surname>Healy</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Achilles</forename><surname>Kameas</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Dordrecht; Netherlands</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2010-04-10">2010. April 10, 2023</date>
+			<biblScope unit="page" from="231" to="243" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">S</forename><surname>Goldstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><forename type="middle">C</forename><surname>Pevehouse</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2952072</idno>
+		<ptr target="https://www.cambridge.org/core/product/identifier/S0003055400210940/type/journal_article" />
+	</analytic>
+	<monogr>
+		<title level="m">Reciprocity, Bullying, and International Cooperation: Time-series Analysis of the Bosnia Conflict</title>
+		<imprint>
+			<date type="published" when="1997-09">1997. September. April 10, 2023</date>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="page" from="1537" to="5943" />
+		</imprint>
+	</monogr>
+	<note>in en</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Learning word vectors for 157 languages</title>
+		<author>
+			<persName><forename type="first">Edouard</forename><surname>Grave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prakhar</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1802.06893</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Text as data: The promise and pitfalls of automatic content analysis methods for political texts</title>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Grimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><forename type="middle">M</forename><surname>Stewart</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/mps028</idno>
+		<ptr target="https://doi.org/10.1093/pan/mps028" />
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<idno type="ISSN">14764989</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="267" to="297" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Introducing an Interpretable Deep Learning Approach to Domain-Specific Dictionary Creation: A Use Case for Conflict Prediction</title>
+		<author>
+			<persName><forename type="first">Sonja</forename><surname>Häffner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Hofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maximilian</forename><surname>Nagl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Walterskirchen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="19" />
+			<date type="published" when="2023">2023</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Computer-Assisted Keyword and Document Set Discovery from Unstructured Text</title>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>King</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Lam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12291</idno>
+		<ptr target="https://doi.org/10.1111/ajps.12291" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="page">15405907</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Estimating policy positions from political texts</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Laver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Garry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="page" from="619" to="634" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+	<note>Publisher: JSTOR</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Efficient Estimation of Word Representations in Vector Space</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<idno>ArXiv: 1301.3781</idno>
+		<ptr target="http://ronan.collobert.com/senna/" />
+		<imprint>
+			<date type="published" when="2013-07-20">2013. July 20, 2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+	<note>v3 Publication Title: arxiv.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">WordNet: a lexical database for English</title>
+		<author>
+			<persName><forename type="first">George</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/219717.219748</idno>
+		<ptr target="https://doi.org/10.1145/219717.219748" />
+	</analytic>
+	<monogr>
+		<title level="j">Communications of The ACM</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="39" to="41" />
+			<date type="published" when="1995-11">1995. November</date>
+		</imprint>
+	</monogr>
+	<note>MAG ID: 2081580037</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Glove: Global Vectors for Word Representation</title>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Manning</surname></persName>
+		</author>
+		<idno type="DOI">10.3115/v1/D14-1162</idno>
+		<ptr target="http://aclweb.org/anthology/D14-1162" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">How to Analyze Political Attention with Minimal Assumptions and Costs</title>
+		<author>
+			<persName><forename type="first">Kevin</forename><forename type="middle">M</forename><surname>Quinn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Burt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Monroe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">H</forename><surname>Colaresi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dragomir</forename><forename type="middle">R</forename><surname>Crespin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Radev</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1540-5907.2009.00427.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1540-5907.2009.00427.x.https://onlinelibrary.wiley.com/doi/10.1111/j.1540-5907.2009.00427.x" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<idno type="ISSN">00925853, 15405907</idno>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="209" to="228" />
+			<date type="published" when="2010-01">2010. January. March 10, 2023</date>
+		</imprint>
+	</monogr>
+	<note>in en</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Corpus-based dictionaries for sentiment analysis of specialized vocabularies</title>
+		<author>
+			<persName><forename type="first">Douglas</forename><forename type="middle">R</forename><surname>Rice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Zorn</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2019.10</idno>
+		<ptr target="https://doi.org/10.1017/psrm.2019.10" />
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<idno type="ISSN">20498489</idno>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="20" to="35" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Word Embeddings What works, what doesn&apos;t, and how to tell the difference for applied research</title>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Spirling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pedro</forename><forename type="middle">L</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<ptr target="https://www.nyu.edu/projects/spirling/documents/embed.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Politics</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="56" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Computing machinery and intelligence (1950)</title>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">M</forename><surname>Turing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Essential Turing: the Ideas That Gave Birth to the Computer Age</title>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="433" to="464" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Censorship of Online Encyclopedias : Implications for NLP Models</title>
+		<author>
+			<persName><forename type="first">Eddie</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

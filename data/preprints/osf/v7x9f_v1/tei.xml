@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">An extension of variational quantum eigensolver to calculate molecular orbitals</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-06-27">June 27, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
+							<email>kikuchi@gakushikai.jp</email>
+							<affiliation key="aff0">
+								<orgName type="department">Internationales Forschungszentrum für Quantentechnik</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">International Research Center for Quantum Technology</orgName>
+								<address>
+									<settlement>Tokyo</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">An extension of variational quantum eigensolver to calculate molecular orbitals</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-06-27">June 27, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">0C5A98D2C8F61250173BE6B056CE560D</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:30+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This article presents a construction of a variational quantum eigensolver that allows us to calculate molecular orbitals. As the authors of the presented work have discussed in their preceding works, the variables in the molecular Hartree-Fock equation are represented by a set of transformation matrices. Those matrices have common eigenvectors, and the corresponding eigenvalues give the individual values of the variables that construct the solution of the Hatree-Fock equation. In other words, one can get the wavefunctions and the orbital energies through eigenvalue problems, which could be evaluated by quantum phase estimation. In this article, we use this formalism for another purpose: the transformation matrices are used to construct the total energy function so that the minimization of the total energy leads to an alternative approach of variational quantum eigensolver if the computation is conducted in a quantum computer.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Preceding studies of the authors of the present article discussed a kind of quantum algorithm to compute the electronic structures of molecules <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b4">5]</ref>.</p><p>The computations are carried out in the following way:</p><p>• Everything required in the computation should be represented by a polynomial. The total energy could be regarded as a polynomial composed of molecular integrals and the undetermined coefficients of LCAO. The orthonormalization conditions are similarly treated. The parameters in the molecular integrals, such as atomic coordinates, are also explicitly included in the polynomial using Taylor expansion around certain centers. The objective function is the sum of the total energy and the ortho-normalization condition with the Lagrange multipliers representing the orbital energies.</p><p>The symbolic differentiation of the objective function yields a system of polynomial equations that gives the optima.</p><p>• To solve the system of polynomial equations, we can apply several methods of computer algebra, where Gröbner bases and the primary ideal decomposition play central roles <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b7">8,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b10">11]</ref>. Namely, we compose an ideal I from the given polynomials and transform them into another system that has a more suitable form for root-finding <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b13">14]</ref>.</p><p>The ideal representing a Hartree-Fock equation could be decomposed into several subsystems described by primary ideals. Each primary ideal represents one solution set, namely, one quantum state if the decomposition is executed to the full.</p><p>• We can solve the set of polynomial equations through the classical computational steps explained in <ref type="bibr" target="#b16">[17]</ref>.</p><p>-Let I be an ideal made of multivariate polynomials (f 1 , f 2 , ..., f t ) in a ring R[x 1 , x 2 , ..., x n ]. Once the Gröbner for the ideal I is computed, it is an easy task to represent any element in the quotient ring R[x 1 , x 2 , ..., x n ]/I uniquely as the linear combination of the monomial basis of the quotient ring.</p><p>-Let x1 , x2 , ..., x2 be the representatives of x 1 , x 2 , ..., x n in R[x 1 , x 2 , ..., x n ]/I. Additionally, let b be a vector composed of the representatives of the monomial basis of the quotient ring.</p><p>-For any i, the multiplication xi</p><formula xml:id="formula_0">• b is represented by xi • b = b • M x i<label>(1)</label></formula><p>with a transformation matrix M x i . The entries of the matrix are numbers, but not symbols. -Let us consider the eigenvalue problems, defined as follows, ξ(j)</p><formula xml:id="formula_1">-As M x i • M x j = M x j • M x i ,</formula><formula xml:id="formula_2">i v j = v j • M x i<label>(2)</label></formula><p>for i = 1, ..., n and j = 1, ..., M . Those equations are solved numerically, and the eigenvalues give the common zeros of the polynomials included in the ideal I. Namely, the eigenvalues give the roots of the set of polynomial equations defined by</p><formula xml:id="formula_3">f 1 (x 1 , x 2 , ..., x n ) = f 2 (x 1 , x 2 , ..., x n ) = ... = f t (x 1 , x 2 , ..., x n ) = 0 (3)</formula><p>in such a way that</p><formula xml:id="formula_4">(x 1 , x 2 , ..., x n ) = ( ξ(j) 1 , ξ(j) 2 , ..., ξ(j) n )<label>(4)</label></formula><p>for j = 1, ..., M . Note that if eigenvectors {v j } j for one M i is obtained, the remaining components of the roots are computed by</p><formula xml:id="formula_5">ξ(j) i = (v j • M x i , v j ) (v j , v j ) .<label>(5)</label></formula><p>The root-finding of a system of polynomial equations is replaced by a set of eigenvalue problems, which could be solved by quantum algorithms. We encode the eigenvectors {v j } j into a set of quantum states {|v j ⟩}, and the computational steps are carried out by a quantum circuit, which conducts the following transformation:</p><formula xml:id="formula_6">|v j ⟩|Ancilla 1 ⟩|Ancilla 2 ⟩ • • • |Ancilla n ⟩ → |v j ⟩| ξ(j) 1 ⟩| ξ(j) 2 ⟩ • • • | ξ(j) n ⟩<label>(6)</label></formula><p>where the eigenvalues of M x i (i = 1, ..., n) for v j are recorded in ancilla qubits through a successive application of quantum phase estimation.</p><p>• To conduct the quantum phase estimation, we could use the technique of block-encoding, by which any complex matrix can be embedded in the diagonal part of certain unitary matrices <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b19">20]</ref>.</p><p>2 Numerical experiments 2.1 VQE Computation for a simple toy model</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1">Model description</head><p>Let us compute a simple toy model, where the secular equation is given by</p><formula xml:id="formula_7">V (x, y) -1 -1 V (x, y) x y = e x y<label>(7)</label></formula><p>along with the normalization condition x 2 + y 2 = 1. The variables (x, y) are the wavefunction amplitudes and e is the orbital energy. V (x, y) is the on-site potential that is the function of the amplitude of the wavefunction. We assume that the roots are real.</p><p>The polynomial ideal that represents the secular equation is given by</p><formula xml:id="formula_8">I = (xV (x, y) -y -e x, yV (x, y) -x -e y, x 2 + y 2 -1)<label>(8)</label></formula><p>In the case of V (x, y) = 0, the Gröbner basis is given by</p><formula xml:id="formula_9">I std = (e 2 -1, 2y 2 -1, x + ye)<label>(9)</label></formula><p>The roots of the set of polynomial equations are given by</p><formula xml:id="formula_10">(x, y, e) = ± 1 √ 2 , ± 1 √ 2 , -1 , ± 1 √ 2 , ∓ 1 √ 2 , 1<label>(10)</label></formula><p>The entries in the quotient ring Q(x, y, e)/I are the linear combinations of the monomial basis b = (ye, y, e, 1).</p><p>In the quotient ring, the multiplications of the entries of the basis b by x, y, and e are represented by the transformation matrices: b</p><formula xml:id="formula_11">•p = b•m p for p = x, y, e. m x =       0 0 0 -1 0 0 -1 0 0 -0.5 0 0 -0.5 0 0 0      <label>(11)</label></formula><formula xml:id="formula_12">m y =       0 0 1 0 0 0 0 1 0.5 0 0 0 0 0.5 0 0      <label>(12</label></formula><p>)</p><formula xml:id="formula_13">m e =       0 1 0 1 0 0 0 0 0 0 1 0 0 1 0      <label>(13)</label></formula><p>The related properties are listed in Table <ref type="table">1</ref>, which covers all the solutions of the secular equation.</p><formula xml:id="formula_14">v (vm x , v) (vm y , v) (vm e , v) (-1 √ 2 , 1 √ 2 , -1, 1) 1 √ 2 1 √ 2 -1 ( 1 √ 2 , -1 √ 2 , -1, 1) -1 √ 2 -1 √ 2 -1 ( 1 √ 2 , 1 √ 2 , 1, 1) -1 √ 2 1 √ 2 1 (-1 √ 2 , -1 √ 2 , 1, 1) 1 √ 2 -1 √ 2 1 Table 1:</formula><p>The solutions of the model. The eigenvectors and the corresponding expectation values for the matrices m x , m y , and m e are shown.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.2">Result of VQE</head><p>In this article, we conduct the numerical experiment of VQE and discuss a point to achieve accurate computation.</p><p>We use the following objective function:</p><formula xml:id="formula_15">f obj (p, E y ) = ⟨v 0 |U † (p)m e U(p)|v 0 ⟩ + |⟨v 0 |U † (p)(m y -E y )U(p)|v 0 ⟩| 2 . (<label>14</label></formula><formula xml:id="formula_16">)</formula><p>In the above, the trial vector is given by U (p)|v 0 ⟩, generated from an initial vector |v 0 ⟩ by the unitary transformation U (p) with a parameter set p. The objective function includes an extra parameter E y .</p><p>As the solution in this case is real, we construct the unitary transformation as follows:</p><formula xml:id="formula_17">U(p) = exp (p 1 • T(1, 2) + p 2 • T(2, 3) + • • • + p N-1 • T(N -1, N) + p N • T(N, 1)) ,<label>(15)</label></formula><p>where N is the matrix dimension. In this section, we set N = 4. The generators of the unitary transformation are given by</p><formula xml:id="formula_18">T(j, k) = E j,k -E k,j<label>(16)</label></formula><p>where E j,k is the matrix such that 1 lies in the (j, k)-th entry and 0 elsewhere.</p><p>The role of the second term on the right-hand side of the objective function is to ensure that the optimum vector is the eigenvector of the matrix m y . If this is the case, the solution vector is uniquely determined at either of two vectors</p><formula xml:id="formula_19">(v 1 = (-1 √ 2 , 1 √ 2 , -1, 1) or v 2 = (-1 √ 2 , 1 √ 2 , -1, 1)</formula><p>. Without this constraint term, the calculation would arrive at a vector in a subspace sv 1 + tv 2 . The vectors in this subspace yield the orbital energy e = -1, but they do not represent the solution for the variables x and y in general.</p><p>A numerical experiment (by the simplex method) obtained the following optimum:</p><p>(p 1 , p 2 , p 3 , p 4 ) = (1.4576, 2.1588, 2.0675, 0.1027, 0.7072) and</p><formula xml:id="formula_20">f opt = -1.0000.</formula><p>This optimum yields the following solution:</p><p>(x, y, e) = (0.7071, 0.7071, -1.0000).</p><p>It corresponds to the solution in the second line in Table <ref type="table">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Computation for Hartree-Fock model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1">Model description</head><p>In this section, the restricted Hartree-Fock computation of a realistic molecule HeH + is studied. This molecule is the simplest heteronuclear molecule and is used as a benchmark problem for the solving of the Hartree-Fock model <ref type="bibr" target="#b20">[21]</ref>. We compute the total energy functional of the RHF model of the molecule through STO-3g basis set <ref type="bibr" target="#b21">[22]</ref>. The total energy functional is a function of the LCAO coefficients (x, y), the orbital energy e, and the interatomic distance R, as defined in the following.</p><formula xml:id="formula_21">E HF = i ⟨i|h|i⟩ + 1 2 ij ([ii|jj] -[ij|ji])<label>(17)</label></formula><formula xml:id="formula_22">⟨i|h|i⟩ = dx 1 χ * i (x 1 )h(r 1 )χ j (x 1 )<label>(18)</label></formula><p>[ij|kl] = dx</p><formula xml:id="formula_23">1 dx 2 χ * i (x 1 )χ j (x 1 ) 1 r 12 χ * i (x 2 )χ j (x 2 ) (<label>19</label></formula><formula xml:id="formula_24">)</formula><formula xml:id="formula_25">χ i (x) = (x ϕ 1s,He (r -R He ) + y ϕ 1s,H (r -R H )) σ i<label>(20)</label></formula><p>σ i : spin function ( <ref type="formula">21</ref>)</p><formula xml:id="formula_26">ϕ ST O-3G 1s (r) = 3 i=1 c(i) exp(-z(i)r 2 ) (22)</formula><p>In the computation of HeH + , we use two spin orbitals.</p><formula xml:id="formula_27">i = α, β<label>(23)</label></formula><p>The total energy in the restricted Hartree-Fock model is given by</p><formula xml:id="formula_28">h(r) = - 1 2 ∇ 2 - Z He |r -R He | -- Z H |r -R H | (24) R = |R He -R H |, Z He = 2, Z H = 1 (25) E total (x, y, e, R) = E HF (x, y, R) -e i (⟨χ i |χ j ⟩ -1) + Z He Z H R<label>(26)</label></formula><p>• The numerical coefficients in the objective function are approximated by fractional numbers so that the objective function, multiplicated by the powers of ten, is given by a polynomial with integer coefficients. To this end, we approximate the numerical coefficient C by rounding 10 n C to the nearest integer N c and get N c /10 n . We use the polynomial with integer coefficients as the objective function. For simplicity, we fix the interatomic distance R at 1.46 a B . However, in general, using Taylor expansion, we could include R in the system of polynomial equations. Namely, we could determine the wave function and the atomic positions simultaneously.</p><p>• A system of polynomial equations is derived by the partial differentiation with respect to (x, y) and e so that the roots of those equations give the optima of the objective function.</p><p>• In algebraic symbolic computation, we use the ring Q[x, y, e] (a ring over the field of rational numbers Q) with the degree reverse lexicographic monomial ordering, such that x &gt; y &gt; e. The generators of the set of polynomial equations compose an ideal I. We compute the Gröbner basis of I, by which the quotient ring Q[x, y, e]/I is defined.</p><p>• As a reference, the result of the Hartree-Fock computation by the standard self-consistent method is shown in Table <ref type="table">2</ref>.</p><p>x y e Total Energy (Hartree) STO-3G 0.801918 0.336800 -1.597448 -2.860662</p><p>Table <ref type="table">2</ref>: The result of the Hartree-Fock computation of HeH + by the standard self-consistent method with STO-3g basis set, at the interatomic distance R = 1.4632.</p><p>• The polynomial approximation of the objective function E total is computed as follows. The transformation matrices (m x , m y , and m e ) for three variables (x,y, e) are given in the appendix.</p><p>• The solutions obtained from the symbolic-numeric method are shown in Table <ref type="table">3</ref>. We use the normalized right eigenvectors |i) of m T X and compute the expectation values (i|...|i) for m T y and m T e . The solutions at the rows (i=2 and 7) correspond to the ground state in the reference data in Table <ref type="table">2</ref>. Those results are quantitatively satisfactory. The solutions at the rows (i=3 and i=6) correspond to an excited state. The other solutions are meaningless since they are complex. 6 -0.6021+0.0000j 1.1147+0.0000j -0.5380+0.0000j -0.4762+0.0000j 7 -0.8019+0.0000j -0.3368+0.0000j -1.5976+0.0000j -2.8609+0.0000j</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>i (i|m</head><p>Table <ref type="table">3</ref>: The result of the Hartree-Fock computation of HeH + by the symbolic numeric method. i-th row in the table shows the expectation values of the transformation matrices and the total energy, computed from the normalized right eigenvectors {|i)} i=0,...,7 of m T x . Some entries are complex and the imaginary unit is represented by j.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.2">Result of VQE</head><p>In this section, we conduct the numerical experiment for VQE and assert that it works well. We use a similar scheme of numerical variation as in the previous section. The dimension of the transformation is 8×8, and we use eight variational parameters p = (p 1 , p 2 , ..., p 8 ) with eight generators T (1, 2), T (2, 3), ..., T (7, 8), T (8, 1) in the unitary transformation U (p). We could use the following objective function.</p><formula xml:id="formula_29">g obj (p) = w={x,y,e} ⟨v 0 | U † (p) ∂E total (x, y, e) ∂w U(p) |v 0 ⟩ 2 .<label>(28)</label></formula><p>A numerical experiment arrived at the following optimum:</p><p>p opt = (-0.7784, 0.3236, 1.7828, 0.6409, 0.0327, -0.1410, -0.2723, 0.0606)</p><p>This optimum yields the solution given in Table <ref type="table">4</ref>. It is a satisfactory result for the ground state computation.</p><p>x y e Total Energy (Hartree) -0.8019 -0.3367 -1.5976 -2.8609 Table <ref type="table">4</ref>: The solution of the Hartree-Fock equation computed by VQE. The wavefunction (x, y), the orbital energy e, and the total energy are shown.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Discussion</head><p>In this section, we discuss several things omitted in the previous parts of this article.</p><p>The first is how to construct the quantum circuit. The numerical experiments in the preceding sections show that the algorithm would work well, at least in simple cases. However, they are only the emulation of VQE by classical computers. The actual computation should be conducted in quantum processors.</p><p>The important matter is that the unitary transformation on the initial input vector should be achieved properly in the quantum circuit. In the numerical experiment, we use the anti-symmetric matrices T (i, j) as the generators of the unitary transformation U (p) over a numerical vector v = (v 0 , v 1 , ..., v N -1 ). In the quantum circuit, such a vector should be encoded by a state vector</p><formula xml:id="formula_30">V = v 0 |0...00⟩ + v 1 |0...10⟩ + • • • + v N -1 |1....11⟩.</formula><p>This state vector should be prepared in m-qubits system such that 2 m = N .</p><p>Then the unitary operation should be constructed by the sequence of gate operations. For example, the unitary transformation to solve the Hartree-Fock equation (in Section 2.2) is illustrated in Figure <ref type="figure" target="#fig_2">1</ref>. The third is how to realize efficient optimization. The numerical experiments in this article used the simplex method, but it is not effective. Instead, we could use the derivative of the total energy with respect to variational parameters.</p><p>The necessary formulas are computed analytically and could be used in the optimization.</p><p>The fourth is the feasibility of computing the excited states. </p><formula xml:id="formula_31">+ λ |(x 0 , y 0 |S|x 1 , y 1 )| 2 ,</formula><p>where (x 0 , y 0 ) and (x 1 , y 1 ) stand for the normalized wavefunctions in the ground and excited states, respectively. The second term curbs the path of the optimization by the strength parameter λ so that it shall not arrive at the ground state. This term might remain non-zero at the optima because the excited state is not the virtual orbital orthogonal to the ground state. For the case of HeH + , one can obtain the excited state using this objective function.</p><p>The version of VQE proposed in the present article can be used to prepare the input state vector for QPE to record the solutions of the equation in quantum states, if one applies the QPE algorithm given in <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b4">5]</ref>. According to the construction of that style of QPE, the solutions (such as wavefunctions, orbital energies, atomic coordinates, and so on) are encoded in quantum state vectors.</p><p>Note that it is not an obligation to find the minimum of the total energy. In- </p><p>Then the final measurement gets two distinct solutions (e, x, y) and (e, -x, -y).</p><p>As for more complicated systems, this trick will be useful.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Summary and conclusion</head><p>In this article, we demonstrated a method to encode the variables in the equation into a set of matrices using an algebraic method. Subsequently, the total energy itself is represented by a function composed of the eigenvalues of those matrices, and the minimization of the total energy, conducted by VQE, yields the ground state solution. We have checked that this scheme would work well, at least for small models. In addition, we have discussed some further applications of the algorithm, such as the evaluation of excited states and the connection between VQE and QPE.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>those transformation matrices share common eigenvectors {v j |j = 1, ..., M }, where M is size of the monomial basis b. Note that those matrices are not Hermitian in general.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>→•</head><label></label><figDesc>10000 * E_total=-2*e*(10000*x**2 + 9016*x*y + 10000*y**2 -10000) + 13071*x**4 + 17494*x**3*y + 19208*x**2*y**2 -53057*x**2 + 12474*x*y**3 -53899*x*y + 7746*y**4 -34640*y**2 + 13670 → → We use the objective function f obj = 10000 E total . • The ideal that gives the optima of the objective function is composed of the following components: The quotient ring Q[x, y, e]/I has the monomial basis b = (y 2 , xe, ye, e 2 , x, y, e, 1).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: The quantum circuit that yields the excited state of the Hartee-Fock computation of HeH + .</figDesc><graphic coords="10,142.66,550.77,309.96,137.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>stead, one might evaluate the minimum orbital energy to get the eigenvector of the corresponding transformation matrix. If that eigenvector is obtained, the other variables in the equation are also determined through the successive operations of VQE for corresponding transformation matrices. For example, in the simple toy model investigated in the previous section, the minimum orbital energy is yielded from the subspace spanned by two different eigenvectors of the transformation matrix m e . The successive VQE operations for m x and m y , being applied to that eigenvector, generate the following state: (α |v 1 ⟩ + β |v 2 ⟩) |Ancilla⟩ → α |v 1 ⟩ |e, x, y⟩ + α |v 2 ⟩ |e, -x, -y⟩</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>To this end, several techniques developed by conventional VQE would be useful. For example, one can add an extra term to the objective function so that the path of the optimization shall avoid the ground state. The modified objective function in the case of the Hartree-Fock computation is given by:</figDesc><table /><note><p>p=x,y,e ∂E total (x, y, e) ∂p 2 x=x 1 ,y=y 1 ,e=e 1</p></note></figure>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Data Availability</head><p>The small programs and the matrix data in this study are available at https://github.com/kikuchiichio/20240701/</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An approach to first principles electronic structure computation by symbolic-numeric computation</title>
+		<author>
+			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<idno type="DOI">10.5339/connect.2013.14</idno>
+		<ptr target="http://dx.doi.org/10.5339/connect.2013.14" />
+	</analytic>
+	<monogr>
+		<title level="j">QScience Connect</title>
+		<imprint>
+			<biblScope unit="issue">14</biblScope>
+			<date type="published" when="2013">2013. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Ab-initio quantum chemistry through computer algebra</title>
+		<author>
+			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Asian Journal of Research and Reviews in Physics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="18" to="31" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Molecular Algebraic Geometry: Electronic Structure of H3+ as Algebraic Variety. OSF Preprints</title>
+		<author>
+			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<ptr target="https://osf.io/preprints/osf/2crxp" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Symbolic, numeric and quantum computation of Hartree-Fock equation</title>
+		<author>
+			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2401.00019</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Feasibility of first principles molecular dynamics in fault-tolerant quantum computer by quantum phase estimation</title>
+		<author>
+			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2404.10001</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Computing in algebraic geometry</title>
+		<author>
+			<persName><forename type="first">Wolfram</forename><surname>Decker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Lossen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">of algorithms and computation in mathematics</title>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="volume">16</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">From Enumerative Geometry to Solving Systems of Polynomial Equations</title>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Sottile</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computations in algebraic geometry with Macaulay 2</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2001">2001</date>
+			<biblScope unit="page" from="101" to="130" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Using algebraic geometry</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>David A Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donal O'</forename><surname>Little</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shea</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+			<biblScope unit="volume">185</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Ideals, varieties, and algorithms: an introduction to computational algebraic geometry and commutative algebra</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Little</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donal</forename><surname>Oshea</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Gröbner Bases in Commutative Algebra</title>
+		<author>
+			<persName><forename type="first">Viviana</forename><surname>Ene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jürgen</forename><surname>Herzog</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<publisher>American Mathematical Soc</publisher>
+			<biblScope unit="volume">130</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Commutative Algebra: with a view toward algebraic geometry</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Eisenbud</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+			<biblScope unit="volume">150</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Gröbner bases and primary decomposition of polynomial ideals</title>
+		<author>
+			<persName><forename type="first">Patrizia</forename><surname>Gianni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barry</forename><surname>Trager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gail</forename><surname>Zacharias</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Symbolic Computation</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2-3</biblScope>
+			<biblScope unit="page" from="149" to="167" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Direct methods for primary decomposition</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Eisenbud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Craig</forename><surname>Huneke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wolmer</forename><surname>Vasconcelos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Inventiones mathematicae</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="207" to="235" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">On decomposing systems of polynomial equations with finitely many solutions</title>
+		<author>
+			<persName><forename type="first">Möller</forename><surname>Michael</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Applicable Algebra in Engineering, Communication and Computing</title>
+		<imprint>
+			<date type="published" when="1993">1993</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="217" to="230" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Localization and primary decomposition of polynomial ideals</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shimoyama</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yokoyama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Symbolic Computation</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="247" to="277" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Solving zero-dimensional algebraic systems</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Lazard</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of symbolic computation</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="117" to="131" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">From enumerative geometry to solving systems of polynomial equations</title>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Sottile</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computations in algebraic geometry with Macaulay 2</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2002">2002</date>
+			<biblScope unit="page" from="101" to="129" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">A universal quantum circuit scheme for finding complex eigenvalues. Quantum information processing</title>
+		<author>
+			<persName><forename type="first">Anmer</forename><surname>Daskin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ananth</forename><surname>Grama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sabre</forename><surname>Kais</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="333" to="353" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Hamiltonian simulation by qubitization</title>
+		<author>
+			<persName><forename type="first">Guang</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Low</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Isaac</forename><forename type="middle">L</forename><surname>Chuang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Quantum</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">163</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Fable: Fast approximate quantum circuits for block-encodings</title>
+		<author>
+			<persName><forename type="first">Daan</forename><surname>Camps</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roel</forename><surname>Van Beeumen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 IEEE International Conference on Quantum Computing and Engineering (QCE)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="104" to="113" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Modern quantum chemistry: introduction to advanced electronic structure theory</title>
+		<author>
+			<persName><forename type="first">Attila</forename><surname>Szabo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><forename type="middle">S</forename><surname>Ostlund</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+		<respStmt>
+			<orgName>Courier Corporation</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Electronic wave functions-i. a general method of calculation for the stationary states of any molecular system</title>
+		<author>
+			<persName><forename type="first">Boys</forename><surname>Francis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the Royal Society of London. Series A. Mathematical and Physical Sciences</title>
+		<imprint>
+			<biblScope unit="volume">200</biblScope>
+			<biblScope unit="page" from="542" to="554" />
+			<date type="published" when="1063">1063. 1950</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,2331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Attention Mechanism, Transformers, BERT, and GPT: Tutorial and Survey</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Benyamin</forename><surname>Ghojogh</surname></persName>
+							<email>bghojogh@uwaterloo.ca</email>
+						</author>
+						<author>
+							<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+							<email>ali.ghodsi@uwaterloo.ca</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="laboratory">Machine Learning Laboratory</orgName>
+								<orgName type="institution">University of Waterloo</orgName>
+								<address>
+									<settlement>Waterloo</settlement>
+									<region>ON</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Statistics and Actuarial Science &amp; David R. Cheriton School of Computer Science</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Data Analytics Laboratory</orgName>
+								<orgName type="institution">University of Waterloo</orgName>
+								<address>
+									<settlement>Waterloo</settlement>
+									<region>ON</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Attention Mechanism, Transformers, BERT, and GPT: Tutorial and Survey</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">ABEF9FF1D84C895D701812D1EA2109BA</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:18+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This is a tutorial and survey paper on the attention mechanism, transformers, BERT, and GPT. We first explain attention mechanism, sequenceto-sequence model without and with attention, self-attention, and attention in different areas such as natural language processing and computer vision. Then, we explain transformers which do not use any recurrence. We explain all the parts of encoder and decoder in the transformer, including positional encoding, multihead self-attention and cross-attention, and masked multihead attention. Thereafter, we introduce the Bidirectional Encoder Representations from Transformers (BERT) and Generative Pre-trained Transformer (GPT) as the stacks of encoders and decoders of transformer, respectively. We explain their characteristics and how they work.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>When looking at a scene or picture, our visual system, so as a machine learning model <ref type="bibr">(Li et al., 2019b)</ref>, focuses on or attends to some specific parts of the scene/image with more information and importance and ignores the less informative or less important parts. For example, when we look at the Mona Lisa portrait, our visual system attends to Mona Lisa's face and smile, as Fig. <ref type="figure" target="#fig_0">1</ref> illustrates. Moreover, when reading a text, especially when we want to try fast reading, one technique is skimming <ref type="bibr" target="#b67">(Xu, 2011)</ref> in which our visual system or a model skims the data with high pacing and only attends to more informative words of sentences <ref type="bibr" target="#b71">(Yu et al., 2018)</ref>. Figure <ref type="figure" target="#fig_0">1</ref> shows a sample sentence and highlights the words to which our visual system focuses more in skimming. The concept of attention can be modeled in machine learning where attention is a simple weighting of data. In the attention mechanism, explained in this tutorial paper, the more informative or more important parts of data are given larger weights for the sake of more attention. Many of the state-of-the-art Natural Language Processing (NLP) (Indurkhya &amp; Damerau, 2010) and deep learning techniques in NLP <ref type="bibr" target="#b56">(Socher et al., 2012)</ref> use attention. Transformers are also autoencoders which encode the input data to a hidden space and then decode those to another domain. Transfer learning is widely used in NLP <ref type="bibr">(Wolf et al., 2019b)</ref>. Transformers can also be used for transfer learning. Recently, transformers were proposed merely composed of attention modules, excluding recurrence and any recurrent modules <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>. This was a great breakthrough. Prior to the proposal of transformers with only attention mechanism, recurrent models such as Long-Short Term Memory (LSTM) <ref type="bibr">(Hochreiter &amp; Schmid-huber, 1997)</ref> and Recurrent Neural Network (RNN) <ref type="bibr" target="#b31">(Kombrink et al., 2011)</ref> were mostly used for NLP. Also, other NLP models such as word2vec <ref type="bibr">(Mikolov et al., 2013a;</ref><ref type="bibr" target="#b5">b;</ref><ref type="bibr" target="#b18">Goldberg &amp; Levy, 2014;</ref><ref type="bibr" target="#b45">Mikolov et al., 2015)</ref> and GloVe <ref type="bibr" target="#b46">(Pennington et al., 2014)</ref> were state-of-the-art before the appearance of transformers. Recently, two NLP methods, named Bidirectional Encoder Representations from Transformers (BERT) and Generative Pre-trained Transformer (GPT), are proposed which are the stacks of encoders and decoders of transformer, respectively. In this paper, we introduce and review the attention mechanism, transformers, BERT, and GPT. In Section 2, we introduce the sequence-to-sequence model with and without attention mechanism as well as the self-attention. Section 3 explains the different parts of encoder and decoder of transformers. BERT and its different variants of BERT are introduced in Section 4 while GPT and its variants are introduced in Section 5. Finally, Section 6 concludes the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Attention Mechanism</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Autoencoder and the Context Vector</head><p>Consider an autoencoder with encoder and decoder parts where the encoder gets an input and converts it to a context vector and the decoder gets the context vector and converts to an output. The output is related to the input through the context vector in the so-called hidden space. Figure <ref type="figure" target="#fig_1">2</ref> illustrates an autoencoder with the encoder (left part of autoencoder), hidden space (in the middle), and decoder (right part of autoencoder) parts. For example, the input can be a sentence or a word in English and the output is the same sentence or word but in French. Assume the word "elephant" in English is fed to the encoder and the word "l'éléphant" in French is output. The context vector models the concept of elephant which also exists in the mind of human when thinking to elephant. This context is abstract in mind and can be referred to any fat, thin, huge, or small elephant <ref type="bibr" target="#b47">(Perlovsky, 2006)</ref>. Another example for transformer is transforming a cartoon image of elephant to picture of a real elephant (see Fig. <ref type="figure" target="#fig_1">2</ref>). As the autoencoder is transforming data from a domain to a hidden space and then to another domain, it can be used for domain transformation <ref type="bibr" target="#b64">(Wang et al., 2020)</ref>, domain adaptation <ref type="bibr" target="#b3">(Ben-David et al., 2010)</ref>, and domain generalization <ref type="bibr" target="#b13">(Dou et al., 2019)</ref>. Here, every context is modeled as a vector in the hidden space. Let the context vector be denoted by c ∈ R p in the p-dimensional hidden space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">The Sequence-to-Sequence Model</head><p>Consider a sequence of ordered tokens, e.g., a sequence of words which make a sentence. We want to transform this sequence to another related sequence. For example, we want to take a sentence in English and translate it to the same sentence in French. This model which trans-  <ref type="bibr" target="#b36">(Li et al., 2017)</ref>.</p><p>forms a sequence to another related sequence is named the sequence-to-sequence model <ref type="bibr" target="#b2">(Bahdanau et al., 2015)</ref>. Suppose the number of words in a document or considered sentence be n.</p><p>Let the ordered input tokens or words of the sequence be denoted by {x 1 , x 2 , . . . , x i-1 , x i , . . . , x n } and the output sequence be denoted by {y 1 , y 2 , . . . , y i-1 , y i , . . . , y n }. As Fig. <ref type="figure" target="#fig_2">3-a</ref> illustrates, there exist latent vectors, denoted by {l i } n i=1 , in the decoder part for every word. In the sequence-tosequence model, the probability of generation of the i-th word conditioning on all the previous words is determined by a function g(.) whose inputs are the immediate previous word y i-1 , the i-th latent vector l i , and the context vector c:</p><formula xml:id="formula_0">P(y i |y 1 , . . . , y i-1 ) = g(y i-1 , l i , c).</formula><p>(1)</p><p>Figure <ref type="figure" target="#fig_2">3</ref>-a depicts the sequence-to-sequence model. In the sequence-to-sequence model, every word x i produces a hidden vector h i in the encoder part of the autoencoder.</p><p>The hidden vector of every word, h i , is fed to the next hidden vector, h i+1 , by a projection matrix W . In this model, for the whole sequence, there is only one context vector c which is equal to the last hidden vector of the encoder, i.e., c = h n . Note that the encoder and decoder in the sequence-to-sequence model can be any sequential model such as RNN <ref type="bibr" target="#b31">(Kombrink et al., 2011)</ref> or LSTM <ref type="bibr" target="#b22">(Hochreiter &amp; Schmidhuber, 1997)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">The Sequence-to-Sequence Model with Attention</head><p>The explained sequence-to-sequence model can be with attention <ref type="bibr" target="#b10">(Chorowski et al., 2014;</ref><ref type="bibr" target="#b40">Luong et al., 2015)</ref>. In the sequence-to-sequence model with attention, the probability of generation of the i-th word is determined as <ref type="bibr" target="#b10">(Chorowski et al., 2014)</ref>:</p><formula xml:id="formula_1">P(y i |y 1 , . . . , y i-1 ) = g(y i-1 , l i , c i ).<label>(2)</label></formula><p>Figure <ref type="figure" target="#fig_2">3</ref>-b shows the sequence-to-sequence model with attention. In this model, in contrast to the sequence-tosequence model which has only one context vector for the whole sequence, this model has a context vector for every word. The context vector of every word is a linear combination, or weighted sum, of all the hidden vectors; hence, the i-th context vector is:</p><formula xml:id="formula_2">c i = n j=1 a ij h j ,<label>(3)</label></formula><p>where a ij ≥ 0 is the weight of h j for the i-th context vector. This weighted sum for a specific word in the sequence determines which words in the sequence have more effect on that word. In other words, it determines which words this specific word "attends" to more. This notion of weighted impact, to see which parts have more impact, is called "attention". It is noteworthy that the original idea of arithmetic linear combination of vectors for the purpose of word embedding, similar to Eq. (3), was in the Word2Vec method <ref type="bibr">(Mikolov et al., 2013a;</ref><ref type="bibr" target="#b5">b)</ref>. The sequence-to-sequence model with attention considers a notion of similarity between the latent vector l i-1 of the decoder and the hidden vector h j of the encoder <ref type="bibr" target="#b2">(Bahdanau et al., 2015)</ref>:</p><formula xml:id="formula_3">R s ij := similarity(l i-1 , h j ).<label>(4)</label></formula><p>The intuition for this similarity score is as follows. The output word y i depends on the previous latent vector l i-1 (see Fig. <ref type="figure" target="#fig_2">3</ref>) and the hidden vector h j depends on the input word x j . Hence, this similarity score relates to the impact of the input x j on the output y i . In this way, the score s ij shows the impact of the j-th word to generate the i-th word in the sequence. This similarity notion can be a neural network learned by backpropagation <ref type="bibr" target="#b53">(Rumelhart et al., 1986)</ref>.</p><p>In order to make this score a probability, these scores should sum to one; hence, we make its softmax form as <ref type="bibr" target="#b10">(Chorowski et al., 2014)</ref>:</p><formula xml:id="formula_4">R a ij := e sij n k=1 e s ik .<label>(5)</label></formula><p>In this way, the score vector [a i1 , a i2 , . . . , a in ] behaves as a discrete probability distribution. Therefore, In Eq. ( <ref type="formula" target="#formula_2">3</ref>), the weights sum to one and the weights with higher values attend more to their corresponding hidden vectors.</p><p>2.4. Self-Attention 2.4.1. THE NEED FOR COMPOSITE EMBEDDING Many of the previous methods for NLP, such as word2vec <ref type="bibr">(Mikolov et al., 2013a;</ref><ref type="bibr" target="#b5">b;</ref><ref type="bibr" target="#b18">Goldberg &amp; Levy, 2014;</ref><ref type="bibr" target="#b45">Mikolov et al., 2015)</ref> and GloVe <ref type="bibr" target="#b46">(Pennington et al., 2014)</ref>, used to learn a representation for every word. However, for understanding how the words relate to each other, we can have a composite embedding where the compositions of words also have some embedding representation <ref type="bibr" target="#b9">(Cheng et al., 2016)</ref>. For example, Fig. <ref type="figure" target="#fig_3">4</ref> shows a sentence which highlights the relation of words. This figure shows, when reading a word in a sentence, which previous words in the sentence we remember more. This relation of words shows that we need to have a composite embedding for natural language embedding.</p><p>2.4.2. QUERY-RETRIEVAL MODELING Consider a database with keys and values where a query is searched through the keys to retrieve a value <ref type="bibr" target="#b17">(Garcia-Molina et al., 1999)</ref>. Figure <ref type="figure" target="#fig_4">5</ref> shows such database. We can generalize this hard definition of query-retrieval to a soft query-retrieval where several keys, rather than only  one key, can be corresponded to the query. For this, we calculate the similarity of the query with all the keys to see which keys are more similar to the query. This soft queryretrieval is formulated as:</p><formula xml:id="formula_5">attention(q, {k i } n i=1 , {v i } n i=1 ) := n i=1 a i v i ,<label>(6) where:</label></formula><p>R</p><formula xml:id="formula_6">s i := similarity(q, k i ),<label>(7)</label></formula><formula xml:id="formula_7">R a i := softmax(s i ) = e si n k=1 e s k ,<label>(8)</label></formula><p>and q, {k i } n i=1 , and {v i } n i=1 denote the query, keys, and values, respectively. Recall that the context vector of a sequence-to-sequence model with attention, introduced by Eq. ( <ref type="formula" target="#formula_2">3</ref>), was also a linear combination with weights of normalized similarity (see Eq. ( <ref type="formula" target="#formula_4">5</ref>)). The same linear combination is the Eq. ( <ref type="formula" target="#formula_5">6</ref>) where the weights are the similarity of query with the keys. An illustration of Eqs. ( <ref type="formula" target="#formula_5">6</ref>), (7), and ( <ref type="formula" target="#formula_7">8</ref>) is shown in Fig. <ref type="figure" target="#fig_5">6</ref>. Note that the similarity s i can be any notion of similarity. Some of the well-known similarity  <ref type="formula" target="#formula_5">6</ref>), ( <ref type="formula" target="#formula_6">7</ref>), and ( <ref type="formula" target="#formula_7">8</ref>) in attention mechanism. In this example, it is assumed there exist five (four keys and one query) words in the sequence.</p><p>measures are <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>:</p><formula xml:id="formula_8">inner product: s i = q k i ,<label>(9)</label></formula><p>scaled inner product:</p><formula xml:id="formula_9">s i = q k i √ p ,<label>(10)</label></formula><p>general inner product:</p><formula xml:id="formula_10">s i = q W k i ,<label>(11)</label></formula><p>additive similarity:</p><formula xml:id="formula_11">s i = w q q + w k k i ,<label>(12)</label></formula><p>where W ∈ R p×p , w q ∈ R p , and w k ∈ R p are some learnable matrices and vectors. Among these similarity measures, the scaled inner product is used most often. The Eq. ( <ref type="formula" target="#formula_5">6</ref>) calculates the attention of a target word (or query) with respect to every input word (or keys) which are the previous and forthcoming words. As Fig. <ref type="figure" target="#fig_3">4</ref> illustrates, when processing a word which is considered as the query, the other words in the sequence are the keys. Using Eq. ( <ref type="formula" target="#formula_5">6</ref>), we see how similar the other words of the sequence are to that word. In other words, we see how impactful the other previous and forthcoming words are for generating a missing word in the sequence.</p><p>We provide an example for Eq. ( <ref type="formula" target="#formula_5">6</ref>), here. Consider a sentence "I am a student". Assume we are processing the word "student" in this sequence. Hence, we have a query corresponding to the word "student". The values are corresponding to the previous words which are "I", "am", and "a". Assume we calculate the normalized similarity of the query and the values and obtain the weights 0.7, 0.2, and 0.1 for "I", "am", and "a", respectively, where the weights sum to one. Then, the attention value for the word "student" is 0.7v I + 0.2v am + 0.1v a .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.3.">ATTENTION FORMULATION</head><p>Let the words of a sequence of words be in a d-dimensional space, i.e., the sequence is</p><formula xml:id="formula_12">{x i ∈ R d } n i=1 . This d-</formula><p>dimensional representation of words can be taken from any word-embedding NLP method such as word2vec <ref type="bibr">(Mikolov et al., 2013a;</ref><ref type="bibr" target="#b5">b;</ref><ref type="bibr" target="#b18">Goldberg &amp; Levy, 2014;</ref><ref type="bibr" target="#b45">Mikolov et al., 2015)</ref> or GloVe <ref type="bibr" target="#b46">(Pennington et al., 2014)</ref>. The query, key, and value are projection of the words into p-dimensional, p-dimensional, and r-dimensional subspaces, respectively:</p><formula xml:id="formula_13">R p q i = W Q x i ,<label>(13)</label></formula><formula xml:id="formula_14">R p k i = W K x i ,<label>(14)</label></formula><formula xml:id="formula_15">R r v i = W V x i ,<label>(15)</label></formula><p>where</p><formula xml:id="formula_16">W Q ∈ R d×p , W K ∈ R d×p , and W V ∈ R d×r</formula><p>are the projection matrices into the low-dimensional query, key, and value subspaces, respectively. Consider the words, queries, keys, and values in matrix forms as</p><formula xml:id="formula_17">X := [x 1 , . . . , x n ] ∈ R d×n , Q := [q 1 , . . . , q n ] ∈ R p×n , K := [k 1 , . . . , k n ] ∈ R p×n , and V := [v 1 , . . . , v n ] ∈ R r×n , respectively.</formula><p>It is noteworthy that in the similarity measures, such as the scaled inner product, we have the inner product q k i . Hence, the similarity measures contain</p><formula xml:id="formula_18">q k i = x i W Q W K x i .</formula><p>This is like a kernel matrix so its behaviour is similar to the kernel for measuring similarity. Considering Eqs. ( <ref type="formula" target="#formula_6">7</ref>), and (8) and the above definitions, the Eq. ( <ref type="formula" target="#formula_5">6</ref>) can be written in matrix form, for the whole sequence of n words, as:</p><formula xml:id="formula_19">R r×n Z := attention(Q, K, V ) = V softmax( 1 √ p Q K),<label>(16)</label></formula><p>where Z = [z 1 , . . . , z n ] is the attention values, for all the words, which shows how much every word attends to its previous and forthcoming words. In Eq. ( <ref type="formula" target="#formula_19">16</ref>), the softmax operator applies the softmax function on every row of its input matrix so that every row sums to one. Note that as the queries, keys, and values are all from the same words in the sequence, this attention is referred to as the "self-attention" <ref type="bibr" target="#b9">(Cheng et al., 2016)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.">Attention in Other Fields Such as Vision and Speech</head><p>Note that the concept of attention can be used in any field of research and not merely in NLP. The attention concept has widely been used in NLP <ref type="bibr" target="#b10">(Chorowski et al., 2014;</ref><ref type="bibr" target="#b40">Luong et al., 2015)</ref>. Attention can be used in the field of computer vision <ref type="bibr" target="#b68">(Xu et al., 2015)</ref>. Attention in computer vision means attending to specific parts of image which are more important and informative (see Fig. <ref type="figure" target="#fig_0">1</ref>). This simulates attention and exception in human visual system <ref type="bibr" target="#b60">(Summerfield &amp; Egner, 2009)</ref> where our brain filters the observed scene to focus on its important parts.</p><p>For example, we can generate captions for an input image using an autoencoder, illustrated in Fig. <ref type="figure" target="#fig_6">7-a</ref>, with the attention mechanism. As this figure shows, the encoder is a Convolutional Neural Network (CNN) <ref type="bibr" target="#b32">(LeCun et al., 1998)</ref> for extracting visual features and the decoder consists of LSTM <ref type="bibr" target="#b22">(Hochreiter &amp; Schmidhuber, 1997)</ref> or RNN <ref type="bibr" target="#b31">(Kombrink et al., 2011)</ref> modules for generating the caption text. Literature has shown that the lower convolutional layers in CNN capture low-level features and different partitions of input images <ref type="bibr" target="#b33">(Lee et al., 2009)</ref>. Figure <ref type="figure">8</ref> shows an example of extracted features by CNN layers trained on facial images. Different facial organs and features have been extracted in lower layers of CNN. Therefore, as Fig. <ref type="figure" target="#fig_6">7</ref>-b shows, we can consider the extracted low-layer features, which are different parts of image, as the hidden vectors {h j } n j=1 in Eq. ( <ref type="formula" target="#formula_3">4</ref>), where n is the number of features for extracted image partitions. Similarity with latent vectors of decoder (LSTM) is computed by Eq. ( <ref type="formula" target="#formula_3">4</ref>) and the queryretrieval model of attention mechanism, introduced before, is used to learn a self-attention on the images. Note that, as the partitions of image are considered to be the hidden variables used for attention, the model attends to important parts of input image; e.g., see Fig. <ref type="figure" target="#fig_0">1</ref>. Note that using attention in different fields of science is usually referred to as "attend, tell, and do something...". Some examples of applications of attention are caption generation for images (show, attend and tell) <ref type="bibr" target="#b68">(Xu et al., 2015)</ref>, caption generation for images with ownership protection (protect, show, attend and tell) <ref type="bibr" target="#b39">(Lim et al., 2020</ref>), text reading from images containing a text (show, attend and read) <ref type="bibr">(Li et al., 2019a)</ref>, translation of one image to another related image (show, attend and translate) <ref type="bibr" target="#b72">(Zhang et al., 2018;</ref><ref type="bibr">Yang et al., 2019a)</ref>, visual question answering (show, ask, attend, and answer) <ref type="bibr" target="#b28">(Kazemi &amp; Elqursh, 2017)</ref>, human-robot social interaction (show, attend and interact) <ref type="bibr" target="#b49">(Qureshi et al., 2017)</ref>, and speech recognition (listen, attend and spell) <ref type="bibr" target="#b7">(Chan et al., 2015;</ref><ref type="bibr">2016)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Transformers</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">The Concept of Transformation</head><p>As was explained in Section 2.1, we can have an autoencoder which takes an input data, embeds data to a context vector which simulates a concept in human's mind <ref type="bibr" target="#b47">(Perlovsky, 2006)</ref>, and generates an output. The input and output are related to each other through the context vector. In other words, the autoencoder transforms the input to a related output. An example for transformation is translating a sentence from a language to the same sentence in another language. Another example for transformer is image captioning in which the image is transformed to its caption explaining the content of image. A pure computer vision example for transformation is transforming a day-time input image to the same image but at night time. An autoencoder, named "transformer", is proposed in the literature for the task for transformation <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>. The structure of transformer is depicted in Fig. <ref type="figure">9</ref>. Figure <ref type="figure">8</ref>. The low-level and high-level features learned in the low and high convolutional layers, respectively. The credit of this image is for <ref type="bibr" target="#b33">(Lee et al., 2009)</ref>.</p><p>As this figure shows, a transformer is an autoencoder consisting of an encoder and a decoder. In the following, we explain the details of encoder and decoder of a transformer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Encoder of Transformer</head><p>The encoder part of transformer, illustrated in Fig. <ref type="figure">9</ref>, embeds the input sequence of n words X ∈ R d×n into context vectors with the attention mechanism. Different parts of the encoder are explained in the following.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1.">POSITIONAL ENCODING</head><p>We will explain in Section 3.4 that the transformer introduced here does not have any recurrence and RNN or LSTM module. As there is no recurrence and no convolution, the model has no sense of order in sequence. As the order of words is important for meaning of sentences, we need a way to account for the order of tokens or words in the sequence. For this, we can add a vector accounting for the position to each input word embedding. Consider the embedding of the i-th word in the sequence, denoted by x i ∈ R d . For encoding the position of the i-th word in the sequence, the position vector p i ∈ R d can be set as:  <ref type="figure">9</ref> shows, for incorporating the information of position with data, we add the positional encoding to the input embedding:</p><formula xml:id="formula_20">       p i (</formula><formula xml:id="formula_21">x i ← x i + p i . (<label>18</label></formula><formula xml:id="formula_22">)</formula><p>Figure <ref type="figure">9</ref>. The encoder and decoder parts of a transformer. The credit of this image is for <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2.">MULTIHEAD ATTENTION WITH</head><p>SELF-ATTENTION After positional encoding, data are fed to a multihead attention module with self-attention. The multihead attention is illustrated in Fig. <ref type="figure" target="#fig_9">11</ref>. This module applies the attention mechanism for h times. This several repeats of attention is for the reason explained here. The first attention determines how much every word attends to other words. The second repeat of attention calculates how much every pair of words attends to other pairs of words. Likewise, the third repeat of attention sees how much every pair of pairs of words attends to other pairs of pairs of words; and so on. Note that this measure of attention or similarity between hierarchical pairs of words reminds us of the maximum mean discrepancy <ref type="bibr" target="#b19">(Gretton et al., 2007;</ref><ref type="bibr">2012)</ref> which measures similarity between different moments of data distributions. As Fig. <ref type="figure" target="#fig_9">11</ref> shows, the data, which include positional encoding, are passed from linear layers for obtaining the queries, values, and keys. These linear layers model linear projec-  tions introduced in Eqs. ( <ref type="formula" target="#formula_13">13</ref>), (15), and ( <ref type="formula" target="#formula_14">14</ref>), respectively. We have h of these linear layers to generate h set of queries, values, and keys as:</p><formula xml:id="formula_23">R p×n Q i = W Q,i X, ∀i ∈ {1, . . . , h},<label>(19)</label></formula><formula xml:id="formula_24">R p×n V i = W V,i X, ∀i ∈ {1, . . . , h},<label>(20)</label></formula><formula xml:id="formula_25">R r×n K i = W K,i X, ∀i ∈ {1, . . . , h}.<label>(21)</label></formula><p>Then, the scaled dot product similarity, defined in Eq. ( <ref type="formula" target="#formula_9">10</ref>) or ( <ref type="formula" target="#formula_19">16</ref>), is used to generate the h attention values {Z i } h i=1 . These h attention values are concatenated to make a new long flattened vector. Then, by a linear layer, which is a linear projection, the total attention value, Z t , is obtained:</p><formula xml:id="formula_26">Z t := W O concat(Z 1 , Z 2 , . . . , Z h ).<label>(22)</label></formula><p>3.2.3. LAYER NORMALIZATION As Fig. <ref type="figure">9</ref> shows, the data (containing positional encoding) and the total attention value are added:</p><formula xml:id="formula_27">Z t ← Z t + X. (<label>23</label></formula><formula xml:id="formula_28">)</formula><p>This addition is inspired by the concept of residual introduced by ResNet <ref type="bibr" target="#b21">(He et al., 2016)</ref>. After this addition, a layer normalization is applied where for each hidden unit h i we have:</p><formula xml:id="formula_29">h i ← g σ (h i -µ),<label>(24)</label></formula><p>where µ and σ are the empirical mean and standard deviation over H hidden units:</p><formula xml:id="formula_30">µ := 1 H H i=1 h i ,<label>(25)</label></formula><formula xml:id="formula_31">σ := H i=1 (h i -µ) 2 . (<label>26</label></formula><formula xml:id="formula_32">)</formula><p>This is a standardization which makes the mean zero and the variance one; it is closely related to batch normalization and reduces the covariate shift <ref type="bibr" target="#b24">(Ioffe &amp; Szegedy, 2015)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.4.">FEEDFORWARD LAYER</head><p>Henceforth, let Z t denote the total attention after both addition and layer normalization. We feed Z t to a feedforward network, having nonlinear activation functions, and then like before, we add the input of feedforward network to its output:</p><formula xml:id="formula_33">Z t ← R + Z t ,<label>(27)</label></formula><p>where R denotes the output of feedforward network. Again, layer normalization is applied and we, henceforth, denote the output of encoder by Z t . This is the encoding for the whole input sequence or sentence having the information of attention of words and hierarchical pairs of words to each other.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.5.">STACKING</head><p>As Fig. <ref type="figure">9</ref> shows, the encoder is a stack of N identical layers. This stacking is for having more learnable parameters to have enough degree of freedom to learn the whole dictionary of words. Through experiments, a good number of stacks is found to be N = 6 <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Decoder of Transformer</head><p>The decoder part of transformer is shown in Fig. <ref type="figure">9</ref>. In the following, we explain the different parts of decoder.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.1.">MASKED MULTIHEAD ATTENTION WITH SELF-ATTENTION</head><p>A part of decoder is the masked multihead attention module whose input is the output embeddings {y i } n i=1 shifted one word to the right. Positional encoding is also added to the output embeddings for including the information of their positions. For this, we use Eq. ( <ref type="formula" target="#formula_21">18</ref>) where x i is replaced by y i . The output embeddings added with the positional encodings are fed to the masked multihead attention module. This module is similar to the multihead attention module but masks away the forthcoming words after a word. Therefore, every output word only attends to its previous output words, every pair of output words attends to its previous pairs of output words, every pair of pairs of output words attends to its previous pairs of pairs of output words, and so on. The reason for using the masked version of multihead attention for the output embeddings is that when we are generating the output text, we do not have the next words yet because the next words are not generated yet. It is noteworthy that this masking imposes some idea of sparsity which was also introduced by the dropout technique <ref type="bibr" target="#b58">(Srivastava et al., 2014)</ref> but in a stochastic manner. Recall Eq. ( <ref type="formula" target="#formula_19">16</ref>) which was used for multihead attention (see Section 3.2.2). The masked multihead attention is defined as:</p><formula xml:id="formula_34">R r×n Z m := maskedAttention(Q, K, V ) = V softmax 1 √ p Q K + M , (<label>28</label></formula><formula xml:id="formula_35">)</formula><p>where the mask matrix M ∈ R n×n is:</p><formula xml:id="formula_36">M (i, j) := 0 if j ≤ i, -∞ if j &gt; i. (<label>29</label></formula><formula xml:id="formula_37">)</formula><p>As the softmax function has exponential operator, the mask does not have any impact for j ≤ i (because it is multiplied by e 0 = 1) and masks away for j &gt; i (because it is multiplied by e -∞ = 0). Note that j ≤ i and j &gt; i correspond to the previous and next words, respectively, in terms of position in the sequence. Similar to before, the output of masked multihead attention is normalized and then is added to its input.</p><p>Table <ref type="table">1</ref>. Comparison of complexities between self-attention and recurrence <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Complexity per layer Sequential operations Maximum path length</head><formula xml:id="formula_38">Self-Attention O(n 2 p) O(1) O(1) Recurrence O(np 2 ) O(n) O(n)</formula><p>3.3.2. MULTIHEAD ATTENTION WITH CROSS-ATTENTION As Fig. <ref type="figure">9</ref> illustrates, the output of masked multihead attention module is fed to a multihead attention module with cross-attention. This module is not self-attention because all its values, keys, and queries are not from the same sequence but its values and keys are from the output of encoder and the queries are from the output of the masked multihead attention module in the decoder. In other words, the values and keys come from the processed input embeddings and the queries are from the processed output embeddings. The calculated multihead attention determines how much every output embedding attends to the input embeddings, how much every pair of output embeddings attends to the pairs of input embeddings, how much every pair of pairs of output embeddings attends to the pairs of pairs of input embeddings, and so on. This shows the connection between input sequence and the generated output sequence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.3.">FEEDFORWARD LAYER AND SOFTMAX</head><p>ACTIVATION Again, the output of the multihead attention module with cross-attention is normalized and added to its input. Then, it is fed to a feedforward neural network with layer normalization and added to its input afterwards. Note that the masked multihead attention, the multihead attention with cross-attention, and the feedforward network are stacked for N = 6 times. The output of feedforward network passes through a linear layer by linear projection and a softmax activation function is applied finally. The number of output neurons with the softmax activation functions is the number of all words in the dictionary which is a large number. The outputs of decoder sum to one and are the probability of every word in the dictionary to be the generated next word. For the sake of sequence generation, the token or word with the largest probability is the next word.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Attention is All</head><p>We Need! 3.4.1. NO NEED TO RNN! As Fig. <ref type="figure">9</ref> illustrates, the output of decoder is fed to the masked multihead attention module of decoder with some shift. Note that this is not a notion of recurrence because it can be interpreted by the procedure of teacher-forcing <ref type="bibr" target="#b30">(Kolen &amp; Kremer, 2001)</ref>. Hence, we see that there is not any recurrent module like RNN <ref type="bibr" target="#b31">(Kombrink et al., 2011)</ref> and LSTM <ref type="bibr" target="#b22">(Hochreiter &amp; Schmidhuber, 1997)</ref> in trans-former. We showed that we can learn a sequence using the transformer. Therefore, attention is all we need to learn a sequence and there is no need to any recurrence module. The proposal of transformers <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref> was a breakthrough in NLP; the state-of-the-art NLP methods are all based on transformers nowadays. <ref type="table">1</ref> reports the complexity of operations in the selfattention mechanism and compares them with those in recurrence such as RNN. In self-attention, we learn attention of every word to every other word in the sequence of n words. Also, we learn a p-dimensional embedding for every word. Hence, the complexity of operations per layer is O(n 2 p). This is while the complexity per layer in recurrence is O(np 2 ). Although, the complexity per layer in self-attention is worse than recurrence, many of its operations can be performed in parallel because all the words of sequence are processed simultaneously, as also explained in the following. Hence, the O(n 2 p) is not very bad for being able to parallelize it. That is while the recurrence cannot be parallelized for its sequential nature. As for the number of sequential operations, the selfattention mechanism processes all the n words simultaneously so its sequential operations is in the order of O(1). As recurrence should process the words sequentially, the number of its sequential operations is of order O(n). As for the maximum path length between every two words, selfattention learns attention between every two words; hence, its maximum path length is of the order O(1). However, in recurrence, as every word requires a path with a length of a fraction of sequence (a length of n in the worst case) to reach the process of another word, its maximum path length is O(n). This shows that attention reduces both sequential operations and maximum path length, compared to recurrence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.2.">COMPLEXITY COMPARISON Table</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">BERT: Bidirectional Encoder</head><p>Representations from Transformers BERT <ref type="bibr" target="#b11">(Devlin et al., 2018)</ref> is one of the state-of-the-art methods for NLP. It is a stack of encoders of transformer (see Fig. <ref type="figure">9</ref>). In other words, it is built using transformer encoder blocks. Although some NLP methods such as XLNet <ref type="bibr">(Yang et al., 2019b)</ref> have slightly outperformed it, BERT is still one of the best models for different NLP tasks such as question answering <ref type="bibr" target="#b48">(Qu et al., 2019)</ref>, natural language understanding <ref type="bibr" target="#b12">(Dong et al., 2019)</ref>, sentiment analysis, and language inference <ref type="bibr" target="#b57">(Song et al., 2020)</ref>.</p><p>BERT uses the technique of masked language modeling. It masks 15% of words in the input document/corpus and asks the model to predict the missing words. As Fig. <ref type="figure" target="#fig_10">12</ref> depicts, a sentence with a missing word is given to every transformer encoding block in the stack and the block is supposed to predict the missing word. 15% of words are missing in the sentences and every missing word is assigned to every encoder block in the stack. It is an unsupervised manner because any word can be masked in a sentence and the output is supposed to be that word. As it is unsupervised and does not require labels, the huge text data of Internet can be used for training the BERT model where words are randomly selected to be masked. Note that BERT learns to predict the missing word based on attention to its previous and forthcoming words so it is bidirectional. Hence, BERT jointly conditions on both left (previous) and right (forthcoming) context of every word. Moreover, as the missing word is predicted based on the other words of sentence, BERT embeddings for words are context-aware embeddings. Therefore, in contrast to word2vec <ref type="bibr">(Mikolov et al., 2013a;</ref><ref type="bibr" target="#b5">b;</ref><ref type="bibr" target="#b18">Goldberg &amp; Levy, 2014;</ref><ref type="bibr" target="#b45">Mikolov et al., 2015)</ref> and GloVe <ref type="bibr" target="#b46">(Pennington et al., 2014)</ref> which provide a single embedding per each word, every word has different BERT embeddings in various sentences. The BERT embeddings of words differ in different sentences based on their context. For example, the word "bank" has different meanings and therefore different embeddings in the sentences "Money is in the bank" and "Some plants grow in bank of rivers".</p><p>It is also noteworthy that, for an input sentence, BERT outputs an embedding for the whole sentence in addition to giving embeddings for every word of the sentence. This sentence embedding is not perfect but works well enough in applications. One can use the BERT sentence embed-dings and train a classifier on them for the task of spam detection or sentiment analysis.</p><p>During training the BERT model, in addition to learning the embeddings for the words and the whole sentence, paper <ref type="bibr" target="#b11">(Devlin et al., 2018)</ref> has also learned an additional task. This task is given two sentences A and B, is B likely to be the sentence that follows A or not?</p><p>The BERT model is usually not trained from the scratch as its training has been done in a long time on huge amount of Internet data. For using it in different NLP applications, such as sentiment analysis, researchers usually do transfer learning and add one or several neural network layers on top of a pre-trained BERT model and train the network for their own task. During training, one can either freeze the weights of the BERT model and just train the added layers or also fine tune BERT weights by backpropagation.</p><p>The parameters of encoder in transformer <ref type="bibr" target="#b63">(Vaswani et al., 2017)</ref> are 6 encoder layers, 512 hidden layer units in the fully connected network and 8 attention heads (h = 8). This is while BERT <ref type="bibr" target="#b11">(Devlin et al., 2018)</ref> has 24 encoder layers, 1024 hidden layer units in the fully connected network and 16 attention heads (h = 16). Usually, when we say BERT, we mean the large BERT <ref type="bibr" target="#b11">(Devlin et al., 2018)</ref> with the above-mentioned parameters. As the BERT model is huge and requires a lot of memory for saving the model, it cannot easily be used in embedded systems. Hence, many commercial smaller versions of BERT are proposed with less number of parameters and number of stacks. Some of these smaller versions of BERT are small BERT <ref type="bibr" target="#b61">(Tsai et al., 2019)</ref>, tiny BERT <ref type="bibr" target="#b25">(Jiao et al., 2019)</ref>, Dis-tilBERT <ref type="bibr" target="#b54">(Sanh et al., 2019)</ref>, and Roberta BERT <ref type="bibr" target="#b59">(Staliūnaitė &amp; Iacobacci, 2020)</ref>. Some BERT models, such as clinical BERT <ref type="bibr" target="#b0">(Alsentzer et al., 2019)</ref> and BioBERT <ref type="bibr" target="#b35">(Lee et al., 2020)</ref>, have also been trained on medical texts for the biomedical applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">GPT: Generative Pre-trained Transformer</head><p>GPT, or GPT-1, <ref type="bibr" target="#b50">(Radford et al., 2018)</ref> is another state-ofthe-art method for NLP. It is a stack of decoders of transformer (see Fig. <ref type="figure">9</ref>). In other words, it is built using transformer decoder blocks. In GPT, the multihead attention module with cross-attention is removed from the decoder of transformer because there is no encoder in GPT. Hence, the decoder blocks used in GPT have only positional encoding, masked multihead self-attention module and feedforward network with their adding, layer normalization, and activation functions. Note that as GPT uses the masked multihead self-attention, it considers attention of word, pairs of words, pairs of pairs of words, and so on, only on the previous (left) words, pairs of words, pairs of pairs of words, and so on. In other words, GPT is not bidirectional and conditions only on the previous words and not the forthcoming words. As was explained before, the objective of BERT was to predict a masked word in a sentence. However, GPT model is used for language model <ref type="bibr" target="#b52">(Rosenfeld, 2000;</ref><ref type="bibr" target="#b27">Jozefowicz et al., 2016;</ref><ref type="bibr" target="#b26">Jing &amp; Xu, 2019)</ref> whose objective is to predict the next word, in an incomplete sentence, given all of the previous words. The predicted new word is then added to the sequence and is fed to the GPT as input again and the other next word is predicted. This goes on until the sentences get complete with their next coming words. In other words, GPT model takes some document and continues the text in the best and related way. For example, if the input sentences are about psychology, the trained GPT model generates the next words and sentences also about psychology to complete the document. Note that as any text without label can be used for predicting the next words in sentences, GPT is an unsupervised method making it possible to be trained on huge amount of Internet data. The successors of GPT-1 <ref type="bibr" target="#b50">(Radford et al., 2018)</ref> are GPT-2 <ref type="bibr" target="#b51">(Radford et al., 2019)</ref> and <ref type="bibr">GPT-3 (Brown et al., 2020)</ref>. GPT-2 and GPT-3 are extension of GPT-1 with more number of stacks of transformer decoder. Hence, they have more learnable parameters and can be trained with more data for better language modeling and inference. For example, GPT-2 has 1.5 billion parameters. GPT-2 and especially GPT-3 have been trained with much more Internet data with various general and academic subjects to be able to generate text in any subject and style of interest. For example, GPT-2 has been trained on 8 million web pages which contain 40GB of Internet text data. GPT-2 is a quite large model and cannot be easily used in embedded systems because of requiring large memory. Hence, different sizes of GPT-2, like small, medium, large, Xlarge, and DistilGPT-2, are provided for usage in embedded systems, where the number of stacks and learnable parameters differ in these versions. These versions of GPT-2 can be found and used in the HuggingFace transformer Python package <ref type="bibr">(Wolf et al., 2019a)</ref>. GPT-2 has been used in many different applications such as dialogue systems <ref type="bibr" target="#b6">(Budzianowski &amp; Vulić, 2019)</ref>, patent claim generation <ref type="bibr" target="#b34">(Lee &amp; Hsiang, 2019)</ref>, and medical text simplification <ref type="bibr" target="#b62">(Van et al., 2020)</ref>. A combination of GPT-2 and BERT has been used for question answering <ref type="bibr" target="#b29">(Klein &amp; Nabi, 2019)</ref>. It is noteworthy that GPT can be seen as few shot learning <ref type="bibr" target="#b5">(Brown et al., 2020)</ref>. A comparison of GPT and BERT can also be found in <ref type="bibr" target="#b15">(Ethayarajh, 2019)</ref>. GPT-3 is a very huge version of GPT with so many number of stacks and learnable parameters. For comparison, note that GPT-2, NVIDIA Megatron <ref type="bibr" target="#b55">(Shoeybi et al., 2019)</ref>, Microsoft Turing-NLG (Microsoft, 2020), and GPT-3 <ref type="bibr" target="#b5">(Brown et al., 2020)</ref> have 1.5 billion, 8 billion, 17 billion, and 175 billion learnable parameters, respectively. This huge number of parameters allows GPT-3 to be trained on very huge amount of Internet text data with various subjects and top-ics. Hence, GPT-3 has been able to learn almost all topics of documents and even some people are discussing whether it can pass the Turing's writer's test <ref type="bibr" target="#b14">(Elkins &amp; Chun, 2020;</ref><ref type="bibr" target="#b16">Floridi &amp; Chiriatti, 2020)</ref>. Note that GPT-3 has kind of memorized the texts of all subjects but not in a bad way, i.e., overfitting, rather in a good way. This memorization is because of the complexity of huge number of learnable parameters <ref type="bibr" target="#b1">(Arpit et al., 2017)</ref> and not being overfitted is because of being trained by big enough Internet data.</p><p>GPT-3 has had many different interesting applications such as fiction and poetry generation <ref type="bibr" target="#b4">(Branwen, 2020)</ref>. Of course, it is causing some risks, too (McGuffie &amp; Newhouse, 2020).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>Transformers are very essential tools in natural language processing and computer vision. This paper was a tutorial and survey paper on attention mechanism, transformers, BERT, and GPT. We explained attention mechanism, the sequence-to-sequence model with and without attention, and self-attention. The different parts of encoder and decoder of a transformer were explained. Finally, BERT and GPT were introduced as stacks of the encoders and decoders of transformer, respectively.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Attention in visual system for (a) seeing a picture by attending to more important parts of scene and (b) reading a sentence by attending to more informative words in the sentence.</figDesc><graphic coords="1,309.24,251.40,230.40,163.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Using an autoencoder for Transformation of one domain to another domain. The used images are taken from the PACS dataset<ref type="bibr" target="#b36">(Li et al., 2017)</ref>.</figDesc><graphic coords="2,309.24,67.06,230.38,61.34" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Sequence-to-sequence model (a) without and (b) with attention.</figDesc><graphic coords="3,64.44,67.06,468.01,231.55" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. The relation of words in a sentence raising the need for composite embedding. The credit of this image for (Cheng et al., 2016).</figDesc><graphic coords="4,64.44,67.06,215.99,133.64" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Query-retrieval in a database.</figDesc><graphic coords="4,64.44,265.58,216.00,93.49" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Illustration of Eqs. (6), (7), and (8) in attention mechanism. In this example, it is assumed there exist five (four keys and one query) words in the sequence.</figDesc><graphic coords="4,309.24,67.06,230.40,163.79" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>Figure 7. Using attention in computer vision: (a) transformer of image to caption with CNN for its encoder and RNN or LSTM for its decoder. The caption for this image is "Elephant is in water", (b) the convolutional filters take the values from the image for the query-retrieval modeling in attention mechanism.</figDesc><graphic coords="6,64.44,67.06,467.99,187.71" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc>j ∈ {0, 1, . . . , d/2 }, where p i (2j + 1) and p i (2j) denote the odd and even elements of p i , respectively. Figure 10 illustrates the dimensions of the position vectors across different positions. As can be seen in this figure, the position vectors for different positions of words are different as expected. Moreover, this figure shows that the difference of position vectors concentrate more on the initial dimensions of vectors. As Fig.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 10 .</head><label>10</label><figDesc>Figure 10. The vectors of positional encoding. In this example, it is assumed that n = 10 (number of positions of words), d = 60, and p = 100.</figDesc><graphic coords="7,309.24,67.06,230.41,194.46" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 11 .</head><label>11</label><figDesc>Figure 11. Multihead attention with h heads.</figDesc><graphic coords="7,309.24,346.95,230.40,274.52" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 12 .</head><label>12</label><figDesc>Figure 12. Feeding sentences with missing words to the BERT model for training.</figDesc><graphic coords="10,57.24,67.06,230.40,167.93" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgment</head><p>The authors hugely thank <rs type="person">Prof. Pascal Poupart</rs> whose course partly covered some of materials in this tutorial paper. Some of the materials of this paper can also be found in <rs type="person">Prof. Ali Ghodsi</rs>'s course videos.</p></div>
+			</div>			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">Emily</forename><surname>Alsentzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">R</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Boag</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Willie</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Weng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Wei-Hung</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Di</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tristan</forename><surname>Naumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Mcdermott</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1904.03323</idno>
+		<title level="m">Publicly available clinical BERT embeddings</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A closer look at memorization in deep networks</title>
+		<author>
+			<persName><forename type="first">Devansh</forename><surname>Arpit</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jastrzebski</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Stanisław</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ballas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nicolas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Krueger</surname></persName>
+		</author>
+		<author>
+			<persName><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Emmanuel</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kanwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maxinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tegan</forename><surname>Maharaj</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Asja</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Aaron</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoshua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Lacoste-Julien</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Neural machine translation by jointly learning to align and translate</title>
+		<author>
+			<persName><forename type="first">Dzmitry</forename><surname>Bahdanau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyunghyun</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">A theory of learning from different domains. Machine learning</title>
+		<author>
+			<persName><surname>Ben-David</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Blitzer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Crammer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Koby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Kulesza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fernando</forename><surname>Pereira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename><surname>Vaughan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wortman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="151" to="175" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">GPT-3 creative fiction</title>
+		<author>
+			<persName><forename type="first">Gwern</forename><surname>Branwen</surname></persName>
+		</author>
+		<ptr target="https://www.gwern.net/GPT-3" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Language models are few-shot learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><forename type="middle">B</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benjamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Prafulla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pranav</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Girish</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Amanda</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Hello, it&apos;s GPT-2how can I help you? Towards the use of pretrained language models for task-oriented dialogue systems</title>
+		<author>
+			<persName><forename type="first">Paweł</forename><surname>Budzianowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ivan</forename><surname>Vulić</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.05774</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">William</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jaitly</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Navdeep</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Quoc</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Oriol</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1508.01211</idno>
+		<title level="m">Listen, attend and spell</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Listen, attend and spell: A neural network for large vocabulary conversational speech recognition</title>
+		<author>
+			<persName><forename type="first">William</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jaitly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Navdeep</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quoc</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Oriol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2016 IEEE International Conference on Acoustics, Speech and Signal Processing</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="4960" to="4964" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Long short-term memory-networks for machine reading</title>
+		<author>
+			<persName><forename type="first">Jianpeng</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Lapata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mirella</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Conference on Empirical Methods in Natural Language Processing</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="551" to="561" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">End-to-end continuous speech recognition using attention-based recurrent NN: First results</title>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Chorowski</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bahdanau</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dzmitry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyunghyun</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.1602</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">BERT: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><forename type="middle">-</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lee</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Toutanova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Unified language model pre-training for natural language understanding and generation</title>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wenhui</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Furu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xiaodong</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jianfeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hsiao-Wuen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="13063" to="13075" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Domain generalization via model-agnostic learning of semantic features</title>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Dou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Coelho</forename><surname>De Castro</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Konstantinos</forename><surname>Kamnitsas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Glocker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="6450" to="6461" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Can GPT-3 pass a writer&apos;s Turing test</title>
+		<author>
+			<persName><forename type="first">Katherine</forename><surname>Elkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><surname>Chun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cultural Analytics</title>
+		<imprint>
+			<biblScope unit="page">4549</biblScope>
+			<date type="published" when="2020">2371. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">Kawin</forename><surname>Ethayarajh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.00512</idno>
+		<title level="m">How contextual are contextualized word representations? Comparing the geometry of BERT, ELMo, and GPT-2 embeddings</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">GPT-3: Its nature, scope, limits, and consequences. Minds and Machines</title>
+		<author>
+			<persName><forename type="first">Luciano</forename><surname>Floridi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Massimo</forename><surname>Chiriatti</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Database systems: The complete book</title>
+		<author>
+			<persName><forename type="first">Hector</forename><surname>Garcia-Molina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ullman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Widom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+			<publisher>Prentice Hall</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">word2vec explained: deriving Mikolov et al.&apos;s negative-sampling wordembedding method</title>
+		<author>
+			<persName><forename type="first">Yoav</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omer</forename><surname>Levy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1402.3722</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">A kernel method for the two-sample-problem</title>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Gretton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Borgwardt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karsten</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rasch</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Malte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><forename type="middle">J</forename><surname>Smola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="513" to="520" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">A kernel two-sample test</title>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Gretton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karsten</forename><forename type="middle">M</forename><surname>Borgwardt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rasch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Malte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Smola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="723" to="773" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xiangyu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shaoqing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Long shortterm memory</title>
+		<author>
+			<persName><forename type="first">Sepp</forename><surname>Hochreiter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jürgen</forename><surname>Schmidhuber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural computation</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1735" to="1780" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Handbook of natural language processing</title>
+		<author>
+			<persName><forename type="first">Nitin</forename><surname>Indurkhya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fred</forename><forename type="middle">J</forename><surname>Damerau</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>CRC Press</publisher>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Batch normalization: Accelerating deep network training by reducing internal covariate shift</title>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1502.03167</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xiaoqi</forename><surname>Jiao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yichun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lifeng</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Linlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qun</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tiny-Bert</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.10351</idno>
+		<title level="m">Distilling BERT for natural language understanding</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jungang</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1906.03591</idno>
+		<title level="m">A survey on neural network language models</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Exploring the limits of language modeling</title>
+		<author>
+			<persName><forename type="first">Rafal</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Oriol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Schuster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonghui</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1602.02410</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Show, ask, attend, and answer: A strong baseline for visual question answering</title>
+		<author>
+			<persName><forename type="first">Vahid</forename><surname>Kazemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Elqursh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.03162</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Learning to answer by learning to ask</title>
+		<author>
+			<persName><forename type="first">Tassilo</forename><surname>Klein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moin</forename><surname>Nabi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1911.02365</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Getting the best of gpt-2 and bert worlds</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">A field guide to dynamical recurrent networks</title>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">F</forename><surname>Kolen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><forename type="middle">C</forename><surname>Kremer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>John Wiley &amp; Sons</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Recurrent neural network based language modeling in meeting recognition</title>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Kombrink</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tomáš</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Karafiát</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukáš</forename><surname>Burget</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Twelfth annual conference of the international speech communication association</title>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Gradient-based learning applied to document recognition</title>
+		<author>
+			<persName><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bottou</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Léon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoshua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Haffner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the IEEE</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="2278" to="2324" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Convolutional deep belief networks for scalable unsupervised learning of hierarchical representations</title>
+		<author>
+			<persName><forename type="first">Honglak</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Grosse</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Roger</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ranganath</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rajesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="609" to="616" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Patent claim generation by fine-tuning OpenAI GPT-2</title>
+		<author>
+			<persName><forename type="first">Jieh-Sheng And</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jieh</forename><surname>Hsiang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.02052</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">BioBERT: a pre-trained biomedical language representation model for biomedical text mining</title>
+		<author>
+			<persName><forename type="first">Jinhyuk</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wonjin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sungdong</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Donghyeon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sunkyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chan</forename><surname>So</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaewoo</forename><surname>Kang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1234" to="1240" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">broader and artier domain generalization</title>
+		<author>
+			<persName><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Da</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yongxin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yi-Zhe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothy</forename><forename type="middle">M</forename><surname>Hospedales</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Deeper</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE international</title>
+		<meeting>the IEEE international</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="5542" to="5550" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Show, attend and read: A simple and strong baseline for irregular text recognition</title>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunhua</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guyu</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="8610" to="8617" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Area attention</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lukasz</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Samy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Si</forename><surname>Si</surname></persName>
+		</author>
+		<idno>PMLR</idno>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="3846" to="3855" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Protect, show, attend and tell: Image captioning model with ownership protection</title>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Lim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chan</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chee</forename><surname>Seng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kam</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Woh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lixin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2008.11009</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Effective approaches to attention-based neural machine translation</title>
+		<author>
+			<persName><forename type="first">Minh</forename><forename type="middle">-</forename><surname>Luong</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Thang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pham</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hieu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1508.04025</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">The radicalization risks of GPT-3 and advanced neural language models</title>
+		<author>
+			<persName><forename type="first">Kris</forename><surname>Mcguffie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Newhouse</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2009.06807</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Turing-NLG: A 17-billion-parameter language model by Microsoft</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Microsoft Blog</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Distributed representations of words and phrases and their compositionality</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ilya</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Greg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="3111" to="3119" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Computing numeric representations of words in a high-dimensional space</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gregory</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><forename type="middle">A</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">US Patent</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">464</biblScope>
+			<date type="published" when="2015-05-19">May 19 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">GloVe: Global vectors for word representation</title>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 conference on empirical methods in natural language processing</title>
+		<meeting>the 2014 conference on empirical methods in natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Toward physics of the mind: Concepts, emotions, consciousness, and symbols</title>
+		<author>
+			<persName><forename type="first">Leonid</forename><forename type="middle">I</forename><surname>Perlovsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physics of Life Reviews</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="23" to="55" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">BERT with history answer embedding for conversational question answering</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Minghui</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Croft</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bruce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohit</forename><surname>Iyyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 42nd International ACM SIGIR Conference on Research and Development in Information Retrieval</title>
+		<meeting>the 42nd International ACM SIGIR Conference on Research and Development in Information Retrieval</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1133" to="1136" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Show, attend and interact: Perceivable human-robot social interaction through neural attention q-network</title>
+		<author>
+			<persName><forename type="first">Ahmed</forename><surname>Qureshi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hussain</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nakamura</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yutaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuichiro</forename><surname>Yoshikawa</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ishiguro</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hiroshi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE International Conference on Robotics and Automation</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1639" to="1645" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Improving language understanding by generative pre-training</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Narasimhan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karthik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<pubPlace>OpenAI</pubPlace>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Language models are unsupervised multitask learners</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jeffrey</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Child</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rewon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Luan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Amodei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OpenAI blog</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Two decades of statistical language modeling: Where do we go from here?</title>
+		<author>
+			<persName><forename type="first">Ronald</forename><surname>Rosenfeld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the IEEE</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1270" to="1278" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Learning representations by back-propagating errors</title>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">E</forename><surname>Rumelhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ronald</forename><forename type="middle">J</forename><surname>Williams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">323</biblScope>
+			<biblScope unit="issue">6088</biblScope>
+			<biblScope unit="page" from="533" to="536" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">DistilBERT, a distilled version of bert: smaller, faster, cheaper and lighter</title>
+		<author>
+			<persName><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Victor</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lysandre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.01108</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Shoeybi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Patwary</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mostofa</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Puri</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Raul</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Legresley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Patrick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Casper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Catanzaro</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.08053</idno>
+		<title level="m">Megatron-LM: Training multi-billion parameter language models using model parallelism</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoshua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Manning</surname></persName>
+		</author>
+		<title level="m">Association of Computational Logistics (ACL)</title>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">Utilizing BERT intermediate layers for aspect based sentiment analysis and natural language inference</title>
+		<author>
+			<persName><forename type="first">Youwei</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jiahai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhiwei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyue</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Jiang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2002.04815</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Dropout: a simple way to prevent neural networks from overfitting</title>
+		<author>
+			<persName><forename type="first">Nitish</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ilya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruslan</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1929" to="1958" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Compositional and lexical semantics in RoBERTa</title>
+		<author>
+			<persName><forename type="first">Ieva</forename><surname>Staliūnaitė</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ignacio</forename><surname>Iacobacci</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2009.08257</idno>
+	</analytic>
+	<monogr>
+		<title level="m">BERT and Dis-tilBERT: A case study on CoQA</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Expectation (and attention) in visual cognition</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Summerfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tobias</forename><surname>Egner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends in cognitive sciences</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="403" to="409" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<monogr>
+		<title level="m" type="main">Small and practical BERT models for sequence labeling</title>
+		<author>
+			<persName><forename type="first">Henry</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Riesa</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Melvin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Arivazhagan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Naveen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amelia</forename><surname>Archer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.00100</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<author>
+			<persName><surname>Van</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hoang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Kauchak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gondy</forename><surname>Leroy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Au-Tomets</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.10573</idno>
+		<title level="m">The autocomplete for medical text simplification</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Noam</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Niki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Llion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="5998" to="6008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Go from the general to the particular: Multi-domain translation with domain transformation networks</title>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Longyue</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shuming</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">K</forename><surname>Victor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaopeng</forename><surname>Tu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="9233" to="9241" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">HuggingFace&apos;s transformers: State-of-the-art natural language processing</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lysandre</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Victor</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Julien</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Delangue</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Clement</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Moi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Anthony</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cistac</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pierric</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rault</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Louf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rémi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Funtowicz</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Morgan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.03771</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">TransferTransfo: A transfer learning approach for neural network based conversational agents</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Victor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clement</forename><surname>Delangue</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">On the techniques of English fast-reading</title>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Theory and Practice in Language Studies</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1416" to="1419" />
+			<date type="published" when="2011">2011</date>
+			<publisher>Academy Publisher</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Show, attend and tell: Neural image caption generation with visual attention</title>
+		<author>
+			<persName><forename type="first">Kelvin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ba</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jimmy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kiros</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ryan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kyunghyun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Aaron</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Salakhudinov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ruslan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rich</forename><surname>Zemel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="2048" to="2057" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Show, attend, and translate: Unsupervised image translation with self-regularization and attention</title>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Taehwan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ruizhe</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C-C</forename><surname>Kuo</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Image Processing</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="4845" to="4856" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">XLnet: Generalized autoregressive pretraining for language understanding</title>
+		<author>
+			<persName><forename type="first">Zhilin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zihang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yiming</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Carbonell</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jaime</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Salakhutdinov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Russ</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Quoc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="5753" to="5763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Fast and accurate text classification: Skimming, rereading and early stopping</title>
+		<author>
+			<persName><forename type="first">Keyi</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schwing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Peng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Show, attend and translate: Unpaired multi-domain image-to-image translation with visual attention</title>
+		<author>
+			<persName><forename type="first">Honglun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wenqing</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jidong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongkun</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaohui</forename></persName>
+		</author>
+		<idno type="arXiv">arXiv:1811.07483</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

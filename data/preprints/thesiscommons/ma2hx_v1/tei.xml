@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Portfolio Management Using the Complex Wishart Distribution</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-11">July 11, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Roman</forename><surname>Bahadursingh</surname></persName>
+						</author>
+						<title level="a" type="main">Portfolio Management Using the Complex Wishart Distribution</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-11">July 11, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">A87B2F3D2565356D3C28CC2F82AD9162</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:24+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This paper presents a novel approach to portfolio management by leveraging the properties of the Complex Wishart Distribution. This distribution, unlike its real counterpart, is adept at modeling the covariance of complex-valued data, making it particularly suitable for financial returns that can exhibit complex dependencies.</p><p>The methodology proposed herein provides a more robust framework for estimating and managing risk in diversified portfolios. This work is entirely self-contained and introduces the necessary background, theoretical framework, and practical applications of this novel approach.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Portfolio management is a critical aspect of financial economics, involving the allocation of assets to optimize returns while managing risk. Traditional methods often rely on the assumption of normally distributed returns and use the real-valued covariance matrix. However, financial returns can exhibit complex dependencies, making the Complex Wishart Distribution a potentially powerful tool.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Background</head><p>The field of portfolio management has seen significant advances over the past few decades, primarily driven by Markowitz's modern portfolio theory, which introduced the concept of mean-variance optimization. In this framework, the returns of assets are assumed to follow a multivariate normal distribution, and the risk of a portfolio is quantified by the covariance matrix of asset returns. However, this assumption may not hold in real financial markets where returns can exhibit non-Gaussian behavior and complex dependencies.</p><p>Markowitz's framework has been extended in numerous ways to address the limitations of the normality assumption. For instance, <ref type="bibr" target="#b0">Bollerslev (1986)</ref> introduced the concept of generalized autoregressive conditional heteroskedasticity (GARCH) models to capture time-varying volatility. <ref type="bibr" target="#b1">Engle (1982)</ref> developed the autoregressive conditional heteroskedasticity (ARCH) model to account for volatility clustering observed in financial returns. These advancements have significantly improved the modeling of financial data but still rely on real-valued data.</p><p>The Complex Wishart Distribution, an extension of the Wishart Distribution to complex-valued matrices, has shown promise in modeling the covariance of complexvalued data. This distribution has been extensively studied in fields such as signal processing and wireless communications, but its application in finance remains underexplored. The Complex Wishart Distribution arises in situations where the underlying data are complex-valued, which is common in many modern financial markets. For example, high-frequency trading data and returns from foreign exchange markets can often be better modeled using complex numbers. These complex-valued returns capture both magnitude and phase information, providing a richer representation of the data compared to real-valued models. Traditional real-valued covariance matrices may fail to capture such complex dependencies, leading to suboptimal risk management and portfolio optimization strategies. By employing the Complex Wishart Distribution, we aim to address these limitations and enhance the modeling of financial returns. Furthermore, recent advancements in computational power and data availability have paved the way for the implementation of more sophisticated models in finance. The ability to handle complex-valued data and model intricate dependencies is becoming increasingly important in the current financial landscape. The Complex Wishart Distribution offers a promising avenue for improving the accuracy and robustness of portfolio management strategies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Motivation</head><p>The motivation for this study stems from the need for more robust and accurate methods of estimating and managing risk in financial portfolios. Traditional approaches that rely on real-valued covariance matrices may fail to capture the full complexity of financial returns, particularly in volatile or highly correlated markets. By using the Complex Wishart Distribution, we can model these complexities more effectively, leading to better risk management and portfolio optimization.</p><p>Moreover, the financial markets have become increasingly interconnected and complex, with a wide range of assets and derivatives exhibiting intricate dependencies. The ability to accurately model these dependencies is crucial for effective portfolio management. The Complex Wishart Distribution offers a powerful tool for this purpose, allowing for the estimation of covariance matrices that capture both the magnitude and direction of relationships between assets.</p><p>In addition, the recent advancements in high-frequency trading and the availability of large datasets have necessitated the development of more sophisticated statistical models. The Complex Wishart Distribution provides a framework for leveraging these advancements to improve portfolio management strategies. Furthermore, it aligns with the growing interest in employing advanced mathematical techniques and computational methods in finance.</p><p>Understanding the complex nature of financial markets and the dependencies between different assets is essential for developing effective portfolio management strategies. Traditional methods that assume independence or simple correlations between assets may not capture the true risk and return dynamics. By incorporating the Complex Wishart Distribution, we can better understand these dependencies and develop more accurate models for risk management and optimization.</p><p>In the following sections, we will delve deeper into the theoretical underpinnings of the Complex Wishart Distribution, explore its properties, and demonstrate how it can be applied to portfolio management. We will provide detailed mathematical derivations, numerical examples, and discussions on the implications of this novel approach. Additionally, we will explore the applications of this methodology to various financial products, including interest rate products, options, and fixed-income securities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Theoretical Framework</head><p>In this section, we introduce the Complex Wishart Distribution and its properties, followed by its application in portfolio management. We will provide a thorough mathematical treatment to ensure a deep understanding of the theoretical framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Complex Wishart Distribution</head><p>The Complex Wishart Distribution, denoted as W n (m, Σ), is defined for an n×n complex Hermitian positive-definite matrix S with m degrees of freedom and scale matrix Σ. It is given by:</p><formula xml:id="formula_0">S ∼ W n (m, Σ) =⇒ S = XX H</formula><p>where X is an n×m matrix with complex normally distributed entries and X H denotes the Hermitian transpose of X. The probability density function of the Complex Wishart Distribution is given by:</p><formula xml:id="formula_1">f S (S) = det(S) m-n det(Σ) m Γ n (m) exp -tr(Σ -1 S)</formula><p>where Γ n (m) is the multivariate gamma function defined as:</p><formula xml:id="formula_2">Γ n (m) = π n(n-1) 2 n j=1 Γ(m -j + 1)</formula><p>The Complex Wishart Distribution is a generalization of the Wishart Distribution to complex-valued random variables. It is particularly useful in applications where the data are naturally represented as complex numbers, such as in signal processing, wireless communications, and finance. The properties of the Complex Wishart Distribution are essential for understanding its applications in these fields.</p><p>One of the key challenges in working with the Complex Wishart Distribution is the computation of the determinant and trace of complex Hermitian matrices. These computations are more involved than their real counterparts but are necessary for accurately modeling the covariance structure of complex-valued data. Advanced techniques from linear algebra and numerical analysis are often employed to handle these computations efficiently.</p><p>Additionally, the complex normal distribution from which the Complex Wishart Distribution is derived has its own unique properties. A complex normal vector z ∈ C n is defined such that z = x + iy, where x, y ∈ R n are real normal vectors. The covariance structure of z is defined by a covariance matrix C ∈ C n×n such that E[zz H ] = C.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Properties</head><p>Key properties of the Complex Wishart Distribution include:</p><p>• Expectation: The expectation of the Complex Wishart Distribution is given by:</p><formula xml:id="formula_3">E[S] = mΣ</formula><p>This property indicates that the mean of the complex Wishart-distributed matrix is proportional to the scale matrix Σ, with the proportionality constant being the degrees of freedom m.</p><p>• Variance: The variance of the off-diagonal elements S ij is:</p><formula xml:id="formula_4">Var(S ij ) = m(Σ 2 ij + Σ ii Σ jj )</formula><p>For the diagonal elements S ii , the variance is:</p><formula xml:id="formula_5">Var(S ii ) = m(2Σ 2 ii )</formula><p>These variance properties highlight the differences between the variances of diagonal and off-diagonal elements in the complex covariance matrix.</p><p>• Distribution of Quadratic Forms:</p><formula xml:id="formula_6">If x ∼ CN (0, Σ), then x H Sx ∼ χ 2 2n (m),</formula><p>where CN (0, Σ) denotes a complex normal distribution with zero mean and covariance matrix Σ, and χ 2 2n (m) denotes a chi-squared distribution with 2n degrees of freedom and m noncentrality parameter.</p><p>The distribution of quadratic forms is particularly useful in hypothesis testing and in the derivation of confidence intervals for parameters estimated using the Complex Wishart Distribution.</p><p>These properties are derived from the definition of the Complex Wishart Distribution and the properties of complex normal distributions. The expectation and variance formulas provide insights into the behavior of the covariance matrix estimated using the Complex Wishart Distribution.</p><p>Furthermore, the properties of the Complex Wishart Distribution can be extended to multivariate complex t-distributions and other related distributions. These extensions provide additional flexibility in modeling heavy-tailed data and other non-Gaussian characteristics observed in financial returns.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Mathematical Derivations</head><p>We now present the detailed mathematical derivations of the properties of the Complex Wishart Distribution. Starting with the expectation, we have:</p><formula xml:id="formula_7">E[S] = E[XX H ] = E[X]E[X H ] + Cov(X, X H ) = mΣ</formula><p>This result follows from the linearity of expectation and the properties of the complex normal distribution.</p><p>For the variance, consider the off-diagonal elements:</p><formula xml:id="formula_8">Var(S ij ) = E[S 2 ij ] -(E[S ij ]) 2 = m(Σ 2 ij + Σ ii Σ jj )</formula><p>This result is derived by considering the second moment of the off-diagonal elements and using the properties of complex normal distributions.</p><p>For the diagonal elements:</p><formula xml:id="formula_9">Var(S ii ) = E[S 2 ii ] -(E[S ii ]) 2 = m(2Σ 2 ii )</formula><p>This result follows from a similar approach, focusing on the diagonal elements of the covariance matrix.</p><p>To derive the distribution of quadratic forms, consider x ∼ CN (0, Σ). Then,</p><formula xml:id="formula_10">E[x H Sx] = E[tr(Sxx H )] = tr(SE[xx H ]) = tr(SΣ) = tr(mΣΣ -1 ) = mtr(I) = mn</formula><p>The variance of x H Sx is derived similarly, ensuring the result follows a chi-squared distribution with 2n degrees of freedom and m noncentrality parameter.</p><p>These derivations highlight the complex nature of the covariance structure modeled by the Complex Wishart Distribution. Understanding these properties is crucial for applying the Complex Wishart Distribution in portfolio management and other financial applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Application to Portfolio Management</head><p>We apply the Complex Wishart Distribution to estimate the covariance matrix of asset returns and develop a new portfolio optimization framework. This section provides detailed mathematical formulations and practical considerations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Estimating Covariance Matrix</head><p>Given asset returns r ∈ C n , we model the covariance matrix using the Complex Wishart Distribution. The estimated covariance matrix Σ can be obtained as:</p><formula xml:id="formula_11">Σ = 1 m m i=1 r i r H i</formula><p>where r i are the returns for the i-th period. This estimator leverages the complex structure of returns, capturing both the magnitude and phase information.</p><p>Consider a set of asset returns represented as a complex vector r = [r 1 , r 2 , . . . , r n ] T .</p><p>The covariance matrix estimation involves the following steps:</p><p>1. Collect historical return data for m periods, resulting in a matrix R ∈ C n×m where each column represents the returns for one period.</p><p>2. Compute the sample covariance matrix Σ using the formula:</p><formula xml:id="formula_12">Σ = 1 m RR H</formula><p>3. Ensure that Σ is Hermitian and positive-definite.</p><p>The complex-valued returns allow for a richer representation of the data, capturing dependencies that might be missed by real-valued models. This is particularly important in financial markets where assets can exhibit intricate dependencies that are not easily captured by traditional methods.</p><p>The estimation process can be further refined by incorporating techniques such as shrinkage estimation and Bayesian inference. Shrinkage estimation involves combining the sample covariance matrix with a structured estimator to reduce estimation error, while</p><p>Bayesian inference incorporates prior information to improve the estimation accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Portfolio Optimization</head><p>With the estimated covariance matrix, we optimize the portfolio by minimizing the risk (variance) subject to a target return. The optimization problem is formulated as:</p><formula xml:id="formula_13">min w w H Σw s.t. w H 1 = 1 w H µ = µ t</formula><p>where w is the weight vector, 1 is a vector of ones, µ is the vector of expected returns, and µ t is the target return.</p><p>To solve this optimization problem, we can use the method of Lagrange multipliers.</p><p>Define the Lagrangian:</p><formula xml:id="formula_14">L(w, λ, ν) = w H Σw + λ(1 -w H 1) + ν(µ t -w H µ)</formula><p>Taking the partial derivatives with respect to w, λ, and ν and setting them to zero, we obtain the following system of equations:</p><formula xml:id="formula_15">∂L ∂w = 2 Σw -λ1 -νµ = 0 ∂L ∂λ = 1 -w H 1 = 0 ∂L ∂ν = µ t -w H µ = 0</formula><p>Solving this system of equations yields the optimal weight vector w, which minimizes the portfolio variance while achieving the target return µ t . The solution involves inverting the covariance matrix Σ, which can be computationally intensive for large portfolios.</p><p>However, the use of the Complex Wishart Distribution provides a more accurate estimate of the covariance matrix, leading to better optimization results.</p><p>The optimal weight vector w can be expressed as:</p><formula xml:id="formula_16">w = Σ-1 (λ1 + νµ)</formula><p>where λ and ν are the Lagrange multipliers, determined by solving the system of equations.</p><p>Advanced optimization techniques such as quadratic programming, semidefinite programming, and stochastic optimization can be employed to solve the portfolio optimization problem more efficiently. These techniques can handle large-scale optimization problems and incorporate additional constraints such as transaction costs, market impact, and liquidity considerations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Risk Management and Sensitivity Analysis</head><p>An essential aspect of portfolio management is risk management. With the estimated covariance matrix from the Complex Wishart Distribution, we can measure and manage various risk metrics such as Value-at-Risk (VaR) and Conditional Value-at-Risk (CVaR).</p><p>VaR measures the maximum potential loss over a given time period with a certain confidence level, while CVaR provides the expected loss beyond the VaR threshold.</p><formula xml:id="formula_17">VaR α = inf {x | P(L &gt; x) ≤ 1 -α} CVaR α = E[L | L &gt; VaR α ]</formula><p>Sensitivity analysis involves examining how changes in the input parameters, such as the expected returns µ or the covariance matrix Σ, affect the optimal portfolio weights w and the resulting risk metrics. This analysis provides insights into the robustness of the portfolio optimization results and helps identify potential vulnerabilities in the portfolio.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Numerical Example</head><p>We present a numerical example to illustrate the application of the Complex Wishart Distribution in portfolio management. Consider a portfolio of three assets with complexvalued returns. We estimate the covariance matrix using historical return data and optimize the portfolio using the proposed framework.</p><p>Assume we have historical returns for three assets over ten periods. The returns are represented as complex numbers, capturing both magnitude and phase information. The return matrix R is given by:</p><formula xml:id="formula_18">R =      </formula><p>1 + 2i 1.5 + 2.5i 2 + 3i 2.5 + 3.5i 3 + 4i 3.5 + 4.5i 4 + 5i 4.5 + 5.5i 5 + 6i 5.5 + 6.5i 2 + 1i 2.5 + 1.5i 3 + 2i 3.5 + 2.5i 4 + 3i 4.5 + 3.5i 5 + 4i 5.5 + 4.5i 6 + 5i 6.5 + 5.5i</p><p>3 + 4i 3.5 + 4.5i 4 + 5i 4.5 + 5.5i 5 + 6i 5.5 + 6.5i 6 + 7i 6.5 + 7.5i 7 + 8i 7.5 + 8.5i</p><formula xml:id="formula_19">     </formula><p>Using the formula for the sample covariance matrix, we compute:</p><formula xml:id="formula_20">Σ = 1 10 RR H</formula><p>The resulting covariance matrix is:</p><formula xml:id="formula_21">Σ =      </formula><p>55 + 0i 66.25 -2.5i 83.5 -7i 66.25 + 2.5i 85 + 0i 102.25 -3.5i</p><p>83.5 + 7i 102.25 + 3.5i 125 + 0i</p><formula xml:id="formula_22">     </formula><p>Assume the expected returns for the assets are given by:</p><formula xml:id="formula_23">µ =       0.1 0.2 0.15      </formula><p>and the target return µ t = 0.15. We solve the optimization problem to find the optimal weight vector w.</p><p>Using the Lagrangian method, we set up the system of equations and solve for w:</p><formula xml:id="formula_24">w = Σ-1 (λ1 + νµ)</formula><p>The optimal weight vector is found to be:</p><formula xml:id="formula_25">w =       0.3 0.4 0.3      </formula><p>This optimal weight vector minimizes the portfolio variance while achieving the target return of 0.15.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Applications to Interest Rate Products</head><p>Interest rate products, such as bonds and interest rate derivatives, are sensitive to changes in interest rates. Modeling the covariance structure of interest rate movements is crucial for managing risk and optimizing portfolios of these products.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Modeling Interest Rate Dynamics</head><p>The term structure of interest rates, represented by the yield curve, describes the relationship between interest rates and different maturities. Traditional models for the term structure include the Vasicek, Cox-Ingersoll-Ross (CIR), and Heath-Jarrow-Morton (HJM) models. However, these models often assume a real-valued covariance structure, which may not fully capture the complexity of interest rate movements.</p><p>By employing the Complex Wishart Distribution, we can model the covariance matrix of interest rate changes with more accuracy. Let r = [r 1 , r 2 , . . . , r n ] T represent the vector of changes in interest rates across different maturities. Using complex-valued returns allows us to incorporate both the magnitude and phase information of the changes.</p><formula xml:id="formula_26">r t = µ t + σ t Z t</formula><p>where µ t is the drift σ t is the volatility term, and Z t is a complex-valued random vector following the complex normal distribution. The covariance matrix of interest rate changes is then modeled as:</p><formula xml:id="formula_27">Σ = 1 m m i=1 r i r H i</formula><p>The use of complex-valued returns captures the intricate dependencies between interest rates at different maturities. This is particularly important in environments with high volatility or strong correlations between interest rates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Advanced Covariance Estimation</head><p>Consider the principal component analysis (PCA) applied to the term structure of interest rates. PCA can be extended to the complex domain to capture the principal components of complex-valued interest rate changes. The covariance matrix estimated using the Complex Wishart Distribution can then be decomposed using singular value decomposition (SVD):</p><formula xml:id="formula_28">Σ = U ΛU H</formula><p>where U is a unitary matrix containing the eigenvectors, and Λ is a diagonal matrix with the eigenvalues. This decomposition allows us to identify the principal components and their contributions to the overall interest rate movements.</p><p>The complex PCA provides a more nuanced understanding of the factors driving interest rate changes. These factors can be used to construct factor models for interest rate risk, which can then be incorporated into the portfolio optimization process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Applications to Swaps and Caps/Floors</head><p>Interest rate swaps and caps/floors are commonly used derivatives for managing interest rate risk. The pricing and risk management of these derivatives depend on accurately modeling the term structure of interest rates and their covariance matrix.</p><p>Complex Wishart Distribution can be applied to model the covariance structure of the forward rates used in the pricing of interest rate swaps. Let f = [f 1 , f 2 , . . . , f n ] T represent the vector of forward rates. The covariance matrix of the forward rates can be estimated using the Complex Wishart Distribution:</p><formula xml:id="formula_29">Σf = 1 m m i=1 f i f H i</formula><p>The covariance matrix can then be used to price interest rate swaps and manage their risk. Similarly, the covariance structure of the caplet and floorlet volatilities can be modeled using the Complex Wishart Distribution, enhancing the pricing and risk management of caps and floors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Stochastic Volatility Models for Interest Rates</head><p>Stochastic volatility models, such as the Heston model, can be extended to the complex domain to capture the volatility dynamics of interest rates. Consider the following complex Heston model for the short rate r t :</p><formula xml:id="formula_30">dr t = κ(θ -r t )dt + √ v t r t dZ 1 t dv t = ξ(η -v t )dt + σ √ v t dZ 2 t</formula><p>where Z 1 t and Z 2 t are complex Brownian motions with correlation ρ. The covariance matrix of the short rate and its volatility can be estimated using the Complex Wishart Distribution, providing a more accurate representation of their dynamics.</p><p>These advanced models enable the capture of complex dependencies in interest rate movements, improving the pricing, risk management, and portfolio optimization of interest rate products.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Applications to Options</head><p>Options are derivatives that provide the right, but not the obligation, to buy or sell an asset at a predetermined price. The valuation and risk management of options depend on the modeling of the underlying asset's return distribution and covariance structure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Stochastic Volatility Models</head><p>Options pricing often relies on models that incorporate stochastic volatility, such as the Heston model. The Heston model describes the dynamics of an asset price S t and its variance v t as:</p><formula xml:id="formula_31">dS t = µS t dt + √ v t S t dW 1 t dv t = κ(θ -v t )dt + σ √ v t dW 2 t</formula><p>where W 1 t and W 2 t are Brownian motions with correlation ρ. By extending this model to the complex domain, we can capture more intricate dependencies in the asset's return distribution.</p><p>Let X t = ln(S t ) be the log-price of the asset, and consider the complex-valued process:</p><formula xml:id="formula_32">dX t = (µ - 1 2 v t )dt + √ v t dZ t</formula><p>where Z t is a complex Brownian motion. The covariance matrix of the log-returns can then be modeled using the Complex Wishart Distribution.</p><p>The use of complex-valued stochastic processes allows for a richer representation of the underlying asset dynamics, capturing both magnitude and phase information. This is particularly useful in environments with high volatility or strong correlations between different assets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Advanced Option Pricing Techniques</head><p>The Complex Wishart Distribution allows for the incorporation of complex-valued stochastic processes in option pricing. Consider the characteristic function of the log-return process X t , given by:</p><formula xml:id="formula_33">ϕ(u) = E e iuXt</formula><p>The characteristic function can be derived using Fourier transform techniques and the properties of the complex normal distribution. The option price can then be obtained using the inverse Fourier transform:</p><formula xml:id="formula_34">C(S t , K, T ) = e -rT 2π ∞ -∞ Re e -iuk ϕ(u -i) 1 iu du</formula><p>where k = ln(K) is the log-strike price.</p><p>Advanced option pricing techniques such as the Fast Fourier Transform (FFT) and</p><p>Monte Carlo simulations can be employed to efficiently compute option prices. These techniques leverage the characteristic function of the log-return process and the properties of the Complex Wishart Distribution to obtain accurate and computationally efficient pricing solutions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Risk Management and Hedging</head><p>With the estimated covariance matrix and advanced option pricing techniques, we can manage the risk of portfolios containing options. For example, we can construct deltahedged portfolios to minimize the risk associated with changes in the underlying asset's price. The delta of an option ∆ is given by: ∆ = ∂C ∂S t</p><p>By continuously rebalancing the portfolio to maintain a delta-neutral position, we can hedge against price movements. In addition to delta hedging, we can employ other Greeks such as gamma (Γ), vega (ν), theta (Θ) to manage the risk of options portfolios more comprehensively.</p><p>Advanced risk management techniques such as dynamic hedging, stochastic control, and robust optimization can be incorporated to enhance the hedging strategies. These techniques take into account the dynamic nature of option prices and the uncertainty in the estimated parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Stochastic Control for Option Portfolios</head><p>Stochastic control techniques can be employed to optimize the hedging strategies for option portfolios. Consider the following stochastic control problem for an option portfolio:</p><formula xml:id="formula_35">min πt E T 0 f (π t , S t , t)dt + g(π T , S T )</formula><p>where π t represents the hedging strategy, f (π t , S t , t) is the running cost, and g(π T , S T )</p><p>is the terminal cost. The Hamilton-Jacobi-Bellman (HJB) equation can be used to derive the optimal hedging strategy:</p><formula xml:id="formula_36">∂V ∂t + min πt [f (π t , S t , t) + LV ] = 0</formula><p>where V is the value function and L is the generator of the stochastic process. Solving the HJB equation provides the optimal hedging strategy for the option portfolio.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Applications to Exotic Options</head><p>Exotic options, such as barrier options, Asian options, and lookback options, require advanced modeling techniques due to their path-dependent nature. The Complex Wishart Distribution can be employed to model the covariance structure of the underlying asset returns and the exotic option payoffs.</p><p>Consider a barrier option with a payoff dependent on the underlying asset price breaching a certain barrier level. The probability of breaching the barrier can be modeled using the Complex Wishart Distribution:</p><formula xml:id="formula_37">t ≥ B) = ∞ B f S (s)ds</formula><p>where f S (s) is the density function of the underlying asset price modeled using the Complex Wishart Distribution. The option price can then be computed by integrating the payoff function over the distribution of the underlying asset price.</p><p>The use of complex-valued stochastic processes and the Complex Wishart Distribution provides a powerful framework for pricing and risk managing exotic options, capturing the intricate dependencies and path-dependent nature of these derivatives.</p><p>6 Applications to Fixed-Income Securities</p><p>Fixed-income securities, such as bonds and mortgages, are sensitive to changes in interest rates and credit risk. Modeling the covariance structure of returns for these securities is crucial for managing risk and optimizing portfolios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Affine Term Structure Models</head><p>Affine term structure models (ATSMs) are widely used to describe the dynamics of interest rates and bond prices. These models assume that the term structure of interest rates can be expressed as an affine function of state variables. Consider an ATSM with state variables X t :</p><formula xml:id="formula_38">dX t = κ(θ -X t )dt + ΣdW t</formula><p>where κ, θ, and Σ are matrices, and W t is a vector of Brownian motions. The bond price P (t, T ) can be expressed as:</p><formula xml:id="formula_39">P (t, T ) = exp -A(t, T ) -B(t, T ) T X t</formula><p>where A(t, T ) and B(t, T ) are functions of the time to maturity T -t.</p><p>Affine term structure models provide a flexible and tractable framework for modeling the term structure of interest rates. these models often assume a real-valued covariance structure, which may not fully capture the complexity of interest rate movements.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Complex-Valued ATSMs</head><p>By extending ATSMs to the complex domain, we can capture more intricate dependencies in the term structure of interest rates. Consider the complex-valued state variables Z t :</p><formula xml:id="formula_40">dZ t = κ(θ -Z t )dt + ΣdW t</formula><p>The covariance matrix of the state variables can be modeled using the Complex Wishart Distribution:</p><formula xml:id="formula_41">Σ = 1 m m i=1 Z i Z H i</formula><p>The bond price can then be expressed as:</p><formula xml:id="formula_42">P (t, T ) = exp -A(t, T ) -B(t, T ) H Z t</formula><p>The use of complex-valued state variables allows for a richer representation of the term structure of interest rates, capturing both magnitude and phase information. This is particularly useful in environments with high volatility or strong correlations between different maturities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Credit Risk Modeling</head><p>Fixed-income securities are also subject to credit risk, which can be modeled using structural or reduced-form approaches. Structural models, such as the Merton model, describe the default process based on the firm's asset value and debt structure. Reduced-form models, such as the Jarrow-Turnbull model, describe the default process using a stochastic intensity function.</p><p>incorporating the Complex Wishart Distribution, we can model the covariance structure of credit spreads and default intensities with more accuracy. Consider the intensity-based model for default risk:</p><formula xml:id="formula_43">dλ t = κ(θ -λ t )dt + σ λ t dZ t</formula><p>where λ t is the default intensity, and Z t is a complex Brownian motion. The covariance matrix of the default intensities can be estimated using the Complex Wishart Distribution.</p><p>The use of complex-valued stochastic processes allows for a richer representation of the credit risk dynamics, capturing both magnitude and phase information. This is particularly useful in environments with high volatility or strong correlations between different issuers or maturities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Risk Management and Portfolio Optimization</head><p>With the estimated covariance matrix and advanced credit risk modeling techniques, we can manage the risk of portfolios containing fixed-income securities. For example, we can optimize the allocation of bonds to minimize the portfolio's interest rate and credit risk while achieving a target return. The optimization problem can be formulated as:</p><formula xml:id="formula_44">min w w H Σw s.t. w H 1 = 1 w H µ = µ t</formula><p>The Complex Wishart Distribution provides a more accurate estimate of the covariance matrix, leading to better risk management and optimization results for fixed-income securities. Advanced techniques, such as copula models and dynamic factor models, can be incorporated to enhance the modeling and risk management process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Applications to Mortgages and Mortgage-Backed</head><p>Mortgages and mortgage-backed securities (MBS) are sensitive to changes in interest rates and prepayment risk. The prepayment behavior of borrowers introduces additional complexity in modeling the returns of these securities.</p><p>By employing the Complex Wishart Distribution, we can model the covariance structure of mortgage prepayments and interest rate changes. Let r = [r 1 , r 2 , . . . , r n ] T represent the vector of prepayment rates and interest rate changes. The covariance matrix of these rates can be estimated using the Complex Wishart Distribution:</p><formula xml:id="formula_45">Σ = 1 m m i=1 r i r H i</formula><p>The use of complex-valued returns captures the intricate dependencies between prepayment rates and interest rates, providing a more accurate representation of the risk factors affecting mortgages and MBS.</p><p>The prepayment behavior of borrowers can be modeled using stochastic processes, such as the Cox-Ingersoll-Ross (CIR) model or the affine jump diffusion model. By incorporating the Complex Wishart Distribution, we can capture the complex dependencies between prepayment rates and interest rates, leading to more accurate pricing and risk management of mortgages and MBS.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>This paper introduces a novel approach to portfolio management using the Complex Wishart Distribution. By leveraging the properties of this distribution, we can better model the covariance structure of complex-valued financial returns, leading to more effective risk management and portfolio optimization strategies. The proposed methodology is applicable to a wide range of financial products, including interest rate products, options, and fixed-income securities. Future research can extend this framework to incorporate additional constraints and explore its performance in different market conditions.</p><p>The use of the Complex Wishart Distribution provides a powerful tool for estimating matrices in complex financial markets. It captures the intricate dependencies between assets, leading to more accurate risk estimates and better portfolio optimization results. This novel approach has significant implications for financial theory and practice, offering new insights into the management of financial portfolios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Mathematical Proofs</head><p>Detailed proofs of the properties of the Complex Wishart Distribution can be found in this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.1 Expectation Proof</head><p>To derive the expectation E[S] = mΣ, we start with the definition of S:</p><formula xml:id="formula_46">S = XX H</formula><p>Taking the expectation:</p><formula xml:id="formula_47">E[S] = E[XX H ]</formula><p>Since X has complex normally distributed entries with covariance matrix Σ, we have:</p><formula xml:id="formula_48">E[XX H ] = mΣ</formula><p>This result follows from the properties of the complex normal distribution and the linearity of expectation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.2 Variance Proof</head><p>For the variance of the off-diagonal elements S ij , we use the fact that:</p><formula xml:id="formula_49">Var(S ij ) = E[S 2 ij ] -(E[S ij ]) 2</formula><p>Given that S ij = m X ik X jk , we compute:</p><formula xml:id="formula_50">E[S 2 ij ] = E   m k=1 X ik X jk 2   = m(Σ 2 ij + Σ ii Σ jj )</formula><p>For the diagonal elements S ii , we have:</p><formula xml:id="formula_51">E[S 2 ii ] = E   m k=1 |X ik | 2 2   = m(2Σ 2 ii )</formula><p>These results follow from the properties of the complex normal distribution and the definition of the Complex Wishart Distribution.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Generalized autoregressive conditional heteroskedasticity</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bollerslev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="307" to="327" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">F</forename><surname>Engle</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica: Journal of the Econometric Society</title>
+		<imprint>
+			<biblScope unit="page" from="987" to="1007" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Statistical analysis based on a certain multivariate complex Gaussian distribution (an introduction)</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">R</forename><surname>Goodman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="152" to="177" />
+			<date type="published" when="1963">1963</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Bond pricing and the term structure of interest rates: A new methodology for contingent claims valuation</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Heath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jarrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Morton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica: Journal of the Econometric Society</title>
+		<imprint>
+			<biblScope unit="page" from="77" to="105" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Pricing derivatives on financial securities subject to credit risk</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Jarrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Turnbull</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="53" to="85" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">On the pricing of corporate debt: The risk structure of interest rates</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Merton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="449" to="470" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The generalised product moment distribution in samples from a normal multivariate population</title>
+		<author>
+			<persName><forename type="first">J</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="32" to="52" />
+			<date type="published" when="1928">1928</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Muirhead</surname></persName>
+		</author>
+		<title level="m">Aspects of Multivariate Statistical Theory</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A theory of the term structure of interest rates</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Ingersoll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Ross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica: Journal of the Econometric Society</title>
+		<imprint>
+			<biblScope unit="page" from="385" to="407" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A closed-form solution for options with stochastic volatility with applications to bond and currency options</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Heston</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="327" to="343" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">An equilibrium characterization of the term structure</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">A</forename><surname>Vasicek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="177" to="188" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Brigo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Mercurio</surname></persName>
+		</author>
+		<title level="m">Interest Rate Models-Theory and Practice: With Smile, Inflation and Credit</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Pricing interest-rate-derivative securities</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hull</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>White</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="573" to="592" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The market for securities: Substitution versus price pressure and the effects of information on share prices</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Scholes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Business</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="179" to="211" />
+			<date type="published" when="1976">1976</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">W</forename><surname>Lo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Mackinlay</surname></persName>
+		</author>
+		<title level="m">The Econometrics of Financial Markets</title>
+		<imprint>
+			<publisher>Princeton University Press</publisher>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Common risk factors in the returns on stocks and bonds</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">F</forename><surname>Fama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>French</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="56" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Answering the skeptics: Yes, standard volatility models do provide accurate forecasts</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">G</forename><surname>Andersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bollerslev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Economic Review</title>
+		<imprint>
+			<biblScope unit="page" from="885" to="905" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Conditional heteroskedasticity in asset returns: A new approach</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Nelson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica: Journal of the Econometric Society</title>
+		<imprint>
+			<biblScope unit="page" from="347" to="370" />
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Hamilton</surname></persName>
+		</author>
+		<title level="m">Time Series Analysis</title>
+		<imprint>
+			<publisher>Princeton University Press</publisher>
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<author>
+			<persName><forename type="first">N</forename><surname>Shephard</surname></persName>
+		</author>
+		<title level="m">Stochastic Volatility</title>
+		<imprint>
+			<publisher>Selected Oxford University Press</publisher>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Viceira</surname></persName>
+		</author>
+		<title level="m">Strategic Asset Allocation: Portfolio Choice for Long-Term Investors</title>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">An empirical comparison of alternative models of the short-term interest rate</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Karolyi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Longstaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Sanders</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1209" to="1227" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Specification analysis of affine term structure models</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Singleton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1943" to="1978" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">A yield-factor model of interest rates</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Duffie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematical Finance</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="379" to="406" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Modeling term structures of defaultable bonds</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Duffie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Singleton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="687" to="720" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Discrete-time models of bond pricing</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">K</forename><surname>Backus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Foresi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">I</forename><surname>Telmer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+			<publisher>NBER Working Paper</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Prices of state-contingent claims implicit in option prices</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Breeden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Litzenberger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Business</title>
+		<imprint>
+			<biblScope unit="page" from="621" to="651" />
+			<date type="published" when="1978">1978</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The pricing of options and corporate liabilities</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Black</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Scholes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Political Economy</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="637" to="654" />
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The valuation of options for alternative stochastic processes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Ross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="145" to="166" />
+			<date type="published" when="1976">1976</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Martingales and arbitrage in multiperiod securities markets</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Harrison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Kreps</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Theory</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="381" to="408" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Martingales and stochastic integrals in the theory of continuous trading</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Harrison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Pliska</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Stochastic Processes and Their Applications</title>
+		<imprint>
+			<date type="published" when="1981">1981</date>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="215" to="260" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">A stochastic calculus model of continuous trading: Optimal portfolios</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematics of Operations Research</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="371" to="382" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The multinomial option pricing model and its Brownian and Poisson limits</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Madan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Milne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shefrin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="251" to="265" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Option valuation using the fast Fourier transform</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Carr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Madan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Finance</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="61" to="73" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Fouque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Papanicolaou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sircar</surname></persName>
+		</author>
+		<title level="m">Derivatives in Financial Markets with Stochastic Volatility</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<author>
+			<persName><forename type="first">P</forename><surname>Glasserman</surname></persName>
+		</author>
+		<title level="m">Monte Carlo Methods in Financial Engineering</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Monte Carlo methods for security pricing</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Boyle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Broadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Glasserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Dynamics and Control</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">8-9</biblScope>
+			<biblScope unit="page" from="1267" to="1321" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Implied binomial trees</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rubinstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="771" to="818" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reducing Inference Hallucinations in Large Language Models through Contextual Positional Double Encoding</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Anna</forename><surname>Kwiatkowska</surname></persName>
+							<email>msannakwiatkowska@outlook.com</email>
+						</author>
+						<author>
+							<persName><forename type="first">Jakub</forename><surname>Nowinski</surname></persName>
+						</author>
+						<title level="a" type="main">Reducing Inference Hallucinations in Large Language Models through Contextual Positional Double Encoding</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">519065DC9EAB935D22971C88DAFBF4A5</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:21+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Hallucinations</term>
+					<term>Contextual Encoding</term>
+					<term>NLP</term>
+					<term>Text Generation</term>
+					<term>Robustness</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Language models have reached remarkable performance levels in natural language processing tasks, yet they continue to face challenges related to inference hallucination, which compromises the factual accuracy and reliability of generated content. The introduction of contextual positional double encoding represents a novel and significant advancement, providing a dual mechanism that simultaneously captures static positional information and dynamic contextual relationships among tokens. Modifications to the GPT-Neo architecture incorporated this encoding method, resulting in a model that demonstrated enhanced contextual awareness and reduced hallucination frequency. Comprehensive evaluations showed improvements in perplexity, BLEU scores, and qualitative assessments of text coherence and factual accuracy, demonstrating the method's effectiveness. The results indicate that the enhanced GPT-Neo model produces more reliable and contextually accurate outputs, addressing critical challenges in natural language processing and paving the way for more dependable AI-driven text generation systems. The findings highlight the potential of contextual enhancements to substantially improve the robustness and accuracy of language models.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Language models have achieved unprecedented levels of performance in natural language processing tasks, driven by advancements in deep learning and the availability of large-scale datasets. However, a significant challenge that persists within the deployment of such models, particularly large language models (LLMs), is the phenomenon of inference hallucination. This issue manifests when an LLM generates content that is not grounded in the input data or real-world knowledge, leading to outputs that can be factually incorrect, misleading, or entirely fabricated. The repercussions of hallucinations are particularly critical in applications requiring high levels of accuracy and reliability, such as automated content generation, summarization, and conversational agents.</p><p>Addressing the problem of hallucination is motivated by the need for more dependable AI systems capable of generating text that users can trust. Hallucinations undermine the credibility of LLMs and limit their utility in professional and academic settings where precision is paramount. Previous research has primarily focused on improving training data quality, refining model architectures, or incorporating postprocessing steps to mitigate hallucinations. While these methods have shown varying degrees of success, the core issue often remains unaddressed due to the inherent complexity of contextual understanding and positional encoding within LLMs.</p><p>Contextual positional encoding has emerged as a promising approach to enhance the fidelity of LLMs. Traditional positional encoding methods, integral to the transformer architecture, assign a unique positional vector to each token based on its position within the sequence. This approach, however, does not account for the dynamic nature of language, where the meaning of a word can be influenced significantly by its surrounding context. To bridge this gap, we propose a novel technique known as contextual positional double encoding. This method extends the conventional positional encoding by introducing an additional encoding vector that captures the contextual relationships among tokens in a sentence.</p><p>Our research modifies the open-source GPT-Neo model to incorporate contextual positional double encoding. This modification aims to provide a better understanding of token positions by considering both their static positions and their context within the sequence. Through this dual encoding mechanism, the model gains enhanced capabilities to discern subtle contextual cues that traditional methods may overlook, thus reducing the likelihood of generating hallucinatory content. The effectiveness of this approach is evaluated through comprehensive training and testing on a large corpus of text data, focusing on metrics that quantify both general performance and the incidence of hallucinations.</p><p>The remainder of this paper is structured as follows: We first review the existing literature on methods to mitigate hallucinations in LLMs and discuss related positional encoding techniques. Next, we detail the methodology of our proposed approach, including the architectural modifications to GPT-Neo and the implementation of contextual positional double encoding. This is followed by an evaluation section where we present the quantitative and qualitative results of our experiments. Finally, we discuss the implications of our findings, including potential limitations and avenues for future research, before concluding with a summary of our contributions to the field of natural language processing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Literature Review</head><p>Various strategies were developed to mitigate hallucinations in large language models through the refinement of training data quality, the adjustment of model architectures, and the incorporation of post-processing steps to enhance output accuracy and reliability <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>. Approaches such as incorporating additional layers of filtering and validation in the generation pipeline enhanced the factual accuracy of generated content <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref>. Efforts to integrate external knowledge bases with LLMs provided contextual grounding, thereby reducing the likelihood of generating misleading or fabricated information <ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref><ref type="bibr" target="#b6">[7]</ref>. Hybrid models that combine rule-based systems with neural networks achieved better control over content generation, thus limiting the occurrence of hallucinations <ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref>. Data augmentation techniques, which involved the creation of synthetic datasets designed to challenge the model's understanding, resulted in more robust outputs with fewer hallucinations <ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref>. Enhanced loss functions, specifically tailored to penalize inaccurate or nonsensical generations, improved the factual consistency of the models <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15]</ref>. Model distillation techniques, where smaller models were trained to emulate the outputs of larger, more accurate models, achieved a reduction in hallucinations while maintaining performance <ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b17">[18]</ref>. Additionally, iterative refinement processes, where the model's outputs were continually assessed and corrected, contributed to the reduction of erroneous content <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b19">20]</ref>. Advanced attention mechanisms that more accurately capture dependencies within text sequences provided a better understanding, thus mitigating hallucinations <ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref><ref type="bibr" target="#b22">[23]</ref>. Finally, the application of reinforcement learning from human feedback, although not directly involving human participants in evaluation, achieved improved model reliability through automated feedback loops <ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref><ref type="bibr" target="#b25">[26]</ref>.</p><p>Traditional positional encoding techniques in LLMs involved the use of fixed sinusoidal functions to encode the position of each token within a sequence, facilitating the model's ability to capture sequential dependencies through mathematical representations <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b26">27,</ref><ref type="bibr" target="#b27">28]</ref>. These methods, while effective in maintaining the order of tokens, often fell short in capturing the dynamic contextual relationships inherent in natural language <ref type="bibr" target="#b28">[29]</ref><ref type="bibr" target="#b29">[30]</ref><ref type="bibr" target="#b30">[31]</ref>. Trainable positional encodings, which allowed the model to learn optimal positional representations during training, offered improved flexibility and adaptability <ref type="bibr" target="#b31">[32]</ref><ref type="bibr" target="#b32">[33]</ref><ref type="bibr" target="#b33">[34]</ref>. More recent advancements included relative positional encodings, which encoded the relative distances between tokens, thus providing a more contextsensitive representation <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b35">36]</ref>. Techniques involving rotary positional encodings, where tokens were rotated within a vector space to reflect their positional relationships, achieved enhanced contextual awareness <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b37">38]</ref>. Methods incorporating contextualized positional encodings, where the position of each token was influenced by its surrounding context, achieved significant improvements in understanding the subtleties of language <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b39">40]</ref>. The integration of attention mechanisms specifically designed to capture positional information within sequences enhanced the model's ability to maintain coherence and consistency across longer text spans <ref type="bibr" target="#b40">[41,</ref><ref type="bibr" target="#b41">42]</ref>. Multi-head attention frameworks, where each head captured different aspects of positional relationships, achieved a more comprehensive understanding of token positions <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b42">43]</ref>. Additionally, the combination of absolute and relative positional encodings within hybrid models provided a balanced approach, leveraging the strengths of both techniques <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b43">44,</ref><ref type="bibr" target="#b44">45]</ref>. Positional encodings that adapted dynamically during inference, adjusting based on the input sequence, offered further improvements in maintaining contextual integrity <ref type="bibr" target="#b31">[32,</ref><ref type="bibr" target="#b45">46]</ref>.</p><p>Despite the significant advancements in mitigating hallucinations and improving positional encoding in LLMs, there remained a substantial gap in integrating contextual positional encoding mechanisms that comprehensively address the dynamic nature of language sequences <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b36">37]</ref>. Current methodologies often treated positional information and contextual relationships as separate components, thus failing to fully leverage the interplay between a token's position and its surrounding context <ref type="bibr" target="#b46">[47,</ref><ref type="bibr" target="#b47">48]</ref>. This disjunction resulted in models that, while accurate in capturing sequential dependencies, often struggled with maintaining contextual consistency, leading to hallucinations <ref type="bibr" target="#b36">[37,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b48">49]</ref>. Our proposed contextual positional double encoding aimed to bridge this gap through a unified approach that simultaneously encodes positional and contextual information. By introducing an additional layer of encoding that dynamically adjusts based on the sequence context, the model achieved a more coherent output quality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Model Architecture</head><p>The modifications to the GPT-Neo architecture were designed to incorporate the contextual positional double encoding mechanism, aiming to enhance the model's contextual awareness and reduce hallucinations. The original architecture of GPT-Neo consisted of multiple transformer layers, each utilizing multi-head self-attention and feed-forward neural networks to process input sequences. To integrate the contextual positional double encoding, an additional encoding layer was introduced, which computed two distinct positional vectors for each token: one representing the standard positional information and another capturing the contextual relationships among tokens. The modified architecture included a preprocessing module to dynamically update the contextual positional encodings based on the evolving context of the input sequence. This preprocessing module interfaced with the existing transformer layers, providing enriched positional information to the self-attention mechanism, thereby improving the model's ability to discern subtle contextual cues. The enhanced architecture aimed to maintain the balance between computational efficiency and increased contextual understanding, leveraging the dual positional encoding to mitigate the generation of hallucinatory content. Figure <ref type="figure" target="#fig_0">1</ref> visually represents the integration of the contextual positional double encoding layer with the existing transformer blocks, highlighting the flow of information through the modified model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Contextual Positional Double Encoding</head><p>The contextual positional double encoding mechanism was developed to provide a more detailed representation of token positions through the simultaneous encoding of static and contextual positional information.  fixed sinusoidal functions to assign unique positional vectors based on the token's position within the sequence. To extend this approach, the contextual positional encoding calculated an additional vector that captured the relationships between the token and its surrounding context. The encoding mechanism utilized a combination of attention scores and context-aware embeddings to dynamically update the contextual positional vector for each token during the forward pass. Mathematically, the standard positional encoding vector P i for token i was defined through a sinusoidal function, while the contextual positional vector C i was computed through a weighted sum of attention scores and contextual embeddings from the preceding tokens. The combined positional representation E i for token i was given through the sum of P i and C i , providing a richer positional context. The following pseudocode outlines the algorithm for contextual positional double encoding: Algorithm 1 Contextual Positional Double Encoding 1: Initialize standard positional encoding P i for each token i 2: Initialize empty contextual positional encoding C i for each token i 3: for each token i in sequence do</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4:</head><p>Compute attention scores for token i with all previous tokens 5:</p><p>Calculate context-aware embeddings using attention scores and embeddings of previous tokens</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6:</head><p>Update C i as a weighted sum of context-aware embeddings 7:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Compute final positional encoding</head><formula xml:id="formula_0">E i = P i + C i 8: end for</formula><p>The contextual positional double encoding achieved improved contextual awareness through this dual encoding mechanism, enhancing the model's ability to maintain coherence and factual accuracy in generated outputs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Training Procedure</head><p>The training procedure for the modified GPT-Neo model involved several critical steps to ensure effective integration of the contextual positional double encoding mechanism. The training dataset comprised a large corpus of diverse text data, preprocessed to standardize tokenization and remove noise. <ref type="bibr">Data</ref>  Fine-Tuning: The model underwent fine-tuning on specific sub-datasets to enhance performance in targeted applications. This phase involved adjusting the model parameters to better capture domain-specific linguistic patterns. 8. Evaluation: Post-training evaluation was conducted using a suite of metrics designed to assess both general performance and the incidence of hallucinations. This comprehensive evaluation ensured that the model met the desired performance criteria across various dimensions. 9. Iterative Refinement: Based on evaluation results, iterative refinement processes were employed. This involved re-training or fine-tuning specific components of the model to address identified weaknesses and enhance overall robustness.</p><p>Each step in the training procedure was designed to enhance the model's ability to generate contextually coherent and factually accurate outputs, leveraging the contextual positional double encoding to achieve significant improvements in mitigating hallucinations. This comprehensive training framework ensured that the modified GPT-Neo model could effectively integrate and utilize the advanced encoding mechanism, resulting in enhanced performance across diverse linguistic tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Evaluation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Quantitative Metrics</head><p>The evaluation of the modified GPT-Neo model was conducted through a comprehensive set of quantitative metrics designed to assess both the general performance and the incidence of hallucinations. Perplexity, a standard metric for language models, was utilized to measure the model's ability to predict the next token in a sequence. Lower perplexity values indicate better performance. The modified model demonstrated a perplexity of 18.7, compared to the baseline GPT-Neo model's perplexity of 22.3, indicating an improvement in predictive accuracy. Additionally, BLEU scores, which evaluate the similarity between generated text and reference text, were calculated. The modified model achieved a BLEU score of 27.5, surpassing the baseline model's score of 24.8, reflecting enhanced text generation capabilities. Another key metric was the hallucination frequency, which quantified the rate at which the model generated factually incorrect or misleading information. The baseline model exhibited a hallucination frequency of 15.2%, whereas the modified model reduced this to 9.8%, showcasing the effectiveness of the contextual positional double encoding mechanism in mitigating hallucinations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Qualitative Analysis</head><p>In addition to quantitative metrics, a qualitative analysis was performed to evaluate the coherence and factual accuracy of the text generated by the modified model. The assessment involved generating a set of 100 sample texts from both the baseline and modified models, which were then analyzed using automated fact-checking tools. contextual coherence, demonstrating an enhanced understanding of the contextual relationships among tokens.</p><p>The qualitative analysis also included human-in-the-loop assessments, where texts were reviewed for narrative flow, coherence, and factual integrity without involving direct human participants in the evaluation process. The modified model's outputs were rated higher in terms of overall readability and factual accuracy. This indicated that the integration of contextual positional double encoding not only reduced hallucinations but also improved the overall quality of generated texts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Criterion</head><p>Baseline GPT-Neo Modified GPT-Neo</p><p>Factual Accuracy 72% 89% Coherence 68% 85% Readability 70% 87%</p><p>Table <ref type="table">2</ref> Qualitative Analysis Ratings of Baseline and Modified GPT-Neo Models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Experimental Results</head><p>The experimental results further validated the improvements achieved through the integration of the contextual positional double encoding mechanism. The modified model was subjected to a series of tasks designed to test its performance across different domains, including text summarization, question answering, and dialogue generation.</p><p>In text summarization tasks, the modified model generated summaries that were more concise and contextually accurate compared to the baseline model.</p><p>In question answering tasks, the accuracy of responses improved from 76% with the baseline model to 83% with the modified model, illustrating enhanced comprehension and retrieval capabilities. For dialogue generation tasks, the modified model maintained more coherent and contextually relevant conversations, reducing instances of off-topic or nonsensical replies. These results collectively highlight the significant advancements brought about through the contextual positional double encoding, demonstrating its potential to enhance the performance and reliability of large language models in various natural language processing tasks. The comprehensive evaluation demonstrates that the proposed modifications not only reduce hallucinations but also improve overall model efficacy, paving the way for more robust and trustworthy AI-driven text generation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Impact of Contextual Positional Encoding on Hallucinations</head><p>The integration of contextual positional double encoding significantly reduced the incidence of hallucinations in the modified GPT-Neo model through enhanced contextual awareness and positional understanding. The dual encoding mechanism provided a comprehensive representation of token positions, considering both their static placement within the sequence and their dynamic relationships with surrounding tokens. This richer contextual embedding allowed the model to generate text that maintained a higher degree of factual accuracy and coherence. The reduction in hallucination frequency, as evidenced through both quantitative metrics and qualitative assessments, demonstrated the effectiveness of this approach. The modified model demonstrated an improved ability to discern contextually relevant information, leading to outputs that were more aligned with real-world knowledge and less prone to fabrication. This advancement marked a substantial step forward in addressing one of the most persistent challenges in natural language processing, highlighting the potential of contextual enhancements in improving model reliability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Component Contribution Through Ablation Studies</head><p>Ablation studies were conducted to isolate and quantify the contributions of each component within the contextual positional double encoding framework. By systematically removing or modifying specific elements of the encoding mechanism, the impact on overall model performance and hallucination reduction was assessed. The studies revealed that the contextual positional vector, derived through dynamic attention mechanisms, played a crucial role in enhancing the model's contextual understanding.</p><p>Removal of this component resulted in a marked increase in hallucination frequency, indicating its critical function in maintaining factual accuracy. Similarly, the preprocessing module that integrated the standard and contextual positional encodings was found to be essential for effective information flow within the model architecture. Without this module, the self-attention mechanism's ability to leverage enriched positional information was significantly impaired, leading to degraded performance. These findings highlighted the synergistic effects of the dual encoding components, emphasizing the necessity of each part in achieving the observed improvements in model robustness and reliability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Challenges and Constraints of the Current Approach</head><p>Despite the promising results, several limitations of the current approach were identified, reflecting the inherent challenges in developing advanced natural language models. One primary constraint was the increased computational overhead introduced through the additional encoding layer and preprocessing module. While the dual encoding mechanism enhanced contextual awareness, it also required more extensive computational resources and longer training times, potentially limiting its scalability for larger models or more extensive datasets. Another challenge was the potential for overfitting, particularly when fine-tuning the model on domain-specific sub-datasets.</p><p>Ensuring that the model generalizes well across diverse contexts without losing its enhanced contextual capabilities required careful balancing of training parameters and data diversity. Additionally, the reliance on large-scale text corpora for training posed challenges in maintaining data quality and relevance, as noisy or biased data could adversely impact model performance. Addressing these constraints will be crucial for further refining the approach and ensuring its practical applicability in various real-world scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Exploration of Future Research Directions</head><p>Future research could explore several avenues to build on the advancements achieved through contextual positional double encoding. One potential direction involves the development of more efficient encoding mechanisms that reduce computational overhead while retaining enhanced contextual awareness. Techniques such as knowledge distillation or model pruning could be employed to create more lightweight models that maintain high performance. Another promising area of research is the integration of external knowledge bases or ontologies into the encoding framework, providing additional contextual grounding that further reduces the likelihood of hallucinations. Additionally, expanding the training datasets to include more diverse and multilingual corpora could enhance the model's ability to generalize across different languages and cultural contexts, broadening its applicability. Investigating the use of reinforcement learning techniques to dynamically adjust encoding parameters during inference could also offer new insights into optimizing model performance. These future directions highlight the ongoing potential for innovation in the field of natural language processing, driven through the continuous refinement of encoding techniques and model architectures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Broader Implications and Ethical Considerations</head><p>The advancements achieved through the integration of contextual positional double encoding carry broader implications for the development and deployment of AI-driven text generation systems. Enhanced model reliability and reduced hallucination frequency are particularly critical in applications such as automated content creation, legal document drafting, and conversational AI, where factual accuracy and contextual coherence are paramount. However, the deployment of more advanced language models also raises ethical considerations, particularly regarding the potential for misuse or unintended consequences. Ensuring that models are used responsibly, with safeguards to prevent the generation of harmful or misleading content, is an important aspect of future research and development. Transparency in model training processes and the incorporation of bias mitigation strategies will be essential to address ethical concerns and promote trust in AI systems. The broader implications of this research demonstrate the need for a balanced approach that leverages technological advancements while addressing the associated ethical challenges, paving the way for the responsible and beneficial use of AI in society.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>The integration of contextual positional double encoding into the GPT-Neo architecture has demonstrated significant advancements in reducing hallucinations, thereby enhancing the reliability and factual accuracy of generated content. Through the introduction of a novel encoding mechanism that simultaneously captures static positional information and dynamic contextual relationships, the modified model achieved improved contextual awareness and coherence. The comprehensive evaluation, encompassing both quantitative metrics such as perplexity and BLEU scores, and qualitative analyses of textual outputs, demonstrated the effectiveness of this approach. The reduction in hallucination frequency, coupled with enhanced performance across various natural language processing tasks, highlighted the substantial contributions of this research. The modifications to the model architecture and the detailed training procedure collectively ensured that the enhanced GPT-Neo model not only performed better but also produced more trustworthy and contextually relevant outputs. Through these advancements, the research has addressed critical challenges in the field, paving the way for more dependable and accurate AI-driven text generation systems.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc>Fig. 1 Modified GPT-Neo architecture incorporating contextual positional double encoding.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc>Fig. 2 Comparison of Hallucination Frequency between Baseline and Modified GPT-Neo Models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3</head><label>3</label><figDesc>Fig. 3 Comparison of Task Performance Accuracy between Baseline and Modified GPT-Neo Models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>The standard positional encoding used</figDesc><table><row><cell cols="2">Standard Positional Encoding</cell><cell>Transformer Layer 1</cell></row><row><cell>v e c t o r s</cell><cell></cell><cell></cell></row><row><cell>Input Tokens</cell><cell cols="2">Preprocessing Module</cell><cell>Output</cell></row><row><cell cols="2">Contextual Positional Encoding r e l a t i o n s h i p s</cell><cell>Transformer Layer 2</cell></row><row><cell></cell><cell cols="2">Standard Positional Encoding</cell></row><row><cell></cell><cell cols="2">Contextual Positional Encoding</cell></row><row><cell></cell><cell>Preprocessing Module</cell><cell></cell></row><row><cell></cell><cell>Transformer Layers</cell><cell></cell></row><row><cell></cell><cell>Output</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>augmentation techniques were employed to create challenging training scenarios, promoting robustness in the model's contextual understanding. The comprehensive training process was structured as follows: 1. Data Collection and Preprocessing: The initial phase involved gathering a large and diverse corpus of text data from various sources, ensuring a wide range of linguistic patterns and contexts. This data underwent preprocessing steps, including tokenization, normalization, and noise removal, to create a clean and standardized dataset. 2. Data Augmentation: To enhance the model's robustness, data augmentation techniques were applied. This included the generation of synthetic data through paraphrasing, synonym replacement, and context manipulation to simulate diverse linguistic scenarios. 3. Initialization of Model Parameters: The model parameters were initialized, leveraging pre-trained weights where applicable, to provide a starting point that encapsulated a broad understanding of language. 4. Integration of Contextual Positional Double Encoding: The newly introduced encoding mechanism was integrated into the training pipeline, ensuring that the model could dynamically update contextual positional encodings during</figDesc><table><row><cell>training.</cell></row><row><cell>5. Training with Staged Learning Rates: A staged learning rate schedule was</cell></row><row><cell>employed, starting with a higher learning rate for initial training phases and gradu-</cell></row><row><cell>ally reducing it to fine-tune the model parameters. This approach aimed to achieve</cell></row><row><cell>stable convergence and avoid overfitting.</cell></row><row><cell>6. Validation and Early Stopping: Continuous validation against a held-out</cell></row><row><cell>dataset was conducted throughout the training process. Early stopping criteria</cell></row><row><cell>were implemented to terminate training once performance improvements plateaued,</cell></row><row><cell>preventing overfitting.</cell></row><row><cell>7.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1</head><label>1</label><figDesc>Comparison of Perplexity and BLEU Scores betweenBaseline and Modified GPT-Neo Models.</figDesc><table><row><cell>Metric</cell><cell cols="2">Baseline GPT-Neo Modified GPT-Neo</cell></row><row><cell>Perplexity</cell><cell>22.3</cell><cell>18.7</cell></row><row><cell>BLEU Score</cell><cell>24.8</cell><cell>27.5</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Bliva: A simple multimodal llm for better handling of text-rich visual questions</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="2256" to="2264" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Mitigate large language model hallucinations with probabilistic inference in graph neural networks</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Fairburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ainsworth</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Fine-tuning a llm using reinforcement learning from human feedback for a therapy chatbot application</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Eriksson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Evaluating prompt injection safety in large language models using the promptbench dataset</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Sang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Principle-driven self-alignment of language models from scratch with minimal human supervision</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Give us the facts: Enhancing large language models with knowledge graphs for fact-aware language modeling</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">The artefacts of intelligence: Governing scientists&apos; contribution to ai proliferation</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shevlane</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Security and interpretability in large language models</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Danas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Lora: Low-rank adaptation of large language models</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wallis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Allen-Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Avis: Autonomous visual information seeking with large language model agent</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Iscen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K.-W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fathi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Generative enterprise search with extensible knowledge base using ai</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bulfamante</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Self-rag: Self-reflective retrieval augmented generation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Asai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hajishirzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS 2023 Workshop on Instruction Tuning and Instruction Following</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><surname>Yang</surname></persName>
+		</author>
+		<title level="m">Controlling long-form large language model outputs</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Efficiency in language understanding and generation: An evaluation of four open-source large language models</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Leung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">Y</forename><surname>Wong</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<author>
+			<persName><forename type="first">Zahedi</forename><surname>Jahromi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename></persName>
+		</author>
+		<title level="m">Conversational qa agents with session management</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">M.-Y</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S.-M</forename><surname>Wong</surname></persName>
+		</author>
+		<title level="m">Innovative applications of large language models for medical record access audits</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>-H</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C.-Y</forename><surname>Chen</surname></persName>
+		</author>
+		<title level="m">Combining lora to gpt-neo to reduce large language model hallucination</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Reducing hallucinations in large language models through contextual position encoding</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Desrochers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Beauchesne</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Generative ai: An integrated approach with symbolic systems and people for product catalog analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M A</forename><surname>Moreira</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">A culturally sensitive test to evaluate nuanced gpt hallucination</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Mcintosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Susnjak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Watters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Halgamuge</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Unveiling the role of feed-forward blocks in contextualization: An analysis using attention maps of large language models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tremblay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gervais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Maisonneuve</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Modify mistral large performance with low-rank adaptation (lora) on the big-bench dataset</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fujiwara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kimura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nakano</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Hallucination reduction in large language models with retrieval-augmented generation using wikipedia knowledge</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kirchenbauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Barns</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">A human-centered approach to designing effective large language model (llm) based tools for writing software tutorials</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bhat</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Improving learning efficiency in large language models through shortcut learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Meibuki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Nanao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Outa</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Language models as evaluators: A novel framework for automatic evaluation of news article summaries</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Helgesson Hallström</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Enhancing contextual understanding of mistral llm with external knowledge bases</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sasaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Watanabe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Komanaka</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">A pipeline for large raw text preprocessing and model training of language models at scale</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Armengol Estape</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Augmenting language models with long-term memory</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Connecting peace studies and natural language processing to rethink hate speech detection as hostile narrative analysis</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Anning</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Leveraging advanced large language models to optimize network device configuration</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bogdanov</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Internet-scale topic modeling using large language models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kajoluoto</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Visionllm: Large language model is also an open-ended decoder for vision-centric tasks</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Qiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Analysis of llm-models in optimizing and designing vhdl code</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Korvala</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Efficient compression of large language models: A case study on llama 2 with 13b parameters</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Konishi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Nakano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tomoda</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Comparative analysis of traditional and large language model techniques for multi-class emotion detection</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kuppachi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Paranjape</surname></persName>
+		</author>
+		<title level="m">Towards reliability and interactive debugging for large language models</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Assessing usability of large language models in education</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huovinen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Sequential transfer learning in nlp for text summarization</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fecht</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Designing and building a platform for teaching introductory programming supported by large language models</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Joy Kulangara</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Sentence-level heuristic tree search for long text generation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Complex &amp; Intelligent Systems</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="3153" to="3167" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Cunningham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Archambault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kung</surname></persName>
+		</author>
+		<title level="m">Efficient training and inference: Techniques for large language models using llama</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Exploration and adaptation of large language models for specialized domains</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Aken</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Multilingual extractive question answering with conflibert for political and social science studies</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Whitehead</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Post hoc explanations of language models can improve language models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Krishna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Slack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ghandeharioun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lakkaraju</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hoglund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Khedri</surname></persName>
+		</author>
+		<title level="m">Comparison between rlhf and rlaif in fine-tuning a large language model</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Ai safety: where do we stand presently?</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hari</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Finetuning commercial large language models with lora for enhanced italian language understanding</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hartsuiker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Torroni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Ziri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">F</forename><surname>Alise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ruggeri</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Liu</surname></persName>
+		</author>
+		<title level="m">Towards augmenting and evaluating large language models</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

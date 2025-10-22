@@ -1,0 +1,1388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Introducing embed2discover: A tool for semiautomated, dictionary-based content-analysis</title>
+				<funder>
+					<orgName type="full">Spanish National Research Council (CSIC)</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Laurence</forename><surname>Brandenberger</surname></persName>
+							<email>laurence.brandenberger@ipz.uzh.ch.</email>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Contact: Laurence Brandenberger</orgName>
+								<orgName type="department" key="dep2">Institute of Political Science</orgName>
+								<orgName type="institution">University of Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Oleg</forename><surname>Bakhteev</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Contact: Laurence Brandenberger</orgName>
+								<orgName type="department" key="dep2">Institute of Political Science</orgName>
+								<orgName type="institution">University of Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jorge</forename><forename type="middle">M</forename><surname>Fernandez</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Contact: Laurence Brandenberger</orgName>
+								<orgName type="department" key="dep2">Institute of Political Science</orgName>
+								<orgName type="institution">University of Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sophia</forename><surname>Schlosser</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Contact: Laurence Brandenberger</orgName>
+								<orgName type="department" key="dep2">Institute of Political Science</orgName>
+								<orgName type="institution">University of Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Luis</forename><surname>Salamanca</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Contact: Laurence Brandenberger</orgName>
+								<orgName type="department" key="dep2">Institute of Political Science</orgName>
+								<orgName type="institution">University of Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">41st PolMeth Meeting</orgName>
+								<address>
+									<postCode>2024</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Introducing embed2discover: A tool for semiautomated, dictionary-based content-analysis</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">7BEBA4F42840C7D99471D4A7F14DEDBE</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:19+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The second part of the paper showcases the new NLP tool and examines the Legislative Elites' Reactions to Women's Inclusion.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The use of machine learning (ML) and (large) language models for the content analysis of text-based data has grown in popularity (for primer, see <ref type="bibr" target="#b20">Grimmer, Roberts and Stewart, 2021)</ref>, but researchers are often weary of employing such methods for fear of retrieving unreliable information <ref type="bibr" target="#b26">(Jordan, Paul and Philips, 2023;</ref><ref type="bibr" target="#b11">Chatsiou and Mikhaylov, 2020;</ref><ref type="bibr" target="#b48">Wilkerson and Casas, 2017)</ref>. In this paper, we introduce embed2discover, a tool for dictionary-based, supervised content analysis of (large-scale) text data. Our tool assists human coders (henceforth called 'users') in discovering topics and themes in (large) text corpora and classifying texts by combining the use of state-of-the-art methodologies from natural language processing (NLP) with language models and human annotations.</p><p>Traditionally, content analysis is performed as an expert-guided, human annotation process, where researchers devise (elaborate) coding schemes and then proceed to process text data manually and code the read text according to the schemes. <ref type="foot" target="#foot_0">2</ref> One of the most prominent examples refers to the Comparative Manifestos Project (CMP) <ref type="bibr" target="#b8">(Budge, 2001;</ref><ref type="bibr" target="#b28">Klingemann, 2006)</ref>, where human experts code party policy positions in manifesto texts. Human annotations have also been used to compile datasets. For instance, <ref type="bibr" target="#b37">Nussio and Clayton (2024)</ref> follow best practices and hand-code over 80,000 news articles to compile new dataset on lynching events in South America. Other examples include the detection of weak and strong populist elements in transcribed political party broadcasts <ref type="bibr" target="#b23">(Jagers and Walgrave, 2007)</ref>, or studying polarization dynamics in US congressional hearings on climate change bills using hand-coded discourse network data <ref type="bibr" target="#b16">(Fisher, Waggle and Leifeld, 2013)</ref>.</p><p>To speed up the hand-annotation process, computer-assisted content analysis was developed. Early approaches focus on automated content classifications (e.g., <ref type="bibr" target="#b2">Andersen et al., 1992;</ref><ref type="bibr" target="#b10">Carley, 1994;</ref><ref type="bibr" target="#b13">Cowie and Lehnert, 1996)</ref>, computer-assisted identification of grammatical patterns (e.g., <ref type="bibr" target="#b17">Franzosi, De Fazio and Vicari, 2012)</ref>, or topic extraction (e.g., <ref type="bibr" target="#b30">Lee and Kim, 2008)</ref>. The promise of computer-assisted content analysis is increased efficacy, allowing researchers to either broaden or deepen their analysis through the use of expanding data sources <ref type="bibr" target="#b19">(Grimmer and Stewart, 2013)</ref>. With recent innovations in natural language processing (NLP) and the advances in (large) language models, computer-assisted content analysis has reached new realms of possibilities (for overviews, see <ref type="bibr" target="#b29">Laurer et al., 2024;</ref><ref type="bibr" target="#b11">Chatsiou and Mikhaylov, 2020)</ref>. But fears potential users have to employ these techniques revolve around replicability, validity, and reliability of the coded results <ref type="bibr" target="#b26">(Jordan, Paul and Philips, 2023;</ref><ref type="bibr" target="#b3">Baden et al., 2022;</ref><ref type="bibr" target="#b35">Muddiman, McGregor and Stroud, 2019)</ref>.</p><p>The concern with using automated content analysis is that both supervised and unsupervised methods usually classify text into predefined categories, either using a dictionary (common in unsupervised approaches) or hand-annotated texts (i.e., sentences, paragraphs, or documents) <ref type="bibr" target="#b48">(Wilkerson and Casas, 2017)</ref>. Whereas dictionary approaches have considerably sped up the annotation process, they are also heavily biased <ref type="bibr" target="#b9">(Carley, 1990;</ref><ref type="bibr" target="#b47">Vourvachis and Woodward, 2015;</ref><ref type="bibr" target="#b46">Van Atteveldt, Van der Velden and Boukes, 2021)</ref>. The biggest issue resides in the fact that dictionaries are fixed words (or n-grams) that do not account for (i) linguistic flexibility, (ii) linguistic changes over time and (iii) translation biases (Van Atteveldt, <ref type="bibr" target="#b46">Van der Velden and Boukes, 2021)</ref>. For supervised methods, the user has to do is to set up a classification model and feed it with hand-annotated texts and allow a model to learn distinguishing characteristics from the text (i.e., existence of words, n-grams, linguistic structures). Then, the supervised machine learning models generally assign weights to these distinguishing characteristics and given enough training data, are able to assign categories to new texts based on the content and the learned weights (for applications, see <ref type="bibr" target="#b21">Hanna, 2013;</ref><ref type="bibr" target="#b27">King, Pan and Roberts, 2013)</ref>.</p><p>There are several drawbacks that currently make researchers weary of applying these unsupervised and supervised models to classify text:</p><p>1. Coding schemes based on dictionaries limit the coded texts linguistically, do not account for word changes over time (if temporal data is used, see <ref type="bibr" target="#b18">(Greene, Park and Colaresi, 2019)</ref>), and restrict the found texts. This is particularly problematic for concepts that are fussy in nature or have ill-defined boundaries, such as populism, inequality, or biodiversity.</p><p>2. For supervised approaches, the researcher does not know apriori how many labeled texts it has to provide the SML in order to achieve a high enough classification score. This makes the use of SML methods less desirable, as it strengthens the idea that these methods are unreliable and constitute a 'black box'.</p><p>3. For supervised approaches, the researcher also has to define a clear coding scheme in order to provide the labeled texts. This entails a lot of work.</p><p>embed2discover forgoes these problems and combines dictionary-based approaches to content analysis with supervised methods. In line with the conclusion from <ref type="bibr" target="#b36">Nelson et al. (2021)</ref> "these new computer-assisted methods can effectively complement traditional human approaches to coding complex and multifaceted concepts in the specialized domain of sociology (and related disciplines), but the evidence is mixed as to whether they can fully replace traditional approaches." (p. 227, emphasis added), our tool is designed to combine the best of both words: complementing advanced NLP methods with efficient human annotations. The goal of the tool is to help a user hand-label meaningful sentences in text data using a user-friendly UI and train a model to increasingly identify relevant sentences (embedded in paragraphs) by itself. First, the user defines a set of words pertaining to the topic to be discovered. Second, the tool allows the user to train a classification model using active learning. Active learning is powerful as it allows the user control over the annotation process (for a political science application, see <ref type="bibr" target="#b14">Dai and Kustov, 2022)</ref>. It is set up so that after every annotation step (e.g., when the user has annotated 10 sentences), the classification model is updated to learn from the new information it gains from the newly annotated sentences.</p><p>The tool collapses the complexity behind classifications of (large-scale) text data into four distinct steps.</p><p>Step 1 entails the expansion of a user-defined dictionary. Here, the user specifies a set of words (min. 5) that pertain to the category of interest. Next, the user specifies the breadth of the dictionary expansion with a set of parameters. Using text similarities based on embeddings, embed2discover then proposes a set of closely related words to expand the dictionary. This is particularly useful in cases where the topical category is ill-defined or has fuzzy boundaries. For instance, if a user is interested in identifying biodiversity-related bills in a corpus of legislative bills, then the word 'biodiversity' can be specified in the dictionary (along with a minimum of four other words), and the model then finds closely related words or n-grams, such as 'wildlife' or 'ecological area'. In Step 2, embed2discover takes the expanded dictionary and selects sentences containing one (or more) of the words or n-grams. The tool then automatically clusters these sentences based on semantic similarities. By clustering similar sentences, the user can then deal with them together, rather than coding them individually. The user is asked to coarsely classify each cluster as 'strongly relevant', 'vaguely relevant' or 'not relevant'. This coarse classification step speeds up the following active learning and allows the researcher to weed out sentences with dictionary words that are not on topic. This is particularly useful for languages where words have increased double meanings and only one meaning pertains to the topic under discovery.</p><p>Step 3 is the active learning step where the user refines the classifi-cation. Here, the user annotates a set of sentences. The user is shown sentences embedded in paragraphs.</p><p>Previous research advocates for coding text paragraphs or sections over sentences alone <ref type="bibr" target="#b4">(Barberá et al., 2021)</ref>, which is why embed2discover presents the sentence in bold, surrounded by up to 2 sentences pre and post (depending on the structure of the document, i.e., whether or not there has been a paragraph near the selected sentence). Once all sentences in a set are annotated, the model is trained anew, including the newly annotated sentences. After every step, the user is shown progress plots and classification performance scores to get a feeling for the annotation progress. Once the user is satisfied with the model's performance, they can move on to step 4. In Step 4, the final model labels all sentences in the dictionary. The user can then download the data alongside final accuracy and performance plots and proceed with their analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">The Mechanics Behind embed2discover</head><p>Figure <ref type="figure" target="#fig_0">1</ref> gives an overview over embed2discover. The tool consists of an input section, a training section, and an output section. The heart of embed2discover is the training section, consisting of 4 distinct steps, where human input is used in every step to keep the training on track. embed2discover then outputs labels for each sentence in the text corpus.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">The Text Corpus</head><p>The text corpus is set up as non-formatted text files in individual files, each with its own ID. The user can arrange their text files to their own liking. For text preprocessing, we employ the Spacy library <ref type="bibr" target="#b22">(Honnibal et al., 2020)</ref>, and use the cld2 language detector<ref type="foot" target="#foot_1">3</ref> to handle multilingual corpora. The functionality of the toolbox is based on word and sentence embeddings, i.e., vectorized representations of words and sentences sharing the distributional hypothesis property <ref type="bibr" target="#b39">(Sahlgren, 2008)</ref>: words and sentences frequently used in the same context have close vector representations.</p><p>We complement the text with two sets of embeddings: word embeddings for step 1 (dictionary expansion) and sentence embeddings for step 2 (coarse clustering). The toolbox supports various types of word embeddings: pre-trained word2vec <ref type="bibr" target="#b33">(Mikolov et al., 2013)</ref> and fasttext embeddings <ref type="bibr" target="#b6">(Bojanowski et al., 2016)</ref>, as well as averaged word embeddings derived from contextualized sentence embedding models such as BERT <ref type="bibr" target="#b15">(Devlin et al., 2018)</ref>. For the latter, the tool processes the entire corpus to obtain per-word em-</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input &amp; Setup</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Import text corpus</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Numerical representation</head><formula xml:id="formula_0">= {1, 0, 2.5, 1.2, -1, ..}</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input &amp; Setup</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Import text corpus</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Numerical representation</head><p>= {1, 0, 2.5, 1.2, -1, ..}</p><p>Step 1</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Set dictionary</head><p>Find similar words Expand dictionary</p><p>Step 2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Select sentences Cluster sentences Label clusters</head><p>Step 3</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Classification model Present sentence Annotate sentence</head><p>Step 4  beddings for each sentence. These word embeddings are heavily dependent on other words presented in the sentences, therefore, we average them across all the sentences and obtain word embeddings with respect to the "average" context of the word in the corpus <ref type="bibr" target="#b7">(Bommasani, Davis and Cardie, 2020)</ref>. Regarding sentence embeddings, the toolbox allows work with models using Transformers <ref type="bibr" target="#b49">(Wolf et al., 2019)</ref> and Sentence-BERT <ref type="bibr" target="#b38">(Reimers and Gurevych, 2019)</ref> libraries, including the SwissBERT <ref type="bibr" target="#b45">(Vamvas, Graën and Sennrich, 2023)</ref> model or the multilingual Sentence-BERT models, which allow embedding sentences written in different languages into shared vector space. The tool allows caching embeddings for the target corpus, facilitating the handling of large-scale document corpora without wasting significant computational resources.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">The Four Training Steps</head><p>The training is split into four steps (see Figure <ref type="figure" target="#fig_0">1</ref>). Step 1 expands the dictionary, step 2 clusters sentences, allowing for a first, coarse classification, step 3 uses active learning to refine the classification and step 4 applies the model to classify the full corpus. For all the steps we calibrate the algorithm hyperparameters (including k in KNN algorithm, classification model parameters, number of clusters in K-means algorithm in step 2) automatically using Optuna library <ref type="bibr" target="#b1">(Akiba et al., 2019)</ref>. The steps 1, 3 and 4 involve a classification model training. For the classification model, we mainly consider kernel logistic regression from (?), but any other classification model can be used. We also perform model confidence calibration to make the model confidence aligned with class probabilities. This is important both from the perspective of confidence interpretability and for the active learning step 3, which utilizes the model confidence to obtain new sentences to annotate.</p><p>For step 1, the user provides a set of keywords (i.e., a dictionary) with words pertaining to the topic to be discovered in the corpus. This dictionary is then expanded. The expansion is based on a k-nearest neighbors (KNN) algorithm and works in two stages. In the first stage, we gather neighbors for each word in the dictionary. In the second stage, we train a binary classification model treating dictionary words and their neighbors as positive class words. For the negative class, we randomly sample words from the corpus.</p><p>In this setting, we assume that the number of words relevant to the specific task is small in comparison to the full corpus vocabulary, and, therefore, the words randomly sampled from the corpus are unlikely to be relevant dictionary words. Since the next step performance is heavily dependent on the quality of the expanded dictionary we also provide parameters to control the expansion: the model classification proba-bility threshold, controlling the confidence of the model to add the words into the dictionary, and relative frequency threshold, allowing to discard too frequent words from the dictionary. Once the dictionary is sufficiently expanded, embed2discover moves away from the word level to the sentence level. In Step 2, all sentences with the expanded dictionary are identified. We gather all sentences containing at least one word from the expanded dictionary, vectorize them, and perform clustering using K-means algorithm. For the K-means, we use faiss library <ref type="bibr" target="#b25">(Johnson, Douze and Jégou, 2019)</ref>, which provides an efficient implementation of the clustering algorithm for the large-scale problems. Our idea for this step lies in the property of the sentence embeddings: if the sentences with similar meanings lie close enough in the vector space, then during clusterization they will probably be in the same cluster. This step allows us to clusterize them and work with them on a cluster-level instead of considering them individually.</p><p>For each cluster, a list of sentences is then provided to the user. The user then labels the clusters 'strongly relevant', 'vaguely relevant', or 'not-relevant'. This coarse classification of sentences is used for the first step in the active learning process. In detail, we use a subsample of the sentences in the clustering: the number of sentences to sample depends on the clustering quality and is selected by the user. If the clustering is imperfect, we suggest sampling only a few sentences and improving classification using an active learning procedure. We support two approaches for classification: with respect to class order (i.e., non-relevant &lt; vaguely relevant &lt; strongly relevant) using an ordinal classification approach, and without, treating all the classes as independent and hierarchy-free.</p><p>The active learning process (Step 3) follows the standard setup: For each round, the user is provided with a set of sentences to label. After completing one labeling round, the classification is updated. By choosing a rather simple model, we can retrain it from scratch after every round. For faster user interaction, we don't perform a hyperparameter selection for the rounds when the number of annotated sentences has not changed significantly. After each round, the user gets active learning progress plots showing the percentage of sentences with matching sentence model prediction and user annotation.</p><p>The strategy of sentences to annotate selection can be selected in the configuration file of the tool. By default, we use the following strategy:</p><p>1. estimate a best classification model probability threshold by F1-score using a cross-validation procedure;</p><p>2. take a pool of sentences with confidence higher than the obtained threshold; 3. from this pool, select sentences with the highest confidence, sentences with the lowest confidence, and sentences randomly sampled from the pool.</p><p>The number of sentences in the pool and the ratio of sentences with different levels of confidence can be calibrated in the configuration file. The intuition behind this procedure is the following: we take only sentences in which the model is rather confident, this is obtained using a F 1 -score threshold. We mostly obtain sentences randomly sampled from the pool to cover all the confidence levels of the model. We also obtain a subsample of least confident sentences, to cover the borderline cases, when the model is uncertain in its decision, and the most confident sentences, which allows the user to see if the model is overconfident wrongly in some sentences and find out annotation problems in the early stages. For example, this overconfidence can happen when the clustering is performed badly or the annotation is imperfect. Inspired by asymmetric active learning concept <ref type="bibr" target="#b50">(Zhang et al., 2018)</ref> by default active learning strategy we don't give the user sentences that the classification model treats as non-relevant or vaguely relevant and process active learning in an imbalanced way. The reason for this is that we are mainly focused on the task of finding sentences that are rare in the corpus, and the ratio of strongly relevant sentences to other sentences is highly imbalanced. However, potentially this can lead to a bad model recall: without providing the classification model with negative examples from the user, the model can overfit the strongly relevant sentences or some specific subsample of such sentences. For this reason, we also support the least confidence active learning strategy that gives the user sentences with the least confidence without thresholding them. The preferred active learning strategy can be set in the configuration of the tool between active learning annotation steps.</p><p>The tool also supports using multiple active learning strategies in a sequential way.</p><p>Once the model is deemed adequate by the user, the user can apply the classification to each sentence in the corpus (step 4). At this step, the model is retrained from scratch using the labels from the active learning step. The tool iterates over all the documents from the corpus and applies the classification model to each sentence. The user can select what sentence classes to save during this step. The result of this step is a file with all the classified sentences of the classes required by the user, their context, classification model confidence, and metadata, including the original filename of the sentence, the position of the sentence in the text, and the language of the document. 3 How to Use embed2discover</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Input and Setup</head><p>Figure <ref type="figure" target="#fig_1">2</ref> shows a screenshot of the embed2discover app. The sidebar on the left helps guide the researcher through the different training steps. Project setup entails uploading text <ref type="bibr">(and, if desired, pre-trained embeddings)</ref>. (Note: The text import button is under development and will be added to the setup page at a later stage.) The user can add a short description, specify the embedding type, and make custom changes in a config file (for advanced users).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Training Step 1: Dictionary expansion</head><p>In step 1, the user specifies the dictionary along with the following settings:</p><p>• Dictionary language: Set the language of the dictionary.</p><p>• Search in languages: Texts in which language should be used to expand the dictionary. Step 1 results of the dictionary expansion. The first 25 rows in the table are shown to the user for easy validation. Alternatively, the user can download the expanded table and validate it offline.</p><p>• Threshold for classifier confidence [0-1]: Low values (0.1-.4) expand the dictionary, and higher values restrict the dictionary to the specified words.</p><p>• Expanded dictionary size: Used to the upper bound of the dictionary.</p><p>• Dictionary: Text field to specify the dictionary words.</p><p>• Remove frequent words [0-1]: Specify to remove the top percentage of frequent words in the corpus from the dictionary. embed2discover then performs the expansion and displays the results to the user, see Figure <ref type="figure" target="#fig_2">3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Training Step 2: Coarse Classification</head><p>In step 2, the user performs a coarse classification with the help of the following settings:</p><p>• Minimal cluster number: Specify the minimal number of clusters that the k-Means clustering should test for.</p><p>• Maximal cluster number: Specify the maximal number of clusters the k-Means clustering should test for.</p><p>• (Optional) maximal files to read: To speed up the process (i.e., for very large corpora), it may be advisable to only read in a portion of the corpus and choose sentences to cluster from the reduced set. The user is advised that the subsequent step (3) still uses the full corpus and is unaffected by the reduced set selected here.</p><p>The clustering step currently takes a few hours to run (depending on dictionary size, text complexity, and corpus size). The user is advised with an estimated time-to-completion notification in the app. The app can be closed while the computations are running, and the user can return to t,he app the next day to continue with the manual annotations of the clusters.</p><p>Figure <ref type="figure" target="#fig_3">4</ref> shows the UI for coarse classification. For each cluster, the user is presented with up to 20 sentences. The user can go through all clusters and label them. Alternatively, the user can download the clustering data (without sentence count restrictions) and examine them offline. This feature is useful if the cluster size exceeds 100 and the user wants to use search options in the sentences to find relevant clusters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Training Step 3: Refined Classification</head><p>In step 3, the user activates active learning to refine the classification with the help of the following settings:</p><p>• Language: Specify the language in which to label sentences. These languages correspond to the ones automatically detected in step 1 upon uploading of the text data.</p><p>• Maximal number of sentences per active learning iteration: Set the number of sentences the user wants to annotate during one labeling step. To speed up the presentation of new sentences, the user is advised to restrict the number of sentences at this stage.</p><p>• Selecting between using sentences from coarse classification or previous refined classification step: In the first round, the model pulls sentences from the coarse annotations. In subsequent rounds, the user most likely wants to refine the model (although sometimes the user wants to start over and choose sentences from step 2 in order to restart the annotation process). Figure <ref type="figure">5</ref> shows the UI for the active learning step. The user is informed of the annotation round, how many files have been processed, and how many sentences have been coded so far. Afterward, the user is presented with a set number of sentences for annotation. Upon annotating the sentences, the user can either stop the active learning step (e.g., to take a break or move on to step 4) or continue labeling with a new set of sentences.</p><p>Active learning models can be trained indefinitely. The user has to stop the annotation process once the model is deemed good enough. embed2discover provides precision-recall as well as additional classification accuracy statistics (f1 and f0.5) together with progress reports to show how the classification improves over time (i.e., after each step).</p><p>Figure <ref type="figure">5</ref>: Screenshot of step 3 of embed2discover: The user is presented with (embedded) sentences and codes each sentence as 'strongly relevant', 'vaguely relevant' or 'non-relevant'.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Training Step 4: Full Corpus Classification</head><p>In step 4, the user uses the trained model in order to apply labels to every sentence in the corpus with the help of the following settings:</p><p>• Language: Specify the language in which to label sentences. These languages correspond to the ones automatically detected in step 1 upon uploading the text data.</p><p>• Selecting between using the model from coarse classification or the last refined classification step • Save sentences in the following classes: The user can save only 'strongly relevant', 'vaguely relevant', 'non-relevant' sentences or a combination thereof. 4 Showcase: Identifying Biodiversity-Related Parliamentary Bills</p><p>We showcase the power of embed2discover using legislative proposal and bill texts from the Swiss Federal Assembly. The Swiss Federal Assembly was founded in 1848 and has documented its activities since 1891. We have collected data on all legislative proposals and bills (hereafter short: bills) proposed to the Swiss parliament between 1891 and today, including federal reports, enactment drafts, parliamentary and cantonal initiatives, motions, postulates, recommendations (until 2003), interpellations and questions <ref type="bibr" target="#b40">(Salamanca et al., 2024)</ref>. The resultant dataset consists of over 85k bills, spanning 21 topics <ref type="bibr" target="#b41">(Schlosser et al., 2023)</ref>.</p><p>There are two major challenges when trying to apply dictionary-based classification to this data. First, the data spans over 130 years of legislative activity and reflects significant topical shifts in parliamentary issue engagement over time. Second, not only has issue engagement changed over time, but language itself has evolved over the past 130 years. We use embed2discover in order to identify bills related to the overarching topic of biodiversity. We have chosen this topic for two reasons: one, biodiversity issues span multiple policy sectors, including the obvious environment, energy, and spatial planning sectors, but also touch upon health, public finances, and international relations. Second, biodiversity issues have risen to the national agenda in the late 1950ies ?, and before have been addressed under the umbrella of nature conservation and protection (from and of nature). This is ideal for showcasing the power of embeddingbased dictionaries and how they can account for language and focus changes over time while still classifying relevant texts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Classifying Biodiversity Bills</head><p>We start our classification task by setting up a simple dictionary. We focus on words associated with biodiversity, as described in the biodiversity strategy of the Swiss Federal Council<ref type="foot" target="#foot_2">4</ref> . We deliberately chose 'modern' dictionary words to showcase the usefulness of expanding dictionaries using text embeddings.</p><p>Our dictionary words are: "Biodiversität", "Biodiversitätsprogramm", "biodiversitätsfreundliche", "Waldbiodiversität", "biologisch", "Vielfalt", "Tierpopulation", "Pflanzenpopulation", "Tierart", "Pflanzenart", "Ökosystem", "Biotop", "Lebensraum", "Lebensräume", "Ökosystem", "Ökosystemleistung".</p><p>We use the default settings in embed2discover to expand our dictionary (i.e., classifier confidence = 0.5, expanded dictionary size = 1000, removing 10% most frequent words). Close word matches include:</p><p>"wildtierart", "gewässerbiodiversität", "biodiversitätsverträglich", "pflanzensorte", "ökofläche", and "landschaftsvielfalt".</p><p>In the coarse sentence classification step, we used the default settings (min. cluster size = 3, max. cluster size = 1000, reading in all files). It resulted in 33 clusters (using N = 2289 sentences), for which we hand-labeled 652 sentences as 'strongly relevant', 61 as 'vaguely relevant' (i.e., 1 cluster), and 1486 as 'not relevant' (with 1 cluster of 90 sentences set to ignore as it mostly pertained article listings, which are difficult to classify without more context).</p><p>In the refined sentence classification step, we used the default settings (10 sentences per run, gathering at most 10 per class) to train our classification model. We trained for 30 steps (i.e., coding 300 sentences), which took approximately 5 hours of annotation time. We stopped the classification once PR hit 80% and of the 300 sentences, more than half were coded as 'strongly relevant'. We have made the experience that the model performs best, once the 'strongly relevant' sentences outweigh the 'not relevant' sentence count.</p><p>But of course, this depends on the complexity of the texts as well as the complexity of the topic. Figure <ref type="figure" target="#fig_5">7</ref> shows three example sentences from the active learning step with strong relevance.</p><p>We then ran the full classification step (step 4) to obtain labels for every sentence in the corpus. Upon exporting, we aggregated the sentences back into our bills dataset, classifying bills as 'biodiversity-bills'</p><p>once they contained at least 1 sentence marked 'strongly relevant' (at least 3 sentences for bills with more than 100 sentences). This resulted in a total of 4, 203 bills (out of 84, 918 bills).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">The Benefits of Moving Beyond Dictionary Approaches</head><p>We deliberately chose 'modern' dictionary words, i.e., we did not go back into historical texts to see how people have written about biodiversity around this time. The goal is to show that by using embedding similarities, dictionaries can be expanded safely to incorporate language changes over time. However, we look forward to future studies examining dynamic dictionaries and language changes in closer detail. Figure <ref type="figure">8</ref> shows word usage in bill texts across time. The term 'biodiversity' was first used in a parliamentary bill in 1991. This is crucial because a simple dictionary-based approach would not find any relevant biodiversity bills prior to 1991 simply because the word was not used. We see, however, that terms such as 'nature' or 'habitat' have been used and correspond quite well to the share of biodiversity bills. any of the 10 dictionary words provided at the start of our classification task. Rather, these bills contain words such as 'nature', 'environment', 'forest', or 'bodies of water'. In Figure <ref type="figure">9</ref>, we see that the prevalence of these words are similar among both groups (bills with keywords and bills without) and substantively larger than bills classified as 'non-relevant'. embed2discover is thus able to expand the dictionary in a meaningful way, allowing for more encompassing topical classifications of texts.  Over the past 130 years, biodiversity issues have gradually gained more space in the federal parliament.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Biodiversity Across the Swiss Political Landscape</head><p>Figure <ref type="figure" target="#fig_7">11</ref> shows how biodiversity bills have increased their share from 0.23% in the 15th legislative period to around 9.5% of all bills submitted to the parliament in the 50th legislative period. While researchers argue that Switzerland has ignored biodiversity issues until the late 1950ies <ref type="bibr" target="#b24">(Jaligot et al., 2019)</ref>, it is clear that some parliamentarians, parliamentary groups as well as the Federal Council have addressed issues of landscape and nature protection. The first biodiversity bill, for instance, deals with the river correction and its impact on the surrounding landscape. In 1925, MP Ryter submitted a bill asking the federal government to take a position on how the new firing range would affect local forests. Interestingly, the vast share of biodiversity bills (87%, compared to the global average of 74%) are submitted as personal bills (parl. initia-  5 Showcase 2: After the Enfranchisement: Legislative Elites' Reactions to</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Women's Inclusion</head><p>In our second showcase, we want to understand whether members of parliament update their behavior when their constituency expands. Switzerland provides an interesting case study, as women's suffrage was only introduced in Switzerland in 1971. Despite early attempts (the first one in 1868), it took Swiss politicians and the Swiss government a long time to grant the women to vote and be elected (WR). In 1918, two motions were submitted to the parliament demanding women's right to vote, but even though both passed a parliamentary vote, the motions were ignored by the Federal Council tasked to draft an enactment. In 1951, the Federal Council called the WR 'premature', and only in 1957 did they finally pass a bill to parliament.</p><p>This bill eventually passed, but as it was subject to the referendum right, Swiss male voters decided against granting WR in 1959 (by popular vote, 33% in favor). In 1968, the Federal Council wanted to sign the human rights convention but was stumped by the fact that Swiss women were not granted political rights. A second campaign was launched, and in February 1971, Swiss male voters granted women the right to vote (for more details on the Swiss women's rights movement, see Figure <ref type="figure" target="#fig_0">18</ref> in the Appendix).</p><p>While previous studies on enfranchisement focus primarily on how rights were gained <ref type="bibr" target="#b0">(Acemoglu and Robinson, 2000;</ref><ref type="bibr" target="#b31">McConnaughy, 2013;</ref><ref type="bibr" target="#b44">Teele, Kalla and Rosenbluth, 2018)</ref>, fewer studies focus on how representation styles have changed and how politicians took on their role to represent a broader constituency.</p><p>Similarly, previous work on enfranchisement has often focused on electoral mobilization and how group identities shift as newly enfranchised join the constituency <ref type="bibr" target="#b12">(Corder and Wolbrecht, 2006;</ref><ref type="bibr" target="#b5">Berlinski, Dewan et al., 2011;</ref><ref type="bibr" target="#b34">Morgan-Collins, 2021;</ref><ref type="bibr" target="#b42">Skorge, 2023)</ref>. We are interested in the supply side of the enfranchisement dynamics in Switzerland and how political parties and legislators change their legislative behavior to accommodate the newly enfranchised electorate. Therefore, we ask: Do legislators give more attention to the policy demands of newly enfranchised groups after enfranchisement?</p><p>In order to tackle this research question, we need (i) to know the political demands made by women before the enfranchisement and (ii) to know what MPs have proposed in parliament and whether or not it aligns with the women's demands. Using qualitative analysis based on press releases from the major women's organization in Switzerland (Schweizerischer Verband für Frauenstimmrecht; later renamed to Schweizerischer Verband für Frauenrechte), we have identified four major (Swiss-centric) women's demands:</p><p>1. demand for political rights: including the right to vote, be elected to cantonal and national parliaments, and equal representation in political offices 2. demand for preservation and acquisition of citizenship rights upon marriage: women lost their citizenship if they married a man without Swiss citizenship (the reverse was not the case, i.e., men did not lose Swiss citizenship if they married a foreign woman).</p><p>3. demand for equal opportunities in education and labor: including equal pay for equal work and no discrimination in education.</p><p>4. demand for the end of insurance discrimination: including equal insurance premium for men and women.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Classifying Women-Centric and Women's Demands Bills</head><p>In order to identify whether the Swiss parliament tackles women's issues (broad and narrow), we base our analysis on the complete records of bills proposed to the Swiss parliament since 1891. We purposefully use a long time range to describe how the Swiss parliament has tackled women's issues over time, not just those related to women's enfranchisement.</p><p>We train five different embed2discover models (see Table <ref type="table">1</ref>). The first model is a simple model that codes women-centric bills. We start off with nine words indicating 'women' in German. We expand the dictionary to words strongly related to women and then actively train the model on identifying sentences that have something to do with women's issues (including maternity leave, health issues, pay issues, women's immigration issues, violence against women, etc.). Our coding efforts result in a very broad view of womencentric issues. Out of the 85k bills, we assign over 12.5k bills to being women-centric.</p><p>The second, third, fourth, and fifth models all train a very specific embed2discover model, identifying one of the four women's demands between 1955 and 1975. Table <ref type="table">1</ref> summarizes the model specifications for these four models. The most important change we made was that we narrowed the expansion of the dictionary to a minimum. When working with very narrow topics, we found it most helpful to narrow the dictionary not to include too many adjoining issues.</p><p>Table <ref type="table">1</ref>: Overview of the five different embed2discover models. C1 codes women-centric bills with a simple women-centric dictionary and trained on sentences identifying women's issues (broad coding). Embed2discover parameters:</p><p>Step 1: Threshold for classifier confidence 0.5 0.9 0.9 0.9 0.9</p><p>Step 1: Remove frequent words Figure <ref type="figure" target="#fig_10">12</ref> offers descriptive insights into the evolution of women-centric bills over time in the Swiss parliament. Figure <ref type="figure" target="#fig_10">12</ref> A illustrates the absolute number of women-centric bills submitted to the Swiss parliament over various legislative periods, starting from 1905 to 2020. The bill counts are aggregated over these periods, and questions are not excluded from the count. We observe a significant increase in the number of women-centric bills submitted over time, especially noticeable from the 1980s onwards. The period after 1991 shows a marked increase in the submission of such bills, with the highest number of submissions occurring in the most recent legislative periods. We further highlight three main occurrences, the failed attempt to introduce womens' rights in 1959, the introduction of women's suffrage in 1971 at the Swiss national level, and the first large women's strike in 1991, which was the largest public mobilization of women in Switzerland since 1918. We further observe that this occurrence coincides with a strong increase in submitted women-centric bills in absolute terms. Figure <ref type="figure" target="#fig_0">18</ref> in the Appendix introduces a timeline of the most relevant changes and occurrences in Switzerland with regard to the introduction of women's suffrage.</p><p>Figure <ref type="figure" target="#fig_10">12</ref> B illustrates the percentage of women-centric bills over the same time periods as Plot A, highlighting significant change points. In the 1940s, women-centric bills mainly dealt with family rights. During the 1960s and 1970s, the focus of these bills shifted to issues concerning marriage, maternity, and insurance discrimination. After 1991, there was a notable increase in bills addressing societal challenges that disproportionately affect women. Several significant change points are marked throughout this period, indicating instances where the percentage of women-centric bills significantly increased.</p><p>Figure <ref type="figure" target="#fig_10">12</ref> C represents the number of bills submitted over time that relate to specific political demands of Swiss women. Early legislative efforts focused on securing the right to vote and ensuring equal representation in all governing bodies. In 1984, the demand for the preservation of citizenship upon marriage was granted, with subsequent bills aiming at the re-attainment of lost citizenships. More recently, there has been an increased focus on the demand for equal pay and the eradication of wage discrimination. Additionally, there is a notable number of bills addressing education opportunities for women, insurance discrimination, and maternity leave.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Effects of women's enfranchisement on political engagement of Swiss members of parliament</head><p>Over time, there has been a notable increase in both the percentage and the absolute number of womencentric bills and those addressing the political demands of Swiss women. the demand to end insurance discrimination focused on equal costs of health insurance and demands for maternatiy leave  Figures <ref type="figure" target="#fig_2">13(a</ref>) and 13(b) illustrate the results of a logistic regression on whether a submitted bill is a women-centric bill, or a women's demands bill, respectively. In Figure <ref type="figure" target="#fig_2">13</ref>(a), we observe a notable increase in the post-1991 period, reaching approximately 20%. In contrast, the earlier periods, specifically <ref type="bibr">pre-1959 and between 1959-1971</ref>, exhibit a lower probability of a bill being women-centric. This indicates a significant shift in legislative focus towards women's issues in the later periods.</p><p>Figure ?? depicts a similar trend to Figure <ref type="figure" target="#fig_2">13</ref>(a). However, the increasing trend is more gradual over the selected time periods. As the parliament tackles a broad variety of issues, the fraction of bills addressing specific women's demands is small, as is reflected in the small marginal effects. Nonetheless, over time, the probability quadruples between the pre-1959 period and the post-1991 period.</p><p>Figures <ref type="figure" target="#fig_3">14(a</ref>) and 14(b) present marginal effects from two-way fixed effects regression models on the percentage of women-centric bills, and women's demands bills respectively, showing the effects between two legislative periods and fixing on within-MP effects. Two key historical events are highlighted: the failed women's rights introduction in 1959 and the successful introduction in 1971. The coefficients and confidence intervals are depicted for each comparison between legislative periods. We see that MPs who experienced the 1971 enfranchisement, did not change their behavior. In fact, MPs tend not to change their engagement, no matter the times.</p><p>Given these insights, we thus turn to the question of who submits those women-demands bills. Figure <ref type="figure" target="#fig_11">15</ref>(a) shows that in particular post 1991, it is more likely that a women-demands bill is submitted by a   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>This paper introduces embed2discover, a semi-automated tool designed for dictionary-based content analysis, combining advanced natural language processing techniques with human annotations. This paper demonstrates how embed2discover can efficiently expand and refine dictionaries to accommodate linguistic and contextual changes over time, ensuring comprehensive and accurate text classification for large corpora. Overall, embed2discover presents a significant advancement in the field of automated content analysis, bridging the gap between machine efficiency and human interpretative capabilities. Additionally, this paper provides two showcases that highlight embed2discover's versatility: one focusing on the evolution of biodiversity-related bills and the other on legislative elites' responses to women's enfranchisement in Switzerland. With the help of embed2discover, we were able to code broad topics as well as very narrow women's demands. These applications underscore the potential of embed2discover to enhance traditional content analysis and classification methods, providing more accurate and nuanced insights into large-scale text corpora.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Overview over embed2discover.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Screenshot of embed2discover project set up page.</figDesc><graphic coords="10,69.17,59.37,459.20,317.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Screenshot of embed2discover:Step 1 results of the dictionary expansion. The first 25 rows in the table are shown to the user for easy validation. Alternatively, the user can download the expanded table and validate it offline.</figDesc><graphic coords="11,132.95,59.36,331.66,348.31" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Screenshot of step 2 of embed2discover: For each sentence cluster, the user is presented with 20 sentences and can label them as 'strongly relevant', 'vaguely relevant', or 'non-relevant'. If the user wants to ignore the cluster, they can select 'initially ignore' (default value).</figDesc><graphic coords="13,107.43,59.36,382.68,348.10" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Annotation progress and accuracy plots. These plots are provided to the user after every annotation step in order to advise them about the progress of the annotation.</figDesc><graphic coords="15,43.65,397.01,255.12,198.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Screenshot of embed2discover illustrating three strongly relevant sentences in the refine classification step (step 3).</figDesc><graphic coords="18,69.17,59.37,459.21,395.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 10</head><label>10</label><figDesc>Figure 10 maps the biodiversity bills into a two-dimensional issue space. Biodiversity bills can be found in every one of the 21 political domains of the Swiss political landscape. Of course, the most predominant domains are Agriculture (N = 1502, 35.7%) and Environment (N = 1001, 23.8%). Biodiversity issues are also addressed in the context of Spatial Planning (N = 306, 7.3%), Energy (N = 247, 5.9%), (Public) Transportation (N = 223, 5.3%) or in International Affairs (N = 147, 3.5%). The bills submitted to the different policy domains cover their unique issues (e.g., Health) while specifically addressing issues of biodiversity, landscape protection, and flora and fauna.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 11 :</head><label>11</label><figDesc>Figure 11: Development of legislative bills on biodiversity issues over time. Panel A shows the share of bills submitted to parliament (both chambers) over time, marking key points in Swiss landscape and nature protection efforts. Panel B depicts the source of sponsors, with the lion's share of biodiversity bills submitted by MPs themselves. Panel C examines MP-sponsored bills in closer detail, depicting the party affiliations of sponsors over time.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head></head><label></label><figDesc>the demand for the preservation of the citizenship upon marriage was granted in 1984; later bills demand re-attainment of lost citizenshipsCapart from the right to vote, bills call for equal representation in all governing bodies the demand for equal pay has received strong attention, especially with increasing statistical assessments of the gender pay gap. Equal opportunities for women in education has received less attention.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 12 :</head><label>12</label><figDesc>Figure 12: Descriptive insights of women-centric bills over time. A illustrates the increase of women-centric bills over time in absolute numbers. B indicates three significant change points in the submitted bills. C shows the increase of bills for each of the specific political demands.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 15 :</head><label>15</label><figDesc>Figure 14: FE Regression on Percentage of Women-Centric Bills and Bills Related to Political Demands</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 16 :</head><label>16</label><figDesc>Figure 16: Marginal effects of cantonal differences on bills being women-centric (a) or tackling a women's demand (b).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 17 :</head><label>17</label><figDesc>Figure 17: Marginal effects of gender differences on bills tackling a women's demands.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="14,107.43,59.37,382.67,288.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Take all documents Classify all sentences Export sentences</head><label></label><figDesc></figDesc><table><row><cell>biodiversity biotope ecosystem habitat species …</cell><cell cols="2">agrobiodiversity biodiversity forest biodiversity wild animal species habitat protection aquatic biodiversity biotope biotope inventory plant species stepping stone ecological</cell><cell>biodiversity agrobiodiversity forest biodiversity habitat protection biotope biotope inventory …</cell></row><row><cell></cell><cell></cell><cell></cell><cell>cluster 1</cell></row><row><cell></cell><cell></cell><cell></cell><cell>cluster 2</cell></row><row><cell>…</cell><cell></cell><cell></cell><cell></cell></row><row><cell>step 3.1</cell><cell></cell><cell></cell><cell>not relevant</cell></row><row><cell>step 3.2 ... step 3.n</cell><cell>.</cell><cell>.</cell><cell>vaguely relevant</cell></row><row><cell></cell><cell></cell><cell></cell><cell>strongly relevant</cell></row><row><cell></cell><cell>n-times</cell><cell></cell><cell></cell></row><row><cell></cell><cell>Step 3.2 -3.n</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Output Export labels Training Step 1 Set dictionary Find similar words Expand dictionary Training Step 2 Select sentences Cluster sentences Label clusters Training Step 3 Classification model Present sentence Annotate sentence Training Step 4 Take all documents Classify all sentences Export sentences &amp; labels</head><label></label><figDesc></figDesc><table><row><cell>biodiversity biotope ecosystem habitat species …</cell><cell cols="2">agrobiodiversity biodiversity forest biodiversity wild animal species habitat protection aquatic biodiversity biotope biotope inventory plant species stepping stone ecological</cell><cell>biodiversity agrobiodiversity forest biodiversity habitat protection biotope biotope inventory …</cell></row><row><cell></cell><cell></cell><cell></cell><cell>cluster 1</cell></row><row><cell></cell><cell></cell><cell></cell><cell>cluster 2</cell></row><row><cell>…</cell><cell></cell><cell></cell><cell></cell></row><row><cell>step 3.1</cell><cell></cell><cell></cell><cell>not relevant</cell></row><row><cell>step 3.2 ... step 3.n</cell><cell>.</cell><cell>.</cell><cell>vaguely relevant</cell></row><row><cell></cell><cell></cell><cell></cell><cell>strongly relevant</cell></row><row><cell></cell><cell>n-times</cell><cell></cell><cell></cell></row><row><cell></cell><cell>Step 3.2 -3.n</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc>Word usage changes over time. Whereas dictionary approaches fail if words are not present in the texts, embed2discover can extrapolate similar words and find close associations.</figDesc><table><row><cell cols="2">10.0%</cell><cell></cell><cell></cell></row><row><cell></cell><cell>7.5%</cell><cell></cell><cell></cell></row><row><cell>Share of bills</cell><cell>5.0%</cell><cell></cell><cell></cell></row><row><cell></cell><cell>2.5%</cell><cell></cell><cell></cell></row><row><cell></cell><cell>0.0%</cell><cell></cell><cell></cell></row><row><cell></cell><cell>20</cell><cell>30</cell><cell></cell><cell>40</cell><cell>50</cell></row><row><cell></cell><cell>(1905)</cell><cell>(1935)</cell><cell></cell><cell>(1975)</cell><cell>(2015)</cell></row><row><cell></cell><cell></cell><cell cols="2">Legislative Period</cell></row><row><cell></cell><cell></cell><cell cols="2">(Year at start of LP)</cell></row><row><cell></cell><cell></cell><cell>Biodiversität</cell><cell>Lebensraum</cell><cell>Natur</cell></row><row><cell>Figure 8:</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>1 (projected from bill embeddings) Dimension 2 (projected from bill embeddings) Issue space with highlighted biodiversity bills</head><label></label><figDesc>Biodiversity bills (colored dots) are plotted into a two-dimensional issue space. They cover all 21 policy domains, some to a higher degree than others. The word clouds represent the top 50 nouns associated with these biodiversity bills.</figDesc><table><row><cell cols="3">Biodiversity-bills containing at least one dictionary word</cell></row><row><cell>25%</cell><cell>27.2%</cell><cell>Share of bills containing one of the following dictionary words</cell></row><row><cell>0% 7.5% 0.0% 2.5% 5.0% Share of bills</cell><cell cols="2">49% 20.7% 26.5% 31.4% 31.1% 28.9% Share of bills containing one of the following biodiversity-associated words 24% 4.7% 5.2% 21% 0.1% 0.6% 0% 0% 0.1% Pflanzenart Biotop Lebensraum Vielfalt Biodiversität 0% 20% 40% Percentage of bills 37.7% 3.4% 4.1% 7.5% Wald Natur Umwelt 15% 8.8% 0.7% 19.8% 0.5% biologisch 0.1% Ökosystem 0.1% first bill on biodiversity Tierart 0% 0% Pflanzenpopulation Tierpopulation parliament demands 1892.011 Correction der Ilfls und des Schonbaches to add a biodiverstiy strategy to the legis-lative program 0.1% 0% 10% 20% Percentage of bills Technology,Communication Health Public Finances Taxation Civil Rights Landwirtschaft Schweizer Prozent Jahren Schutz Tiere Franken Agrarpolitik Schäden Absatz Bevölkerung Umsetzung Situation Tieren 20 (1905) 30 (1935) 40 (1975) (2015) 50 Fragen Kosten Produkte Pflanzen Nutzung Flächen Wald Produktion Jahr Auswirkungen Frage Millionen Direktzahlungen Umwelt Holz Biodiversität Arten Mittel Entwicklung Bereich Förderung Erhaltung Wolf Teil Land Initiative Forschung Bewirtschaftung Antibiotikaresistenz Beantwortung Ernährung Krankheiten Grundlagen Tier Spirituosen Klimawandel Jahre Bedeutung Einsatz Zukunft Bundesamt Bauern Bienen Menschen Gesundheit Umwelt Bevölkerung Antibiotika Strategie Auswirkungen Menschen Schweizer Embryonen Absinth Antibiotikaresistenzen Folgen Kindern Bereich ValdeTravers Zusammenhang Mensch BAG Produkte Kinder Stoffen Komplementärmedizin Jahre Absinthverbot Wirkung WHO Zusammenarbeit Bakterien Verbreitung Risiko Fragen Human NFP Erkenntnisse Frauen Verhütungsmittel landscapes Fragen1 Unternehmen Klimaerwärmung tected natural monuments and Prozent Forschung Zugang "Botschaft und Beschlusses-Entwurf vom 30. August 1892 (Bun-desblattIY. 381), betr Bewilligung eines Bundesbeitrages an die Kantone Bern und Luzern für die Correction des Schcnbaches und der Ilfis von oberhalb Marbach bis zur Einmündung..." popular initiative The biodiversity initiative demands designation of pro-excessive protest in Fricktal against en-vironmental pollution of a local alluminium Submission of company (Fluorkrieg)</cell></row><row><cell cols="3">75% 50% 25% B bill sponsors Kulturlandschaft Forstwirtschaft Landschaftsschutz Schutzgebiet Heimatschutz Kulturland Umweltschutz Gewässer Boden Biodiversity-bills containing zero dictionary words 3.2% 18.5% 3.9% 7.6% 10.5% 4% 5.3% 3.1% 3% 2.5% 17.4% 2.1% 7% 8.2% 3.9% 3.8% 1.4% 1.2% 0.1% 3.8% 0% 1% 0.6% 0.1% 0.1% 0.1% 0% 0% 10% 20% 30% 40% Percentage of bills bills without biodiversity connection biodiversity bills containing dictionary words biodiversity bills without dictionary words 72.8% (Public) Transportation National Security International Affairs Migration Criminal Law Parliamentary Procedure Labor Social Welfare Financial Sector Economy Legislative Period bill on setting up of a first bill mentioning the (Year at start of LP) firing range word "biodiversity" 17% Ratifikation Education Research Agriculture Environment Energy Spatial Planning Culture, Religion Sports, Entertainment Government Operations Dimension Wasserkraft Energien Energie Strom Nutzung Anlagen Auswirkungen Ausbau Umwelt Bedeutung Kosten Prozent Schutz Schweizer Potenzial Jahr Bau Natur Absatz Energiestrategie Franken Projekte Bereich Vorlage Wasser Förderung Wasserkraftwerke Umsetzung Landschaft Fragen Windenergie Gesetz Gewässer Produktion Ziel Jahren Entwicklung Stromproduktion Bevölkerung Landschaften Millionen Studie Jahre Zeit Revision Bundesverfassung Pflanzen Interessen Betrieb Gemeinden Biodiversität Schutz Umwelt Natur Jahren Auswirkungen Umsetzung Prozent Schweizer Fragen Nutzung Millionen Franken Bedeutung Strategie Bevölkerung Initiative Entwicklung Gewässer Wasser Bundesverfassung Jahr Bereich Absatz Landwirtschaft Gemeinden Zusammenhang Ziel Aktionsplan Jahre Arten Menschen Wald Ziele Wirtschaft Erhaltung Subventionen Teil Energie Mittel Juni Dezember Kosten Förderung Folgen Frage Schäden Land Landschaft Projekte Projekt Bau Landschaft Franken Kosten Bedeutung Fragen Schutz Bazl Jahren Nationalstrassen Millionen Umwelt Natur Bevölkerung Schweizer Bundesamt Strassen Jahr Teil Arten Gebirgslandeplätze Gemeinden Sicherheit Ausbau SBB Biodiversität Beantwortung Heliskiing Ich Strasse Auswirkungen GLP Revision Fragen1 Ersatzmassnahmen NHG Dezember Verkehr Zusammenhang Region März Jahre Zukunft Bereich Umsetzung Studie Lochhof Planung Frage Schutz Kultur Bedeutung Franken Kulturgüter Förderung Bereich Schweizer Erhaltung Kulturerbes Denkmalpflege Millionen Jahren Vielfalt Heimatschutz Unesco Entwicklung Kulturgut Jahr Isos Mittel Natur Antrag Institutionen Inventar Baukultur Jahre Pro Stiftung Entwurf Kulturgütern BAK Ortsbilder Fragen Projekt Gemeinden Zusammenhang Schweizerische Unterstützung Grundlage Sport Aufgabe Kulturerbe Konvention 1925.5071 Interpellation Rytcr 1991.3434 4% 3% all bills Interpell. Bäumlin Erbe Gesetz Helvetia Zusammenarbeit Gegenentwurf 87% a a a a Federal Council Cantons Parl. Group Committee/Bureau MP Other "Im eidgenössischen Militärdepartement be-steht die Absicht, in der Gemeinde Reichen bach (Fältschen-Suldtal) einen Flab-Schiess platz zu errichten. [...] wie sich die Bewirtschaftung des Waldes, der Alp und land-wirtschaftlichen Gebiete gestalten soll..." UNCED. Biodiversi-tätskonvention " vom 13. Dezember 1991. Schutz und ungehinderter Zugang zur biologischen Vielfalt, die sich grössten-teils in der Dritten Welt be-findet, sind die Haupt inte-ressen der Industrieländer. Die Entwicklungsländer teilen diese Interessen..." 74% a a a a a a Federal Council Cantons Parl. Group Committee/Bureau MP Other biodiversity bills federal council parl. groups cantons committee MPs 0% 25% 50% 75% 100% 30 (1935) 40 (1975) 50 (2015) Figure 10: 7% 3% a a Legislative Period (</cell></row><row><cell cols="3">Figure 9: Examination of how dictionary-based approaches fail to discover relevant texts if the dictionary is</cell></row><row><cell cols="3">not expanded using embeddings. Of the 4, 203 bills identified as biodiversity-centered, only 27.2% contain</cell></row><row><cell cols="3">words from the dictionary (fuzzy matching enabled).</cell></row><row><cell cols="3">tives, motions, postulates, interpellations, questions), where MPs act as sponsors of these bills. Historically,</cell></row><row><cell cols="3">MPs from the conservative parties have submitted the largest share of these bills, a trend that has shifted</cell></row></table><note><p>over time. Over time, socialist parties have taken on more biodiversity issues, holding both camps in near balance in the present legislative periods.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Year at start of LP) Share of biodiversity bills</head><label></label><figDesc></figDesc><table><row><cell cols="2">A distribution of biodiversity bills over time</cell><cell></cell></row><row><cell cols="3">C MP-sponsored bills by party</cell></row><row><cell>Conservatives (right)</cell><cell>Liberals (center)</cell><cell>Socialists (left)</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0"><p>Note that human annotation has been criticized as well in the literature, especially when it comes to labeling human annotations as 'gold standards' and 'ground truth datasets' (e.g.,<ref type="bibr" target="#b43">Song et al., 2020;</ref><ref type="bibr" target="#b32">Mikhaylov, Laver and Benoit, 2012)</ref>.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_1"><p>https://github.com/CLD2Owners/cld2 For the python version of the library we use package from https://github. com/GregBowyer/cld2-cffi.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_2"><p>https://www.eda.admin.ch/aboutswitzerland/en/home/umwelt/natur/biodiversitaet.html</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_3"><p>Note that we do not do exact matches. Rather, we use fuzzy matching, allowing word variations (as well as plurals, unfinished words, or wrong spellings).</p></note>
+		</body>
+		<back>
+
+			<div type="funding">
+<div><p>1) <rs type="institution">ETH Zurich, Switzerland, (2) University of Zurich, Switzerland</rs>, (3) <rs type="funder">Spanish National Research Council (CSIC)</rs>, Spain</p></div>
+			</div>
+			<listOrg type="funding">
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Political losers as a barrier to economic development</title>
+		<author>
+			<persName><forename type="first">Daron</forename><surname>Acemoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">A</forename><surname>Robinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="126" to="130" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Optuna: A next-generation hyperparameter optimization framework</title>
+		<author>
+			<persName><forename type="first">Takuya</forename><surname>Akiba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shotaro</forename><surname>Sano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Toshihiko</forename><surname>Yanase</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Takeru</forename><surname>Ohta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Masanori</forename><surname>Koyama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 25th ACM SIGKDD international conference on knowledge discovery &amp; data mining</title>
+		<meeting>the 25th ACM SIGKDD international conference on knowledge discovery &amp; data mining</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="2623" to="2631" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Automatic extraction of facts from press releases to generate news stories</title>
+		<author>
+			<persName><forename type="first">Peggy</forename><forename type="middle">M</forename><surname>Andersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Philip</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><forename type="middle">P</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alison</forename><forename type="middle">K</forename><surname>Weinstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linda</forename><forename type="middle">M</forename><surname>Huettner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Irene</forename><surname>Schmandt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nirenburg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992">1992</date>
+			<biblScope unit="page" from="170" to="177" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Three gaps in computational text analysis methods for social sciences: A research agenda</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Baden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Pipal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martijn</forename><surname>Schoonvelde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ac G</forename><surname>Mariken</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Der Velden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communication Methods and Measures</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="18" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Automated text classification of news articles: A practical guide</title>
+		<author>
+			<persName><forename type="first">Pablo</forename><surname>Barberá</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amber</forename><forename type="middle">E</forename><surname>Boydstun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suzanna</forename><surname>Linn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Mcmahon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Nagler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="19" to="42" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The political consequences of franchise extension: Evidence from the second reform act</title>
+		<author>
+			<persName><forename type="first">Samuel</forename><surname>Berlinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Torun</forename><surname>Dewan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">34</biblScope>
+			<biblScope unit="page" from="329" to="376" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Enriching Word Vectors with Subword Information</title>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edouard</forename><surname>Grave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1607.04606</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Interpreting pretrained contextualized representations via reductions to static embeddings</title>
+		<author>
+			<persName><forename type="first">Rishi</forename><surname>Bommasani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kelly</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Claire</forename><surname>Cardie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 58th Annual Meeting of the Association for Computational Linguistics</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="4758" to="4781" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Mapping policy preferences: estimates for parties, electors, and governments</title>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Budge</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Oxford University Press</publisher>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1945" to="1998" />
+			<pubPlace>Oxford</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Content analysis</title>
+		<author>
+			<persName><forename type="first">Kathleen</forename><surname>Carley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The encyclopedia of language and linguistics</title>
+		<imprint>
+			<date type="published" when="1990">1990</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="725" to="730" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Extracting culture through textual analysis</title>
+		<author>
+			<persName><forename type="first">Kathleen</forename><surname>Carley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Poetics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="291" to="312" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Deep learning for political science</title>
+		<author>
+			<persName><forename type="first">Kakia</forename><surname>Chatsiou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Slava</forename><surname>Jankin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mikhaylov</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The SAGE handbook of research methods in political science and international relations</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1053" to="1078" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Political context and the turnout of new women voters after suffrage</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Corder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christina</forename><surname>Kevin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wolbrecht</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="34" to="49" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Information extraction</title>
+		<author>
+			<persName><forename type="first">Jim</forename><surname>Cowie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wendy</forename><surname>Lehnert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="80" to="91" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">When do politicians use populist rhetoric? Populism as a campaign gamble</title>
+		<author>
+			<persName><forename type="first">Yaoyao</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kustov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Communication</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="383" to="404" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Bert: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Where does political polarization come from? Locating polarization within the US climate change debate</title>
+		<author>
+			<persName><forename type="first">Dana</forename><forename type="middle">R</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><surname>Waggle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><surname>Leifeld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Behavioral Scientist</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="70" to="92" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Ways of measuring agency: an application of quantitative narrative analysis to lynchings in Georgia (1875-1930)</title>
+		<author>
+			<persName><forename type="first">Roberto</forename><surname>Franzosi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gianluca</forename><surname>De Fazio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefania</forename><surname>Vicari</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methodology</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="42" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Machine learning human rights and wrongs: How the successes and failures of supervised learning algorithms can inform the debate about information effects</title>
+		<author>
+			<persName><forename type="first">Kevin</forename><forename type="middle">T</forename><surname>Greene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baekkwan</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Colaresi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="223" to="230" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Text as Data: The Promise and Pitfalls of Automatic Content Analysis Methods for Political Texts</title>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Grimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><forename type="middle">M</forename><surname>Stewart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">03</biblScope>
+			<biblScope unit="page" from="267" to="297" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Machine Learning for Social Science: An Agnostic Approach</title>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Grimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><forename type="middle">M</forename><surname>Stewart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="395" to="419" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Computer-aided content analysis of digitally enabled movements</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Hanna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mobilization: An International Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="367" to="388" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">spaCy: Industrialstrength natural language processing in python</title>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Honnibal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ines</forename><surname>Montani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sofie</forename><surname>Van Landeghem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriane</forename><surname>Boyd</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Populism as political communication style: An empirical study of political parties&apos; discourse in Belgium</title>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Jagers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefaan</forename><surname>Walgrave</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European journal of political research</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="319" to="345" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Historical dynamics of ecosystem services and land management policies in Switzerland</title>
+		<author>
+			<persName><forename type="first">Rémi</forename><surname>Jaligot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jérôme</forename><surname>Chenal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marti</forename><surname>Bosch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stéphanie</forename><surname>Hasler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ecological Indicators</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="81" to="90" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Billion-scale similarity search with GPUs</title>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthijs</forename><surname>Douze</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hervé</forename><surname>Jégou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Big Data</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="535" to="547" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">How to cautiously uncover the &quot;Black Box&quot; of machine learning models for legislative scholars</title>
+		<author>
+			<persName><forename type="first">Soren</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hannah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">Q</forename><surname>Paul</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Philips</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Legislative Studies Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="165" to="202" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">How censorship in China allows government criticism but silences collective expression</title>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>King</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American political science Review</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="326" to="343" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Mapping policy preferences II: estimates for parties, electors, and governments in Eastern Europe, European Union, and OECD</title>
+		<author>
+			<persName><forename type="first">Hans-Dieter</forename><surname>Klingemann</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1990">2006. 1990-2003</date>
+			<publisher>Oxford University Press</publisher>
+			<biblScope unit="volume">2</biblScope>
+			<pubPlace>Oxford</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Less annotating, more classifying: Addressing the data scarcity issue of supervised machine learning with deep transfer learning and BERT-NLI</title>
+		<author>
+			<persName><surname>Laurer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wouter</forename><surname>Moritz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreu</forename><surname>Van Atteveldt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kasper</forename><surname>Casas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Welbers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="84" to="100" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">News keyword extraction for topic tracking</title>
+		<author>
+			<persName><forename type="first">Sungjick</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Han-Joon</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2008 fourth international conference on networked computing and advanced information management</title>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="554" to="559" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">Corrine</forename><forename type="middle">M</forename><surname>Mcconnaughy</surname></persName>
+		</author>
+		<title level="m">The woman suffrage movement in America: A reassessment</title>
+		<meeting><address><addrLine>Cambridge</addrLine></address></meeting>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Coder reliability and misclassification in the human coding of party manifestos</title>
+		<author>
+			<persName><forename type="first">Slava</forename><surname>Mikhaylov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Laver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenneth</forename><forename type="middle">R</forename><surname>Benoit</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="78" to="91" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of Workshop at the International Conference on Representation Learning</title>
+		<meeting>Workshop at the International Conference on Representation Learning</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="1" to="12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">The electoral impact of newly enfranchised groups: The case of women&apos;s suffrage in the United States</title>
+		<author>
+			<persName><forename type="first">Mona</forename><surname>Morgan-Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="150" to="165" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">(Re) claiming our expertise: Parsing large text corpora with manually validated and organic dictionaries</title>
+		<author>
+			<persName><forename type="first">Ashley</forename><surname>Muddiman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shannon</forename><forename type="middle">C</forename><surname>Mcgregor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Natalie</forename><forename type="middle">Jomini</forename><surname>Stroud</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Communication</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="214" to="226" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The future of coding: A comparison of hand-coding and three types of computer-assisted text analysis methods</title>
+		<author>
+			<persName><forename type="first">Laura</forename><forename type="middle">K</forename><surname>Nelson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><surname>Burk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcel</forename><surname>Knudsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leslie</forename><surname>Mccall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="202" to="237" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Introducing the lynching in Latin America (LYLA) dataset</title>
+		<author>
+			<persName><forename type="first">Enzo</forename><surname>Nussio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Govinda</forename><surname>Clayton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Peace Research</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="18" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Sentence-bert: Sentence embeddings using siamese bertnetworks</title>
+		<author>
+			<persName><forename type="first">Nils</forename><surname>Reimers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iryna</forename><surname>Gurevych</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1908.10084</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">The distributional hypothesis</title>
+		<author>
+			<persName><forename type="first">Magnus</forename><surname>Sahlgren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Italian Journal of linguistics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="33" to="53" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Processing Large-Scale Archival Records: The Case of the Swiss Parliamentary Records</title>
+		<author>
+			<persName><forename type="first">Luis</forename><surname>Salamanca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laurence</forename><surname>Brandenberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lilian</forename><surname>Gasser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sophia</forename><surname>Schlosser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marta</forename><surname>Balode</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fernando</forename><surname>Perez-Cruz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Schweitzer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Swiss Political Science Review. Online First</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="34" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">From Expertise to Versatility: The Evolution of Issue Engagement in the Swiss Parliament Over 130 Years</title>
+		<author>
+			<persName><forename type="first">Sophia</forename><surname>Schlosser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laurence</forename><surname>Brandenberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Minder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giuseppe</forename><surname>Russo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luis</forename><surname>Salamanca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Schweitzer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Paper presentation at the European Political Science Association 13th Annual Conference</title>
+		<meeting><address><addrLine>EPSA, Glasgow, UK</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023-06-22">2023. June 22-24, 2023</date>
+			<biblScope unit="page" from="1" to="12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Mobilizing the underrepresented: Electoral systems and gender inequality in political participation</title>
+		<author>
+			<persName><forename type="first">Øyvind</forename><surname>Skorge</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Søraas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="538" to="552" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">In validations we trust? The impact of imperfect human annotations as a gold standard on the quality of validation of automated content analysis</title>
+		<author>
+			<persName><forename type="first">Hyunjin</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Petro</forename><surname>Tolochko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob-Moritz</forename><surname>Eberl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olga</forename><surname>Eisele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Esther</forename><surname>Greussing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tobias</forename><surname>Heidenreich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabienne</forename><surname>Lind</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Galyga</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hajo G Boomgaarden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Communication</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="550" to="572" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">The ties that double bind: social roles and women&apos;s underrepresentation in politics</title>
+		<author>
+			<persName><forename type="first">Dawn</forename><surname>Teele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Langan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frances</forename><surname>Kalla</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rosenbluth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="525" to="541" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">SwissBERT: The Multilingual Language Model for Switzerland</title>
+		<author>
+			<persName><forename type="first">Jannis</forename><surname>Vamvas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johannes</forename><surname>Graën</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rico</forename><surname>Sennrich</surname></persName>
+		</author>
+		<idno>ArXiv Preprint:2303.13310</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1" to="15" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">The validity of sentiment analysis: Comparing manual annotation, crowd-coding, dictionary approaches, and machine learning algorithms</title>
+		<author>
+			<persName><surname>Van Atteveldt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wouter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Acg</forename><surname>Mariken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Van Der Velden</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Boukes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communication Methods and Measures</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="121" to="140" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Content analysis in social and environmental reporting research: trends and challenges</title>
+		<author>
+			<persName><forename type="first">Petros</forename><surname>Vourvachis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thérèse</forename><surname>Woodward</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Accounting Research</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="166" to="195" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Large-scale computerized text analysis in political science: Opportunities and challenges</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Wilkerson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreu</forename><surname>Casas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="529" to="544" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Huggingface&apos;s transformers: State-ofthe-art natural language processing</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lysandre</forename><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Victor</forename><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clement</forename><surname>Delangue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><surname>Moi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierric</forename><surname>Cistac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Rault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rémi</forename><surname>Louf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morgan</forename><surname>Funtowicz</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.03771</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Online adaptive asymmetric active learning for budgeted imbalanced data</title>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peilin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiezhang</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenye</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junzhou</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingyao</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingkui</forename><surname>Tan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</title>
+		<meeting>the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="2768" to="2777" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

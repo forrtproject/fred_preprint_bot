@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Methodological Approach for Causal Inference under Uncontrolled (and Possibly Latent) Pre-exposure to Treatment</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-08">July 8, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Diogo</forename><surname>Ferrari</surname></persName>
+							<email>diogo.ferrari@ucr.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Dept. of Political Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>2234</postCode>
+									<settlement>Watkins Hall, Riverside</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Methodological Approach for Causal Inference under Uncontrolled (and Possibly Latent) Pre-exposure to Treatment</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-08">July 8, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">F7E266862541B185F3E0638956FA5A61</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:16+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Experiments have become one of the main tools for causal inference in political science, but scholars have raised concerns regarding the uncontrolled real-world pre-exposure of subjects to the information manipulated during the experiment. This pre-exposure can mislead conclusions about the treatment effects, and the problem is exacerbated because direct measurement of pre-exposure is not feasible in many studies due to the risk of confounding the experiment. This paper presents a method to estimate causal effects when pre-exposure is uncontrolled and directly unobservable. It formalizes the problem using the potential outcomes framework; decomposes the average treatment effect (ATE) into pre-exposure and exposure components; derives the bias that emerges when pre-exposure is ignored; establishes sufficient identification conditions; and introduces a bias-corrected estimator for the relevant causal parameters. The method is applied to analyze the impact of party cues on voters' policy attitudes.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Recently, researchers have raised concerns about threats to causal inference in information experiments due to the possibility of real-world pre-exposure to the information manipulated during the experiment <ref type="bibr" target="#b16">(Gaines, Kuklinski, and Quirk 2006;</ref><ref type="bibr" target="#b12">Druckman and Leeper 2012;</ref><ref type="bibr" target="#b24">Linos and Twist 2018)</ref>. <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref> discuss cases where pre-exposure, if disregarded, can lead to erroneous conclusions that the information had no or minimal effect when, in reality, it had a substantial impact, and this impact would have appeared in the analysis if the preexposure status of the subjects in the experiment were considered. <ref type="bibr">Linos and Twist (2018, p. 149)</ref> succinctly captures the problem, stating that when an experiment repeats information already received by respondents in the real world, failing to observe further changes in opinion during the study might lead to the incorrect conclusion that the message had no effect when in fact the effect happened during the prior exposure <ref type="bibr" target="#b16">(Gaines, Kuklinski, and Quirk 2006;</ref><ref type="bibr" target="#b8">Chong and Druckman 2010;</ref><ref type="bibr" target="#b30">Slothuus 2016)</ref>.</p><p>In many applications, measuring pre-exposure directly from the experimental units at the time of the experiment is not feasible or may lead to unintended consequences. One reason is that the act of measuring pre-exposure can serve as a form of treatment exposure. For instance, when investigating the impact of party cues on public support for policies <ref type="bibr" target="#b1">(Barber and Pope 2019)</ref>, asking individuals which party supports a particular policy (i.e., measuring pre-exposure to the party position on the issue) can prime individuals to think along partisan lines (exposure), potentially biasing subsequent responses and the cue-taking in the experiment. Furthermore, measuring pre-exposure after the outcome of interest is often impractical. In the example of partisan cues, it is not viable to measure pre-exposure after the experiment, as individuals in the treatment group have already been informed about the party's position on the issue, which can affect the answers to questions measuring pre-exposure. This paper proposes a methodological solution to address the problem of pre-exposure in information experiments when measuring pre-exposure among experiment subjects is not feasible. Specifically, it a formalizes the pre-exposure problem using the potential outcomes framework, and uses that formalization to decompose the causal effect of information into its pre-exposure and exposure components. Then, I derive a close-form expression for the bias that arises when a naive average treatment effect (ATE) estimation is employed to investigate the effect of infor-mation, neglecting the pre-exposure status of the subjects in the experiment. The formalization and the ATE decomposition lead to formal definition of causal parameters that capture different quantities of interest related to information exposure and pre-exposure. Sufficient identification condition to estimate those parameters are presented. A bias-corrected estimator is introduced, and a Monte Carlo experiment is conducted to demonstrate the finite sample performance of the proposed solution. I illustrate the method with an application to investigate the effect of party cues on public policy support.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Decomposing the Average Treatment Effect</head><p>To examine the issues caused by pre-exposure to the treatment information, and how it can lead to a misinterpretation of the ATE when pre-exposure is ignored, I start by formulating the problem using the potential outcomes framework. Let Y i (d) indicate the outcome value for unit i under treatment value D i = d. For simplicity, let us consider a binary treatment d ∈ {0, 1}, where D i = 1 signifies that unit i received the information treatment, and D i = 0 indicates that it did not. I assume SUTVA, positivity, and consistency (see online supplement for deatils) throughout the study, as costumary <ref type="bibr" target="#b22">(Imbens and Rubin 2015)</ref>.</p><p>A common practice in applied research is to estimate the ATE, which is defined as the difference between the average potential outcomes across all units if everyone had received the treatment and the average potential outcome if no one had. This causal parameter can be expressed as:</p><formula xml:id="formula_0">τ ATE = E [Y i (1) -Y i (0)] = E X [E [Y i | D i = 1, X i ]] -E X [E [Y i | D i = 0, X i ]]<label>(1)</label></formula><p>When researchers want to measure the impact of information exposure, the ATE fails to capture some quantities of interest. For instance, <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref> examined whether support for a proposal to establish a state-owned casino is influenced by framing the proposal in positive or negative terms. They conducted an experiment where participants were randomly assigned to either positive or negative framing. The authors highlight the key problem with pre-exposure and using the ATE to access the information/framing effect: some individuals may have already formed strong opinions about the proposal before the experiment due to real-life prior information exposure. For these individuals, "another exposure [during the experiment] would have minimal additional effect" (pg. 886). This means that estimating the ATE, as shown in equation (1), will underestimate the effect of information as such because a portion of this effect-the one among pre-exposed subjects-occurred prior to the experiment during pre-exposure. The treatment and control groups in the experiment consist of individuals who had already been pre-exposed, resulting in minimal effects during the experiment for this preexposed group. What the ATE captures is a weighted average effect of exposure (among subjects not pre-exposed) and re-exposure (among pre-exposued subjects) to information, whereas the focus of interest often lies in the effect of exposure itself.</p><p>Since <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref>, the literature has empirically demonstrated that using a ATE naively can result in either an overestimation or underestimation of treatment exposure effects, due to unaccounted pre-exposure <ref type="bibr" target="#b16">(Gaines, Kuklinski, and Quirk 2006;</ref><ref type="bibr" target="#b8">Chong and Druckman 2010;</ref><ref type="bibr" target="#b30">Slothuus 2016;</ref><ref type="bibr" target="#b24">Linos and Twist 2018;</ref><ref type="bibr" target="#b9">Clifford, Leeper, and Rainey 2023)</ref>.</p><p>The main complication is that pre-exposure is often both uncontrolled by the researchers and not directly measurable among experimental subjects, as it can lead to treatment contamination.</p><p>For instance, when investigating the impact of party cues on public support for policies <ref type="bibr" target="#b1">(Barber and Pope 2019)</ref>, asking individuals which party supports a particular policy (i.e., measuring pre-exposure to the party position on the issue) can prime individuals to think along partisan lines (exposure), potentially biasing subsequent responses and the cue-taking in the experiment.</p><p>Furthermore, measuring pre-exposure after the outcome of interest is often impractical. It is not viable to measure pre-exposure after the treatment either, as individuals in the treatment group have already been informed about the party's position on the issue, which can affect the answers to questions measuring pre-exposure.</p><p>In sum, real-life information pre-exposure matters, and it typically cannot be measured or controlled by researchers during the experiment. This problem has not yet been analyzed using modern causal modeling tools. In the following discussion, I formalize this problem using the potential outcome framework. By formalizing the problem, we can gain a clearer understanding of its nature and define the relevant causal quantities involved. Furthermore, this formalization allows us to derive sufficient identification conditions and propose a feasible bias-corrected estimator that can be employed in cases where pre-exposure is unobservable among experimental subjects.</p><p>To start, denote t as the period that unit i was exposed to the information treatment. For simplicity, consider two periods, and use t = 1 to denote the time prior to the experiment and t = 2 the time of the experiment. I am not dealing with practical issues related to the decay of the pre-exposure effects, which require more substantive research and can be case-specific.</p><p>The approach proposed is general enough, and these problems do not prevent its application.</p><p>Future extensions can deal with the effect decay issue. Here, I use t = 1 and t = 2 as indexes to indicate pre-exposure status at the time of the experiment rather than the actual time that the person was pre-exposed.</p><p>We can write D i = (D 1i , D 2i ), and D ti to denote the value of the exposure to the treatment for unit i at period t. Likewise, d = (d 1 , d 2 ) ∈ {0, 1} 2 is a specific treatment status pair.</p><p>I use D 1i = 1 to indicate that i had been pre-exposed to the treatment information, that is, had already been exposed to the information manipulated during the experiment prior to the experiment and therefore knew it already by the time of the experiment. I use</p><formula xml:id="formula_1">D 2i = 1</formula><p>to indicate that i was in the treatment group, that is, received the information during the experiment. The potential outcome of i becomes Y i (d 1 , d 2 ), and there are four possibilities:</p><p>Y i (0, 0) is the potential outcome if i had not received the information treatment prior to or during the experiment; Y i (1, 0) is the potential outcome if she was in the control group in the experiment but had been pre-exposed, Y i (0, 1) is the potential outcome if i had been treated</p><p>but not pre-exposed, and finally, Y i (1, 1) is the potential outcome if i had been pre-exposed and then exposed again during the experiment.</p><p>Using that notation, we can define different causal parameters of interest. Let us consider a typical case in which the researcher controls exposure to the treatment during the experiment and can randomly assign units to each treatment group, but pre-exposure happens in real-life outside experimental conditions and is not under the researcher's control. Researchers are often interested in estimating the average causal effect of information exposure, which would require no prior exposure <ref type="bibr" target="#b12">(Druckman and Leeper 2012;</ref><ref type="bibr" target="#b9">Clifford, Leeper, and Rainey 2023;</ref><ref type="bibr" target="#b16">Gaines, Kuklinski, and Quirk 2006)</ref>. I call this parameter the average information effect (AIE). This is the implicitly parameter that is being underestimated by the ATE according to <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref> discussion about the casino proposal framing effect under pre-exposure. AIE is also the target in <ref type="bibr" target="#b9">Clifford, Leeper, and Rainey (2023)</ref>, which investigates the effect of party cues on policy support under voters pre-exposure to party positions on salient issues. The AIE can be defined as:</p><formula xml:id="formula_2">τ AIE = E [Y i (0, 1) -Y i (0, 0)]<label>(2)</label></formula><p>In the same vein, we can define the average effect of re-exposure, that is, the effect in the experiment among those who have already been exposed to the treatment information in real life. This parameter is referred to as the average information re-exposure effect (AIRE). It can be defined as follows:</p><formula xml:id="formula_3">τ AIRE = E [Y i (1, 1) -Y i (0, 0)]<label>(3)</label></formula><p>In order to facilitate the subsequent analyses, it is also useful to define the average information pre-exposure effect (AIPE). The AIPE represents the average pre-exposure effect among the control group units. In a randomized experiment, this effect should be equivalent to the pre-exposure effect in the treatment group.</p><formula xml:id="formula_4">τ AIP E = E [Y i (1, 0) -Y i (0, 0)] (4)</formula><p>Now, the first result of this paper establishes the relationship between the ATE and the other causal parameters just defined:</p><p>Proposition 2.1 (Average Treatment Effect Decomposition). Denote π 1 the proportion of people pre-exposed. The ATE can be decomposed into its AIE, AIPE, and AIPE parts as follows:</p><formula xml:id="formula_5">τ AT E = τ AIE -π 1 (τ AIRE -τ AIE -τ AIP E ) (5)</formula><p>The proof of Proposition 2.1 can be found in the Appendix. Equation (5) demonstrates that the ATE is a result of combining the AIE, the AIPE, and the AIRE. However, if one were to use an unbiased estimator of the ATE to estimate the AIE, it would lead to a pre-exposure bias, whose magnitude is exactly π 1 (τ AIRE -τ AIE -τ AIP E ). Thus, the bias is a function of the proportion of people who were pre-exposed as well as the average effects of pre-exposure, reexposure, and exposure under no pre-exposure. Equation ( <ref type="formula">5</ref>) provides an explicit expression for what <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref>, <ref type="bibr" target="#b24">Linos and Twist (2018)</ref>, <ref type="bibr" target="#b30">Slothuus (2016)</ref> and other authors allude to when they discuss overestimation or underestimation due to ignoring pre-exposure.</p><p>Equation ( <ref type="formula">5</ref>) makes it is evident that a "naive" ATE can lead to either overestimation or underestimation of the AIE unless there is no pre-exposure (π 1 = 0).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Identification Conditions</head><p>This section discusses the conditions that, if met, are sufficient for the identification of AIE, AIPE, and AIRE. Let us start by assuming that during the experiment, pre-exposure (D 1i ) can be measured directly from each unit i, and that researchers only control the exposure (D 2i ), while pre-exposure happens in real life and is beyond researchers' control. I will address cases in which pre-exposure is not directly observable in the following section.</p><p>For identification of the pre-exposure causal parameters (AIE, AIPE, and AIRE), a sufficient condition is that the pre-exposure is conditionally ignorable given a set of measurable background variables X i . This is a particular version of the strong ignorability assumption proposed by <ref type="bibr" target="#b28">Rosenbaum and Rubin (1983)</ref>, which is widely used in observational studies and matching methods. It can be stated as follows:</p><p>Assumption 3.1 (Pre-exposure conditional ignorability (PECI)). Pre-exposure is independent of the potential outcomes given a set of covariates X i . Formally,</p><formula xml:id="formula_6">Y i (d 1 , d 2 ) ⊥ ⊥ D 1i | X i = x , ∀d = (d 1 , d 2 ) ∈ {0, 1} 2 , x ∈ X</formula><p>Theorem 3.1 provides identification results for the general causal parameter τ P E (d, d ′ ) and its special cases (AIE, AIPE, and AIRE). The proof is in the Appendix.</p><p>Theorem 3.1 (Nonparametric identification of causal effects with observed pre-exposure). Under assumption 3.1, the general causal parameter τ P E-AT E (d, d ′ ) defined in (??) and its special cases (AIE, AIPE, and AIRE) are nonparametric identifiable with τ P E-AT E P ECI (d, d ′ ) defined as follows:</p><p>τ</p><formula xml:id="formula_7">P E-AT E P ECI (d, d ′ ) = E X [E [Y i | D 1i = d, D 2i = 1, X i ]] -E X E Y i | D 1i = d ′ , D i2 = 0, X i (6)</formula><p>When pre-exposure is observed and PECI holds, it is straighforward to estimate the causal parameters. One can estimate them non-parametrically using a plug-in estimator by comparing averages based on exposure and pre-exposure status for each demographic group X i = x, or parametrically using a linear model with an interaction term between exposure (D 1i ) and preexposure (D 2i ).</p><p>Now, let us consider a scenario where pre-exposure cannot be directly observed. As discussed previously, this is a common situation due to the risks that the process of measuring pre-exposure poses in terms of contaminating or being contaminated by the treatment assignment or outcome measurement. In such cases, the central problem for applied research is to determine whether and how the pre-exposure average treatment effect (PE-ATE) parameters can be estimated.</p><p>When pre-exposure cannot be observed, the fundamental problem of causal inference <ref type="bibr" target="#b20">(Holland 1986</ref>) gets aggravated because none of the potential outcomes are observable.</p><p>Table <ref type="table">1</ref> illustrates this problem using three hypothetical subjects (rows). Consider the first row (subject i = 1), which has been assigned to receive the treatment during the experiment (D 21 = 1 ). The observed outcome for that subject is Y 1 = 2. As we cannot observe pre-exposure (D 11 ), we do not know if this outcome corresponds to Y 1 (0, 1) or Y 1 (1, 1). The same reasoning applies to the other cases. Hence, we cannot recover any pre-exposure causal parameters. To estimate the PE-ATE, we need to recover the pre-exposure status of the subjects. Thus, the challenge lies in determining the PE-ATE parameters when direct observations of subjects' pre-exposure status are not feasible.</p><p>Table <ref type="table">1</ref>: Hypothetical scenario illustrating the fundamental problem of causal inference <ref type="bibr" target="#b20">(Holland 1986</ref>) under missing information (N/A) on treatment pre-exposure (D i0 ).</p><p>Hypothetical Data Potential Outcomes</p><formula xml:id="formula_8">i X i D i0 D i1 Y i Y i (0, 0) Y i (1, 0) Y i (0, 1) Y i (1, 1) 1 7 N/A 1 2 × × ? ? 2 -3 N/A 1 3 × × ? ? 3 4 N/A 0 6 ? ? × ×</formula><p>Note: Assuming SUTVA and consistency, for each row we know with certainty that the observed outcome Y i do not correspond to the potential outcomes marked with × in the respective row, but we don't know which ones with quotation mark (?) in the respective row Y i captures.</p><p>Feasiable Estimators under Unobserved Pre-Exposure</p><p>When subjects' pre-exposure cannot be directly observed among experimental subjects, one feasible methodological solution-there might be others that can be developed in future work, relaxing parametric assumptions-is to use a parametric regression model and subjects' preexposure predicted status (PEPS). This combination and the method proposed below leads to an unbiased estimator of the AIE.</p><p>To motivate the solution, consider first the case in which is possible to directly observe pre-exposure. Let us focus on cases with continuous outcome y. In this case, we can capture the causal quantities using the following parametrization, with additive separable covariates X i :</p><formula xml:id="formula_9">E [Y i (0, 0) | X i ] = β 0 +β x X i , E [Y i (0, 1) | X i ] = β 0 +β x X i +τ AIE , E [Y i (1, 0)] = β 0 +β x X i +τ AIP E ,</formula><p>and</p><formula xml:id="formula_10">E [Y i (1, 1)] = β 0 + β x X i + τ AIE + τ AIP E + γ. Let ϵ i denote the individual-specific deviation</formula><p>from the outcome's mean for subject i. If pre-exposure was observed and assumption 3.1 holds, we can recover the causal parameters by estimating the following model using an ordinary least square (OLS) estimator of the regression coefficients:</p><formula xml:id="formula_11">y i = β 0 + τ AIE D 2i + τ AIP E D 1i + γD 1i D 2i + β x X i + ϵ i (7)</formula><p>When pre-exposure is not observed, the corresponding model for the ATE that averages out pre-exposure is:</p><formula xml:id="formula_12">y i = β ′ 0 + τ AT E D 2i + β ′ x X i + ϵ ′ i (8)</formula><p>When D 2i is randomized, the ATE can be estimated without bias using the OLS estimator.</p><p>However, if the aim is to estimate the AIE parameter, for instance, but pre-exposure could not be measured directly for each unit i in the experiment, then using the ATE to estimate the AIE results in pre-exposure bias, as discussed in <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref>. Clearly, from model ( <ref type="formula">7</ref>), we have γ = τ AIRE -τ AIE -τ AIP E . From proposition 2.1 and the fact that τ AT E is an unbiased estimator of τ AT E , we see that the pre-exposure bias is π 1 γ, that is, the product of the proportion of pre-exposure individuals and the parameter capturing the interaction effects between exposure and pre-exposure from model (7) (proof in the online supplement):</p><formula xml:id="formula_13">Bias( τ AT E , τ AIE ) = γπ 1 (9)</formula><p>To address the issue of pre-exposure bias when we cannot observe pre-exposure directly, I propose a solution that utilizes the pre-exposure probability as a function of subject background characteristics, denoted as p(D 1i | X i ). This probability is not influenced by the treatment status (D 2i ) or outcome (y i ). Hence, we can calculate it by drawing an auxiliary random sample from the same population as the experimental sample. In this ancillary sample, we solely need to measure pre-exposure (D i1 ) and the background variables (X i ), without any interference from treatment or outcome, avoiding contamination of the treatment or outcome due to measuring pre-exposure, or vice-versa. We can then apply the probability p(D 1i | X i ), computed using the auxiliary sample, to classify the subjects in the experiment as pre-exposed</p><p>or not, based on their observed background features X i .</p><p>Define the predicted pre-exposure status D 1i as:</p><formula xml:id="formula_14">D 1i = argmax d p(D 1i = d | X i ) (10)</formula><p>Note that 11 chooses the pre-exposure status d that maximizes the probability of pre-exposure, that is,</p><formula xml:id="formula_15">D 1i = 1 whenever p(D 1i = 1 | X i ) &gt; p(D 1i = 0 | X i ).</formula><p>Next, define the following estimators as a function of the predicted pre-exposure status:</p><p>Definition 4.1 (PEPS-ATE estimator). The pre-exposure predicted status average treatment effect (PEPS-ATE) estimator is an estimator constructed using the predicted pre-exposure status D 1i instead of the true status D 1i to produce the estimates. That is,</p><formula xml:id="formula_16">( τ AIE , τ AIP E , τ AIRE , β) = f (D 2 , D 1 , X)</formula><p>Using the predicted status D 1 is useful because it allows us to derive an unbiased estimator of the target parameters. Note first that if there is no misclassification of the subjects in the experiment, then we can use D 1i instead of D 1i and still recover all parameters, such as AIE, using model ( <ref type="formula">7</ref>). But in practice, there is likely to be some misclassification of pre-exposure with this approach. However, even with severe misclassification, when aiming to recover the AIE, utilizing the predicted pre-exposure status D 1i and the PEPS estimator bring significant advantages. The main advantage is that it changes the nature of the bias. Instead of a pre-exposure bias due to completely omitting pre-exposure (omitted variable bias), the PEPS estimator leads to a misclassification bias, which arises due to the misclassification associated with both false positive and false negative cases. Therefore, the problem caused by unmeasured pre-exposure can be reformulated in terms of a misclassified covariate and measurement error.</p><p>And while we may not be able to eliminate the misclassification error, we can eliminate the asymptotic bias by using a misclassification bias-corrected PEPS estimator. That is, reformulating the unmeasured pre-exposure problem as a misclassified pre-exposure problem enables us to extend existing solutions that address the inconsistency of OLS estimators in the case of misclassified binary covariates <ref type="bibr" target="#b29">(Savoca 2000;</ref><ref type="bibr" target="#b4">Black, Sanders, and Taylor 2003;</ref><ref type="bibr" target="#b17">Greene 2012;</ref><ref type="bibr" target="#b32">Yi and He 2017;</ref><ref type="bibr" target="#b0">Aigner 1973)</ref>, and use it to deal with bias due to uncontrolled and unmeasured pre-exposure. This new problem is formally equivalent to dealing with the asymptotic bias caused by covariates that are subject to measurement error.</p><p>To see why this is advantageous, I follow <ref type="bibr" target="#b0">Aigner (1973)</ref> and model the misclassification using a misclassification error U ∈ {-1, 0, 1}.</p><formula xml:id="formula_17">D 1i = D 1i + U (11)</formula><p>Let us define the probabilities of false positive and false negative as</p><formula xml:id="formula_18">P ( D 1i = 1 | D 1i = 0) = α 0 and P ( D 1i = 0 | D 1i = 1) = α 1</formula><p>, respectively. These probabilities correspond to a subject being misclassified as pre-exposed when they are not, and as not pre-exposed when they are, respectively. Consider the following operational model obtained from the true model ( <ref type="formula">7</ref>) after replacing the unobserved pre-exposure variable D 1i with its error-prone predicted value D 1i</p><p>(from equation ( <ref type="formula">11</ref>)): </p><formula xml:id="formula_19">y i = β 0 + τ AIE D 2i + τ AIP E D 1i + γ D 1i D 2i + β x X i + (ϵ i -τ AIP E U i -γU i D 2i ) (12) Denote M = (D 2 , D 1 , D 2 D 1 , X) a n×k matrix</formula><formula xml:id="formula_20">Asy.Bias( θ m ) = -plim ( M T M ) -1 (τ AIP E M T U + γ M T (U T I I ID 2 )) (<label>13</label></formula><formula xml:id="formula_21">)</formula><p>where I I I denotes the n × n identity matrix. Thus, the asymptotic bias depends on the misclassification error U and the misclassified pre-exposure. In the absence of these factors (e.g., with no misclassification error), the misclassification bias would not exist.</p><p>Measurement error in one covariate is sufficient to bias the OLS estimates of all coefficients, except for the coefficient of a covariate that is orthogonal to the other covariates and it is correctly measured <ref type="bibr" target="#b0">(Aigner 1973;</ref><ref type="bibr" target="#b17">Greene 2012)</ref>. Although I am assuming randomization and therefore orthogonality of exposure during the experiment, the interaction between exposure and pre-exposure is sufficient to bias the OLS estimator of the AIE if pre-exposure is ignored or misclassified, as demonstrated in expession (9).</p><p>The proposed solution, as presented in Theorem 4.1, accounts for the asymptotic bias in OLS estimates resulting from the misclassification of subjects' pre-exposure status. Theorem 4.1, together with the formulation of the problem in terms of potential outcomes, the causal identification analysis, and the identification assumption stated in 3.1, allow us to estimate the AIE consistently, and the estimated quantity has the desired causal effect interpretation. , γ c ) of the causal parameters (τ AIE , γ) defined in (2) and (7) are asymptotically unbiased and asymptotically Gaussian:</p><formula xml:id="formula_22">τ AIE c = τ AIE m + a 1 1 -c τ AIP E m + d 1 -c γ c + b γ c<label>(14)</label></formula><formula xml:id="formula_23">γ c = 1 (1 -f )(1 -c) -ed (1 -c) γ m + e τ AIP E m<label>(15)</label></formula><p>where,</p><formula xml:id="formula_24">M = (D2, D 1 , D 2 D 1 , X) T ; W = plim( M T M /n) -1 ; w k = [W ] k• (k th row of W ) a = w 1 ρAIP E , b = w 1 ργ , c = w 2 ρAIP E , d = w 2 ργ , e = w 3 ρAIP E , f = w 3 ργ ρAIP E =           0 (η + ν)σ 2 p π2 (η + ν)σ 2 p Φρ px           ; ργ =           Ψσ 2 E π2 (η + ν)σ 2 p φ π2 Φρ px           ; η = α1 π(m) 1 -α0 (1 - π(m) 1 )(1 -α0 -α1 ) ν = α0 (1 -α1 - π(m) 1 ) π(m) 1 (1 -α0 -α1 ) ; Φ = - α0 + α1 1 -α0 -α1 ; φ = π2 π(m) 1 (ν -π2 Ψ) Ψ = ν π(m) 1 -η(1- π(m) 1 ) ; ρpx = Cov X, D 1 ; σ2 p = π(m) 1 (1- π(m) 1 ) ; σ2 E = π2 (1-π2 )</formula><p>The proof for Theorem 4.1 is extensive and is provided in the online supplement. In essence,</p><p>the Theorem indicates that we can obtain a consistent estimator for the average information effect (AIE) by utilizing the PEPS estimators, even without directly observing pre-exposure and in spite of potentially inaccurate predictions of pre-exposure status due to misclassification. One important advantage is that there is no a priori restriction on how severe the misclassification might be. The approach remains viable as long as we have consistent estimators for (1) the (misclassified) proportion of pre-exposed subjects (π</p><formula xml:id="formula_25">(M ) 1</formula><p>), which can be achieved through a plugin estimator, and (2) the misclassification rates α 0 and α 1 , which can be easily obtained via maximum likelihood estimator <ref type="bibr" target="#b19">(Hausman, Abrevaya, and Scott-Morton 1998)</ref>  an estimator for consistently recovering the AIE when pre-exposure cannot be measured directly among subjects in the experimental sample due to risk of contamination. The proposed method functions by predicting the pre-exposure status of the experiment participants to deal with the pre-exposure bias when using a "naive" ATE to estimate the AIE, and then employing an estimator (bias-corrected PEPS-ATE) that corrects the remaining misclassification bias due to pre-exposure prediction misclassification. I introduced an asymptotic bias-corrected PEPS estimator that is consistent even when there is severe pre-exposure misclassification. Standard errors can be obtained through the delta method or bootstrap <ref type="bibr" target="#b11">(Davison and Hinkley 1997;</ref><ref type="bibr" target="#b31">Wasserman 2013</ref>). The application in the paper uses the latter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sampling Procedures</head><p>When practical implementation is concerned, two decisions need to be made when using the method proposed here. The first is selecting a model for p( D 1i | X i ). This model remains unspecified in this work since the bias-corrected estimator remains applicable even with an model that produces severe misclassification. Therefore, researchers can select a model of their preference, such as logistic regression.</p><p>The second important decision concerns the sampling procedure. One possible approach is to use a split-module sampling scheme. Essentially, this scheme randomly allocates subjects into two distinct samples. In the first sample, which I call the experimental sample, subjects participate the experiment, following usual procedures. In the second sample, which I call the PEPS sample, subjects do not answer the outcome question and are not exposed to any treatment condition. This module's sole purpose is to gauge background variables (X i ) along with prior exposure information. Note that this procedure isn't strictly necessary for implementing the method, with the only requirement being that assumption 3.1 is satisfied. Nonetheless, this sampling scheme facilitates balanced samples in both observable and unobservable variables.</p><p>At a minimum, subjects in both samples need to originate from the same base population and be sampled utilizing the same procedure. Therefore, the PEPS sample can still be gathered post the completion of the experiment.</p><p>Next, for each sample, one needs to decide about the sample size. Let us consider the experimental sample first. Although several studies have presented results for sample size calculation in regression analysis with misclassified variables <ref type="bibr" target="#b23">(Lachenbruch 1968;</ref><ref type="bibr" target="#b26">Rahme, Joseph, and Gyorkos 2000;</ref><ref type="bibr" target="#b13">Edwards et al. 2005;</ref><ref type="bibr" target="#b7">Cheng, Stamey, and Branscum 2009;</ref><ref type="bibr" target="#b3">Beleites et al. 2013;</ref><ref type="bibr" target="#b27">Riley et al. 2020)</ref>, none of these results are directly applicable to the proposed model. Due to the complexity of sample size calculation in this case, addressing it formally is beyond the limits and scope of this paper.</p><p>To aid practitioners with the sample size selection for their study, I conducted various simulation analyses whose details are in the online supplement. Briefly, I evaluated the average increase in the size of the confidence interval of the bias-corrected PEPS estimator relative to the confidence interval of the corresponding model where the true pre-exposure was correctly observed. This enables us to determine the additional sample size required for analyses using predicted pre-exposure to achieve a confidence interval that is similar in size to what is needed for analyses using OLS with true pre-exposure observed. The exercise showed that in order for the bootstrap-based confidence interval of the corrected pre-exposure predicted status average treatment effect (PEPS-ATE) estimator to match the confidence interval of a OLS estimator calculated using real pre-exposure measures, the sample size must be at least 4.1 times greater.</p><p>Therefore, practitioners can conduct a standard power analysis for analyzing a single coefficient Randomly assign n peps subjects to the PEPS sample 5: Using the PEPS sample, measure X (covariates) and D 1 (pre-exposure) only 6: Using the experimental sample, measure X (covariates), D 2 (exposure), and y (outcome) 7: Estimate the probability of pre-exposure p(D 1i | X i ) using the PEPS-sample 8: Compute the predicted probabilities p(D 1i | X i ) for subjects in the experimental sample 9: Compute the predicted pre-exposure status of experiment subjects using expression (11) 10: Estimate model ( <ref type="formula">7</ref>) using D 1i instead of D 1i 11: Estimate the misclassification rates α 0 and α 1 using a consistent estimator 12: Estimate the proportion classified as pre-exposed π (M ) 1 using a consistent estimator 13: Compute the bias-corrected estimators in Theorem 4.1 14: Compute the confidence intervals in a multivariate linear regression <ref type="bibr" target="#b10">(Cohen et al. 2013</ref>) and then increase the sample size by a factor of 4.1 or more.</p><p>Regarding the PEPS sample, researchers can follow the usual sampling size guidelines for classification methods <ref type="bibr" target="#b14">(Figueroa et al. 2012</ref>). The proposed method, however, does not require accurate classification, meaning the sample size may be much smaller than when predictive performance is required. The simulations show that a sample size of 150 with three background covariates is sufficient for good performance. Table <ref type="table" target="#tab_1">2</ref> outlines the recommended steps.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Study</head><p>This section shows a small-scale Monte Carlo exercise as in <ref type="bibr" target="#b21">Imai, Keele, and Yamamoto (2010)</ref> to demonstrate the results presented in the previous section and investigate the finite sample performance of the three main estimators discussed, namely, the ATE, which leads to pre-exposure bias when used to estimate the average information effect (AIE); the PEPS-ATE, which is not subject to pre-exposure bias but to misclassification bias because it uses predicted pre-exposure but does not correct for prediction misclassification; and the PEPS-ATE (BC), which corrects both biases. I assume the goal is to recover the AIE, as in <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref> and <ref type="bibr" target="#b9">Clifford, Leeper, and Rainey (2023)</ref>, and include the both PEPS-ATE estimators to demonstrate the difference between the pre-exposure bias and the misclassification bias. I assume that 3.1 holds in the data generating process throughout. The details of the simulation can be found in the online supplement due to space constraints.</p><p>Figure <ref type="figure">1</ref> compares the estimators for different true values of the parameters τ AIE , τ AIP E , and γ. As discussed in the previous section, the pre-exposure bias due to using the ATE to estimate the AIE is exactly γπ 1 . The solid black lines with square marks in Figure <ref type="figure">1</ref> demonstrate this bias. Regardless of the true values of τ AIP E (column panels) or τ AIE (row panels), the bias can be positive or negative depending on the value of γ, which captures the interaction effect of pre-exposure and exposure. This simulation result confirms the formal derivation from prior sections and supports arguments in the existing literature that ATE not only underestimates the true AIE, as discussed in <ref type="bibr" target="#b12">Druckman and Leeper (2012)</ref>, but can also overestimate it, as shown in applied examples by <ref type="bibr" target="#b24">Linos and Twist (2018)</ref>. The results here provide a more general closed-form expression supporting their empirical findings, and Figure <ref type="figure">1</ref> illustrates that the bias can be zero if γ is zero. It can also be zero if there is no pre-exposure (π 1 = 0).</p><p>The Figure <ref type="figure">1</ref> reveals some other important results. The PEPS-ATE estimator improves over (i.e., decreases the bias when compared to) the ATE. However, this improvement does not hold in the exceptional cases that I will discuss below. To emphasize this improvement, I have highlighted the pre-exposure bias in the top-left panel, which originates from omitting pre-exposure information when utilizing a "naive" ATE estimator to learn about the AIE. I have also highlighted the misclassification bias resulting from utilizing the PEPS-ATE when there is pre-exposure misclassification of experiment subjects. As we can see, the PEPS-ATE (BC) estimator eliminates both biases. erations. This table compares the performance of the ATE, the PEPS-ATE, the PEPS-ATE (BC), and an OLS estimator computed using the true pre-exposure status of subjects in the experiment. The performance of the PEPS-ATE (BC) estimators are comparable to the OLS estimator in terms of coverage and average estimated bias. The coverage levels reach the expected rate of 95%, and it is evident that this is not due to excessively large standard errors.</p><p>Although the standard error of the PEPS-ATE (BC) estimator is expected to be greater than those from the true model, the difference is not particularly large.</p><p>In summary, the PEPS-ATE (BC) estimator corrects bias even in cases of severe misclassification. It recovers the true value of the target parameter (AIE), even when pre-exposure is not observable, at a rate comparable to situations in which true pre-exposure was observed.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Applied Example</head><p>I apply the proposed method to real data using the experimental study conducted by <ref type="bibr" target="#b9">Clifford, Leeper, and Rainey (2023)</ref>. The authors explore the impact of party cues on partisans' policy support. Party cues are brief pieces of information regarding the policy stances of political parties. The term "party cues effects" refers to the inclination of partisans to support (or reject) a policy when they are informed that their favoured party advocates (or opposes) that policy <ref type="bibr">(Bullock 2020</ref><ref type="bibr" target="#b5">(Bullock , 2011;;</ref><ref type="bibr" target="#b1">Barber and Pope 2019)</ref>.</p><p>Clifford, Leeper, and Rainey (2023) note that there is a substantial heterogeneity in party cue effects depending on the policy topic. They demonstrate that this dispersion in experimental results is strongly associated with variations in subjects' pre-exposure to party positions, which can vastly differ depending on the policy salience. They measured the effect of party cues and pre-exposure to party policy positions for 48 policies with varying degree of salience.</p><p>To account for pre-exposure, the authors made use of the ancillary module (the PEPS sample), wherein participants neither partook in the experiment nor answered the outcome question. Instead, they responded to queries pertaining to their awareness of party policy positions. The goal was to obtain estimates of prior exposure "that could not be influenced by the experiment" <ref type="bibr" target="#b9">(Clifford, Leeper, and Rainey 2023)</ref>. A total of 2,764 interviews were collected for the experimental sample, and 252 for the ancillary module. More details of their analysis can be found in the online supplement for lack of space.</p><p>Figure <ref type="figure">3</ref> compares different estimates produced using their data. Consider the left panel first.</p><p>It compares the observed policy-level rates of pre-exposure in the PEPS sample (x-axis) for each policy against the predicted pre-exposure rates in the experimental sample (y-axis) computed by Clifford, Leeper, and Rainey (2023) (gray dots) and by the proposed method (black dots). The latter uses individual-level prediction, while the fomer uses policy-level aggregate rates, and this difference explains the higher variability of the predictions (see online supplement for details).</p><p>The covariates available include race, sex, age, education, partisanship (ANES), marital status, a social identity measure of party identification, an indicator of being Hispanic, and ideology.</p><p>The strong correlation depicted in Figure <ref type="figure">3</ref> between observed pre-exposure in the PEPS sample and predicted pre-exposure in the experimental sample is remarkable. We should expect this correlation because individuals were ramdonly assigned to the experimental and PEPS samples. larger, which would enable a proper test of the difference in estimates. Hence, we should not interpret the overlap in confidence intervals as an indication that the estimates are the same.</p><p>The overlap is a consequence of the different methods used to compute the standard errors using the same dataset, with the PEPS-ATE relying on bootstrap estimation and the naive ATE using a closed-form solution.</p><p>At any rate, as previously discussed, the ATE and the PEPS-ATE (BC) estimate different quantities. This application demonstrates that the proposed method offers a solution to account for pre-exposure and recover the AIE parameter, even when pre-exposure cannot be directly measured among the subjects in the experiment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>In this paper, I formalized the pre-exposure bias problem using the potential outcomes framework; decomposed the average treatment effect (ATE) into its pre-exposure and exposure causal effect components; identified and quantified the bias arising from neglecting pre-exposure;</p><p>established sufficient identification conditions for identification of the pre-exposure causal parameters when pre-exposure is uncontrolled by the researchers; proposed a method to estimate the parameters when it is unfeaseable to measure pre-exposure directly from the experiment subjects; proposed a sampling procedure to apply the method; evaluated the finite sample performance of the bias-corrected estimator using Monte Carlo simulations; and illustrated the method with a real data application. The proposed solution can be implemented even after the experiment has been conducted and pre-exposure was not explicitly measured. It does not require repeated experiments or panel data, and can be conducted using two cross-sectional samples.</p><p>Although accounting for pre-exposure is considered an ideal procedure in information experiments <ref type="bibr" target="#b16">(Gaines, Kuklinski, and Quirk 2006;</ref><ref type="bibr" target="#b12">Druckman and Leeper 2012;</ref><ref type="bibr" target="#b18">Hartman and Newman 2019)</ref>, challenges related to causal inference that arise from pre-exposure have been largely overlooked, despite the concerns that have been raised starting at least two decades ago. The lack of attention given to pre-exposure in past research may be due to various reasons, such as the difficulty in dealing with the issue, the lack of fundational methodological work or formal results that explain pre-exposure bias, or the absence of a low-cost and practical methodological approach that addresses the problem. This paper bridges the gap between ideal and current research practices by tackling pre-exposure bias in information experiments when the goal is to evaluate the average information effect.</p><p>The method proposed has broad applicability beyond political science experiments. It can be used in observational studies that utilize machine learning classification methods to obtain binary interactive covariates. The PEPS estimator can correct for misclassification bias in such cases. The method is particularly important for information experiments (e.g. priming, framing, vignette, and cuing experiments) when addressing pressuring and salient political issues, where pre-exposure is more likely. It helps to account for the bias due to inability to directly measure pre-exposure among experimental subjects.</p><formula xml:id="formula_26">τ AT E = E [Y i (1)] -E [Y i (0)] = E [Y i (1) | D 2 = 1] -E [Y i (0) | D 2 = 0] (Randomization of D 2 ) = E [Y i | D 2 = 1] -E [Y i | D 2 = 0] (Consistency assumption) = E [E [Y i | D 1 , D 2 = 1]] -E [E [Y i | D 1 , D 2 = 0]] (Law of interated expectations) = (π 1 E [Y i | D 1 = 1, D 2 = 1] + (1 -π 1 )E [Y i | D 1 = 0, D 2 = 1]) -(π 1 E [Y i | D 1 = 1, D 2 = 0] + (1 -π 1 )E [Y i | D 1 = 0, D 2 = 0]) = π 1 E [Y i (1, 1)] + (1 -π 1 )E [Y i (0, 1)] -π 1 E [Y i (1, 0)] + (1 -π 1 )E [Y i (0, 0)] (Consistency assumption) = (1 -π 1 ) (E [Y i (0, 1)] -E [Y i (0, 0)]) + π 1 (E [Y i (1, 1)] -E [Y i (1, 0)]) = (1 -π 1 )τ AIE + π 1 (E [Y i (1, 1)] -E [Y i (0, 0)] + E [Y i (0, 0)] -E [Y i (1, 0)]) = (1 -π 1 )τ AIE + π 1 τ AIRE -π 1 τ AIP E</formula><p>The proof of theorem 3.1 is as follows. The general causal parameter capturing pre-exposure is:</p><formula xml:id="formula_27">τ P E (d 0 , d ′ 0 ) = E Y i (d 0 , 1) -Y i (t)(d ′ 0 , 0)<label>(16)</label></formula><p>For the first expectation in 16, we have: As plim θ = θ, following <ref type="bibr">Greene (2012, 66-7)</ref> and by assumption 3.1, we have plim M T ϵ n = 0 and the result follows for Asy.Bias( θ m ) = plim θ m -θ. The proof that the remaining term is non-zero is a direct result of the proof for the bias-corrected PEPS estimator presented in the online suplement.</p><formula xml:id="formula_28">E [Y i (t)(d, 1)] = E [Y i (d, 1) | D i1 = 1] (Y i (d 0 , d 1 ) ⊥ ⊥ D i1 ) = E X [E [Y i (d,</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>where k is the number of covariates, includingD 1 , D 2 , and their interaction. Denote θ m = ( τ AIE m , τ AIP E m, γ m , β x ) the PEPS estimator with misclassified cases of pre-exposure. Then, the asymptotic bias of θ m is (proof in the Appendix):</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Theorem 4.1 (Bias-corrected PEPS-ATE Estimator). Denote the biased and inconsistent OLS PEPS estimators ( τ AIE m , τ AIP E m , γ m ) computed from model (7) using the predicted pre-exposure status D 1i from (11) instead of the true pre-expoure D 1i , where D 1i is subject to false negative and false positive classification rates α 1 and α 0 , respectively. Denote α0 , α1 , and π of subjects classified as pre-exposed. Let π2 be the proportion of subjects exposed (i.e., in the treatment group) during the experiment. The following estimators ( τ AIE c</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 Figure 1 :</head><label>21</label><figDesc>Figure 2 analyzes the estimators' performance as a function of the misclassification rates α 0 and α 1 . Notably, the pre-exposure bias (ATE bias) is lower than the misclassification bias (PEPS-ATE bias) only in cases where α 0 + α 1 &gt; 1. The right panel of Figure 2 highlights this difference in absolute bias values. As the on-line supplment shows, α 0 + α 1 &lt; 1 is equivalent to a positive correlation between D 1 and D 1 . The PEPS-ATE (BC) doesn't suffer from this limitation and rectifies both the misclassification and the pre-exposure biases, irrespective of how poor the pre-exposure classification is, as evident in Figure 2.Table 3 presents the results of a Monte Carlo experiment consisting of ten thousand it-</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Comparing estimators of the average information effect (AIE) as function of misclassification rates (α 0 and α 1 ) and interaction effects between exposure and pre-exposure (λ). Simulated values use τ AIE = τ AIP E = 2 for the left panel and τ AIP E ∈ {-2, 0, 2} for the right panel, with average pre-exposure rate (pi (m) 1 ) of 0.54 (min: 0.53, max: 0.56).</figDesc><graphic coords="20,370.96,149.96,151.73,148.53" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>1) | X i , D i1 = 1]] (Law of interated expectations) = E X [E [Y i (d, 1) | X i , D i0 = d, D i1 = 1]] (Assumption 3.1) = E X [E [Y i | X i , D i0 = d, D i1 = 1]] (Consistency assumption) = x y y i dF (y i |X i =x,D i0 =d,D i1 =1) dF xTo prove the asymptotic bias due to misclassification shown in expression (13), denote θ = (τ AIE , τ AIP E , γ, β x ). From equation (12) we haveθ m = ( M T M ) -1 M T y = ( M T M ) -1 M T ( M θ + ϵ -γU + τ AIRE (U T I I ID 2 ))Taking the probability limit,plim θ m = θ + plim M M T M ) -1 (τ AIP E M T U + γ M T (U T I I ID 2 ))</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Steps to estimate the average information effect (AIE) using the asymptotic biascorrected pre-exposure predicted status average treatment effect (PEPS-ATE) estimatior and a split-module sampling procedure. Simulations indicate a good performance with n peps = 150 and a factor k = 4.1.Randomly assign k ×n exp subjects to the experimental sample</figDesc><table><row><cell>Steps</cell></row><row><cell>1: Compute the experimental sample size n exp using usual power analysis to test hypothesis</cell></row><row><cell>about a regression coefficient</cell></row><row><cell>2: Split-sampling scheme:</cell></row><row><cell>3:</cell></row><row><cell>4:</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 :</head><label>3</label><figDesc>Finite Sample Performance of the ATE, PEPS-ATE, Bias-corrected PEPS-ATE, and True Model OLS Estimators for Various Sample Sizes. The a Monte Carlo Experiment Used</figDesc><table><row><cell cols="7">Ten Thousand Iterations with (τ AIE , τ AIP E , γ) = (2.1, 1.2, 0.7) and the same other procedures</cell></row><row><cell>as in Figure 1.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="4">Sample 95% CI Coverage Average Std. Error</cell><cell>Bias</cell><cell></cell></row><row><cell>Estimator</cell><cell>Size τ AIE</cell><cell>γ</cell><cell>τ AIE</cell><cell>γ</cell><cell>τ AIE</cell><cell>γ</cell></row><row><cell>ATE</cell><cell>1000 0.0020</cell><cell>-</cell><cell>0.078776</cell><cell>-</cell><cell>0.378441</cell><cell>-</cell></row><row><cell></cell><cell>1500 0.0000</cell><cell>-</cell><cell>0.064237</cell><cell>-</cell><cell>0.380618</cell><cell>-</cell></row><row><cell></cell><cell>2000 0.0000</cell><cell>-</cell><cell>0.055619</cell><cell>-</cell><cell>0.379430</cell><cell>-</cell></row><row><cell>PEPS-ATE</cell><cell>1000 0.4573</cell><cell>0.1355</cell><cell cols="4">0.123852 0.160822 0.250684 -0.483209</cell></row><row><cell></cell><cell>1500 0.3004</cell><cell>0.0460</cell><cell cols="4">0.100968 0.130907 0.248058 -0.475531</cell></row><row><cell></cell><cell>2000 0.1817</cell><cell>0.0103</cell><cell cols="4">0.087285 0.113300 0.249331 -0.479456</cell></row><row><cell>PEPS-ATE</cell><cell>1000 0.9479</cell><cell>0.9504</cell><cell cols="4">0.298010 0.527781 -0.005066 0.004977</cell></row><row><cell>(BC)</cell><cell>1500 0.9459</cell><cell>0.9450</cell><cell cols="4">0.239372 0.423504 -0.012302 0.022308</cell></row><row><cell></cell><cell>2000 0.9477</cell><cell>0.9496</cell><cell cols="4">0.205802 0.364184 -0.004196 0.006024</cell></row><row><cell>True model</cell><cell>1000 0.9545</cell><cell>0.9605</cell><cell cols="4">0.093882 0.127482 0.003797 -0.005349</cell></row><row><cell>(pre-exposure</cell><cell>1500 0.9450</cell><cell>0.9517</cell><cell cols="4">0.076526 0.103859 0.000329 0.001525</cell></row><row><cell>observed)</cell><cell>2000 0.9486</cell><cell>0.9515</cell><cell cols="4">0.066256 0.089928 -0.000110 -0.000610</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The top-right panel of Figure <ref type="figure">3</ref> shows the misclassification rates (α 0 and α 1 ) for each policy.</p><p>As illustrated in Figures <ref type="figure">1</ref> and<ref type="figure">2</ref>, using predicted pre-exposure without adjusting for misclassification can decrease pre-exposure bias, unless the combined rates of false positives and false negatives surpass 1. The top-right panel reveals that this occurred in some cases (8.3 percent, or 4 out of the 48 policies in the sample). In such a scenario, using a predictive pre-exposure without a correction for misclassification would exacerbate the bias when estimating the AIE.</p><p>The bottom-right panel displays the naive ATE, PEPS-ATE, and PEPS-ATE (BC) estimates.</p><p>In this application, we can observe that the naive ATE underestimates the AIE by 8.8 percent ((0.0959 -0.0875)/0.0959).</p><p>Note that the confidence interval for the PEPS-ATE (BC) is larger and, for this particular application, the percentage change in the estimated values due to pre-exposure bias is small (8.8 percent). Given these results, one might object to the proposed method, arguing that the reduction in bias does not compensate for the increase in variance. However, this objection is incorrect for two reasons. First, it is impossible to know the size of the bias in advance for each possible case in which pre-exposure is a problem. Therefore, we cannot discard a priori that the bias is substantively relevant. Second, as discussed earlier, obtaining a bootstrap confidence interval comparable in size to the naive ATE would require a dataset approximately four times</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix</head><p>To proove proposition 2.1, denote π 1 the proportion of people pre-exposed, and assume D 2 (exposure) was randomized. Assume SUTVA and consistency <ref type="bibr" target="#b22">(Imbens and Rubin 2015)</ref>, which are required for any estimation of as defined in equation (1). Then,</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Regression with a binary independent variable subject to errors of observation</title>
+		<author>
+			<persName><forename type="first">Dennis</forename><forename type="middle">J</forename><surname>Aigner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="59" />
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Does party trump ideology? Disentangling party and ideology in America</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Barber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeremy</forename><forename type="middle">C</forename><surname>Pope</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Cross-Validation: What Does It Estimate and How Well Does It Do It?</title>
+		<author>
+			<persName><forename type="first">Stephen</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Am. Stat. Assoc</title>
+		<idno type="ISSN">0162-1459</idno>
+		<imprint>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2023-04">2023. April</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Sample size planning for classification models</title>
+		<author>
+			<persName><forename type="first">Claudia</forename><surname>Beleites</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ute</forename><surname>Neugebauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Bocklitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Krafft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jürgen</forename><surname>Popp</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Anal. Chim. Acta</title>
+		<idno type="ISSN">0003-2670</idno>
+		<imprint>
+			<biblScope unit="volume">760</biblScope>
+			<biblScope unit="page" from="25" to="33" />
+			<date type="published" when="2013-01">2013. January</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Measurement of higher education in the census and current population survey</title>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Black</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seth</forename><surname>Sanders</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lowell</forename><surname>Taylor</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">463</biblScope>
+			<biblScope unit="page" from="545" to="554" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Elite influence on public opinion in an informed electorate</title>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">G</forename><surname>Bullock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="496" to="515" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Party Cues</title>
+	</analytic>
+	<monogr>
+		<title level="m">The Oxford Handbook of Electoral Persuasion</title>
+		<editor>
+			<persName><forename type="first">Elizabeth</forename><surname>Suhay</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Bernard</forename><surname>Grofman</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alexander</forename><forename type="middle">H</forename><surname>Trechsel</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Bayesian approach to average power calculations for binary regression models with misclassified outcomes</title>
+		<author>
+			<persName><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">D</forename><surname>Dunlei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><forename type="middle">J</forename><surname>Stamey</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Branscum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Stat. Med</title>
+		<idno type="ISSN">0277-6715</idno>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="848" to="863" />
+			<date type="published" when="2009-02">2009. February</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Dynamic Public Opinion: Communication Effects over Time</title>
+		<author>
+			<persName><forename type="first">Dennis</forename><surname>Chong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">N</forename><surname>Druckman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<idno type="ISSN">1537-5943</idno>
+		<imprint>
+			<biblScope unit="volume">104</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="663" to="680" />
+			<date type="published" when="2010-11">2010. November</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Generalizing Survey Experiments Using Topic Sampling: An Application to Party Cues</title>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Clifford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">J</forename><surname>Leeper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlisle</forename><surname>Rainey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Behavior</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="24" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Applied multiple regression/correlation analysis for the behavioral sciences</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patricia</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><forename type="middle">G</forename><surname>West</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leona</forename><forename type="middle">S</forename><surname>Aiken</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Routledge</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Davison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">V</forename><surname>Hinkley</surname></persName>
+		</author>
+		<title level="m">Bootstrap Methods and their Application</title>
+		<meeting><address><addrLine>Cambridge, England, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="1997-10">1997. October</date>
+			<biblScope unit="page" from="978" to="978" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Learning More from Political Communication Experiments: Pretreatment and Its Effects</title>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">N</forename><surname>Druckman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">J</forename><surname>Leeper</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<idno type="ISSN">0092-5853</idno>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="875" to="896" />
+			<date type="published" when="2012-10">2012. October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Power and sample size calculations in the presence of phenotype errors for case/control genetic association studies</title>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">J</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chad</forename><surname>Haynes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><forename type="middle">A</forename><surname>Levenstien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><forename type="middle">J</forename><surname>Finch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><surname>Gordon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Genet</title>
+		<idno type="ISSN">1471-2156</idno>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2005-12">2005. December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Predicting sample size required for classification performance</title>
+		<author>
+			<persName><forename type="first">Rosa</forename><forename type="middle">L</forename><surname>Figueroa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Zeng-Treitler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sasikiran</forename><surname>Kandula</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Long</forename><forename type="middle">H</forename><surname>Ngo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC medical informatics and decision making</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Estimating misclassification error with small samples via bootstrap cross-validation</title>
+		<author>
+			<persName><forename type="first">Wenjiang</forename><forename type="middle">J</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Raymond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suojin</forename><surname>Carroll</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1979" to="1986" />
+			<date type="published" when="2005-05">2005. May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The logic of the survey experiment reexamined</title>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">J</forename><surname>Gaines</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">H</forename><surname>Kuklinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">J</forename><surname>Quirk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Econometric analysis. xxxix, 1188 p</title>
+		<author>
+			<persName><forename type="first">William</forename><forename type="middle">H</forename><surname>Greene</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Pearson Prentice Hall</publisher>
+			<pubPlace>Upper Saddle River, NJ</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Accounting for Pre-Treatment Exposure in Panel Data: Re-Estimating the Effect of Mass Public Shootings</title>
+		<author>
+			<persName><forename type="first">Todd</forename><forename type="middle">K</forename><surname>Hartman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><forename type="middle">J</forename><surname>Newman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<idno type="ISSN">0007-1234</idno>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1567" to="1576" />
+			<date type="published" when="2019-10">2019. October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Misclassification of the dependent variable in a discrete-response setting</title>
+		<author>
+			<persName><forename type="first">Jerry</forename><forename type="middle">A</forename><surname>Hausman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Abrevaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fiona</forename><forename type="middle">M</forename><surname>Scott-Morton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of econometrics</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="239" to="269" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Statistics and Causal Inference</title>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">W</forename><surname>Holland</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">396</biblScope>
+			<biblScope unit="page">945</biblScope>
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Identification, inference and sensitivity analysis for causal mediation effects</title>
+		<author>
+			<persName><forename type="first">Kosuke</forename><surname>Imai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Keele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Teppei</forename><surname>Yamamoto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Science</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="51" to="71" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<author>
+			<persName><forename type="first">Guido</forename><forename type="middle">W</forename><surname>Imbens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<title level="m">Causal Inference in Statistics, Social, and Biomedical Sciences: An Introduction</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">On expected probabilities of misclassification in discriminant analysis, necessary sample size, and a relation with the multiple correlation coefficient</title>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">A</forename><surname>Lachenbruch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="page" from="823" to="834" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Diverse Pre-Treatment Effects in Survey Experiments</title>
+		<author>
+			<persName><forename type="first">Katerina</forename><surname>Linos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kimberly</forename><surname>Twist</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Political Science</title>
+		<idno type="ISSN">2052-2630</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="148" to="158" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Estimating misclassification error: a closer look at cross-validation based methods</title>
+		<author>
+			<persName><surname>Ounpraseuth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shelly</forename><forename type="middle">Y</forename><surname>Songthip</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Horace</forename><forename type="middle">J</forename><surname>Lensing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ralph</forename><forename type="middle">L</forename><surname>Spencer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kodell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Res. Notes</title>
+		<idno type="ISSN">1756-0500</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="11" />
+			<date type="published" when="2012-12">2012. December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Bayesian Sample Size Determination for Estimating Binomial Parameters from Data Subject to Misclassification</title>
+		<author>
+			<persName><forename type="first">Elham</forename><surname>Rahme</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lawrence</forename><surname>Joseph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Theresa</forename><forename type="middle">W</forename><surname>Gyorkos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. R. Stat. Soc. Ser. C. Appl. Stat</title>
+		<idno type="ISSN">0035-9254</idno>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="119" to="128" />
+			<date type="published" when="2000-03">2000. March</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Calculating the sample size required for developing a clinical prediction model</title>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">D</forename><surname>Riley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joie</forename><surname>Ensor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">E</forename><surname>Kym</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><forename type="middle">E</forename><surname>Snell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Glen</forename><forename type="middle">P</forename><surname>Harrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johannes</forename><forename type="middle">B</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Reitsma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Karel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>Moons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Smeden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMJ</title>
+		<idno type="ISSN">1756-1833</idno>
+		<imprint>
+			<biblScope unit="volume">368</biblScope>
+			<biblScope unit="page">441</biblScope>
+			<date type="published" when="2020-03">2020. March</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The central role of the propensity score in observational studies for causal effects</title>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">R</forename><surname>Rosenbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="41" to="55" />
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Measurement errors in binary regressors: an application to measuring the effects of specific psychiatric diseases on earnings</title>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><surname>Savoca</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Health Services and Outcomes Research Methodology</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="149" to="164" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Assessing the Influence of Political Parties on Public Opinion: The Challenge from Pretreatment Effects</title>
+		<author>
+			<persName><forename type="first">Rune</forename><surname>Slothuus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Communication</title>
+		<idno type="ISSN">1058-4609</idno>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="302" to="327" />
+			<date type="published" when="2016-04">2016. April</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">All of statistics: a concise course in statistical inference</title>
+		<author>
+			<persName><forename type="first">Larry</forename><surname>Wasserman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Analysis of case-control data with interacting misclassified covariates</title>
+		<author>
+			<persName><forename type="first">Grace</forename><forename type="middle">Y</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenqing</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Stat. Distrib. App</title>
+		<idno type="ISSN">2195-5832</idno>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2017-12">2017. December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

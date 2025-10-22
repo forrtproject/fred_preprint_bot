@@ -1,0 +1,1224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HMLET -High-resolution Machine Learning Eye-tracking Toolbox</title>
+				<funder>
+					<orgName type="full">UC Davis Department of Psychology Summer Research Fellowship and Dissertation Research Fellowship</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Alireza</forename><surname>Kazemi</surname></persName>
+							<email>kazemi@ucdavis.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Center for Mind and Brain</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Joy</forename><surname>Geng</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Center for Mind and Brain</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Simona</forename><surname>Ghetti</surname></persName>
+							<email>sghetti@ucdavis.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Center for Mind and Brain</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<postCode>95616</postCode>
+									<settlement>Davis</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">HMLET -High-resolution Machine Learning Eye-tracking Toolbox</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">5EEDDF7BFD65F8A217C58D74AB66C7BF</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:34+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Eye-tracking</term>
+					<term>Time-course Analysis</term>
+					<term>Visual Exploration</term>
+					<term>Toolbox</term>
+					<term>Similarity Analysis</term>
+					<term>Feature Selection</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Eye-tracking technology yields high temporal and spatial resolution data on visual behavior. Detection and quantification of cognitive processes underlying looking behavior can be challenging using conventional processing and statistical analysis. Non-parametric statistical methods are powerful alternatives for high-resolution time series analysis and data driven machine learning techniques can provide an unbiased and explorative description in the analysis of high dimensional data. This paper introduces high-resolution machine learning eye-tracking toolbox (HMLET) that provides an accurate implementation of non-parametric statistical methods in R language and an executable graphic user interface (GUI) comprising novel methods and tools for extraction and analysis of informative measures from eye-tracking data with high temporal resolution. This package supports processing of raw eye-tracking data for basic preprocessing, high-resolution time series analysis, non-parametric permutation tests, datadriven evaluation and selection of eye-tracking measures, a novel visual exploration similarity analysis, along with a sets of visualization tools. HMLET is freely available for download and contribution on GitHub https://github.com/Alireza-Kazemi/MLET, distributed under the MIT license.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Eye-tracking is a well-established method to collect data on looking behaviors <ref type="bibr" target="#b23">(Mele &amp; Federici, 2012)</ref>. Looking behaviors are governed by numerous cognitive processes including, but not limited, to perception and visual attention <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref>, emotion <ref type="bibr" target="#b19">(Lim et al., 2020)</ref>, decision-making <ref type="bibr" target="#b12">(Gidlöf et al., 2013;</ref><ref type="bibr" target="#b33">Selmeczy et al., 2021;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref>, and memory <ref type="bibr" target="#b25">(Oakes et al., 2013;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016;</ref><ref type="bibr" target="#b30">Richmond &amp; Nelson, 2009)</ref>. In addition, there is evidence that eye movements are influenced by the autonomic nervous system <ref type="bibr" target="#b22">(McDougal &amp; Gamlin, 2014)</ref>. As a result, even in well-controlled experiments, eye-tracking data reflect the combination of ongoing cognitive and autonomic processes as well as recording-related errors <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. As a result, it can be challenging to detect and quantify what aspects of looking behaviors reflect a specific cognitive process (e.g., episodic memory), particularly when the effect of interest is small and/or its temporal dynamics are likely changing over the course of the trial. In order to make the best use of eye-tracking data, researchers should use methods that maximize their ability to utilize the available data without sacrificing precision and leverage robust statistical methods to compare relevant experimental conditions.</p><p>Most studies average specific measures (e.g., looking proportions) across many timepoints <ref type="bibr" target="#b13">(Hannula, 2010)</ref>. Although this practice is typically used to improve the chance of detecting a hypothesized effect reliably by avoiding multiple comparison correction <ref type="bibr" target="#b14">(Hannula &amp; Ranganath, 2009;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016)</ref>, there is the risk of losing important information about temporal dynamics. Capturing the high temporal resolution of the eye-tracking data can increase statistical power especially when the target effect is hypothesized to vary across time and its size may be limited <ref type="bibr" target="#b1">(Andersson et al., 2010;</ref><ref type="bibr" target="#b4">Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b29">Prasse et al., 2020)</ref>. Modern eye-tracking devices can record gaze positions up to 2000 times per second <ref type="bibr">(2000 Hz)</ref> resulting in a dense time series of gaze points with 0.5ms time interval between samples. Such a high temporal resolution may seem unnecessary when one considers that it takes tens of milliseconds for the visual cortex to receive the visual input <ref type="bibr" target="#b0">(Albrecht et al., 2002;</ref><ref type="bibr" target="#b35">Shapley et al., 2007)</ref>. However, eye-tracking technology relies on discrete time sampling of eye movements and based on the Nyquist-Shannon theorem <ref type="bibr" target="#b34">(Shannon, 1949)</ref> the sampling rate must be at least twice the bandwidth of the actual signal. Bandwidth of a signal is defined as the difference between upper and lower rate of change in the signal <ref type="bibr" target="#b27">(Oppenheim &amp; Schafer, 1975)</ref>. Eye movements include very slow drifts to ultra-rapid saccades that can peak at 650 degrees per seconds in some individuals <ref type="bibr" target="#b40">(Wilson et al., 1993)</ref>. Sampling rate for a signal with peak bandwidth of 650hz should be at least 1300hz to provide enough data for accurate estimation of all eye-movements from slow drifts and steady fixations to ultra-rapid saccades. Therefore, the sampling frequency of an eye-tracker limits the estimation of fast dynamics in the eye-movements consistent with the evidence that accurate detection of fast events can benefit from higher temporal resolutions <ref type="bibr" target="#b16">(Kirchner &amp; Thorpe, 2006)</ref>.</p><p>As a result, analyzing the time series of eye-movements may provide more accurate estimation of the dynamics of the targeted effects compared to estimating fixations and saccades collapsed within pre-determined time bins. To mitigate the multiple-comparison problem in the analysis of time series data, permutation tests are a suitable solution <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>.</p><p>In some research, the same comparison might be repeated across different measures and conditions <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b38">Wang et al., 2020)</ref>. Critically, permutation tests are computationally demanding, and multiple permutation tests to investigate hypothesized effects on all possible measures (e.g., looking proportions, switching frequency, and saccades frequency) not only demand for high computational resource, but also may increase the chance of false discovery through "fishing" <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. Therefore, it is helpful to explore novel methods capable of cross validating a custom set of measures. Similar challenges have been addressed in the field of machine learning through data-driven methods of feature evaluation/selection <ref type="bibr" target="#b2">(Ang et al., 2016;</ref><ref type="bibr" target="#b36">Solorio-Fernández et al., 2020)</ref>. For the sake of consistency, we are going to use the term feature to refer to measures obtained from eye-tracking data. In this paper, we introduce a package for analysis of high-temporal resolution eye-tracking time series, data driven evaluation and selection of numerous features, and a novel visual exploration similarity analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical Analysis of the Time Series</head><p>Commercial eye-tracking software solutions such as Tobii Pro Lab, formerly known as Tobii Pro Studio <ref type="bibr" target="#b37">(Tobii AB, 2024)</ref> are usually limited to a specific eye-tracking hardware and provide limited analytical methods. However, most of them can export raw or preprocessed data for further analysis in other software and packages. Several open-source packages have been introduced for eye-tracking data analysis with different capabilities. EyetrackingR <ref type="bibr" target="#b6">(Dink, J. W. &amp; Ferguson, B., 2015)</ref> is the most cited package that provides tools to perform different analyses including onset contingent analysis <ref type="bibr" target="#b9">(Fernald et al., 2008)</ref>, growth curve analysis <ref type="bibr" target="#b24">(Mirman et al., 2008)</ref>, and divergence analysis <ref type="bibr" target="#b39">(Wendt et al., 2014)</ref>. Some of these methods use permutation tests for statistical comparison and to the best of our knowledge, eyetrackingR is the only package that provides permutation test for high-temporal resolution time series of eye-tracking data. However, the current version of the eyetrackingR does not account for the repetition of the permutation samplings. In a permutation test, the null distribution is estimated non-parametrically through a Monte Carlo approximation which includes computing the desired statistic in a relatively large number of unique permutation of the input data <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>. If one does not control for the repeated permutations, false positive or false negative results may be observed depending on the number of observations, simulations, and the likelihood and distribution of the repeated permutations <ref type="bibr" target="#b20">(Mahadevan, 1997;</ref><ref type="bibr" target="#b32">Rubinstein &amp; Kroese, 2016)</ref>.</p><p>Moreover, as <ref type="bibr" target="#b21">Maris and Oostenveld (2007)</ref> discussed, in within-subject studies, permutations can be completed either across subject-level averages (i.e., subject-level permutations) or across trials within each subject (i.e., trial-level permutations). Critically, in studies with small sample sizes, the total number of possible subject-level permutations theoretically limits the accuracy of p-value estimation. For example, in a study with 5 participants with 2 within-subject conditions, only 2 5 = 32 unique subject-level permutations are possible hence the smallest possible p-value is 1/32 = 0.031. In cases of small sample sizes, but large numbers of trials available for each participant, trial-level permutation is a better estimation tool, which is not available in eyetrackingR or other open-source eye-tracking packages.</p><p>In HMLET, we implemented both trial-level and subject-level permutation tests, equipped with routines to produce unique permutation labels. We also provided a couple of preprocessing routines for checking data for common issues in ordering and indexing, resampling, binning in time, and interpolation (See Time Series Analysis Section).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Informative Measures</head><p>The field has generated several tools to preprocess and analyze eye-movement. For example, GazeR <ref type="bibr" target="#b10">(Geller et al., 2020)</ref> and PyTrack <ref type="bibr" target="#b11">(Ghose et al., 2020)</ref> are successful opensource packages which provided a strong set of tools for different stages of eye-tracking data analysis including, preprocessing of the raw data, common and novel feature and parameter extraction, statistical analysis and visualization. Despite the strengths of existing analytical tools, to our knowledge, there is no available eye-tracking package that supports unbiased and comprehensive feature analysis, which is a necessary step to conduct a formal and replicable data exploration in a principled fashion <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. The use of systematic and reproducible analytical methods for feature evaluation and selection across different studies is crucial to improve replicability and reliability of the scientific findings. In HMLET, we provided a set of complementary tools to perform feature evaluation and provide a set of temporal and overall ranking of the measures in terms of their informativeness in dissociating specified experimental conditions (See Feature Analysis Section).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration</head><p>Another desirable ability of eye-tracking packages is to produce estimates of visual exploration, given its importance for attention allocation <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref> and information processing <ref type="bibr" target="#b17">(Krajbich et al., 2010;</ref><ref type="bibr" target="#b18">Krajbich &amp; Rangel, 2011)</ref>.</p><p>Scanpath similarity analysis has been shown to be an informative eye-tracking measure which quantifies the extent to which visual exploration is similar across different conditions or between encoding and retrieval <ref type="bibr" target="#b8">(Fahimi &amp; Bruce, 2021)</ref>. Fixation density maps are conceptually a mapped version of scanpaths on a 2 dimensional plane, which have been widely used in the similarity-based analysis of visual exploration <ref type="bibr" target="#b7">(Engelke et al., 2013;</ref><ref type="bibr" target="#b26">Olsen et al., 2014)</ref>. For example, similarity analysis of fixation density maps in a memory task showed that revisiting the same fixation points that were visited during the encoding, in the retrieval improve visuospatial memory <ref type="bibr" target="#b41">(Wynn et al., 2018)</ref>. Eyesim (https://github.com/bbuchsbaum/eyesim) is an opensource package that provides similarity analysis for fixation density maps. Critically, the temporal resolution of the fixation density maps is bound to the fixation durations, and this is not necessarily temporally comparable across participants.</p><p>In HMLET, we introduced a novel method for visual exploration similarity analysis in which we used time series of gaze points rather than fixations to estimate the pattern of the gaze distribution across time and space. We also provided some routines to create output videos (See Visual Exploration Similarity Analysis Section).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET workflow</head><p>In the following sections, we provide an overview of the functions and capabilities implemented in HMLET. The workflow and main modules are presented in Figure <ref type="figure" target="#fig_0">1</ref>. Feature analysis includes functions and routines for feature evaluation and selection based on machine learning. VESA includes functions and routines for visual exploration similarity analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization includes functions and routines to visualize data and results.</head><p>The preprocessing module is designed to be compatible with all types of eye-tracking technology that supports CSV or TXT file export. We encourage users to export raw gaze-point coordinates with time stamps to preserve high temporal resolution and use pre-processing functions to define AOIs. However, HMLET is amenable for users exporting AOIs and fixation data computed by their software of choice. In this case, users would skip pre-processing steps in HMLET and use the functions for data preparation for the desired module which convert user data to a compatible format for HMLET modules.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Structure</head><p>Data must be prepared in the long format. General data structure should include subject index (within-trial permutation tests support single subject data), time variable indicating time stamp in milliseconds (e.g., 16, 32, 48, …), or indexes (e.g., 1, 2, 3, …), grouping variables indicating trial or subject level conditions, and response types (e.g., hit, false-alarm) and eyetracking variables indicating gaze point coordinates on screen or they can be relative coordinates with respect to a fixed or changing center (e.g., fixation [x, y] coordinate relative to the stimuli center), areas of interest, and gaze proportions. Additional variables can be included, and some can be replaced as an alternative to the listed required variables. For example, HMLET supports reverse time analysis which allows for examining eye-movement patterns backward in time from a specific incident (e.g., response submission) which can be replaced with the normal time stamp or time index variables. See Table .1 for details. </p><formula xml:id="formula_0">✓ - ✓ ✓ - ✓ ✓ ✓ Features Different Eye-tracking Measures - ✓</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET Modules in R</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocessing</head><p>Eye-tracking data in raw format consist of a temporal sequence of 2-dimensional gaze coordinates within the experimental screen per trial/subject/condition. Data must be loaded into a variable of type dataframe in R and sorted in long format. The standard preprocessing pipeline available in HMLET for raw data is shown in Figure <ref type="figure" target="#fig_1">2</ref>. We suggest using these modules in the presented order to avoid unwanted error propagation. In the following sections, we provide detailed functions of each module. Validation. In the analysis of time series data, it is crucial to have the exact time stamp of all data points. The time interval between samples must also be equal to implement permutation tests because average values in each time point across trials and participant ID is used to compute the statistic that is later used to form clusters across time points. Even a small deviation or mislabeling of the time stamps between trials and participants can result in large errors in the average time series and corresponding permutation tests. In practice, due to truncation errors, it is very common to have slight deviations in the time stamps exported by the eye-trackers. For example, for an eye-tracker with sampling rate of 60hz the time interval between samples will be 16.(6)ms, which has an indefinitely repeating 6 in its decimal, but a rounded or truncated version of this number will be stored by the software which may cause varying time intervals across samples (e.g., with presumably an ideal 60hz sampler, time intervals frequently alternate between 16ms and 17ms). As a result, in practice, there can be discrepancies in time intervals between samples that have to be fixed before proceeding to permutation tests. The function ComputeSamplingInterval_HMLET provides estimates of the sampling interval in the given data. This function produces a warning if there are discrepancies in the current data. To fix the issue, Preprocess_FixSampling_HMLET, can be used in which all the data points will be labeled with consistent time stamps.</p><p>We strongly suggest using the function Preprocess_CheckData_HMLET for quality to check data for critical issues such as consistency of time stamps and identification of missing values due to blink or head movements.</p><p>Interpolation. It is very common to have missing gaze points in any given temporal sequence of gaze coordinates. This may happen due to blinking, the participant not looking within the screen area, or device error. Critically, when it comes to high temporal resolution analysis of eye-tracking data, removing missing gaze points results in misalignment of data time points across trials. Users can estimate gaze point trajectory for missing time points using the Preprocess_Interpolate_HMLET function. This function performs linear interpolation for the specified number of consecutive missing gaze points and leaves the value of longer consecutive missing gaze points as NA. This step is not mandatory, and it can be ignored.</p><p>AOI Extraction. This step adds a categorical column to the data indicating the name of the AOI the subject is looking at during each time point. Users need to provide 4 arguments for rectangular AOIs as {Center_X, Center_Y, Width, Height}, indicating center of each AOI and its width and height in pixels with respect to top left corner of the screen (i.e., origin {0, 0}). Areas outside the listed AOI will be labeled as Content (user can change the label). The function</p><p>Preprocess_AOIExtraction_HMLET performs these computations. The AOI column is mandatory for permutation tests, but if it is already available in the data this step can be ignored.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Define Time Bins. Time bin is defined as an interval of time across which individual time</head><p>point data is aggregated. This is most commonly used for looking proportions. Time bins can be defined as arbitrary time intervals (not smaller than sampling duration) using the function</p><p>CreateTimeBinData_HMLET. This step is not mandatory. However, it is recommended with high temporal resolution data with many missing gaze points. The aggregating function can be set by the user and is set to the mean() function by default. This function first creates new columns for all possible AOIs with binary values indicating whether gaze point was inside the AOI or not. If these binary AOI columns are already presented in the data, this step will be ignored. Subsequently, it applies the aggregating function on these binary AOIs columns within time bins for each level of the grouping variables defined by the user. If users do not specify any grouping variables, time point data will not be aggregated (e.g., averaged, summed, etc.) within time bins and only the time bin information will be added to the current data frame in the form of two additional columns. One column specifies the corresponding time interval for each sample as labels (e.g., for time bins of size 250ms: "0-250", "250-500", …), and the other column specifies the index of the time bins in numerical format (e.g., 1, 2, 3, …). This is not a mandatory step and user may ignore this step.</p><p>Data Preparation. This is a mandatory step through which data column names are converted to a compatible format for HMLET modules. To prepare data for permutation tests, the function PermutationTestDataPrep_HMLET should be called. Alternatively, to prepare the data for GUI use and performing feature analysis and VESA modules, the function</p><p>ExportDataForGUI_HMLET should be used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Time Series Analysis</head><p>In HMLET, we implemented both subject-level and trial-level permutation tests as introduced by <ref type="bibr" target="#b21">Maris and Oostenveld, (2007)</ref> for time series data. Critically, to have a valid estimation of the null distribution, individual permutations of conditions must be unique. If not, the Monte Carlo assumption would be violated and the estimated distribution would be invalid <ref type="bibr" target="#b31">(Romano &amp; Tirlea, 2022)</ref>. In HMLET, we first produce unique random permutation labels for the number of simulations defined by the user. Subsequently, we perform simulations on these labels to estimate the null distribution. Users can directly pass the prepared data to the function PermutationTest_HMLET, which runs the permutation test pipeline at the subject-level or triallevel based on the specified binary value to the input argument permuteTrialsWithinSubject (i.e., trial-level will be used if it is set as true, otherwise participants level permutation will be performed). In principle, both methods are expected to produce the same results when ample number of permutation samples are tested <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>. However, in practice, with small numbers of subjects contributing data, desired number of permutations across subjects may not be possible or enough to reliably estimate the p-value. In these cases, with large number of trials for each experimental condition, trial-level permutation is more appropriate. Subjectlevel permutation is computationally faster and when enough subjects are available, users may prefer to run subject-level tests. Trial-level permutation test can compare experimental conditions in one subject which is implemented in a separate function</p><p>PermutationTestSingleParticipant_HMLET. Results of the permutation tests can be visualized using functions PlotTimeSeries_HMLET and PlotNullDistribution_HMLET.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET GUI Modules</head><p>Feature analysis and VESA modules are available in the GUI which is implemented in MATLAB™ (2024a). To run the GUI, MATLAB™ compiler runtime is required which is freely available on MathWorks™ website 1 . Source scripts for these modules are also available which 1 https://www.mathworks.com/products/compiler/matlab-runtime.html can be directly used in MATLAB™ environment. Users can use ExportDataForGUI_HMLET function in R to prepare their data for the GUI.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Analysis</head><p>The workflow of the feature analysis module is represented in Figure <ref type="figure" target="#fig_2">3</ref>. In this module, desired features (i.e., eye-tracking measures) extracted from the data are analyzed to score their informativeness in discriminating between specified conditions. Note that any measure of eyetracking can be treated as a feature, but only conceptually comparable ones can be analyzed together in the feature analysis. Therefore, one application of the feature analysis is to identify the optimal parameters for a specific eye-tracking measure. For instance, in practice, the size of AOI around a stimulus (e.g., fixation cross) is often defined heuristically, especially when the stimulus lacks explicit borders. As a result, the value of an eye-tracking measure (e.g., looking time at that area) may vary with different sizes of AOIs with significant impact on the results. As preliminary assessment, all possible values of the looking time resulting from different AOI sizes can be compared in the feature analysis.</p><p>Features must be added in separate columns in the long format. In addition to the features provided by the user, HMLET can compute some basic features from the preprocessed data as listed in Table <ref type="table" target="#tab_1">2</ref>. If features were computed within different time windows during trials, their informativeness within each time window would be compared and scored separately. After outlier removal and normalization of the features, based on a user defined categorical dependent variable (e.g., Accuracy, Experimental Condition, etc.), features are ranked using chi square tests <ref type="bibr" target="#b15">(Jović et al., 2015)</ref> and minimum redundancy <ref type="bibr" target="#b5">(Ding &amp; Peng, 2005)</ref>. Subsequently, the ranking of the features can be validated on the performance of a KNN or SVM classifier (can be chosen by the user) to predict the desired trial/subject level variable using the feature time series. In this step, a set of features will be extracted from the preprocessed data. Features can be extracted from absolute gaze points, relative gaze points, and/or gaze proportions. By default, HMLET extracts different groups of features listed in Table <ref type="table" target="#tab_1">2</ref>. Users can choose all or a subset of these features. Alternatively, users can provide their own features in the input data and ignore the feature extraction step. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration Similarity Analysis (VESA)</head><p>VESA is a novel technique in which absolute or relative gaze point coordinates are used to compute similarity of gaze patterns between two conditions (e.g., Similarity between encoding and retrieval in a memory task). VESA builds an exploration map which is a 2-dimensional representation of the gaze distribution within a sliding time window (with user defined length and overlap). Therefore, a set of exploration maps will be computed for each trial. Users can choose to compare exploration-maps of the corresponding time windows between trials which will produce a time series of similarity scores for each pair of compared trials. Alternatively, exploration maps within each trial can be stacked temporally and similarity computed between the 3D volumetric representations which will result one similarity score for each pair of compared trials (See Figure <ref type="figure" target="#fig_3">4</ref>). In both cases, similarity scores are computed using a Pearson's correlation.</p><p>Each exploration map is created in 3 steps. First, a 2-dimensional pictorial representation of all gaze points in the selected time window is created as a 2D picture with the same size as the original screen in which each pixel takes the value corresponding to the number of gaze points in that coordinate. Second, the 2D images are smoothed by a specified factor. Finally, these images are rescaled with the desired factor defined by user. Rescaling smaller images is necessary for computational efficiency. However, if ample computational resources are available, users may use factor 1 for rescaling. For smoothing, users can choose between three different methods: gridbased, Gaussian, and convolution. In grid-based smoothing, for a smoothing factor R, the screen is divided into grids of R×R pixels. Smoothing and scaling are performed simultaneously by assigning one pixel to each grid, with its value being the sum of all pixel values within that grid.</p><note type="other">HMLET Toolbox 16</note><p>Gaussian smoothing applies a 2D Gaussian filter with a standard deviation of R to the image. In convolution smoothing, the value of each pixel is replaced with the average value of all pixels within a circle of radius R centered on that pixel. These methods offer different approaches to smoothing based on user preferences and requirements. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. HMLET workflow. Raw eye-tracking data should include gaze point coordinates,</figDesc><graphic coords="8,108.00,320.38,435.07,225.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Preprocessing modules offered in HMLET. These modules are suggested to be</figDesc><graphic coords="11,108.00,72.00,403.66,183.45" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Workflow of feature analysis module in HMLET. This pipeline automatically</figDesc><graphic coords="16,108.00,72.00,378.24,171.90" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Steps of creating an exploration map. A) Hypothetical scan-path with only 1 gaze</figDesc><graphic coords="18,108.00,182.39,420.24,145.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Eye-tracking data structure supported by HMLET. Required variables are the variables that must exist in the data for some or all modules of HMLET. Computable variables are those that HMLET can compute for the user if they are not already in the data.</figDesc><table><row><cell>Categories</cell><cell>Variables</cell><cell>Details</cell><cell cols="2">Required Computable</cell></row><row><cell>Subjects</cell><cell cols="2">IDs Unique Subject IDs (categorical)</cell><cell>✓</cell><cell>-</cell></row><row><cell>Time Variables</cell><cell>Time Stamp</cell><cell>time in milliseconds/index (numerical)</cell><cell>✓</cell><cell>-</cell></row><row><cell></cell><cell>Time Bin</cell><cell>arbitrary time bin (ordinal)</cell><cell>-</cell><cell>✓</cell></row><row><cell></cell><cell>Forward Index</cell><cell>forward time index (ordinal)</cell><cell>-</cell><cell>✓</cell></row><row><cell></cell><cell>Reverse Index</cell><cell>backward time index (ordinal)</cell><cell>-</cell><cell>-</cell></row><row><cell></cell><cell>Sampling Duration</cell><cell>duration of each sample in milliseconds</cell><cell>✓</cell><cell>-</cell></row><row><cell></cell><cell></cell><cell>(numerical)</cell><cell></cell><cell></cell></row><row><cell>Grouping Variables</cell><cell>Within Subjects</cell><cell>trial level (categorical)</cell><cell>✓</cell><cell>-</cell></row><row><cell></cell><cell>Between Subjects</cell><cell>subject level (categorical)</cell><cell>✓</cell><cell>-</cell></row><row><cell></cell><cell>Response Type</cell><cell>trial level accuracy (categorical)</cell><cell>✓</cell><cell>-</cell></row><row><cell>Eye-Tracking</cell><cell>Gaze coordinates</cell><cell>[x, y] on screen at each time point (nu-</cell><cell></cell><cell></cell></row><row><cell></cell><cell>Relative coordinates</cell><cell>merical)</cell><cell></cell><cell></cell></row><row><cell></cell><cell>AOIs</cell><cell>[x, y] relative to a center at each time</cell><cell></cell><cell></cell></row><row><cell></cell><cell>Gaze proportions</cell><cell>point (numerical)</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>Areas of interest (categorical)</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>looking proportions (numerical)</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>Default features HMLET feature analysis module extracts from eye-tracking data.</figDesc><table><row><cell>Feature Type</cell><cell>Details</cell><cell>Unit</cell></row><row><cell>Unique Gaze Points</cell><cell>Number of unique gaze points in each AOI and overall</cell><cell>Count</cell></row><row><cell>Unique Spots</cell><cell>Number of unique gaze clusters, grouped based on a user defined</cell><cell>Number</cell></row><row><cell></cell><cell>spot size</cell><cell></cell></row><row><cell>Revisited Spots</cell><cell>Number of time same spots are revisited</cell><cell>Number</cell></row><row><cell>Looking Time</cell><cell>The time spent within each AOI and overall</cell><cell>Time(ms)</cell></row><row><cell>Area of Visit</cell><cell>Total area explored within each AOI and overall</cell><cell>Pixel Square</cell></row><row><cell>Total Distance</cell><cell>Total distance explored within each AOI and overall</cell><cell>Pixel</cell></row><row><cell>Average Distance</cell><cell>Average of Euclidean distance between consecutive gaze points</cell><cell>Pixel</cell></row><row><cell>Number of switches</cell><cell>Number of time gaze points switched between AOIs</cell><cell>Count</cell></row><row><cell>Looking Proportions</cell><cell>Proportional viewing time of the AOIs</cell><cell>Percent</cell></row><row><cell>Vicinity Score</cell><cell>Scoring gaze points based on their vicinity to a specified point</cell><cell>Pixel</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="funding">
+<div><head>Funding</head><p>The development of this package is partly supported by <rs type="funder">UC Davis Department of Psychology Summer Research Fellowship and Dissertation Research Fellowship</rs> awarded to A.K.</p></div>
+			</div>
+			<listOrg type="funding">
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interest statement</head><p>The authors declared no potential conflicts of interest with respect to the research, authorship, and/or publication of this article.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Visual Cortex Neurons of Monkeys and Cats: Temporal Dynamics of the Contrast Response Function</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Albrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Geisler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Frazor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Crane</surname></persName>
+		</author>
+		<idno type="DOI">10.1152/jn.2002.88.2.888</idno>
+		<ptr target="https://doi.org/10.1152/jn.2002.88.2.888" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neurophysiology</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="888" to="913" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Sampling frequency and eye-tracking measures: How speed affects durations, latencies, and more</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Andersson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nyström</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Holmqvist</surname></persName>
+		</author>
+		<idno type="DOI">10.16910/jemr.3.3.6</idno>
+		<ptr target="https://doi.org/10.16910/jemr.3.3.6" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Eye Movement Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Supervised, Unsupervised, and Semi-Supervised Feature Selection: A Review on Gene Selection</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Ang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mirzal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">N A</forename><surname>Hamed</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TCBB.2015.2478454</idno>
+		<ptr target="https://doi.org/10.1109/TCBB.2015.2478454" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE/ACM Transactions on Computational Biology and Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="971" to="989" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Eye-tracking metrics in perception and visual attention research</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Borys</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Plechawska-Wójcik</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">13</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Best practices in eye tracking research</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">T</forename><surname>Carter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">G</forename><surname>Luke</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijpsycho.2020.05.010</idno>
+		<ptr target="https://doi.org/10.1016/j.ijpsycho.2020.05.010" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Psychophysiology</title>
+		<imprint>
+			<biblScope unit="volume">155</biblScope>
+			<biblScope unit="page" from="49" to="62" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Minimum redundancy feature selection from microarray gene expression data</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Peng</surname></persName>
+		</author>
+		<idno type="DOI">10.1142/s0219720005001004</idno>
+		<ptr target="https://doi.org/10.1142/s0219720005001004" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Bioinformatics and Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="185" to="205" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Dink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ferguson</surname></persName>
+		</author>
+		<ptr target="http://www.eyetrackingr.com" />
+		<title level="m">eyetrackingR: An R Library for Eye-tracking Data Analysis</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Comparative Study of Fixation Density Maps</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Engelke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Le Callet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Heynderickx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H.-J</forename><surname>Zepernick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maeder</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TIP.2012.2227767</idno>
+		<ptr target="https://doi.org/10.1109/TIP.2012.2227767" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Image Processing</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1121" to="1133" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">On metrics for measuring scanpath similarity</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fahimi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D B</forename><surname>Bruce</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-020-01441-0</idno>
+		<ptr target="https://doi.org/10.3758/s13428-020-01441-0" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="609" to="628" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Looking while listening: Using eye movements to monitor spoken language comprehension by infants and young children</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fernald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zangl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Portillo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">A</forename><surname>Marchman</surname></persName>
+		</author>
+		<idno type="DOI">10.1075/lald.44.06fer</idno>
+		<ptr target="https://doi.org/10.1075/lald.44.06fer" />
+	</analytic>
+	<monogr>
+		<title level="m">Developmental psycholinguistics: On-line methods in children&apos;s language processing</title>
+		<imprint>
+			<publisher>John Benjamins Publishing Company</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="97" to="135" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">GazeR: A Package for Processing Gaze Position and Pupil Size Data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Geller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Winn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mahr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mirman</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-020-01374-8</idno>
+		<ptr target="https://doi.org/10.3758/s13428-020-01374-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="2232" to="2255" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">PyTrack: An end-toend analysis toolkit for eye tracking</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Ghose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Srinivasan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">P</forename><surname>Boyce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Chng</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-020-01392-6</idno>
+		<ptr target="https://doi.org/10.3758/s13428-020-01392-6" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="2588" to="2603" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Using Eye Tracking to Trace a Cognitive Process: Gaze Behaviour During Decision Making in a Natural Environment</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Gidlöf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wallin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dewhurst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Holmqvist</surname></persName>
+		</author>
+		<idno type="DOI">10.16910/jemr.6.1.3</idno>
+		<ptr target="https://doi.org/10.16910/jemr.6.1.3" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Eye Movement Research</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Worth a glance: Using eye movements to investigate the cognitive neuroscience of memory</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Hannula</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fnhum.2010.00166</idno>
+		<ptr target="https://doi.org/10.3389/fnhum.2010.00166" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Human Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">The Eyes Have It: Hippocampal Activity Predicts Expression of Memory in Eye Movements</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Hannula</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ranganath</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2009.08.025</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2009.08.025" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="592" to="599" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A review of feature selection methods with applications</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jović</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Brkić</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bogunović</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/MIPRO.2015.7160458</idno>
+		<ptr target="https://doi.org/10.1109/MIPRO.2015.7160458" />
+	</analytic>
+	<monogr>
+		<title level="m">38th International Convention on Information and Communication Technology, Electronics and Microelectronics (MIPRO)</title>
+		<imprint>
+			<date type="published" when="2015">2015. 2015</date>
+			<biblScope unit="page" from="1200" to="1205" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Ultra-rapid object detection with saccadic eye movements: Visual processing speed revisited</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kirchner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Thorpe</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.visres.2005.10.002</idno>
+		<ptr target="https://doi.org/10.1016/j.visres.2005.10.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Vision Research</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1762" to="1776" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Visual fixations and the computation and comparison of value in simple choice</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Krajbich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Armel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rangel</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nn.2635</idno>
+		<ptr target="https://doi.org/10.1038/nn.2635" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1292" to="1298" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Multialternative drift-diffusion model predicts the relationship between visual fixations and choice in value-based decisions</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Krajbich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rangel</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1101328108</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1101328108" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">33</biblScope>
+			<biblScope unit="page" from="13852" to="13857" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Emotion Recognition Using Eye-Tracking: Taxonomy, Review and Current Challenges</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Z</forename><surname>Lim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mountstephens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Teo</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/s20082384</idno>
+		<ptr target="https://doi.org/10.3390/s20082384" />
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Monte Carlo Simulation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mahadevan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Reliability-Based Mechanical Design</title>
+		<imprint>
+			<publisher>CRC Press</publisher>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Nonparametric statistical testing of EEG-and MEG-data</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Maris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Oostenveld</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jneumeth.2007.03.024</idno>
+		<ptr target="https://doi.org/10.1016/j.jneumeth.2007.03.024" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience Methods</title>
+		<imprint>
+			<biblScope unit="volume">164</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="177" to="190" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Autonomic Control of the Eye</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">H</forename><surname>Mcdougal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Gamlin</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/cphy.c140014</idno>
+		<ptr target="https://doi.org/10.1002/cphy.c140014" />
+	</analytic>
+	<monogr>
+		<title level="m">Comprehensive Physiology</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="439" to="473" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Gaze and eye-tracking solutions for psychological research</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Mele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Federici</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10339-012-0499-z</idno>
+		<ptr target="https://doi.org/10.1007/s10339-012-0499-z" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Processing</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">S1</biblScope>
+			<biblScope unit="page" from="261" to="265" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Statistical and computational models of the visual world paradigm: Growth curves and individual differences</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mirman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Dixon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Magnuson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jml.2007.11.006</idno>
+		<ptr target="https://doi.org/10.1016/j.jml.2007.11.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Memory and Language</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="475" to="494" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Developmental changes in visual short-term memory in infancy: Evidence from eye-tracking</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Oakes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Baumgartner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Messenger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Luck</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2013.00697</idno>
+		<ptr target="https://www.frontiersin.org/articles/10.3389/fpsyg.2013.00697" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">The relationship between delay period eye movements and visuospatial memory</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Olsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chiew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Buchsbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Ryan</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/14.1.8</idno>
+		<ptr target="https://doi.org/10.1167/14.1.8" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vision</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Oppenheim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Schafer</surname></persName>
+		</author>
+		<title level="m">Digital Signal Processing</title>
+		<imprint>
+			<publisher>Prentice-Hall</publisher>
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">More to it than meets the eye: How eye movements can elucidate the development of episodic memory</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Pathman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ghetti</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/09658211.2016.1155870</idno>
+		<ptr target="https://doi.org/10.1080/09658211.2016.1155870" />
+	</analytic>
+	<monogr>
+		<title level="j">Memory</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="721" to="736" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">On the Relationship between Eye Tracking Resolution and Performance of Oculomotoric Biometric Identification</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Prasse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Jäger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Makowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Feuerpfeil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Scheffer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.procs.2020.09.245</idno>
+		<ptr target="https://doi.org/10.1016/j.procs.2020.09.245" />
+	</analytic>
+	<monogr>
+		<title level="j">Procedia Computer Science</title>
+		<imprint>
+			<biblScope unit="volume">176</biblScope>
+			<biblScope unit="page" from="2088" to="2097" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Relational memory during infancy: Evidence from eye tracking</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Richmond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Nelson</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-7687.2009.00795.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1467-7687.2009.00795.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Developmental Science</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="549" to="556" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Permutation testing for dependence in time series</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Romano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Tirlea</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/jtsa.12638</idno>
+		<idno>jtsa.12638</idno>
+		<ptr target="https://doi.org/10.1111/jtsa.12638" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Time Series Analysis</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">Y</forename><surname>Rubinstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kroese</surname></persName>
+		</author>
+		<title level="m">Simulation and the Monte Carlo Method</title>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Developmental Differences in Subjective Recollection and Its Role in Decision Making</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Selmeczy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kazemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ghetti</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/cdev.13611</idno>
+		<ptr target="https://doi.org/10.1111/cdev.13611" />
+	</analytic>
+	<monogr>
+		<title level="j">Child Development</title>
+		<imprint>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">92</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Communication in the Presence of Noise</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Shannon</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/JRPROC.1949.232969</idno>
+		<ptr target="https://doi.org/10.1109/JRPROC.1949.232969" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IRE</title>
+		<meeting>the IRE</meeting>
+		<imprint>
+			<date type="published" when="1949">1949</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="10" to="21" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">The dynamics of visual responses in the primary visual cortex</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Shapley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hawken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xing</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0079-6123(06)65003-6</idno>
+		<ptr target="https://doi.org/10.1016/S0079-6123(06)65003-6" />
+	</analytic>
+	<monogr>
+		<title level="m">Progress in Brain Research</title>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">165</biblScope>
+			<biblScope unit="page" from="21" to="32" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">A review of unsupervised feature selection methods</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Solorio-Fernández</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Carrasco-Ochoa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Martínez-Trinidad</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fco</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10462-019-09682-y</idno>
+		<ptr target="https://doi.org/10.1007/s10462-019-09682-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence Review</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="907" to="948" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Tobii Pro Lab (1.241) [Computer software]</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Tobii</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Prediction of product design decision Making: An investigation of eye movements and EEG features</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Tobii</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename></persName>
+		</author>
+		<idno type="DOI">10.1016/j.aei.2020.101095</idno>
+		<ptr target="https://doi.org/10.1016/j.aei.2020.101095" />
+	</analytic>
+	<monogr>
+		<title level="j">Advanced Engineering Informatics</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page">101095</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">An Eye-Tracking Paradigm for Analyzing the Processing Time of Sentences with Different Linguistic Complexities</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wendt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kollmeier</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0100186</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0100186" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">100186</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Saccadic eye movement parameters in normal subjects</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Glue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ball</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Nutt</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0013-4694(93)90068-7</idno>
+		<ptr target="https://doi.org/10.1016/0013-4694(93)90068-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Electroencephalography and Clinical Neurophysiology</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="69" to="74" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Fixation reinstatement supports visuospatial memory in older adults</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Wynn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Olsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Binns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Buchsbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Ryan</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/xhp0000522</idno>
+		<ptr target="https://doi.org/10.1037/xhp0000522" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Human Perception and Performance</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1119" to="1127" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Visual search guidance uses coarser template information than target-match decisions</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Johal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Geng</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13414-022-02478-3</idno>
+		<ptr target="https://doi.org/10.3758/s13414-022-02478-3" />
+	</analytic>
+	<monogr>
+		<title level="j">Perception, &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1432" to="1445" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note>Attention</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

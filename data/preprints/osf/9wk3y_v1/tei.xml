@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Graph Neural Network, ChebNet, Graph Convolutional Network, and Graph Autoencoder: Tutorial and Survey</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Benyamin</forename><surname>Ghojogh</surname></persName>
+						</author>
+						<author>
+							<persName><roleName>{BGHOJOGH</roleName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Ali</forename><surname>Ghodsi}</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Uwaterloo</forename><surname>Ca</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Waterloo</forename><surname>Ontario</surname></persName>
+						</author>
+						<title level="a" type="main">Graph Neural Network, ChebNet, Graph Convolutional Network, and Graph Autoencoder: Tutorial and Survey</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">40518F77C3EEA6CEE62253163513E088</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:18+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This is a tutorial paper on graph neural networks including ChebNet, graph convolutional network, graph attention network, and graph autoencoder. It starts with Laplacian of graph, graph Fourier transform, and graph convolution. Then, it is explained how Chebyshev polynomials are used in graph networks to have Cheb-Net. Afterwards, graph convolutional network and its general framework are introduced. Then, graph attention network is explained as a combination of attention mechanism and graph neural networks. Finally, graph reconstruction autoencoder and graph variational autoencoder are introduced.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Many real-world datasets are in the form of graphs. Some examples of graph data are social networks, protein interaction networks, the internet (World Wide Web), and molecules. Image data can also be considered as graphs. Every image is a graph where each pixel represents a node (vertex) connected by edges to its adjacent pixels <ref type="bibr" target="#b0">(Cheung et al., 2018;</ref><ref type="bibr" target="#b21">Sudderth &amp; Freeman, 2008)</ref>. Moreover, text data can be considered as graphs <ref type="bibr" target="#b12">(Koncel-Kedziorski et al., 2019)</ref>. Every token (word) can be a node connected by an edge to its next token (word). Another example is use of graphs in biology by modeling proteins and antibodies as graphs with amino acids as the nodes. For instance, Gear-Net <ref type="bibr">(Zhang et al., 2023)</ref> and PECAN <ref type="bibr" target="#b19">(Pittala &amp; Bailey-Kellogg, 2020)</ref> are graph representations of proteins in neural networks. There are different tasks in graph processing:</p><p>• Graph-level task: it predicts the property of the entire graph. For example, it predicts whether an antibody protein binds to an antigen protein or not <ref type="bibr" target="#b16">(Myung et al., 2022)</ref>.</p><p>• Node-level task: it predicts the identity or role of every node in the graph. In this task, every node has some features and there is a label for every node. For instance, if the nodes correspond to people, the label can be whether the person lives in a specific city or not.</p><p>• Edge-level task: it predicts the identity or role of every edge in the graph. For example, in recommender systems for movie suggestion to users, some nodes are the users and some nodes are the movies <ref type="bibr">(Wang et al., 2021)</ref>. An edge between a user and a movie exists if the user has rated that movie and the label of the edge is the rating score. It is possible to predict the label (score) of non-existing edges between a user and a movie.</p><p>As mentioned, images are special cases of graphs. The graph of an image is called the Euclidean graph or a grid graph (see Fig. <ref type="figure" target="#fig_0">1-a</ref>). In Convolutional Neural Network (CNN) <ref type="bibr" target="#b14">(LeCun et al., 1998)</ref>, there is convolution of a filter kernel with the Euclidean graph of the image. However, what about a graph with some arbitrary structure or irregular shape (see Fig. <ref type="figure" target="#fig_0">1-b</ref>)? The question is how to define convolution of a filter kernel with the arbitrary graph. This question is answered in the following section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Graph Fourier Transform</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Laplacian of Graph</head><p>Consider a graph G(V, E) with nodes (vertices) V and edges E. Let the number of nodes be n. The adjacency matrix A ∈ R n×n is a matrix whose (i, j)-th element is one if the node i is connected to the node j and is zero otherwise. The degree matrix of the matrix A is a diagonal matrix whose (i, i)-th element is the summation of the i-th row of the matrix A, i.e.:</p><formula xml:id="formula_0">D(i, i) := n j=1 A(i, j),<label>(1)</label></formula><p>where A(i, j) denotes the (i, j)-th element of A. The Laplacian matrix of the graph G is defined as <ref type="bibr">(Ghojogh et al., 2023b)</ref>:</p><formula xml:id="formula_1">R n×n ∋ L := D -A.</formula><p>(2) It is noteworthy that there exist some other variants of Laplacian matrix such as <ref type="bibr" target="#b26">(Weiss, 1999;</ref><ref type="bibr" target="#b18">Ng et al., 2001)</ref>:</p><formula xml:id="formula_2">L ← D -α AD -α ,<label>(3)</label></formula><p>where α ≥ 0 is a parameter. A common value for this parameter is α = 0.5:</p><formula xml:id="formula_3">L = D -1/2 AD -1/2 . (<label>4</label></formula><formula xml:id="formula_4">)</formula><p>This matrix is also referred to as the normalized Laplacian matrix. Here, the normalized Laplacian is used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Graph Fourier Transform</head><p>Consider the eigenvalue decomposition of the normalized Laplacian matrix <ref type="bibr" target="#b5">(Ghojogh et al., 2019)</ref>:</p><formula xml:id="formula_5">L = U ΛU ⊤ ,<label>(5)</label></formula><p>where U = [u 1 , . . . , u n ] ∈ R n×n and Λ = diag([λ 1 , . . . , λ n ] ⊤ ) ∈ R n×n contain the eigenvectors and eigenvalues of the normalized Laplacian matrix, respectively. The eigenvectors of the (normalized) Laplacian, i.e., u 1 , . . . , u n , are called the Fourier functions. The Fourier transform is projecting a signal x on the Fourier functions.</p><p>The result is the coefficients of the Fourier series <ref type="bibr" target="#b22">(Trigub &amp; Belinsky, 2012)</ref>. Graph Fourier transform projects the input graph signal to a space whose orthonormal bases are the eigenvectors of the normalized Laplacian of the graph. For now, assume that every node of the graph has a scalar feature value. Let</p><formula xml:id="formula_6">R n ∋ x = [x 1 , . . . ,</formula><p>x n ] ⊤ be the vector of features of all nodes in the graph, where x i ∈ R is the feature vector of the i-th node. The graph Fourier transform of x is its projection onto the column space of the matrix U <ref type="bibr">(Ghojogh et al., 2023a)</ref>:</p><formula xml:id="formula_7">f (x) = x = U ⊤ x.<label>(6)</label></formula><p>The inverse graph Fourier transform reconstructs the signal back from projection:</p><formula xml:id="formula_8">f -1 ( x) = U f (x) = U U ⊤ x. (7)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Graph Convolution</head><p>The graph convolution of the input signal x with the filter g ∈ R n is defined as:</p><formula xml:id="formula_9">x * g := f -1 f (x)f (g) (6) = f -1 U ⊤ xU ⊤ g (7) = U U ⊤ xU ⊤ g . (<label>8</label></formula><formula xml:id="formula_10">)</formula><p>We define:</p><formula xml:id="formula_11">R n×n ∋ G := diag(U ⊤ g) =      u ⊤ 1 g 0 • • • 0 0 u ⊤ 2 g • • • 0 0 0 . . . 0 0 0 • • • u ⊤ n g      .<label>(9)</label></formula><p>Hence, the graph convolution, Eq. ( <ref type="formula" target="#formula_9">8</ref>), can be stated as:</p><formula xml:id="formula_12">R n ∋ x * g = U GU ⊤ x. (<label>10</label></formula><formula xml:id="formula_13">)</formula><p>If every node has a feature vector rather than a feature value, the features become a matrix X ∈ R n×d where every row is the d-dimensional feature vector of a node. Then, the graph convolution becomes:</p><formula xml:id="formula_14">R n×d ∋ X * g = U GU ⊤ X.<label>(11)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">ChebNet</head><p>Convolutional graph neural networks have been built upon two main approaches:</p><p>• spectral methods which have a graph signal processing perspective, and</p><p>• spatial methods which define graph convolution by information propagation.</p><p>Graph Convolutional Network (GCN) <ref type="bibr" target="#b11">(Kipf &amp; Welling, 2017)</ref> bridged the gap between spectral and spatial approaches. Recall Eq. ( <ref type="formula" target="#formula_14">11</ref>). If the input of the ℓ-th layer is denoted by H (ℓ-1) and the output of the ℓ-th layer is H (ℓ) , then Eq. ( <ref type="formula" target="#formula_14">11</ref>) becomes:</p><formula xml:id="formula_15">H (ℓ) = σ(U GU ⊤ H (ℓ-1) ),<label>(12)</label></formula><p>where the activation function σ(.) has been applied on the result of the graph convolution. The first layer accepts the data features as input:</p><formula xml:id="formula_16">H (0) = X.<label>(13)</label></formula><p>A big limitation with Eq. ( <ref type="formula" target="#formula_15">12</ref>) is that U in that equation is the matrix of eigenvectors of the Laplacian of its input graph. The computational complexity of the eigenvalue decomposition of the n×n Laplacian matrix is O(n 3 ) <ref type="bibr" target="#b9">(Golub &amp; Van Loan, 2013)</ref>. Chebyshev Network (ChebNet) <ref type="bibr" target="#b1">(Defferrard et al., 2016)</ref> improves the computational complexity of the convolutional neural network. It approximates the filter g by Chebyshev polynomials of the diagonal matrix of eigenvalues, i.e., Λ.</p><p>The Chebyshev polynomials are <ref type="bibr" target="#b15">(Mason &amp; Handscomb, 2002)</ref>:</p><formula xml:id="formula_17">T 0 (x) = 1, T 1 (x) = x, T i (x) = 2xT i-1 (x) -T i-2 (x).<label>(14)</label></formula><p>The domain of input x for Chebyshev polynomials is [-1, 1]. For example, the Chebyshev polynomials are widely used for cosine expressions:</p><formula xml:id="formula_18">cos(iα) = T i cos(α) .</formula><p>ChebNet approximates the filter G by a linear combination of Chebyshev polynomials of the eigenvalues Λ:</p><formula xml:id="formula_19">G = k i=0 θ i T i (Λ),</formula><p>where k is the order of Chebyshev polynomials. However, there is a problem with the domain of the Chebyshev polynomials in this equation. The eigenvalues, i.e., the diagonal elements of Λ are between zero and the largest eigenvalue λ max . Therefore, the eigenvalues need to be normalized as:</p><formula xml:id="formula_20">R n×n ∋ Λ := 2 λ max Λ -I n ,<label>(15)</label></formula><p>where I n is the (n × n) identity matrix. The values in the normalized eigenvalue matrix are in range [-1, 1] as required by the domain of Chebyshev polynomials. Hence, the approximation of the filter g is:</p><formula xml:id="formula_21">G = k i=0 θ i T i ( Λ).<label>(16)</label></formula><p>Recall Eq. ( <ref type="formula" target="#formula_12">10</ref>):</p><formula xml:id="formula_22">x * g = U GU ⊤ x (16) = U k i=0 θ i T i ( Λ) U ⊤ x = k i=0 θ i U T i ( Λ)U ⊤ x.<label>(17)</label></formula><p>The matrix U is orthogonal, i.e., its columns are orthonormal, because it is the matrix of eigenvectors. For an orthonormal transformation, the following holds:</p><formula xml:id="formula_23">U T i ( Λ)U ⊤ = T i (U ΛU ⊤ ).<label>(18)</label></formula><p>Similar to Eq. ( <ref type="formula" target="#formula_20">15</ref>), we define:</p><formula xml:id="formula_24">L := 2 λ max L -I n ,<label>(19)</label></formula><p>where λ max is largest eigenvalue of the normalized Laplacian L. Then, according to Eq. ( <ref type="formula" target="#formula_20">15</ref>) and similar to Eq. ( <ref type="formula" target="#formula_5">5</ref>), the eigenvalue decomposition of L becomes:</p><formula xml:id="formula_25">L = U ΛU ⊤ . (<label>20</label></formula><formula xml:id="formula_26">)</formula><p>Combining Eqs. ( <ref type="formula" target="#formula_23">18</ref>) and (20) gives:</p><formula xml:id="formula_27">U T i ( Λ)U ⊤ = T i ( L).<label>(21)</label></formula><p>Putting Eq. ( <ref type="formula" target="#formula_27">21</ref>) in Eq. ( <ref type="formula" target="#formula_22">17</ref>) gives:</p><formula xml:id="formula_28">x * g = k i=0 θ i T i ( L)x. (<label>22</label></formula><formula xml:id="formula_29">)</formula><p>Comparing Eqs. ( <ref type="formula" target="#formula_15">12</ref>) and ( <ref type="formula" target="#formula_28">22</ref>) shows that ChebNet resolves the limitation of eigenvalue decomposition of the Laplacian. This is because it uses the approximation of Chebyshev polynomials and does not perform eigenvalue decomposition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Graph Convolutional Network</head><p>Graph Convolutional Network (GCN) <ref type="bibr" target="#b11">(Kipf &amp; Welling, 2017)</ref> is the first-order approximation of ChebNet. In Eq. ( <ref type="formula" target="#formula_28">22</ref>), GCN approximates the Chebyshev polynomials to its first order (k = 1):</p><formula xml:id="formula_30">T i ( L) ≈ T 0 ( L) + T 1 ( L).<label>(23)</label></formula><p>In other words:</p><formula xml:id="formula_31">x * g ≈ 1 i=0 θ i T i ( L)x = θ 0 T 0 ( L)x + θ 1 T 1 ( L)x (14) = θ 0 x + θ 1 Lx.</formula><p>More number of learnable parameters may result in overfitting <ref type="bibr" target="#b5">(Ghojogh &amp; Crowley, 2019)</ref>. To reduce the number of parameters and to avoid overfitting, it is assumed that θ 0 = θ 1 = θ, so:</p><formula xml:id="formula_32">x * g = θx + θ Lx = θ(I + L)x (19) = θ(I + 2 λ max L -I)x = θ 2 λ max Lx.</formula><p>It is possible to absorb the constant 2/λ max into the learnable parameters and simplify the graph convolution as:</p><formula xml:id="formula_33">x * g = θLx (4) = θD -1/2 AD -1/2 x.<label>(24)</label></formula><p>It has been empirically observed that this results in some instability in training of GCN <ref type="bibr" target="#b11">(Kipf &amp; Welling, 2017)</ref>. Therefore, an additional assumption is added to have self-loops on the nodes meaning that every node has an edge from it to itself (see Fig. <ref type="figure" target="#fig_1">2</ref>). Mathematically, it means that the main diagonal of the adjacency matrix should become one by adding the identity matrix to it. Therefore, we define:</p><formula xml:id="formula_34">A := A + I, D(i, j) := n j=1 A(i, j), L := D -1/2 A D -1/2 . (<label>25</label></formula><formula xml:id="formula_35">)</formula><p>As a result, Eq. ( <ref type="formula" target="#formula_33">24</ref>) is replaced by:</p><formula xml:id="formula_36">x * g = θ D -1/2 A D -1/2 x = θ Lx.</formula><p>In matrix form, if every row of X ∈ R n×d is the ddimensional feature vector of a node, this equation becomes x * g = LXθ where θ ∈ R d . If there is a need to have f feature maps after the convolution, then this equation can become x * g = LXΘ where Θ ∈ R d×f . As a result, if the input of the ℓ-th layer is denoted by 1)  and the output of the ℓ-th layer is H (ℓ) , then Eq. ( <ref type="formula" target="#formula_14">11</ref>) becomes: where the activation function σ(.) has been applied on the result of the graph convolution. The first layer accepts the data features as input, as stated in Eq. ( <ref type="formula" target="#formula_16">13</ref>).</p><formula xml:id="formula_37">H (ℓ-</formula><formula xml:id="formula_38">H (ℓ) = σ( LH (ℓ-1) Θ),<label>(26)</label></formula><p>Eq. ( <ref type="formula" target="#formula_38">26</ref>) is the graph convolution performed in every layer of GCN where Θ is the matrix of learnable weights in the layer. Comparing Eqs. ( <ref type="formula" target="#formula_15">12</ref>) and ( <ref type="formula" target="#formula_38">26</ref>):</p><formula xml:id="formula_39">H (ℓ) = σ(U GU ⊤ H (ℓ-1)</formula><p>),</p><formula xml:id="formula_40">H (ℓ) = σ( LH (ℓ-1) Θ),</formula><p>shows that GCN resolves the limitation of eigenvalue decomposition of the Laplacian. It makes use of the approximation of Chebyshev polynomials and does not perform eigenvalue decomposition.</p><p>In the fully connected layer of a feedforward neural network, the operation of the layer is:</p><formula xml:id="formula_41">H (ℓ) = σ(H (ℓ-1) Θ).<label>(27)</label></formula><p>However, according to Eqs. ( <ref type="formula" target="#formula_34">25</ref>) and ( <ref type="formula" target="#formula_38">26</ref>), the operation of convolution in a layer of GCN is:</p><formula xml:id="formula_42">H (ℓ) = σ( D -1/2 A D -1/2 H (ℓ-1) Θ).<label>(28)</label></formula><p>Comparing Eqs. ( <ref type="formula" target="#formula_41">27</ref>) and ( <ref type="formula" target="#formula_42">28</ref>) shows the relation of GCN and feedforward neural network. In a fully connected layer of feedforward network, all the features of previous layer H (ℓ-1) are fed to the next layer through a linear transformation by the weight matrix Θ followed by a nonlinear activation function. However, in a graph neural network, firstly the adjacency matrix defines which nodes (or features) are connected to each other, and then the linear transformation by the weight matrix Θ is performed followed by a nonlinear activation function. In other words, the adjacency matrix determines which nodes should impact the features of every node (see Fig. <ref type="figure" target="#fig_2">3</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">More General Frameworks of Graph Convolutional Network</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">The General Framework</head><p>The update rule of every layer, i.e., Eq. ( <ref type="formula" target="#formula_42">28</ref>), can be restated as:</p><formula xml:id="formula_43">h (ℓ) i = σ j∈Ni Θh (ℓ-1) j , (<label>29</label></formula><formula xml:id="formula_44">)</formula><p>for the i-th neuron in the ℓ-th layer, where N i denotes the neighbors of the i-th node (or neuron) in the input of the layer. This update rule is called sum pooling because it sums over the neighbors. There is a problem with sum pooling. Summing the contents of the neighboring nodes (or neurons) increases the scale of the output feature gradually over multiple layers. To resolve this issue, it is possible to normalize the input of the activation function by D :</p><formula xml:id="formula_45">H (ℓ) = σ D -1 AH (ℓ-1) Θ , (<label>30</label></formula><formula xml:id="formula_46">)</formula><p>where D is defined in Eq. ( <ref type="formula" target="#formula_34">25</ref>). Eq. ( <ref type="formula" target="#formula_45">30</ref>) can be stated for every node i:</p><formula xml:id="formula_47">h (ℓ) i = σ j∈Ni 1 |N i | Θh (ℓ-1) j ,<label>(31)</label></formula><p>where |N i | denotes the number of neighbors for the i-th node. This is because the degree matrix counts the number of neighbors for nodes. The update rule in Eq. ( <ref type="formula" target="#formula_45">30</ref>) or ( <ref type="formula" target="#formula_47">31</ref>) is called mean pooling. Rather than Eq. ( <ref type="formula" target="#formula_45">30</ref>), it is possible to use symmetric normalization in mean pooling:</p><formula xml:id="formula_48">H (ℓ) = σ D -1/2 A D -1/2 H (ℓ-1) Θ .<label>(32)</label></formula><p>Eq. ( <ref type="formula" target="#formula_48">32</ref>) can be stated for every node i:</p><formula xml:id="formula_49">h (ℓ) i = σ j∈Ni 1 |N i ||N j | Θh (ℓ-1) j ,<label>(33)</label></formula><p>which is called mean pooling with symmetric normalization. Comparing Eqs. ( <ref type="formula" target="#formula_42">28</ref>) and ( <ref type="formula" target="#formula_48">32</ref>) shows that the original GCN uses mean pooling with symmetric normalization. Eq. ( <ref type="formula" target="#formula_49">33</ref>) means that for every node i, if the node j is a neighbor, its impact on the node i should be more if the node j has few number of neighbors (|N j | is small). However, its impact on the node i should be less if the node j has large number of neighbors (|N j | is large) because the node i would be one of the many neighbors of node j. Note that this impact is not considered in Eq. (31).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Machine Learning Tasks in Graph Neural Networks</head><p>There exist different machine learning tasks in graph neural networks: • Graph classification/regression: after the multiple layers of convolution, all the h i 's of the last layer are aggregated and used in the loss function for the graph classification or regression.</p><p>• Link classification/regression: after the multiple layers of convolution, the h i 's and the edges e ij of the last layer are used in the loss function for the link classification or regression.</p><p>The use of features in these tasks is depicted in Fig. <ref type="figure" target="#fig_4">4</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Graph Attention Network</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1.">Formulation of Graph Attention Network</head><p>As observed in Eqs. ( <ref type="formula" target="#formula_43">29</ref>), (31), and (33), the linear combination in pooling can have weights. Graph Attention Network (GAT) <ref type="bibr" target="#b24">(Veličković et al., 2017)</ref> adopts attention mechanisms to learn the relative weights between two connected nodes. In the pooling operation, the weights of attention are added:</p><formula xml:id="formula_50">h (ℓ) i = σ j∈Ni α ij h (ℓ-1) j , (<label>34</label></formula><formula xml:id="formula_51">)</formula><p>where the attention weight α ij measures the influence of node j on node i <ref type="bibr" target="#b4">(Ghojogh &amp; Ghodsi, 2020)</ref>:</p><formula xml:id="formula_52">α ij = attention(h (ℓ-1) i , h (ℓ-1) j ). (<label>35</label></formula><formula xml:id="formula_53">)</formula><p>The attention weight can be computed by an attention function a(.) between h (ℓ-1) i and h</p><p>(ℓ-1) j</p><p>:</p><formula xml:id="formula_54">a ij = a(h (ℓ-1) i , h (ℓ-1) j ). (<label>36</label></formula><formula xml:id="formula_55">)</formula><p>This attention function may also consider the edge between the nodes i and j:  This attention function a(.) can be a transformer autoencoder <ref type="bibr" target="#b23">(Vaswani et al., 2017)</ref>. However, GAT models the attention function a(.) as a single-layer feedforward neural network. This single-layer neural network calculates the attention between nodes. Finally, the attention values of every node are normalized in a softmax form to obtain the attention weights:</p><formula xml:id="formula_56">a ij = a(h (ℓ-1) i , h (ℓ-1) j , e ij ).<label>(37)</label></formula><formula xml:id="formula_57">α ij = e aij k∈Ni e a ik ,<label>(38)</label></formula><p>where the summation in the denominator is over the neighbors of the i-th node. Figure <ref type="figure" target="#fig_5">5</ref> shows the attention of nodes in a graph. It is noteworthy that transformers <ref type="bibr" target="#b23">(Vaswani et al., 2017)</ref> are special cases of graph neural networks. In fact, every sentence or sequence can be considered as a graph where GAT can calculate the attention between the tokens in the sequence. For example, the graph for the sentence "This is also a sentence" is illustrated in Fig. <ref type="figure" target="#fig_6">6</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.">Comparison of Graph Attention Network and Transformer</head><p>In the following, GAT and transformer are compared.</p><p>Firstly, on the one hand, in GAT, the attention is a ij = ) where h (ℓ-1) i and h</p><p>(ℓ-1) j</p><p>are passed through a single-layer network with some weight matrix W . Therefore, the attention is calculated between W ⊤ h (ℓ-1) i and W ⊤ h (ℓ-1) j after feeding to the single layer of network. In transformer, on the other hand, the attention is a ij = a(q i , k j ) where the query q i and key k j are different linear transformations of the same tokens, i.e., <ref type="bibr" target="#b4">Ghojogh &amp; Ghodsi, 2020)</ref>. Therefore, the difference of GAT and transformer is that GAT uses the shared learnable weights for the query and key but transformer uses different learnable weights for them. Secondly, another difference between GAT and transformer is that GAT uses a single-layer feedforward neural network as the attention function a(.). However, in transformer, this function is <ref type="bibr" target="#b4">(Ghojogh &amp; Ghodsi, 2020)</ref>:</p><formula xml:id="formula_58">q i = W ⊤ Q x and k i = W ⊤ K x (</formula><formula xml:id="formula_59">a(q i , k j ) = 1 √ p q ⊤ i k j ,</formula><p>where p is the dimensionality of the query and the key. Thirdly, the last difference of GAT and transformer is the softmax form. GAT sums over the neighbors in the denominator of a softmax form (see Eq. ( <ref type="formula" target="#formula_57">38</ref>)). However, transformer sums over all tokens in the sequence:</p><formula xml:id="formula_60">α ij = e aij n k=1 e a ik .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Graph Autoencoder</head><p>Consider an autoencoder, shown in Fig. <ref type="figure">7</ref>, where the encoder has two layers. This autoencoder accepts a graph as its input; hence, its name is Graph Autoencoder (GAE) <ref type="bibr" target="#b10">(Kipf &amp; Welling, 2016)</ref>. According to Eq. ( <ref type="formula" target="#formula_38">26</ref>), the first layer of the encoder is:</p><formula xml:id="formula_61">H (1) = σ( LXΘ 1 ),<label>(39)</label></formula><p>where Θ 1 is the learnable weight matrix of the first layer, X ∈ R n×d is the feature vectors of nodes stacked rowwise, L is defined in Eq. ( <ref type="formula" target="#formula_34">25</ref>) based on the adjacency matrix of the graph, σ(.) is usually the ReLU activation function <ref type="bibr" target="#b17">(Nair &amp; Hinton, 2010)</ref>, and H (1) is the output of the first layer.</p><p>Again, according to Eq. ( <ref type="formula" target="#formula_38">26</ref>), the second layer of the encoder is:</p><formula xml:id="formula_62">H (2) = LH (1) Θ 2 , (<label>40</label></formula><formula xml:id="formula_63">)</formula><p>where Θ 2 is the learnable weight matrix of the second layer, H (2) is the output of the second layer, and the second layer is assumed not to have an actvation function.</p><p>Putting Eq. ( <ref type="formula" target="#formula_61">39</ref>) in Eq. ( <ref type="formula" target="#formula_62">40</ref>) gives the following function which we denote by GCN(X, A; Θ 1 , Θ 2 ):</p><formula xml:id="formula_64">GCN(X, A; Θ 1 , Θ 2 ) := L σ( LXΘ 1 )Θ 2 . (<label>41</label></formula><formula xml:id="formula_65">)</formula><p>There are two types of GAE, i.e., graph reconstruction autoencoder and graph variational autoencoder <ref type="bibr" target="#b10">(Kipf &amp; Welling, 2016)</ref>. These autoencoders are introduced in the following.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.1.">Graph Reconstruction Autoencoder</head><p>In the graph reconstruction autoencoder, also called the non-probabilistic GAE, the encoder is Eq. ( <ref type="formula" target="#formula_64">41</ref>) with two layers. The p-dimensional latent embeddings of nodes, denoted by Z ∈ R n×p , are obtained as:</p><formula xml:id="formula_66">Z = GCN(X, A; Θ 1 , Θ 2 ) := L σ( LXΘ 1 )Θ 2 .</formula><p>The decoder of graph reconstruction autoencoder does not contain any layers but it models measuring similarity between the embedding vectors of the nodes (see Fig. <ref type="figure">7</ref>). It is the sigmoid function of z ⊤ i z j to show the score of similarity (inner product) of the latent variables z i and z j . In other words, it reconstructs the adjacency matrix but with the latent embeddings of nodes rather than the nodes directly:</p><formula xml:id="formula_67">A = sigmoid(ZZ ⊤ ), or<label>(42)</label></formula><formula xml:id="formula_68">A(i, j) = 1 1 + e -z ⊤ i zj .<label>(43)</label></formula><p>The graph reconstruction autoencoder is depicted in Fig. <ref type="figure">7</ref>. The loss is the mean squared error between the adjacency matrix and the reconstructed adjacency matrix:</p><formula xml:id="formula_69">minimize θ ∥ A -A∥ 2 F ,<label>(44)</label></formula><p>where ∥.∥ F denotes the Frobenius norm and θ := {Θ 1 , Θ 2 } is the learnable parameters. This loss function is minimized by backpropagation <ref type="bibr" target="#b20">(Rumelhart et al., 1986)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.2.">Graph Variational Autoencoder</head><p>Graph variational autoencoder uses these two GCN modules for estimating the mean and variance in the latent space by the encoder: where the first layer is shared between them as shown in Fig. <ref type="figure" target="#fig_8">8</ref>.</p><formula xml:id="formula_70">GCN µ (X, A; Θ 1 , Θ 2 ) := L σ( LXΘ 1 )Θ 2 , (<label>45</label></formula><formula xml:id="formula_71">) GCN σ (X, A; Θ 1 , Θ 3 ) := L σ( LXΘ 1 )Θ 3 ,<label>(46)</label></formula><p>As the latent variables of the nodes are independent, the encoder of the graph variational autoencoder models the following conditional distribution:</p><formula xml:id="formula_72">q(Z|X, A) = n i=1 q(z i |X, A),<label>(47)</label></formula><p>where Z ∈ R n×p contains the p-dimensional latent variables and z i ∈ R p is the latent variable of the i-th node whose conditional distribution is a Gaussian distribution:</p><formula xml:id="formula_73">q(z i |X, A) = N (z i | µ i , diag(σ 2 i )),<label>(48)</label></formula><p>where diag(.) makes a diagonal matrix with its input as the diagonal of matrix. The latent variables {z i } n i=1 are sampled from the multivariate joint distribution in Eq. ( <ref type="formula" target="#formula_72">47</ref>). The decoder of the autoencoder models the following conditional distribution:</p><formula xml:id="formula_74">q(A|Z) = n i=1 n j=1 p(A(i, j)|z i , z j ),<label>(49)</label></formula><p>where p(A(i, j)|z i , z j ) is the sigmoid function of z ⊤ i z j to show the probability of similarity (inner product) of the latent variables z i and z j : p(A(i, j) = 1|z i , z j ) = 1 1 + e -z ⊤ i zj .</p><p>(50)</p><p>As a result, the decoder of the graph variational autoencoder does not contain any layers but models measuring similarity between the sampled latent variables in the latent space (see Fig. <ref type="figure" target="#fig_8">8</ref>).</p><p>The graph variational autoencoder maximizes the Evidence Lower Bound (ELBO) in variational inference <ref type="bibr" target="#b6">(Ghojogh et al., 2021)</ref>: maximize θ E q(Z|X,A) log(p(A | Z))</p><p>-KL q(Z|X, A)∥ p(Z) .</p><p>where KL(.∥.) denotes the Kullback-Leibler (KL) divergence <ref type="bibr" target="#b13">(Kullback &amp; Leibler, 1951)</ref>, p(Z) is the desired prior distribution such as some Gaussian distribution, and θ := {Θ 1 , Θ 2 , Θ 3 } is the learnable parameters. The graph variational autoencoder is trained by backpropagation <ref type="bibr" target="#b20">(Rumelhart et al., 1986)</ref>. In backpropagation, the loss function should be minimized; therefore, the loss is the ELBO times -1: minimize θ -E q(Z|X,A) log(p(A | Z))</p><p>+ KL q(Z|X, A)∥ p(Z) .</p><p>(52)</p><p>Minimizing this loss function tries to learn generation of the adjacency matrix A given the sampled latent variables Z while the conditional distribution of the latent variable given the graph and its adjacency matrix becomes similar to the desired prior distribution of the latent space. It is noteworthy that graph autoencoder has been implemented in the Python programming language by the PyTorch Geometric library 1 <ref type="bibr" target="#b2">(Fey &amp; Lenssen, 2019)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Conclusion</head><p>This tutorial paper covered the theory of different variants of graph neural networks. First, graph Fourier transform and graph convolution were explained. Then, ChebNet was explained followed by graph convolutional network. General frameworks were also introduced for graph convolutional network. Thereafter, graph attention network was covered. Finally, two graph autoencoders, i.e., graph reconstruction autoencoder and graph variational autoencoder, were explained.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. (a) Euclidean graph (grid graph) such as pixels of image, (b) arbitrary graph with irregular shape.</figDesc><graphic coords="2,136.44,67.06,324.00,124.83" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Self-loops of nodes of graph in GCN.</figDesc><graphic coords="4,118.44,67.06,107.99,139.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. A node being impacted by its connected nodes before linear transformation in a graph neural network.</figDesc><graphic coords="4,316.44,67.06,216.00,96.42" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Use of features for machine learning tasks in graph neural networks</figDesc><graphic coords="5,309.24,67.06,230.41,100.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Illustration of attention of nodes in a graph.</figDesc><graphic coords="6,100.44,229.49,144.00,133.74" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. The graph for sentence "This is also a sentence". The arrows show the attention of the word "This" to other words of the sentence.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure</head><label></label><figDesc>Figure 7. Graph reconstruction autoencoder</figDesc><graphic coords="6,334.44,67.06,180.00,108.73" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. Graph variational autoencoder</figDesc><graphic coords="7,309.24,67.06,230.40,138.53" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgement</head><p>Some of the materials in this tutorial paper have been partially covered by <rs type="person">Prof. Ali Ghodsi</rs>'s videos (Data Science Courses) and <rs type="person">Antonio Longa</rs>'s videos on YouTube.</p></div>
+			</div>			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Graph spectral image processing</title>
+		<author>
+			<persName><forename type="first">Gene</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Magli</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Enrico</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuichi</forename><surname>Tanaka</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Michael</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="page" from="907" to="930" />
+		</imprint>
+	</monogr>
+	<note>Proceedings of the IEEE</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Convolutional neural networks on graphs with fast localized spectral filtering</title>
+		<author>
+			<persName><forename type="first">Michaël</forename><surname>Defferrard</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bresson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xavier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Vandergheynst</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="3844" to="3852" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Fast graph representation learning with PyTorch Geometric</title>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Lenssen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Eric</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations (ICLR), RLGM Workshop</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">Crowley</forename><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename></persName>
+		</author>
+		<idno type="arXiv">arXiv:1905.12787</idno>
+		<ptr target="https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.htmlGhojogh" />
+		<title level="m">The theory behind overfitting, cross validation, regularization, bagging, and boosting: tutorial</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Attention mechanism, transformers, BERT, and GPT: tutorial and survey</title>
+		<author>
+			<persName><forename type="first">Benyamin</forename><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Eigenvalue and generalized eigenvalue problems: Tutorial</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Crowley</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1903.11240</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Factor analysis, probabilistic principal component analysis, variational inference, and variational autoencoder: Tutorial and survey</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ghodsi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ali</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Crowley</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2101.00734</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Background on linear algebra. Elements of Dimensionality Reduction and Manifold Learning</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Crowley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="17" to="41" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Laplacian-based dimensionality reduction</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Crowley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Elements of Dimensionality Reduction and Manifold Learning</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="249" to="284" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Matrix computations</title>
+		<author>
+			<persName><forename type="first">Gene</forename><forename type="middle">H</forename><surname>Golub</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Loan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Charles</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>JHU press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">N</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Welling</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1611.07308</idno>
+		<title level="m">Variational graph autoencoders</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Semi-supervised classification with graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">N</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Welling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Text generation from knowledge graphs with graph transformers</title>
+		<author>
+			<persName><forename type="first">Rik</forename><surname>Koncel-Kedziorski</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bekal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dhanush</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Luan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mirella</forename><surname>Lapata</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hajishirzi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hannaneh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">North American Chapter of the Association for Computational Linguistics (NAACL)</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">On information and sufficiency. The annals of mathematical statistics</title>
+		<author>
+			<persName><forename type="first">Solomon</forename><surname>Kullback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">A</forename><surname>Leibler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1951">1951</date>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="79" to="86" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Gradient-based learning applied to document recognition</title>
+		<author>
+			<persName><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bottou</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Léon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoshua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Haffner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the IEEE</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="2278" to="2324" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Chebyshev polynomials</title>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">C</forename><surname>Mason</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">C</forename><surname>Handscomb</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>Chapman and Hall/CRC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">CSM-AB: graph-based antibody-antigen binding affinity prediction and docking scoring function</title>
+		<author>
+			<persName><forename type="first">Yoochan</forename><surname>Myung</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pires</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">V</forename><surname>Douglas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">B</forename><surname>Ascher</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1141" to="1143" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Rectified linear units improve restricted boltzmann machines</title>
+		<author>
+			<persName><forename type="first">Vinod</forename><surname>Nair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 27th international conference on machine learning (ICML-10)</title>
+		<meeting>the 27th international conference on machine learning (ICML-10)</meeting>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="807" to="814" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">On spectral clustering: Analysis and an algorithm</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jordan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yair</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="849" to="856" />
+		</imprint>
+	</monogr>
+	<note>Advances in neural information processing systems</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Learning context-aware structural representations to predict antigen and antibody binding interfaces</title>
+		<author>
+			<persName><forename type="first">Srivamshi</forename><surname>Pittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bailey-Kellogg</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="3996" to="4003" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Learning representations by back-propagating errors</title>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">E</forename><surname>Rumelhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ronald</forename><forename type="middle">J</forename><surname>Williams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">323</biblScope>
+			<biblScope unit="issue">6088</biblScope>
+			<biblScope unit="page" from="533" to="536" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Signal and image processing with belief propagation [DSP applications]</title>
+		<author>
+			<persName><forename type="first">Erik</forename><forename type="middle">B</forename><surname>Sudderth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><forename type="middle">T</forename><surname>Freeman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Signal Processing Magazine</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="114" to="141" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Fourier analysis and approximation of functions</title>
+		<author>
+			<persName><forename type="first">Roald</forename><forename type="middle">M</forename><surname>Trigub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eduard</forename><forename type="middle">S</forename><surname>Belinsky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Noam</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Niki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Llion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">30</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Graph attention networks</title>
+		<author>
+			<persName><forename type="first">Petar</forename><surname>Veličković</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cucurull</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Guillem</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Casanova</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Arantxa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriana</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Lio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Graph learning based recommender systems: A review</title>
+		<author>
+			<persName><forename type="first">Shoujin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xiangnan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Quan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Orgun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mehmet</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Longbing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Ricci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Joint Conference on Artificial Intelligence (IJCAI)</title>
+		<imprint>
+			<biblScope unit="page">2021</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Segmentation using eigenvectors: a unifying view</title>
+		<author>
+			<persName><forename type="first">Yair</forename><surname>Weiss</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the seventh IEEE international conference on computer vision</title>
+		<meeting>the seventh IEEE international conference on computer vision</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="975" to="982" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Protein representation learning by geometric structure pretraining</title>
+		<author>
+			<persName><forename type="first">Zuobai</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Minghao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jamasb</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Arian</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chenthamarakshan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vijil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aurelie</forename><surname>Lozano</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Payel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations (ICLR)</title>
+		<imprint>
+			<biblScope unit="page">2023</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 1 Method for Sample Size Determination for Cluster-Randomized Trials Using the Bayes Factor</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Camila</forename><forename type="middle">N</forename><surname>Barragán</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Methodology and Statistics</orgName>
+								<orgName type="institution">Utrecht University</orgName>
+								<address>
+									<addrLine>Padualaan 14</addrLine>
+									<postCode>3584 CH</postCode>
+									<settlement>Utrecht</settlement>
+									<country key="NL">The Netherlands</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Methodology and Statistics</orgName>
+								<orgName type="institution">Utrecht University</orgName>
+								<address>
+									<addrLine>Padualaan 14</addrLine>
+									<postCode>3584 CH</postCode>
+									<settlement>Utrecht</settlement>
+									<country key="NL">The Netherlands</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mirjam</forename><surname>Moerbeek</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Methodology and Statistics</orgName>
+								<orgName type="institution">Utrecht University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 1 Method for Sample Size Determination for Cluster-Randomized Trials Using the Bayes Factor</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">E854D2192961E7912F3220352BED6CC3</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:16+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Bayes factor</term>
+					<term>Sample size determination</term>
+					<term>Cluster Randomized Trials</term>
+					<term>Sample size</term>
+					<term>Multilevel model</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Determining sample size is crucial in research study design. The hierarchical structure of the data in cluster-randomized trials (CRTs) complicates this process, thereby necessitating the determination of the sample size at each level. Most methods for these trials are based on null hypothesis significance testing (NHST), which has numerous pitfalls. These drawbacks can be avoided, however, by using the Bayes factor. Current methods for sample size determination when using the Bayes factor are limited to trials without multilevel structure. This study presents a method to determine the sample size for a one-period two-treatment parallel cluster-randomized trial using the Bayes factor. We introduce the implementation of this method in an R package. Simulation results show that the required sample size increases with decreasing effect sizes and with increasing intraclass correlation and Bayes factors.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>In the initial stages of the design of a research study, a key step is the determination of the sample size. Neglecting this key step may result in underpowered studies due to insufficient sample size, thereby potentially diminishing the ability to detect clinically relevant effects and leading to unethical use of participants. Furthermore, the publication of underpowered studies aggravates the crisis of replicability of research findings, as the replicability of a study is related to the statistical power of its design <ref type="bibr" target="#b39">(Oakes, 1987)</ref>.</p><p>Determining sample size also prevents the use of more subjects than necessary, thereby reducing waste of resources and unethical participants recruitments.</p><p>Numerous elements come into play in determining the required sample size, with variations depending on the selected statistical model and the framework employed for hypothesis testing. The complexity of the interaction between the elements is especially intensified when dealing with multilevel models, given the hierarchical structure of the data.</p><p>An example of multilevel data is found in cluster-randomized trials (CRTs), where complete groups, such as schools or families, are randomly assigned to treatment conditions. This design is widely used in social, behavioral, and biomedical sciences for the evaluation of treatments, programs, or interventions <ref type="bibr" target="#b5">(Campbell &amp; Walters, 2014;</ref><ref type="bibr" target="#b10">Donner &amp; Klar, 2010;</ref><ref type="bibr" target="#b11">Eldridge &amp; Kerry, 2012;</ref><ref type="bibr" target="#b18">Hayes &amp; Moulton, 2009;</ref><ref type="bibr" target="#b38">Murray, 1998)</ref>. Considering the hierarchical structure of the data, with subjects nested within clusters, the researcher must determine the required sample size for both levels, cluster sizes and number of clusters.</p><p>The conventional framework for hypothesis testing is based on null hypothesis significance testing (NHST), which is a combination of the significance testing approach of Fisher and the hypothesis testing approach of Neyman and Pearson <ref type="bibr" target="#b2">(Balluerka et al., 2005)</ref>. NHST involves the null hypothesis, i.e. the absence of an effect, and the alternative hypothesis, i.e. the presence of an effect. This approach to hypothesis testing assumes that BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 4</p><p>the null hypothesis is true in the population, and subsequently the researchers decide to either reject or retain the hypothesis using p-values. In the context of a CRT, previous studies have identified several factors that influence the determination of sample size within this framework, including intraclass correlation, effect size, Type I error rate, cluster size, and number of clusters <ref type="bibr" target="#b36">(Moerbeek et al., 2000;</ref><ref type="bibr">Raudenbush, 1997a)</ref>. Researchers determine the sample size using these elements in equations that illustrate the relation between sample size and power, or available software such as SPA-ML <ref type="bibr" target="#b35">(Moerbeek &amp; Teerenstra, 2016)</ref> and the Shiny CRT Calculator <ref type="bibr">(Hemming &amp; Kasza, n.d.)</ref>.</p><p>An alternative approach to hypothesis testing is based on the Bayes factor. The Bayes factor is a quantification of the relative support of the data for one hypothesis over another <ref type="bibr" target="#b19">(Heck et al., 2022;</ref><ref type="bibr" target="#b22">Hoijtink, 2012;</ref><ref type="bibr">Hoijtink, Mulder, et al., 2019;</ref><ref type="bibr" target="#b41">O'Hagan, 1995)</ref>.</p><p>In general, Bayesian sample size determination takes into account a user-specified minimum value of the Bayes factor and the effect sizes; however, various criteria exist in the literature (a comprehensive overview can be found in <ref type="bibr" target="#b14">Gelfand and Wang, 2002)</ref>. In the context of CRT, the methodology for determining the Bayesian sample size is scarce. <ref type="bibr" target="#b49">Wilson (2022)</ref> proposed a method to calculate the total number of participants using Monte Carlo simulations, but this method was proposed for Bayesian inference instead of hypothesis testing, and assumes that the number of clusters is fixed beforehand, whereas in some CRTs, the cluster size is fixed beforehand, so that the number of clusters needs to be determined.</p><p>This study aims to present a method to determine the sample size in CRTs using the Bayesian approach for hypothesis testing. The method for sample size determination relies on simulation studies, for which we created functions in R that can either determine the required number of clusters given a fixed cluster size or, vice versa, the cluster size that is required for a fixed number of clusters. The next section introduces the data generation model. Subsequently, we discuss the shortcomings of NHST and the advantages of using the Bayes factor. We then explore the details of the determination of the sample size for BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 5</p><p>CRT, explaining each essential factor for sample size determination and the underlying algorithm. Subsequently, we present the results of a simulation and the sample size required for realistic scenarios. To conclude, we present the limitations of the methodology and offer suggested advice to researchers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cluster-Randomized Trials (CRTs)</head><p>The data from a CRT have a so-called multilevel structure, with variables measured on individuals at the first level and variables measured on clusters at the second level <ref type="bibr" target="#b15">(Goldstein, 2011;</ref><ref type="bibr" target="#b25">Hox et al., 2017;</ref><ref type="bibr" target="#b32">Lazega &amp; Snijders, 2016;</ref><ref type="bibr" target="#b44">Raudenbush &amp; Bryk, 2010)</ref>.</p><p>An example of this design is the study by <ref type="bibr" target="#b1">Ausems et al. (2002)</ref>, in which the objective was to test the additional effect of out-of-school smoking prevention intervention. In this study, elementary schools were randomly assigned to four treatment conditions: an in-school smoking prevention program, a computer-based out-of-school smoking prevention program, a combined approach (in-school and out-of-school conditions), and a control condition. The students filled out a questionnaire twice, once before the intervention and once afterward.</p><p>The researchers expected that students within the same school would mutually influence each other's smoking behavior; hence, the multilevel model was used to account for dependencies in the outcome variables.</p><p>Randomization at the cluster level rather than the individual level results in a decrease in statistical power, given the dependency on outcome measures within the same cluster. In other words, the CRT does not provide the same amount of information as an individually randomized trial. Despite this drawback, the CRT is widely used for ethical and logistical reasons. An advantage is that the design helps to avoid or reduce contamination of the control condition that may occur if multiple treatment conditions are available within each cluster, and information likely leaks from the intervention condition to the control. This leakage may occur when the intervention relies on providing new information, procedures, or guidelines to the participants <ref type="bibr" target="#b33">(Moerbeek, 2005)</ref>.</p><p>In this paper, the continuous outcome Y ij for an individual i in cluster j, is a BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 6 function of the treatment condition:</p><formula xml:id="formula_0">Y ij = µ C I Cj + µ T I T j + u j + e ij (1)</formula><p>The µ represents the mean of the control condition (C) and the treatment condition (T ).</p><p>The indicator variable I Cj can take values 0 and 1 and indicates when cluster j is in the control condition, while I T j indicates when cluster j is in the treatment condition.</p><p>Additionally, two random terms are included, u j ∼ N (0, σ 2 u ) at the cluster level and e ij ∼ N (0, σ 2 e ) at the individual level, which are assumed to be independent of each other. The sum of the between-cluster variance σ 2 u and the within-cluster variance σ 2 e results in the total variance, denoted as σ 2 . The two variances also define the intraclass correlation</p><formula xml:id="formula_1">coefficient (ICC), ρ = σ 2 u /(σ 2 e + σ 2 u )</formula><p>, which is the proportion of total variance attributable to the cluster level.</p><p>The standardized treatment effect, denoted as δ and also known as the effect size, is defined as</p><formula xml:id="formula_2">δ = µ T -µ C σ (2)</formula><p>where σ is the standard deviation of the outcome variable. The variance of the treatment effect is expressed as</p><formula xml:id="formula_3">4σ 2 [1 + (n 1 -1)ρ] n 1 n 2 (3)</formula><p>Here, n 1 represents the number of individuals per cluster, and n 2 represents the total number of clusters.</p><p>All of these elements play a crucial role, along with statistical power, in the estimation of the sample size. The statistical power is denoted as 1 -β, where β is the probability of committing a Type II error. In the context of CRT, the definition of BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 7 statistical power is given by the combination of Equations ( <ref type="formula">2</ref>) and ( <ref type="formula">3</ref>)</p><formula xml:id="formula_4">1 -β = δ 4σ 2 [1+(n 1 -1)ρ] n 1 n 2 . (<label>4</label></formula><formula xml:id="formula_5">)</formula><p>This equation shows that the power decreases as ρ increases, especially when the common cluster size n 1 is high. Therefore, the researcher must balance the cluster sizes with the number of clusters to obtain the minimum sample required to detect a treatment effect.</p><p>One approach to determine the sample size is using the design effect</p><formula xml:id="formula_6">DE = 1 + (n 1 -1)ρ (5)</formula><p>which considers the effect of clustering. The total number of subjects is calculated based on the sample size obtained for an individually randomized design and then is inflated by the design effect with the fixed cluster size n 1 (e.g., <ref type="bibr" target="#b5">Campbell and Walters, 2014;</ref><ref type="bibr" target="#b35">Moerbeek and Teerenstra, 2016</ref>).</p><p>An alternative approach to determine the sample size uses the factors that influence power. <ref type="bibr" target="#b35">Moerbeek and Teerenstra (2016)</ref> presented formulas describing the relation between statistical power, effect size, Type I error rate, ICC, and sample size. Equation (4) can be rewritten so that the number of clusters becomes a function of cluster size, Type I error rate, power, and effect size</p><formula xml:id="formula_7">n 2 = 4 1 + (n 1 -1)ρ n 1 z 1-α + z 1-β δ 2 (6)</formula><p>where z denotes the percentile from the standard normal distribution and α the significance level. The formula makes evident that increasing the common cluster size n 1 leads to a smaller number of clusters, while increasing the intraclass correlation ρ leads to a larger number of clusters. Alternatively, we can also formulate a function for the cluster size</p><formula xml:id="formula_8">n 1 = 4 1 -ρ δ z 1-α +z 1-β 2 n 2 -4ρ (7) BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 8</formula><p>Here, it can be seen that, for a small number of clusters, the desired power level may not be achieved, even when the cluster size increases to infinity <ref type="bibr" target="#b20">(Hemming et al., 2011)</ref>.</p><p>However, important to note is that the methods for estimating the sample size discussed until now have been established for the NHST framework, which comes with notable limitations. These limitations will be explored in greater detail in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hypothesis Testing</head><p>Null Hypothesis Significance Testing (NHST)</p><p>Despite the widespread use of null hypothesis significance testing (NHST), criticism of this approach has grown over the past few decades. <ref type="bibr">Hoijtink, Mulder, et al. (2019)</ref> provide an extensive account of numerous issues associated with NHST. One criticism in their paper is related to the use of the NHST approach in research. The excessive emphasis on p-values has contributed to publication bias, as studies yielding statistically significant results are more likely to be published. Furthermore, this emphasis on p-values has led some researchers aiming to advance their careers to engage in questionable research practices, such as p-hacking, hypothesizing after the results are known, and cherry-picking.</p><p>A second criticism is that the use of a dichotomous decision rule based on α = 0.05, or another appropriate value, narrows the focus of the investigation to reporting whether the null hypothesis is rejected.</p><p>A third criticism is the question whether one is even interested in testing the null hypothesis. The null hypothesis indicates that there is zero effect, or in other words, that two groups have exactly the same means on a continuous outcome variable. This hypothesis is operationalized as H 0 : µ 1 = µ 2 , which means that the mean outcome in condition 1 is equal to the mean outcome in condition 2. However, the likelihood of this scenario in reality is very low, rendering the test practically unnecessary <ref type="bibr" target="#b16">(Gu et al., 2014)</ref>.</p><p>A fourth criticism is that the NHST approach is focused on the null hypothesis, and when this hypothesis is rejected, the conclusion remains limited to asserting that the effect is not zero. When comparing more than two treatment means, post hoc tests are required to BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 9</p><p>understand which condition means significantly differ from each other.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Beyond Null Hypothesis Testing</head><p>Diverse types of hypotheses can be of interest to researchers; to illustrate some of those types, we consider the study presented in the "Cluster-Randomized Trials (CRTs)" section, where <ref type="bibr" target="#b1">Ausems et al. (2002)</ref> collected data on four treatment conditions in a smoking prevention intervention. An informative hypothesis would show that there is an order between the treatment condition means. For instance,</p><formula xml:id="formula_9">H 1 : µ combined &gt; µ in &gt; µ out &gt; µ control</formula><p>where the mean of the combination of the in-school and out-of-school smoking prevention program is expected to be larger than the mean of the in-school program, which is larger than the mean of the computer-based out-of-school smoking prevention program, which in turn is larger than the mean of the control condition. Other informative hypotheses can contain different combinations between the following parameters:</p><formula xml:id="formula_10">H 2 : µ combined &gt; µ in , µ out &gt; µ control H 3 : µ combined = µ in , µ out &gt; µ control .</formula><p>Under H 2 , the expectation is that the combined program has a mean greater than both in-school and out-of-school programs, with no prior expectation about the ordering of those in-school and out-of-school means. However, both of these means are anticipated to be higher than the control condition mean. The hypothesis H 3 states that the combined program mean is equal to the in-school mean, and both means for in-school and out-of-school program conditions surpass the control condition mean. These hypotheses use equality and inequality constraints to specify the relations between the treatment means and are therefore called constrained hypotheses. On the other hand, a hypothesis without any constraint is called unconstrained BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 10</p><formula xml:id="formula_11">H u : µ combined , µ in , µ out , µ control</formula><p>Such a hypothesis implies that the researcher does not have any a priori expectations concerning the group means. A final hypothesis that is used in this paper is the complement hypothesis, which in the case of H 1 the complement is</p><formula xml:id="formula_12">H c : µ combined &lt; µ in &lt; µ out &lt; µ control</formula><p>This hypothesis covers the space of all possible parameter values that are not covered in H 1 .</p><p>Important to note is that, in this paper, we use only two treatment conditions: treatment and control. Moreover, recognizing the broad use of the null hypothesis in social sciences, as well as considering that the project aims to provide researchers with the necessary tools, we included the hypothesis with equality constraint as a possible hypothesis of the study. The pair of competing hypotheses, including the equality constraint, is referred to as Hypotheses Set 1:</p><formula xml:id="formula_13">H 0 : µ C = µ T H 1 : µ C &lt; µ T</formula><p>while Hypotheses Set 2 contains a pair of informative hypotheses:</p><formula xml:id="formula_14">H 1 : µ C &lt; µ T H 2 : µ C &gt; µ T</formula><p>This set of hypotheses can be used when one has good reason to believe the treatment is performing better than the control (H 1 ) and one wants to test this versus the opposite (H 2 ).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bayes Factor</head><p>The Bayes factor is a quantification of the relative support of the data for one hypothesis over another <ref type="bibr" target="#b19">(Heck et al., 2022)</ref>. It is also known as the ratio of two marginal BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 11 likelihoods, or the marginal probability of the data X under H i or H i ′ <ref type="bibr" target="#b19">(Heck et al., 2022;</ref><ref type="bibr" target="#b27">Kass &amp; Raftery, 1995)</ref>. This quantification is represented as</p><formula xml:id="formula_15">BF ii ′ = P (X|H i ) P (X|H i ′ )</formula><p>However, when comparing a constrained hypothesis with an unconstrained one, the formulation can be simplified by using the so-called encompassing prior approach, where the constrained hypothesis is nested within the unconstrained one <ref type="bibr" target="#b17">(Gu et al., 2018)</ref>. Thus, the evaluation of the null hypothesis and an informative hypothesis is calculated by</p><formula xml:id="formula_16">BF 0i = BF 0u BF iu = f 0 c 0 f i c i (<label>8</label></formula><formula xml:id="formula_17">)</formula><p>where f is the relative fit and c is the relative complexity of the hypothesis under consideration compared to the unconstrained hypothesis. The fit can be interpreted as the proportion of the posterior distribution that is supported by the informative hypothesis (H i ), and the complexity is the proportion of the prior distribution supported by the informative hypothesis (H i ) <ref type="bibr" target="#b30">(Klugkist et al., 2005)</ref>. However, the computation of the fit and complexity of the null hypothesis (H 0 ) is carried out by using the density instead of the proportion; in this case, the density of the difference between the means in treatment and control condition is zero.</p><p>In the case of evaluating two informative hypotheses, the Bayes factor is calculated by</p><formula xml:id="formula_18">BF ic = BF iu BF cu = f i c i 1-f i 1-c i (9)</formula><p>where the Bayes factor is the ratio of the Bayes factors for the informative hypothesis (H i ) compared to the unconstrained hypothesis (H u ) and the Bayes factor of the complement hypothesis (H c ) compared to H u .</p><p>In the encompassing prior approach, the prior distribution is constructed using a truncation of the unconstrained hypothesis <ref type="bibr" target="#b30">(Klugkist et al., 2005)</ref>. According to this BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 12 approach, the prior distribution is specified must meet two characteristics. One, the prior must be neutral and not favor any hypothesis, which means that the prior distribution is the same for both hypotheses; so, for Hypotheses Set 2, the prior is set to 0.5. Two, the prior should be non-informative, which means that the prior is specified such that its variance is large enough to be vague and for the data to dominate in the computation of the Bayes factor <ref type="bibr" target="#b28">(Klugkist &amp; Hoijtink, 2007)</ref>. In this paper, we use the approximated adjusted fractional Bayes factor (AAFBF). Along with employing the encompassing prior approach, AAFBF specifies the prior distribution, using a fraction of the information in the data, denoted as b. Additionally, the fractional prior is centered around a focal point, ensuring that no hypothesis under consideration is favored. Due to the large sample theory, both the marginal posterior and the fractional prior can be approximated, using a normal distribution with mean in the maximum likelihood estimate and a covariance matrix Σ for the posterior and Σ b for the prior. To conclude, the prior distribution is normally approximated, centered around zero, and the variance is determined using a fraction of the data. Further details can be found in Appendix A.</p><p>The approximate adjusted fractional Bayes factor is defined as</p><formula xml:id="formula_19">AAF BF iu = θ∈Θ i π u (θ|X) dθ θ∈Θ i π * u (θ|X b ) dθ (10)</formula><p>where the numerator is the posterior distribution of the parameter of interest (θ) and the denominator is the adjusted fractional prior distribution. The parameter space in Θ i represents the parameter space in agreement with the hypothesis H i .</p><p>The AAFBF is sensitive to the parameter b when evaluating a hypothesis with equality constraints; it is therefore crucial to perform a sensitivity analysis with different choices of fractions of information b <ref type="bibr" target="#b17">(Gu et al., 2018)</ref>. In the evaluation of a hypothesis that only includes inequality constraints, AAFBF is stable regardless of the fraction of information b <ref type="bibr" target="#b37">(Mulder, 2014)</ref>. Further explanation of b can be found in Appendix A.</p><p>One of the advantages of the Bayes factor is that it is easy to interpret. Given that BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 13</p><p>the Bayes factor is a quantification of the support for one hypothesis over the other, the interpretation is how much relative support the data have for one hypothesis over the other. For instance, if BF 10 = 10 then the relative support for hypothesis 1 (H 1 ) is ten times larger than for the null hypothesis (H 0 ). In the case where the Bayes factor is 1, there is no preference between the hypotheses under consideration. Important to note is that the Bayes factors can take on positive values to infinite. Initially, <ref type="bibr" target="#b26">Jeffreys (1983)</ref> proposed a threshold of 3.2 to declare that there is "positive" evidence for one hypothesis.</p><p>Later, <ref type="bibr" target="#b27">Kass and Raftery (1995)</ref> proposed more thresholds to distinguish between positive, strong, and very strong evidence in favor of one hypothesis. Nevertheless, another advantage of the Bayes factors is that there are no strict thresholds because their interpretation is relative to the hypotheses of study; for this reason, avoiding the use of cut-off values for interpretation is strongly advised.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology for Sample Size Determination</head><p>Fu (2022) proposed a method to determine the sample size using the Bayes factor for hypothesis testing. The sample size is determined by the probability (η) that the Bayes factor exceeds a threshold (BF thresh ), given that the hypothesis is true. This probability is,</p><formula xml:id="formula_20">P (BF ii ′ &gt; BF thresh |H i ) ≥ η (<label>11</label></formula><formula xml:id="formula_21">)</formula><p>where i and i ′ represent competing hypotheses of Hypotheses Set 1 or Hypotheses Set 2.</p><p>Equation ( <ref type="formula" target="#formula_20">11</ref>) is evaluated for each of the hypotheses under consideration (i.e. BF ii ′ and</p><formula xml:id="formula_22">BF i ′ i ).</formula><p>The probability and the threshold are specified by the researcher taking into account the purpose of the study; in cases where the study is high-stakes and the aim is to obtain compelling evidence with a large probability, the threshold and the probability are relatively large. Consider as an example a study involving the evaluation of the effectiveness of a public health intervention in reducing the transmission of diseases spread by mosquitoes; in this case, the researcher may choose to adopt a high threshold of 10 and a probability of 0.9. However, when the aim is to collect evidence for exploratory studies, BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 14 researchers may choose a lower probability and threshold. To illustrate, picture a study where the aim is to compare the effect of using cognitive-behavioral therapy alone with the effectof using an app with AI, developed to interact with patients with anxiety disorders, as a complement of cognitive-behavioral therapy. Considering that the study is exploratory, the researcher may use a low threshold of, say, 3 and with a probability of 0.8.</p><p>As mentioned earlier, for a CRT, two sample sizes need to be determined: cluster sizes and number of clusters. The strategy proposed in this paper fixes one of the samples, with the other to be determined. The algorithm can be seen in Figure <ref type="figure">1</ref>.</p><p>The first step in this method is to generate the data sets corresponding to a two-group-parallel conditions cluster-randomized trial, with a given number of clusters and cluster size. The second step is to fit the multilevel model in Equation ( <ref type="formula">1</ref>) to the data with the function lmer from the R package lme4 <ref type="bibr" target="#b3">(Bates et al., 2015)</ref>. The third step is to use the estimates of means and variance of the means for both treatment conditions to calculate the Bayes factors for both hypotheses in Hypotheses Set 1 or Hypotheses Set 2. The fourth step is to calculate the proportion of generated data sets for which the Bayes factors exceed the threshold and to evaluate the Bayesian power criterion. The fifth step, which occurs when the power criterion in Equation ( <ref type="formula" target="#formula_20">11</ref>) is not met, is to change the sample size. Rather than increasing the sample size by only one, the algorithm incorporates a binary search to efficiently find the required sample size and reduce the computation time (see Appendix B). In the case that one of the hypotheses contains only equality constraints, a sensitivity analysis is carried out, which means that the aforementioned first five steps are repeated for different choices of fraction of information b as specified by the researchers. When the power criterion is met and the sensitivity analysis has finished, the results are displayed in a table where the researcher can find the hypotheses under consideration, the number of clusters, the cluster sizes, and the probabilities of Bayes factors exceeding the threshold.</p><p>In the repository and in the R package, two functions to determine the sample size for a trial with two parallel treatment conditions can be found. The function BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 15</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1</head><p>Algorithm of function for sample size determination in cluster-randomized trials when using the Bayes factor to test informative hypotheses, including the null hypothesis.</p><p>SSD_crt_null determines the sample size when one of the hypotheses has an equality constraint, which is the Hypotheses Set 1. Meanwhile, the function SSD_crt_inform determines the sample size for Hypotheses Set 2.</p><p>The arguments necessary to determine the sample size are the following:</p><p>• eff_size is a numeric value corresponding to the standardized mean difference between the treatment and control conditions. The effect size is the standardized difference between the treatment and control conditions.</p><p>• n1 is a numeric value that specifies the sizes of the clusters. All clusters are assumed to have the same sizes. The default value is 15 individuals in each cluster.</p><p>• n2 is a numeric value that specifies the total number of clusters; as the same number of clusters is assigned to both treatment conditions, the value must be even. The default is 30 clusters: 15 in the experimental condition and 15 in the control condition.</p><p>• BF.thresh is a numeric value that specifies the desired minimum of the Bayes factor.</p><p>This value indicates how much support the data should show for one of the hypotheses under consideration. The default value is 3.</p><p>• eta is a numeric value that indicates the probability of finding a Bayes factor equal or larger to the threshold, given that the hypothesis is true. The default value is 0.8.</p><p>• ndatasets is a numeric value that indicates how many data sets are generated to evaluate the power criterion. The default is 5,000 data sets.</p><p>• rho is a numeric value that specifies the intraclass correlation.</p><p>• fixed is a string that specifies which sample size is fixed. When the number of clusters is fixed (fixed="n2"), the function determines the cluster sizes. If the cluster sizes are fixed (fixed="n1"), then the function determines the number of clusters.</p><p>The default setting is "n2".</p><p>BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 17</p><p>• max is a numeric value that indicates the maximum sample size that is used by the algorithm: if the algorithm reaches this sample size, it stops. By default, the maximum sample size is 1,000.</p><p>• batch_size is a numeric value that indicates the batch size in the multilevel model fitting, which is a strategy to improve memory usage efficiency and computational performance, given that the data sets might become very large and require a considerable amount of computational effort for model fitting. The default is 100 models at the same time.</p><p>The function SSD_crt_null has one additional argument:</p><p>• b_fract is a numeric value that specifies the maximum value that the fraction of information b is multiplied by in the sensitivity analysis. A sensitivity analysis is carried out for all integer values ranging from 1 to b f ract . This means, the fraction of information taken from the data increases from 1/N ef f until and including b_fract×1/N ef f . For further information, the reader can refer to Appendix A. By default, b_fract is equal to 3.</p><p>The outputs are different for SSD_crt_null and SSD_crt_inform. However, for both functions, the output includes the hypotheses under consideration, the sample size required, whether the number of clusters or the cluster size was fixed, the probabilities that the Bayes factor is higher than the threshold, and data sets containing the Bayes factors calculated during the simulation. For SSD_crt_null, the output also incorporates the results for different choices of b.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Design</head><p>Four simulations were carried out to provide sample sizes for various realistic scenarios. Two of the simulations had the objective of determining the number of clusters BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 18</p><p>given a fixed cluster size, while the other two aimed to determine the cluster size for a fixed number of clusters. The common factors in the design were the following:</p><p>• Intraclass correlation: 0.025, 0.05, 0.1</p><p>• Effect size: 0.2, 0.5, 0.8</p><p>• Bayes factor threshold: 1, 3, 5</p><p>• Probability: 0.8</p><p>• Maximum sample size: 1,000</p><p>• Eta: 0.8</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the number of clusters</head><p>To determine the number of clusters, the cluster size was fixed to the following values:</p><p>• Cluster sizes: 5, 10, 40</p><p>Together with the factors that were common for both simulations, 81 combinations were formed. For each of these combinations, 5,000 data sets were generated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the cluster size</head><p>To determine the cluster sizes, the number of clusters was fixed to the following values:</p><p>• Number of clusters: 30, 60, 90</p><p>The total of formed combinations of the factors was 81, and for each of these combinations, 5,000 data sets were generated.</p><p>The minimum sample size was set inside the functions; for cluster size was 5, and for number of clusters was 6, whereas the maximum was set to 1,000 in the functions' argument. The reason for using a maximum sample size was that, for a small number of BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 19 clusters, sufficient power is not always achieved in the framework of NHST, even in the case in which the cluster size increases to infinity <ref type="bibr" target="#b20">(Hemming et al., 2011)</ref>. In addition, for testing Hypothesis Set 1, a sensitivity analysis was carried out for each combination with fractions of information b, 2b, and 3b.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>Taking into account the limited space, this subsection presents a selection of the required sample sizes in tables. Readers interested in exploring additional results not displayed here can access them in the following Shiny app (https://utrecht-university.shinyapps.io/BayesSamplSizeDet-CRT/).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the number of clusters for Hypotheses Set 1</head><p>Table <ref type="table">1</ref> presents the required number of clusters and, for hypotheses H 0 and H 1 , the probability η of exceeding the threshold BF thresh . For instance, for BF thres = 1, n 1 = 5, ICC = 0.025 and effect size δ = 0.2 the required number of clusters is 126. This number results in probability η = 0.807 for H 1 and η = 0.982 for H 0 . Thus, in this specific case, the desired threshold is exceeded more often for H 0 than it is for H 1 . However, that is not necessarily the case for all other combinations of design factors in Table <ref type="table">1</ref>.</p><p>The results in Table <ref type="table">1</ref> show that the required number of clusters to meet the power criterion increases as the ICC increases. This increase is expected, given that the higher the correlation between the individuals within a cluster, the larger the dependency among the individuals and, hence, the lower the effective sample size <ref type="bibr" target="#b25">(Hox et al., 2017)</ref>. This expectation is also possible to infer from Equation ( <ref type="formula">6</ref>). Table <ref type="table">1</ref> further shows a trade-off between the two sample sizes: the required number of clusters decreases if the cluster size increases. This decrease is obvious, given that the larger the cluster size, the more information is available within each cluster and, hence, fewer clusters are needed. The results also show an inverse relationship between the effect size and the number of clusters.</p><p>This inverse result is because larger effect sizes are easier to detect than smaller effect sizes. threshold means that a larger number of clusters is needed to achieve the support for the correct hypothesis.</p><p>As the reader can easily verify from our Shiny app (https://utrecht-university.shinyapps.io/BayesSamplSizeDet-CRT/), overall, the number of clusters required increases with the fraction of information b, especially when the effect size is small. The explanation of this finding can be found in <ref type="bibr" target="#b13">Fu et al. (2021)</ref>, who indicated that when b gets larger, the prior variances decrease, while the complexity c 0 increases in Equation ( <ref type="formula" target="#formula_16">8</ref>), resulting in smaller values of the Bayes factor when H 0 is true.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the cluster sizes for Hypotheses Set 1</head><p>Table <ref type="table">2</ref> presents the required cluster sizes as a function of the number of clusters, effect size, ICC, and Bayes factor thresholds. This table is similar in format to Table <ref type="table">1</ref>, but now the number of clusters rather than the cluster size appears in the second column, while the other columns show the required cluster sizes and corresponding Bayesian power.</p><p>As shown in Table <ref type="table">2</ref>, the desired power η = 0.8 for both hypotheses was not always achieved. The maximum specified cluster size of 1,000 was reached for one or both hypotheses without meeting the power criterion, especially in cases of small effect sizes and medium-to-high ICC (ρ = 0.05 and ρ = 0.1, respectively). This outcome was expected,</p><p>given that an increase in the number of individuals only has a limited increase in power <ref type="bibr" target="#b20">(Hemming et al., 2011)</ref>. This finding also proves that increasing the cluster size has a weaker effect on power than increasing the number of clusters, which is a characteristic also observed in the frequentist approach as illustrated in Equation ( <ref type="formula">7</ref>).</p><p>Comparatively, when the effect size is 0.5, increasing the ICC leads to slight increases in cluster size for certain conditions, while for the majority, the cluster size remains unaffected. These conditions correspond to a threshold of 5 and cluster sizes of 30 or 60. Noteworthy is that we found similar patterns in the effect of the factors we have mentioned, regardless of whether the effect size is 0.5 or 0.8. The reader can use the Shiny app to verify that, for an effect size of 0.8, cluster sizes tend to be 6 and increase slightly with the ICC under specific conditions. However, there are conditions in which the maximum cluster size is reached, particularly with high ICC (ρ = 0.1) and low number of clusters (n 2 = 30).</p><p>The relationship between the variables in Table <ref type="table">2</ref> are similar to those described in Table <ref type="table">1</ref>. Larger cluster sizes are required when the effect size and the number of clusters decrease. There is a notable difference in the probability η according to the effect size:</p><p>with a small effect size, the increase in ICC leads to a considerable increase in cluster size.</p><p>In general, larger cluster sizes were required with increasing the Bayes factor threshold and the fraction b. However, for conditions with a small effect size, the cluster size decreased or exhibited a different pattern of changes as the fraction b increased.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the number of clusters for Hypotheses Set 2</head><p>Table <ref type="table" target="#tab_2">3</ref> is different from the tables presented for Hypotheses Set 1. The consideration of hypotheses with only inequality constraints requires the simulation and test for one hypothesis given that, in this case, we are testing one hypothesis (i.e., H 1 ) against its complement. Moreover, as there is no equality constraint, the fraction of information b is not necessary for a sensitivity analysis. Regarding all the other factors, the interpretation of the table is similar to the interpretation for Table <ref type="table">1</ref>.</p><p>The table clearly indicates that, regardless of the Bayes factor threshold, ICC, effect size, and cluster size, the required number of clusters per treatment condition is 6. The cases that deviate from this tendency have the largest thresholds, the smallest cluster sizes, and the smallest effect sizes. This tendency means that, while the number of clusters may be larger in specific conditions, overall, the power criterion is easily met, with a number of clusters close to the minimum specified in the design of the simulation study.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Determining the cluster size for Hypotheses Set 2</head><p>Table <ref type="table">4</ref> presents the cluster size as a function of the number of clusters, ICC, effect sizes, and Bayes factor thresholds. From the table can be inferred that, regardless of the ICC and threshold, the required cluster size is 8 when the effect size is 0.5. However, in the BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 24 Another difference in the results of the two hypothesis sets lies in that the required sample size for Hypotheses Set 2 hardly depends on the ICC, effect size, and Bayes factor threshold. The results for Hypotheses Set 1 are more consistent with the effects of the factors in the frequentist framework, which is expressed in equations ( <ref type="formula">6</ref>) and ( <ref type="formula">7</ref>) and proved in <ref type="bibr" target="#b35">Moerbeek and Teerenstra (2016)</ref>. On the other hand, the same relationship between the factors and the sample size is observed in specific conditions for Hypotheses Set 2, such as the smallest effect size, the largest thresholds, and the smallest fixed sample sizes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Practical example</head><p>This section uses the example of the cluster-randomized trial carried out by <ref type="bibr" target="#b1">Ausems et al. (2002)</ref>, presented above. In this study, schools were assigned randomly to four treatment conditions to evaluate two interventions and their interaction. One of the variables that was measured is the attitude toward the disadvantages of smoking, which is a result of the sum of an 11-item scale with a 5-point Likert scale, ranging from 1=very negative to 5=very positive.</p><p>Suppose that a researcher wants to replicate the study of <ref type="bibr" target="#b1">Ausems et al. (2002)</ref> but is only interested in the effect of the out-of-school condition versus the control. Attitude toward the disadvantages of smoking is the outcome variable for which a power analysis is to be performed. </p><formula xml:id="formula_23">H 0 : µ out = µ control H 1 : µ out &gt; µ control .</formula><p>The researcher performs sample size calculations. Following <ref type="bibr" target="#b34">Moerbeek (2006)</ref>, the between-cluster variance is equal to σ 2 u = 3.5 and within-cluster variance is equal to</p><p>σ 2 e = 45, which means that the total variance is σ 2 = 48.5 and the ICC is ρ = 3.5 48.5 = 0.0721. The unstandardized effect size that the researcher is expecting to detect is 1.39, corresponding to the standardized effect size δ = 1.39/ √ 48.5 = 0.19. The desired significance level is α = 0.05 and statistical power 1 -β = 0.8. If the cluster size is n 1 = 30 students per cluster, using the formula (6), the required total number of schools is </p><formula xml:id="formula_24">n 2 = 4 1 + (30 -1)0.</formula><p>which is rounded up to 82.</p><p>However, the researcher is also open to using the Bayes factor as the method to test the hypotheses. For this reason, the researcher performs a sample size calculation to test the hypotheses with different threshold and probability values. Considering that the researcher wants to confirm the effects that have been studied before, the Bayes factor thresholds are 3 and 5 and the thresholds are 0.8 and 0.9.</p><p>The results in Table <ref type="table" target="#tab_5">5</ref> show that the required number of clusters per treatment condition can be from 84 up to 252, increasing with the threshold (BF thresh ) and probability(η). The original study by <ref type="bibr" target="#b1">Ausems et al. (2002)</ref> included 143 schools, which is higher than most of the required number of schools as listed in Table <ref type="table" target="#tab_5">5</ref>. The effect of increasing the fraction of information b on the required number of clusters may be increasing, decreasing, or constant, depending on the values of effect sizes and BF thresh such as this study (δ = 0.19).</p><p>BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 28 Note: η represents the probability that must be reached to meet the power criterion.</p><p>BF thresh represents the Bayes factor threshold. In addition, n 2 stands for the required number of clusters to reach the power criterion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>This paper presents an innovative method for determining the sample size for CRTs based on Bayesian power. The method is designed to determine the number of clusters or the cluster sizes when one of them is fixed. The Bayesian power criterion specifies that the sample size is determined so that it ensures the probability (η) of obtaining a Bayes factor larger than a Bayes factor threshold for either hypothesis under consideration. The results showed the effect of ICC, effect size, and fixed sample size on the determination of the required sample size. Larger sample sizes are required when the ICC increases, the fixed sample size is small, or the effect size is small. These results align with the effect of the same factors on the sample size determination in the frequentist approach <ref type="bibr" target="#b35">(Moerbeek &amp; Teerenstra, 2016;</ref><ref type="bibr">Raudenbush, 1997b)</ref>. The simulation showed the trade-off between the number of clusters and cluster sizes; in addition and as expected <ref type="bibr" target="#b20">(Hemming et al., 2011)</ref>, the required power level η could not always be achieved for a limited number of clusters, even when the cluster size was as large as 1,000.</p><p>The effects of the Bayes factor threshold and fraction of information b on the required sample size indicate that larger sample sizes were required for larger values of thresholds and fraction of information. However, important to note is that the tendency of the effect of fraction of information on sample size determination also depends on the values of the effect size and ICC. In addition, this tendency only happens when a hypothesis with equality constraint is evaluated. Alternatively, our findings for Hypothesis Set 2 suggest that the required sample sizes tended to be small and varied little, regardless of the factor levels used in the simulation study. This tendency lends additional support to questioning the testing of the null hypothesis (for further arguments against the use of NHST, see: David R. <ref type="bibr" target="#b6">Anderson et al., 2000;</ref><ref type="bibr" target="#b8">De Schoot et al., 2011;</ref><ref type="bibr" target="#b16">Gu et al., 2014;</ref><ref type="bibr">Hoijtink, Mulder, et al., 2019;</ref><ref type="bibr" target="#b31">Klugkist et al., 2011)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 30</head><p>The simulations exhibited the differences in reaching the power criterion for different hypotheses. The power criterion was easily met when evaluating Hypotheses Set 2 for all conditions. Moreover, the required sample size had a small range of values and varied little, especially for cases with medium and large effect sizes. In comparison, when evaluating Hypotheses Set 1, the required sample size varied considerably, and in cases with small effect sizes and a small number of clusters the power criterion was not met, even after reaching 1,000 individuals per cluster.</p><p>The method and the software presented in this paper implement the approximated adjusted fractional Bayes factor (AAFBF), which is only one type of Bayes factor. While one of the advantages of the Bayes factor is the incorporation of prior information, for this type of Bayes factor the user only has to indicate the fraction of information from data used to specify the prior distribution. However, the AAFBF is sensible to different fractions of the sample in the case of equality-constrained hypotheses. Additionally, the software presented in this paper is specifically tailored for determining the sample sizes in a parallel cluster-randomized trial with only two treatment conditions and evaluating two hypotheses. Additional elements in CRT design that also influence the determination of sample size include unequal cluster sizes, uncertainty surrounding intraclass correlation, and non-inferiority and equivalence designs <ref type="bibr" target="#b45">(Rutterford et al., 2015)</ref>. For NHST, the loss of efficiency due to variation in cluster sizes has been shown to rarely exceed 10%, meaning 11% more clusters should be added to compensate <ref type="bibr" target="#b47">(Van Breukelen et al., 2007)</ref>. This paper is restricted to equal allocation ratios, which can be shown to be optimal when costs and variances do not vary across treatment conditions <ref type="bibr" target="#b46">(Schouten, 1999)</ref>.</p><p>In general, the methods for sample size determination also requires an educated guess of the ICC. This value can be obtained from the literature or expert knowledge. For instance, Table <ref type="table">11</ref>.1 in <ref type="bibr" target="#b35">Moerbeek and Teerenstra (2016)</ref>  Another consideration when utilizing the provided functions is computational cost, since our method to determine the required sample relies on simulations. In general, the minimum running time is approximately 5 minutes, while the largest running time is 35 hours. These results were obtained with a 16-core GPU of 250GB of RAM. To improve efficiency and reduce computation time, the functions in the package employ a binary search algorithm to find the required sample size. However, it is important to highlight that the combinations with the largest running time always corresponded to the evaluation of Hypothesis Set 1. Most likely, in the near future, this limitation of computational cost will be solved with the advance of technology.</p><p>Considering the growing popularity of Bayes factors for hypothesis testing in psychology <ref type="bibr" target="#b19">(Heck et al., 2022)</ref>, our method for sample size determination in CRTs is an important advance in research. We have previously discussed the disadvantages of null hypothesis significance testing (NHST), and how the Bayes factors provide an alternative approach to hypothesis testing that can avoid these disadvantages. One of the drawbacks of NHST is that, in practice, the decision to reject or maintain the null hypothesis relies on an arbitrary level of significance. To avert the same misinterpretation of the thresholds in our method, important to note is that the Bayes factor is the quantification of the evidence of the hypotheses under consideration and it may take values from 0 to infinity. Although the thresholds used in this paper are often seen in practice, we encourage the researchers to choose the thresholds based on the aimed-for degree of support.</p><p>This paper introduced a method for sample size determination in cluster-randomized trials (CTRs) tailored for hypothesis testing using Bayes factors.</p><p>Moreover, we provided the practical implementation of the method through functions in the R package SSD_Bayes_ML. To our knowledge, this was the first contribution to Bayesian sample size determination for CRTs. This paper is part of a larger four-year BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 32</p><p>project; in the years to come, we aim to focus on trials with more than two treatment conditions (thereby extending the paper by <ref type="bibr" target="#b12">Fu (2022)</ref> to the multilevel setting) and cluster-randomized crossover. We also consider alternative measures for the evaluation of hypotheses, such as the GORICA <ref type="bibr" target="#b0">(Altinisik et al., 2021;</ref><ref type="bibr" target="#b48">Vanbrabant et al., 2020)</ref>.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>shows a summary of papers that report estimates of ICCs in CRTs in various fields of science. One may consider a sensitivity analysis and determine the sample size for a range of plausible values of the ICC BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 31 to study the degree to which sample size depends on the ICC. Future research may focus on sample size determination variances varying across treatment conditions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3</head><label>3</label><figDesc>Required number of clusters per treatment condition with probability (η) of 0.8 for Hypotheses Set 2 effect size is 0.2, larger cluster sizes are necessary when the number of clusters is low, the ICC increases, or the threshold increases.The comparison of the results for Hypotheses Set 1 and Hypotheses Set 2 indicates that including hypotheses with equality constraints requires larger sample sizes. This outcome is obvious, since finding support for one specific value of the difference in group means (H 0 : µ C -µ T = 0) is more difficult than finding support for a range of values in the difference in group means (H A : µ C -µ T &lt; 0). Hence, H 1 has a better fit when the posterior distribution deviates from the specific value in H 0 .</figDesc><table><row><cell>ICC = 0.100</cell><cell>Eff. Size = 0.2 Eff. Size = 0.5</cell><cell>2 P (BF &gt; BF thresh ) thresh ) n 2 P (BF &gt; BF</cell><cell>6 0.942 6 1.000</cell><cell>6 0.987 6 1.000</cell><cell>6 0.996 6 1.000</cell><cell>6 0.811 6 0.999</cell><cell>6 0.936 6 1.000</cell><cell>6 0.978 6 1.000</cell><cell>12 0.806 6 0.998</cell><cell>6 0.887 6 1.000</cell><cell>6 0.959 6 1.000</cell><cell></cell></row><row><cell>ICC = 0.025 ICC = 0.050</cell><cell>Eff. Size = 0.2 Eff. Size = 0.5 Eff. Size = 0.2 Eff. Size = 0.5</cell><cell>BF thresh n 1 n 2 P (BF &gt; BF</cell><cell>1 30 6 0.969 6 1.000 6 0.959 6 1.000</cell><cell>1 60 6 0.994 6 1.000 6 0.992 6 1.000</cell><cell>1 90 6 0.999 6 1.000 6 0.998 6 1.000</cell><cell>3 30 6 0.867 6 1.000 6 0.854 6 1.000</cell><cell>3 60 6 0.967 6 1.000 6 0.957 6 1.000</cell><cell>3 90 6 0.992 6 1.000 6 0.987 6 1.000</cell><cell>5 30 7 0.830 6 1.000 8 0.818 6 0.999</cell><cell>5 60 6 0.937 6 1.000 6 0.922 6 1.000</cell><cell>5 90 6 0.983 6 1.000 6 0.975 6 1.000</cell><cell>n 1 represents the cluster size and n 2 represents the number of clusters.</cell></row></table><note><p>thresh ) n 2 P (BF &gt; BF thresh ) n 2 P (BF &gt; BF thresh ) n 2 P (BF &gt; BF thresh ) n</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5</head><label>5</label><figDesc>Required number of clusters for evaluation of smoking prevention programs with the Bayes factor when the cluster size equals 30 students.η BF thresh b n 2 P (BF 01 &gt; BF thresh | H 0 ) P (BF 10 &gt; BF thresh | H 1 )</figDesc><table><row><cell>0.8</cell><cell>3</cell><cell>1 84</cell><cell>0.948</cell><cell>0.804</cell></row><row><cell>0.8</cell><cell>3</cell><cell>2 78</cell><cell>0.913</cell><cell>0.801</cell></row><row><cell>0.8</cell><cell>3</cell><cell>3 76</cell><cell>0.879</cell><cell>0.806</cell></row><row><cell>0.9</cell><cell>3</cell><cell>1 110</cell><cell>0.951</cell><cell>0.902</cell></row><row><cell>0.9</cell><cell>3</cell><cell>2 104</cell><cell>0.925</cell><cell>0.905</cell></row><row><cell>0.9</cell><cell>3</cell><cell>3 100</cell><cell>0.906</cell><cell>0.903</cell></row><row><cell>0.8</cell><cell>5</cell><cell>1 94</cell><cell>0.912</cell><cell>0.811</cell></row><row><cell>0.8</cell><cell>5</cell><cell>2 88</cell><cell>0.845</cell><cell>0.808</cell></row><row><cell>0.8</cell><cell>5</cell><cell>3 96</cell><cell>0.801</cell><cell>0.854</cell></row><row><cell>0.9</cell><cell>5</cell><cell>1 120</cell><cell>0.920</cell><cell>0.908</cell></row><row><cell>0.9</cell><cell>5</cell><cell>2 170</cell><cell>0.900</cell><cell>0.988</cell></row><row><cell>0.9</cell><cell>5</cell><cell>3 252</cell><cell>0.902</cell><cell>1.000</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head></head><label></label><figDesc>To facilitate this approach, we have developed two functions, SSD_crt_null and BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 29SSD_crt_inform, that are implemented and freely available in an R package calledSSD_Bayes_ML. The first function determines the required sample size for the evaluation of Hypothesis Set 1, where H 0 : µ C = µ T and H 1 : µ C &lt; µ T are evaluated. The second function determines the required sample size to evaluate Hypotheses Set 2, which isH 1 : µ C &lt; µ T against its complement H 2 : µ C &gt; µ T .In addition, the results from the simulations can be consulted and explored in the Shiny app Sample Size Determination for</figDesc><table><row><cell>Cluster Randomised Trials with Bayes Factor</cell></row><row><cell>(https://utrecht-university.shinyapps.io/BayesSamplSizeDet-CRT/).</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Calculation of Approximated Adjusted Fractional Bayes Factor</head><p>According to <ref type="bibr" target="#b13">Fu et al. (2021)</ref>, <ref type="bibr" target="#b17">Gu et al. (2018)</ref>, <ref type="bibr">and Hoijtink, Gu, and Mulder (2019)</ref>, the adjusted fractional prior distribution is given by</p><p>Where σ 2 C represents the variance of the control condition and σ 2 T represents the variance of the treatment condition. One can observe that fraction b affects the variance of the prior distribution, resulting in a larger variance of the distribution with small fractions and a lower variance with large fractions. As explained above, due to the dependence of the observations, the effective sample size is used (N ef f ), which according to <ref type="bibr" target="#b25">Hox et al. (2017)</ref> is defined as</p><p>The normal approximation of the posterior distribution is</p><p>where µ C denotes the mean of control condition and µ T denotes the maximum likelihood estimate of the mean of treatment condition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Choosing b</head><p>The fraction of information b has numerous definitions depending on the type of Bayes factor that is used and the researcher's aim. In this paper, we used the Approximated Adjusted Fractional Bayes Factor, for which the minimal training sample is defined as</p><p>where J is the number of restrictions in the hypotheses under consideration. However, there are other definitions of b; researchers interested in this definitions can refer to <ref type="bibr" target="#b17">Gu et al. (2018)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 40</head><p>Appendix B</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Binary search algorithm</head><p>The binary search algorithm reduces the number of iterations and hence the computation time in the algorithm proposed in section Methodology for Sample Size Determination.</p><p>The binary search takes values (N mid ) between N min and N max until the power criteria of P (BF 01 &gt; BF thresh |H 0 ) &gt; η and P (BF 10 &gt; BF thresh |H 1 ) &gt; η are met. As a result, the time complexity is reduced to O(logN ) ("Binary Search Algorithm," 2024), which means that, in the worst scenario, the algorithm makes log 2 (1000 -5) + 1 = 10 evaluations of the power criterion.</p><p>1. N max is specified by the user as an argument of the R function, while N min is defined inside the R function.</p><p>2. The midpoint is calculated as N mid = N min +Nmax 2 .</p><p>3. If the power criterion in Equation ( <ref type="formula">11</ref>) is satisfied, the maximum is updated to N max = N mid and N mid is calculated again. Otherwise, the minimum is set to N min = N mid , and N mid is recalculated. The result of this recalculation means that in the first case, the sample size decreases and in the second case, the sample size increases.</p><p>4. The algorithm terminates under two conditions. For cluster size determination, the algorithm stops when N mid = N min + 1 and N min -1 fails to satisfy the power criterion. In the case of determining the number of clusters, it stops when N mid = N min + 2 and N min -2 fails to meet the power criterion. In either case, upon termination N = N mid .</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Evaluation of inequality constrained hypotheses using a generalization of the AIC</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Altinisik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Van Lissa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Oldehinkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Kuiper</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000406</idno>
+		<ptr target="https://doi.org/10.1037/met0000406" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="599" to="621" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Short-Term Effects of a Randomized Computer-Based Out-of-School Smoking Prevention Trial Aimed at Elementary Schoolchildren</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ausems</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mesters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Van Breukelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>De Vries</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/pmed.2002.1021</idno>
+		<ptr target="https://doi.org/10.1006/pmed.2002.1021" />
+	</analytic>
+	<monogr>
+		<title level="j">Preventive Medicine</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="581" to="589" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The Controversy over Null Hypothesis Significance Testing Revisited</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Balluerka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gómez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hidalgo</surname></persName>
+		</author>
+		<idno type="DOI">10.1027/1614-1881.1.2.55</idno>
+		<ptr target="https://doi.org/10.1027/1614-1881.1.2.55" />
+	</analytic>
+	<monogr>
+		<title level="j">Methodology</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="55" to="70" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Fitting Linear Mixed-Effects Models Using lme4</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mächler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v067.i01</idno>
+		<ptr target="https://doi.org/10.18637/jss.v067.i01" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m">Wikipedia Page Version ID</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">1218941965</biblScope>
+		</imprint>
+	</monogr>
+	<note>Binary search algorithm</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Walters</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/9781118763452</idno>
+		<ptr target="https://doi.org/10.1002/9781118763452" />
+		<title level="m">How to Design, Analyse and Report Cluster Randomised Trials in Medicine and Health Related Research</title>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="2014-04">2014. April</date>
+		</imprint>
+	</monogr>
+	<note>st ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Null hypothesis testing: Problems, prevalence, and an alternative</title>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">R</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anderson</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenneth</forename><forename type="middle">P</forename><surname>Burnham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">P</forename><surname>Burnham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">L</forename><surname>Thompson</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/3803199</idno>
+		<ptr target="https://doi.org/10.2307/3803199" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Wildlife Management</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="912" to="923" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Mag</forename><surname>Id</surname></persName>
+		</author>
+		<imprint>
+			<date>1991445071</date>
+			<biblScope unit="page">543</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Moving Beyond Traditional Null Hypothesis Testing: Evaluating Expectations Directly</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">V</forename><surname>De Schoot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jan-Willem</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2011.00024</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2011.00024" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Bayesian Sample Size Determination</forename><surname>For</surname></persName>
+		</author>
+		<idno>CLUSTER-RANDOMIZED TRIALS 34</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Design and analysis of cluster randomization trials in health research</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Donner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Klar</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A Practical Guide to Cluster Randomised Trials in</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Eldridge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kerry</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/9781119966241</idno>
+		<ptr target="https://doi.org/10.1002/9781119966241" />
+	</analytic>
+	<monogr>
+		<title level="m">Health Services Research</title>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="2012-01">2012. January</date>
+		</imprint>
+	</monogr>
+	<note>st ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Fu</surname></persName>
+		</author>
+		<idno type="DOI">10.33540/1221</idno>
+		<ptr target="https://doi.org/10.33540/1221" />
+		<title level="m">Sample Size Determination for Bayesian Informative Hypothesis Testing</title>
+		<imprint>
+			<date type="published" when="2022-03">2022. March</date>
+		</imprint>
+	</monogr>
+	<note>Doctoral dissertation, Utrecht University</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Sample-size determination for the Bayesian t test and Welch&apos;s test using the approximate adjusted fractional Bayes factor</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-020-01408-1</idno>
+		<ptr target="https://doi.org/10.3758/s13428-020-01408-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="139" to="152" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A simulation-based approach to Bayesian sample size determination for performance under a given model and for separating models</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Gelfand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/ss/1030550861</idno>
+		<ptr target="https://doi.org/10.1214/ss/1030550861" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="193" to="208" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Goldstein</surname></persName>
+		</author>
+		<title level="m">Multilevel statistical models</title>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>th ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Bayesian evaluation of inequality constrained hypotheses</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Deković</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000017</idno>
+		<ptr target="https://doi.org/10.1037/met0000017" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="511" to="527" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Approximated adjusted fractional Bayes factors: A general method for testing informative hypotheses</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/bmsp.12110</idno>
+		<ptr target="https://doi.org/10.1111/bmsp.12110" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Mathematical and Statistical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="229" to="261" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">H</forename><surname>Moulton</surname></persName>
+		</author>
+		<title level="m">Cluster randomised trials</title>
+		<meeting><address><addrLine>OCLC</addrLine></address></meeting>
+		<imprint>
+			<publisher>CRC Press</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page">244246621</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">A review of applications of the Bayes factor BAYESIAN SAMPLE SIZE DETERMINATION FOR CLUSTER-RANDOMIZED TRIALS 35 in psychological research</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Heck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Boehm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Böing-Messing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-C</forename><surname>Bürkner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Derks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Dienes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Karimova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A L</forename><surname>Kiers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Klugkist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Kuiper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Leenders</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Leplaa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Linde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Meijerink-Bosman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000454</idno>
+		<ptr target="https://doi.org/10.1037/met0000454" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Sample size calculations for cluster randomised controlled trials with a fixed number of clusters</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hemming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Girling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Sitch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Marsh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Lilford</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2288-11-102</idno>
+		<ptr target="https://doi.org/10.1186/1471-2288-11-102" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Medical Research Methodology</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">102</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">The Shiny CRT Calculator: Power and Sample size for Cluster Randomised Trials</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hemming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kasza</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Informative hypotheses: Theory and practice for behavioral and social scientists</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>CRC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Bayesian evaluation of informative hypotheses for multiple populations</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/bmsp.12145</idno>
+		<ptr target="https://doi.org/10.1111/bmsp.12145" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Mathematical and Statistical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="219" to="243" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">A tutorial on testing hypotheses using the Bayes factor</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Van Lissa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gu</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000201</idno>
+		<ptr target="https://doi.org/10.1037/met0000201" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="539" to="556" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Hox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van De Schoot</surname></persName>
+		</author>
+		<idno type="DOI">10.4324/9781315650982</idno>
+		<ptr target="https://doi.org/10.4324/9781315650982" />
+		<title level="m">Multilevel Analysis: Techniques and Applications</title>
+		<imprint>
+			<publisher>Routledge</publisher>
+			<date type="published" when="2017-09">2017, September</date>
+		</imprint>
+	</monogr>
+	<note>rd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jeffreys</surname></persName>
+		</author>
+		<title level="m">Theory of probability</title>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+	<note>rd ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Bayes Factors</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Kass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1995.10476572</idno>
+		<ptr target="https://doi.org/10.1080/01621459.1995.10476572" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="issue">430</biblScope>
+			<biblScope unit="page" from="773" to="795" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The Bayes factor for inequality and about equality constrained models</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Klugkist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.csda.2007.01.024</idno>
+		<ptr target="https://doi.org/10.1016/j.csda.2007.01.024" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics &amp; Data Analysis</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="6367" to="6379" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Bayesian Sample Size Determination</forename><surname>For</surname></persName>
+		</author>
+		<idno>CLUSTER-RANDOMIZED TRIALS 36</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Inequality Constrained Analysis of Variance: A Bayesian Approach</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Klugkist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Laudy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoijtink</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/1082-989X.10.4.477</idno>
+		<ptr target="https://doi.org/10.1037/1082-989X.10.4.477" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="477" to="493" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Do we know what we test and do we test what we want to know?</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Klugkist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Van Wesel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bullens</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0165025411425873</idno>
+		<ptr target="https://doi.org/10.1177/0165025411425873" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Behavioral Development</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="550" to="560" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Multilevel network analysis for the social sciences: Theory, methods and applications</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Lazega</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Snijders</surname></persName>
+		</author>
+		<editor>A. B.</editor>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Randomization of Clusters Versus Randomization of Persons Within Clusters: Which Is Preferable?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/000313005X20727</idno>
+		<ptr target="https://doi.org/10.1198/000313005X20727" />
+	</analytic>
+	<monogr>
+		<title level="j">The American Statistician</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="72" to="78" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Power and money in cluster randomized trials: When is it worth measuring a covariate?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/sim.2297</idno>
+		<ptr target="https://doi.org/10.1002/sim.2297" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistics in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page" from="2607" to="2617" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Power analysis of trials with multilevel data</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teerenstra</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>CRC Press</publisher>
+			<pubPlace>Taylor &amp; Francis</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Design Issues for Experiments in Multilevel Populations</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moerbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J P</forename><surname>Van Breukelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P F</forename><surname>Berger</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1165206</idno>
+		<ptr target="https://doi.org/10.2307/1165206" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Educational and Behavioral Statistics</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">271</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Prior adjusted default Bayes factors for testing (in)equality constrained hypotheses</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.csda.2013.07.017</idno>
+		<ptr target="https://doi.org/10.1016/j.csda.2013.07.017" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics &amp; Data Analysis</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="page" from="448" to="463" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Design and analysis of group-randomized trials</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Murray</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+			<publisher>Oxford university press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Statistical inference: A commentary for the social and behavioural sciences (Reprint)</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Oakes</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1987">1987</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Bayesian Sample Size Determination</forename><surname>For</surname></persName>
+		</author>
+		<idno>CLUSTER-RANDOMIZED TRIALS 37</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Fractional Bayes Factors for Model Comparison</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>O'hagan</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1995.tb02017.x</idno>
+		<ptr target="https://doi.org/10.1111/j.2517-6161.1995.tb02017.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="99" to="118" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Statistical analysis and optimal design for cluster randomized trials</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Raudenbush</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/1082-989X.2.2.173</idno>
+		<ptr target="https://doi.org/10.1037/1082-989X.2.2.173" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="173" to="185" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Statistical analysis and optimal design for cluster randomized trials</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Raudenbush</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/1082-989X.2.2.173</idno>
+		<ptr target="https://doi.org/10.1037/1082-989X.2.2.173" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="173" to="185" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Raudenbush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Bryk</surname></persName>
+		</author>
+		<title level="m">Hierarchical linear models: Applications and data analysis methods</title>
+		<imprint>
+			<publisher>Sage Publ</publisher>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Methods for sample size determination in cluster randomized trials</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rutterford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Copas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Eldridge</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/ije/dyv113</idno>
+		<ptr target="https://doi.org/10.1093/ije/dyv113" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1051" to="1067" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Sample size formula with a continuous outcome for unequal group sizes and unequal variances</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J A</forename><surname>Schouten</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/(SICI)1097-0258(19990115)18:1&lt;87::AID-SIM958&gt;3.0.CO;2-K</idno>
+		<idno>&lt;87::AID-SIM958&gt;3.0.CO;2-K</idno>
+		<ptr target="https://doi.org/10.1002/(SICI)1097-0258" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistics in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="87" to="91" />
+			<date type="published" when="1999">1999. 19990115</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Relative efficiency of unequal versus equal cluster sizes in cluster randomized and multicentre trials</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J P</forename><surname>Van Breukelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J J M</forename><surname>Candel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P F</forename><surname>Berger</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/sim.2740</idno>
+		<ptr target="https://doi.org/10.1002/sim.2740" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistics in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="2589" to="2603" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Evaluating a theory-based hypothesis against its complement using an AIC-type information criterion with an application to facial burn injury</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Vanbrabant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Van Loey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Kuiper</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000238</idno>
+		<ptr target="https://doi.org/10.1037/met0000238" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="129" to="142" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Bayesian design and analysis of two-arm cluster randomised trials using assurance</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Wilson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022-08">2022. August</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Simulating Electoral Systems: from open-list to single-member districts in Brazil</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-11">July 11, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Gabriel</forename><forename type="middle">C</forename><surname>Caseiro</surname></persName>
+							<email>gabrielcaseiro99@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Bristol</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Leandro</forename><surname>De Magalhães</surname></persName>
+							<email>leandro.demagalhaes@bristol.ac.uk</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Bristol</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Fgv -São</forename><surname>Paulo</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Bristol</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Simulating Electoral Systems: from open-list to single-member districts in Brazil</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-11">July 11, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8757E21B8DC6E2CF555F141EE7AF1247</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:24+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Open-list electoral systems provide a complete rank ordering of all candidatesparties in a race covering a large area. Thus, we can observe a complete rank ordering of candidates-parties for any sub-area of that race. This allows us to simulate a single-member majoritarian electoral system based on the preferences revealed by an open-list proportional system with relative easy. We simulate the 2022 election in the Brazilian state of São Paulo. We simulate thousands of counterfactual intra-state constituency boundaries based on existing legal boundaries. For each simulated constituency map we compute the district winner by four different methods. The non-ideological rank method produces results that have a similar ideological breadth as the open-list system. The party aggregation method delivers a two-party system. The Left-Right aggregation method produces complete dominance by right-wing parties. The Left-CenterRight-Right aggregation does not identify a clear third party, suggesting instability.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Comparing electoral systems is at the core of political science and political economy <ref type="bibr" target="#b30">(Rokkan (1970)</ref>, <ref type="bibr" target="#b24">Norris (1997)</ref>, <ref type="bibr" target="#b4">Boix (1999)</ref>, <ref type="bibr" target="#b2">Blais et al. (2005)</ref>, <ref type="bibr" target="#b17">Iversen and Soskice (2006)</ref>; <ref type="bibr" target="#b27">Persson and Tabellini (1999)</ref>, <ref type="bibr" target="#b0">Austen-Smith (2000)</ref>, <ref type="bibr" target="#b22">Milesi-Ferretti et al. (2002)</ref>). Most of the empirical evidence to support these comparisons comes from cross-country studies, 1 or the study of rare electoral reform. 2  In this paper, we propose a new approach to empirically evaluate and compare majoritarian and proportional electoral systems. We compare observed electoral results in an open-list proportional system with simulated results of a single-member district majoritarian system. This direction of analysis -from actual open-list to simulated single-member districts -can be constructed based on a purely datadriven approach. Open-list electoral systems provide a complete rank ordering of all candidates-parties in a race covering a large area. Thus, we can observe a complete rank ordering of candidates-parties for any sub-area.</p><p>If we were to use a closed-list proportional system as the basis for simulations, we would need to estimate voters's preferences regarding candidates for areas where those candidates were never present in the ballot box -only the party was. <ref type="bibr" target="#b21">Merlo and Paula (2017)</ref> have shown this can be done with careful modelling, but it still requires the assumption that voters' preferences are ideological and can be represented in a multi-dimensional ideological space. The contribution of <ref type="bibr" target="#b21">Merlo and Paula (2017)</ref> is to show that estimating such preferences is feasible with data for the 1999 European Parliament elections. They stop short, however, of simulating other electoral systems -which is the core of our paper.</p><p>Our method contributes to a long standing literature comparing proportional and majoritarian systems. Moreover, such and advance is of particular relevance to countries that currently hold open-list elections. Open-lists are common in the Americas (e.g., Chile, Peru, Ecuador, Colombia, Panama) and Europe (e.g., Germany, Italy, Finland, Poland, Ukraine), and also present in Asia (Indonesia, Sri Lanka and Japan).</p><p>Similar to us, <ref type="bibr" target="#b12">Finan and Mazzocco (2021)</ref> simulate changes in electoral rules in Brazil, but only for the state of Roraima. They focus on two counterfactual reforms: approval voting and the imposition of a one-term limit, but maintain the electoral system as is: an open-list multi-member district. Their focus is the interaction between politicians in multi-member districts and how this interaction affects the efficiency of government transfers. They build and estimate a model in which voters' preferences are determined by the transfers from members of Congress towards the voters' municipality, the candidates' appeal, and a preference shock. The complexity of their model means it can only be estimated for Brazilian states with a small number of members of Congress, hence the choice of Roraima. In contrast to their work, our data driven approach and our objective to simulate a single-member majoritarian electoral system implies we can simulate elections for any state size. Moreover, our objective is to evaluate political outcomes such as the number of parties and ideological identity of those elected, not how public resources are allocated.</p><p>The method we propose here can be further developed to address long-standing hypothesis in political economy linking electoral systems to the level and nature of government expenditure. Proportional electoral systems (compared to majoritarian) have been found to have higher government spending <ref type="bibr" target="#b1">(Bawn and Rosenbluth (2003)</ref>, <ref type="bibr">Persson and Tabellini (2003)</ref>) less inequality <ref type="bibr" target="#b8">(Crepaz (1998)</ref>); and more redistribution <ref type="bibr" target="#b0">(Austen-Smith (2000)</ref> and <ref type="bibr" target="#b17">Iversen and Soskice (2006)</ref>). Our simulation may be seen as the a first step on which to build a simulated political economy model under different electoral systems.</p><p>Unlike the US, where a whole-sale change in the electoral system has never been enacted, such institutional changes are often debated and implemented in other democracies. For example, electoral reform took place repeatedly in Italy in the last 30 years <ref type="bibr" target="#b6">(Chiaramonte (2015)</ref>); Chile had a recent electoral reform in 2015 <ref type="bibr" target="#b15">(Gamboa and Morales (2016)</ref>) and an attempt to adopt a new constitution in 2022; the UK had a referendum on electoral reform in 2011 <ref type="bibr" target="#b29">(Renwick et al. (2009)</ref>), among others. Our paper provides another avenue for research that informs the perennial debate of changing the electoral system.</p><p>In Brazil, electoral reform is a recurrent debate. Brazil adopted proportional representation in the 30s, followed by the majority of Latin America <ref type="bibr" target="#b23">(Negretto and Visconti (2018)</ref>). A new constitution was adopted in 1988; term-limits for the executive were imposed in 1996, and other small reforms were recently implemented. Currently, there are multiple bills in Congress -still at the committee stage -that propose fundamental electoral rule reforms. One of them would implement in Brazil the single-member district electoral system current in use in the US, but with a similar population size per district within each state, and differing across states.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Simulation steps</head><p>Our first step is to simulate single-member electoral districts. This exercise is based on the literature that analyses the effects of redistricting and gerrymandering in the US using simulated redistricted maps. We implement the method proposed in <ref type="bibr">Mc-Cartan and Imai (2023)</ref>. This methods imposes three desirable constraints: similar population per district, compactness, and preservation of administrative boundaries.</p><p>The important choice at this stage is the administrative boundaries to be used in the case of Brazil. We use the municipality boundaries and the boundaries of the electoral zones (zonas eleitorais). Electoral zones in Brazil are geographical areas within a state under the jurisdiction of an electoral notary who is responsible to coordinate voting in that area; under the supervision of electoral judges (Tribunal Superior Eleitoral). One municipality may include multiple electoral zones as is the case of the capital city of the state of São Paulo (see Figure <ref type="figure" target="#fig_0">1</ref> ), or one electoral zone may contain multiple municipalities and sometimes only some neighborhoods within it (see Figure <ref type="figure">2</ref> ).</p><p>Using the Sequential Monte Carlo algorithm in McCartan and Imai (2023) we run 50,000 unique iterations of the algorithm, for each we set as the objective 70 electoral districts for the state of São Paulo, respecting the boundaries by municipality and electoral zones (Figure <ref type="figure">3</ref> ), compactness, and allowing for a maximum of 5% deviation in population size among districts. The algorithm is able to converge to a unique map in 1,102 instances. These are the 1,102 unique maps that we use to estimate counterfactual single-member district majoritarian electoral results and compare with the actual open-list results.</p><p>In Figure <ref type="figure">4</ref> we show an example of the simulated district boundaries (red) compared to the observed municipalities' and electoral zones' boundaries. In Figure <ref type="figure">5</ref> we show another example and include shading corresponding to how close voter population is to 500,000 within each simulated district (allowed to diverge by 5%).</p><p>Our second step is to assign a winner for each of the 70 districts in each of the unique 1,102 constituency maps. We follow four different approaches. All four are based on the complete ranking of candidate-parties observed in the open-list electoral system. The open-list system implies that every voter is presented with a ballot which includes all candidates in the state of São Paulo. Moreover, TV and radio time are allocated to candidates according to a predefined rule implemented equally across the entire state. Actual electoral results are available by 'section' (seção eleitora -a combination of a few voting booths with a determined geographical location. Thus, we can reconstruct a complete rank ordering of candidates for any geographical unit composed of one or more 'sections'. Electoral law imposes that an electoral zone or a municipality be composed of multiple 'sections' that respect both boundaries.</p><p>One potential concern regarding our method is the selection into candidacy. Note, however, that the cost running for office in Brazil is relatively low. Parties have an incentive to have multiple candidates with little or no chance of getting elected to boost the overall party vote. Thus, we believe the candidates observed in a given election is close to the universe of individuals willing to run for office at that point in time. In other words, our identify assumption is that any candidate that would have run for office in a single-member district majoritarian election would also have run for office in an open-list proportional election. <ref type="foot" target="#foot_0">3</ref>The other concern regarding selection is that electoral systems differ because they select different types of politicians instead of incentivizing the same politicians to act differently. <ref type="bibr" target="#b14">Gagliarducci et al. (2011)</ref> use regression discontinuity design to show that similar politicians (the same average politician under a potential outcomes framework) elected under majoritarian or proportional rule do act differently according to how they were elected: through the majoritarian or proportional route. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Assigning the winning candidate</head><p>We propose a simple algorithm to assign a representative to each districts based on voters' revealed preferences aggregated in four different ways described below. Independent of the preference aggregation method, the algorithm should have the following desirable features: i) the selected representative should reflect the electorate's relative preferences and ii) representatives should be assigned to the district with the highest possible support out of all other districts. The algorithm unfolds in several iterative steps as follows:</p><p>1. Initial Preference Determination: For each iteration, we first identify the candidate with the highest preference (i.e., the highest voting share) in every district that has not yet been assigned a representative.</p><p>2. Selection and Assignment: Among these leading candidates across all remaining districts, the one with the overall highest voting share is deemed elected. This candidate is then assigned as the representative for the district where they had this highest share. Both the elected candidate and their district are subsequently removed from consideration in the next iterations of the process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Iterative Process:</head><p>The algorithm repeats the above steps, recalculating the leading candidate for each remaining district and selecting the one with the highest share across these districts for assignment, until a representative is assigned to every district.</p><p>To illustrate how the algorithm works in practive, consider a scenario with three districts (D1, D2, and D3) and candidates (C1, C2, C3 and C4), where their voting shares in these districts are as follows:</p><p>• In D1, C1 leads with 50%, followed by C2 with 25%, C4 with 15%, and C3 with 10%.</p><p>• In D2, C1 again leads with 35%, but C2 is close behind with 32%, C4 has 20%, and C3 with 15%.</p><p>• In D3, C2 leads with 30%, C1 has 28%, C3, 22%, and C4 has 20%.</p><p>According to our algorithm:</p><p>1. C1, having the highest overall share, is elected in D1 in the first iteration.</p><p>2. With C1 now removed from consideration, C2, now the leading candidate with the highest share across the remaining districts, is elected in D2 in the subsequent iteration.</p><p>3. Finally, C3 is elected in D3, as she is the the leading remaining candidate in the last district.</p><p>This example clarifies how the algorithm addresses issue of candidates who lead in multiple districts. The algorithm assigns individuals such as C2 to the district where their election has the highest vote support based on the recalculated preferences after higher-ranked candidates in other districts are removed from the process. C2 is the leading candidate in D3 initially. However, after C1 is elected in D1 and removed from further consideration, C2's strongest remaining support is in D2, not D3. This method prevents a scenario in which a candidate is elected in a district despite having a stronger voter support in another.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Non-ideological rank preferences</head><p>First, we focus purely on the electoral preferences expressed through the open-list results, irrespective of party or ideological affiliations of the candidates. In the Nonideological Rank Preferences approach, the algorithm for selecting the winning candidate in each district considers the revealed preferences of the voters at the candidate level, based on nominal votes. Therefore, at the beginning of the algorithm, every candidate is considered running in every district. This initial step ensures that the selection process is grounded in the actual voting behavior of the electorate, with no candidate being excluded from consideration in any district.</p><p>In this approach, party or ideological identity plays no role in the allocation of representatives in simulated districts. Allocation is simply done by the rank ordering of individuals as observed in the actual open-list results. Nevertheless, we discuss the results by showing the distribution of parties that are chosen to represent the state of São Paulo in the simulated districts compared to the actual choice produced under an open-list electoral system.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Party based preferences</head><p>In this approach, we begin by assessing the performance of parties at the district level, aggregating the nominal votes received by each candidate of a party and the party's list votes. This process aims to identify the party preferred by voters in each district, based on their collective performance. Once the leading party in a district is determined, we then apply the winning candidate selection algorithm. However, in this phase, the candidates considered for each district are exclusively those belonging to the district's preferred party. This means that the algorithm's focus narrows to selecting the most favored candidate within the context of the party that has garnered the highest overall support from the district's voters. This methodological adjustment allows for a representation selection that not only reflects the individual preferences for candidates but also aligns with the broader party preferences exhibited by the electorate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Left-Right based preferences.</head><p>Following a similar logic, the Left-Right based preferences approach aggregates votes not based on individual parties but by ideological orientation-dividing parties into two broad categories: Left and Right. This categorization is grounded in the parties' electoral coalitions and public endorsements in the gubernatorial election, which occurs concurrently with the election for the house of representatives. Specifically, candidates from parties that supported the left-wing candidate, Fernando Haddad (PT), in the second round of the gubernatorial election are categorized as 'Left', while those supporting the right-wing candidate, Tarcísio de Freitas (Republicanos), are classified as 'Right'. By consolidating parties into these two ideological blocs, our simulation effectively mirrors a binary party system.</p><p>Within each district, after votes are aggregated to determine the dominant ideological preference (Left or Right), we apply the candidate selection algorithm. The distinctive feature here is that the set of candidates considered for each district is restricted to those affiliated with the ideologically dominant group, as indicated by the district-level voter preferences. This method enables an exploration of how electoral outcomes might vary within a simplified ideological spectrum, underscoring the potential for dominance by one ideological bloc over the other, driven by the voters' structured preferences. This approach not only reflects the electorate's ideological leanings by including the role of gubernatorial alliances. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5">Left-CenterRight-Right based preferences.</head><p>Finally, we delve deeper into the ideological preferences by partitioning parties into three distinct groups, based on their electoral coalitions and public endorsements during the first round of the gubernatorial election. This round featured three principal candidates: Fernando Haddad (PT) representing the Left, Tarcísio de Freitas (Republicanos) for the Right, and Rodrigo Garcia (PSDB) positioned as Center-Right. Notably, Rodrigo Garcia's coalition shifted support to Tarcísio de Freitas in the second round, delineating a nuanced ideological landscape with a Left group, a Center-Right group (aligned with Rodrigo Garcia), and a Right group (aligned with Tarcísio de Freitas). This tripartite division is particularly insightful given the predominance of rightwing parties, offering a unique opportunity to explore the electoral implications of ideological fragmentation on the Right. Specifically, this setup aims to assess how a divided Right -between Center-Right and Right factions -could potentially open pathways for Left-leaning candidates, despite the overall right-wing majority.</p><p>The implementation of the candidate selection algorithm remains consistent with our previous exercises. Votes are aggregated within each district according to these three ideological groups, and the algorithm proceeds to identify and assign the winning candidate from the group that garners the most support in each district. The distinction lies in the consideration of three ideological categories instead of two. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Results</head><p>The main results can be seen in Table <ref type="table" target="#tab_0">1</ref> . We list all the parties that took part in the 2022 Congressional election in São Paulo and indicate their ideological classification as either left or right <ref type="bibr" target="#b5">(Bolognesi et al. (2022)</ref>) using the color blue for 'right' and the color red for 'left' (red is the colour of PT and blue is the colour of PL). In column 1 we report the number of representatives (deputados federais) elected by each party in the actual observed 2022 open-list election. The two main parties are the right-wing PL with 17 elected representatives and the left-wing PT with 11. Overall, there were 50 representatives elected by right-wing parties and 20 elected by left-wing parties.</p><p>In column 2 we report the outcome for the non-ideological rank approach. We show the 70 individuals that were elected more often in the 1,102 generated constituency maps. The only substantial difference is that the party with the most elected representatives, PL, decreases the number of representatives by approximately 50%, from 17 to 9, mostly at the expense of other right-wing parties. Other than that, the overall simulated outcome is similar to that of the observed open-list election. All left wing parties elect a similar number of candidates, the ranking of the top five parties is maintained, and the overall number of right and left wing candidates changes little. In the simulated single-member district election the right (left) elects 52 (18) representatives instead of <ref type="bibr">50 (20)</ref> in the observed open-list one.</p><p>In column 3 we report the outcome for the party based preferences approach. In this approach, the simulated single-member majoritarian elections clearly departs form the actual open-list results. Despite being based on the same revealed individual-party ranked preferences, once we aggregate votes by party we obtain a two-party system. The right-wing party PL wins in 52 districts and the left-wing PT wins in 15 districts. Remarkably, despite the drastic change in the number of parties that win office, the overall number of right-wing and left-wing parties elected (53:17) remains similar to that of the observed in the open-list result (50:20).</p><p>In column 4 we report the outcomes for the Left-Right based preference approach. This simulation imposes a two-party system aggregating the Left and the Right and treating them as one party each. The main result in this scenario is that all left-wing parties, including the PT, are wiped out. All 70 representatives that are more often elected in the 1,102 generated constituency maps belong to right-wing parties.</p><p>In column 5, with the introduction of a Center-Right category, the overall distribution of elected representatives between right-wing (combining Center-Right and Right) and left-wing candidates stands at 52:18. This distribution is notably similar to the outcomes observed in both the non-ideological rank approach and the partybased preferences approach. Note also that Even with the imposition of a third ideological grouping, both the 'right' and the 'left' have a clear dominant party; respectively the PL and PT. The main insight gained from this exercise is that no single party seems to dominate in the 'center-right'; UNIAO and MDB have 3 and 4 representative each. This lack of a clear latent dominant party in the center suggests a three-party outcome would be unstable or difficult to establish.</p><p>Importantly, the division of right-wing parties into distinct Center-Right and Right groups, does not lead to a significant decrease in the overall right-wing representation. All simulations of single-member districts deliver more right-wing parties than the actual open-list results.  </p><formula xml:id="formula_0">7 0 8 1 CIDADANIA 2 1 0 2 1 PSB 2 3 0 0 2 NOVO 1 0 0 1 0 PSC 1 0 0 1 4 REDE 1 0 0 0 0 SOLIDARIEDADE 1 2 0 0 1 PATRIOTA 0 1 0 1 0 PTB 0 1 0 1 1 AVANTE 0 0 0 1 1</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Discussion</head><p>We find surprising that the open-list proportional system delivers the same results as the simulated single-member district majoritarian system, in which voters simply rank individuals and ignore party affiliation altogether. This suggests that parties are not used to inform voting choices in the Brazilian open-list electoral system. Such an interpretation would be in-keeping with a vast literature that describes Brazil as having a weak party system (e.g., <ref type="bibr" target="#b18">Klašnja and Titiunik (2017)</ref>) and the voting being focused on individual candidates <ref type="bibr" target="#b9">(De Magalhaes (2015)</ref>). Another surprising result is the easy with which we obtain a two-party systems once we aggregate votes by party. We had no clear prior that one of two parties would dominate in every district. But this is what we find. This result supports a common view that single-member majoritarian system may be predisposed to a two-party system -or less party fragmentation, at least -as argued by <ref type="bibr">Persson et al. (2003)</ref> and <ref type="bibr" target="#b13">Fiva and Hix (2021)</ref>, and as is the case in the US and the UK. This result also makes the third simulation more plausible, as it would be likely that after a reform, politician would migrate to either of the two clearly dominating parties; potentially creating a two-party system. Even when we allow for a third center-right ideological grouping, not single party dominates the center.</p><p>All four simulations deliver a higher number of right-wing representatives than the observed results in the open-list election. This veering to the right is complete in the third simulation, in which we impose a two-party system; all elected representatives are from the right and the left elects no one. This result supports the theoretical argument proposed by <ref type="bibr" target="#b17">Iversen and Soskice (2006)</ref> that center-left parties are more likely to be in power under PR systems than under majoritarian systems; and the results regarding more right-wing cabinets under majoritarian systems <ref type="bibr" target="#b10">(Döring and Manow (2017)</ref>).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Municipality with multiple electoral Zones</figDesc><graphic coords="6,91.80,175.40,171.36,171.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Ideological Preferences -Left-Right Division</figDesc><table><row><cell>Group</cell><cell>Parties</cell></row><row><cell>Right</cell><cell></cell></row><row><cell>Left</cell><cell>AGIR, PC do B, PCB, PCO, PDT, PSB, PSOL, PSTU, PT, PV, REDE, SOLIDARIEDADE, UP</cell></row></table><note><p>AVANTE, CIDADANIA, DC, MDB, NOVO, PATRIOTA, PATRIOTA, PL, PMB, PMN, PODE, PODE, PP, PROS, PRTB, PSC, PSD, PSDB, PTB, REPUBLICANOS, UNIÃO, UNIÃO</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Ideological Preferences -Three Groups Division</figDesc><table><row><cell>Group</cell><cell>Parties</cell></row><row><cell>Center-Right</cell><cell></cell></row></table><note><p>AVANTE, CIDADANIA, MDB, PATRIOTA, PATRIOTA, PODE, PODE, PP, PROS, PSDB, SOLIDARIEDADE, UNIÃO, UNIÃO Right DC, NOVO, PL, PMB, PMN, PRTB, PSC, PSD, PTB, REPUBLICANOS Left AGIR, PC do B, PCB, PCO, PDT, PSB, PSOL, PSTU, PT, PV, REDE, UP</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 :</head><label>3</label><figDesc>Observed Open-list Proportional vs Simulated Single-Member Majoritarian</figDesc><table><row><cell></cell><cell cols="3">Number of elected by party and ideology</cell><cell></cell><cell></cell></row><row><cell></cell><cell>Actual</cell><cell></cell><cell cols="2">Simulated</cell><cell></cell></row><row><cell>Party</cell><cell cols="5">Open-list Individual rank Party Agg. Left-Right Agg. Three Party Agg.</cell></row><row><cell>PL</cell><cell>17</cell><cell>9</cell><cell>52</cell><cell>12</cell><cell>16</cell></row><row><cell>PT</cell><cell>11</cell><cell>9</cell><cell>15</cell><cell>0</cell><cell>11</cell></row><row><cell>UNIÃO</cell><cell>6</cell><cell>8</cell><cell>0</cell><cell>11</cell><cell>3</cell></row><row><cell>MDB</cell><cell>5</cell><cell>6</cell><cell>0</cell><cell>7</cell><cell>4</cell></row><row><cell>PSOL</cell><cell>5</cell><cell>4</cell><cell>2</cell><cell>0</cell><cell>4</cell></row><row><cell>REPUBLICANOS</cell><cell>5</cell><cell>5</cell><cell>1</cell><cell>8</cell><cell>11</cell></row><row><cell>PP</cell><cell>4</cell><cell>4</cell><cell>0</cell><cell>5</cell><cell>2</cell></row><row><cell>PODE</cell><cell>3</cell><cell>5</cell><cell>0</cell><cell>7</cell><cell>1</cell></row><row><cell>PSD</cell><cell>3</cell><cell>5</cell><cell>0</cell><cell>5</cell><cell>7</cell></row><row><cell>PSDB</cell><cell>3</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc>Parties are allocated either as 'left' (red) or right' (blue) according to<ref type="bibr" target="#b5">Bolognesi et al. (2022)</ref>. Column 1 presents the number of representatives elected by party in the actual open-list system. In column 2, 3, 4 and 5 we present the 70 candidates elected in the most number of the 1,102 simulated constituency maps; column 2 according to the rank order observed in the open-list vote; column 3 votes are first aggregated by party within each simulated district; column 4 votes are aggregate by 'left' or 'right' within each simulated district; ; column 4 votes are aggregate by 'left' or 'right' in three groups within each simulated district.</figDesc><table><row><cell>Total Right</cell><cell>50</cell><cell>52</cell><cell>53</cell><cell>70</cell><cell>52</cell></row><row><cell>Total Left</cell><cell>20</cell><cell>18</cell><cell>17</cell><cell>0</cell><cell>18</cell></row><row><cell>Note:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>As a robustness, we discuss relaxing this assumption by introducing highly successful candidates from other elections in our simulations.</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Redistributing income under proportional representation</title>
+		<author>
+			<persName><forename type="first">Austen-Smith</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Political Economy</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1235" to="1269" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Coalition parties versus coalitions of parties: How electoral agency shapes the political logic of costs and benefits</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bawn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">M</forename><surname>Rosenbluth</surname></persName>
+		</author>
+		<idno>SSRN 1154118</idno>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">To adopt or not to adopt proportional representation: The politics of institutional choice</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Blais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dobrzynska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">H</forename><surname>Indridason</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British journal of political science</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="182" to="190" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The economic effects of constitutions: replicating-and extending-Persson and Tabellini</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Blume</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Voigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wolf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Public Choice</title>
+		<imprint>
+			<biblScope unit="volume">139</biblScope>
+			<biblScope unit="page" from="197" to="225" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Setting the rules of the game: the choice of electoral systems in advanced democracies</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Boix</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American political science review</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="609" to="624" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolognesi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ribeiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Codato</surname></persName>
+		</author>
+		<title level="m">Uma nova classificação ideológica dos partidos políticos brasileiros. Dados</title>
+		<imprint>
+			<date type="published" when="2022">2022. 20210164</date>
+			<biblScope unit="volume">66</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The unfinished story of electoral reforms in Italy</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chiaramonte</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Contemporary Italian Politics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="10" to="26" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Parties, legislators, and the origins of proportional representation</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Fiva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="102" to="133" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Inclusion versus exclusion: Political institutions and welfare expenditures</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Crepaz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative politics</title>
+		<imprint>
+			<biblScope unit="page" from="61" to="80" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Incumbency effects in a comparative perspective: Evidence from Brazilian mayoral elections</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>De Magalhaes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="113" to="126" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Is proportional representation more favourable to the left? Electoral rules and their impact on elections, parliaments and the formation of cabinets</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Döring</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Manow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="149" to="164" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Disproportional threat: Redistricting as an alternative to proportional representation</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Emmenegger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Walter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="917" to="933" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Electoral incentives and the allocation of public funds</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Finan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mazzocco</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the European Economic Association</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="2467" to="2512" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Electoral reform and strategic coordination</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Fiva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hix</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1782" to="1791" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Electoral rules and politicians&apos; behavior: a micro test</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gagliarducci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nannicini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Naticchioni</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Journal: Economic Policy</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="144" to="174" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Chile&apos;s 2015 electoral reform: changing the rules of the game</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gamboa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Morales</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Latin American Politics and Society</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="126" to="144" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Shoring up power: Electoral reform and the consolidation of authoritarian rule</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gandhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Heller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">J</forename><surname>Reuter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral Studies</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="page">102475</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Electoral institutions and the politics of coalitions: Why some democracies redistribute more than others</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Iversen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Soskice</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American political science review</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="165" to="181" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">The incumbency curse: Weak parties, term limits, and unfulfilled accountability</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Klašnja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Titiunik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="129" to="148" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">The adoption of proportional representation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Leemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mares</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="461" to="478" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Sequential Monte Carlo for sampling balanced and compact redistricting plans</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mccartan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Imai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Applied Statistics</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="3300" to="3323" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Identification and estimation of preference distributions when voters are ideological</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Merlo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Á</forename><forename type="middle">D</forename><surname>Paula</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Economic Studies</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1238" to="1263" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Electoral systems and public spending</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Milesi-Ferretti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Perotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rostagno</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The quarterly journal of economics</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="609" to="657" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Electoral reform under limited party competition: The adoption of proportional representation in latin america</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">L</forename><surname>Negretto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Visconti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Latin American Politics and Society</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="27" to="51" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Choosing electoral systems: proportional, majoritarian and mixed systems</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Norris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International political science review</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="297" to="312" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Does proportional representation increase redistribution? Evidence from early 20th century Norwegian municipalities</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Paulsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral Studies</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="page">102494</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">How do electoral rules shape party structures</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Roland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tabellini</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The size and scope of government:: Comparative politics with rational politicians</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tabellini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European economic review</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">4-6</biblScope>
+			<biblScope unit="page" from="699" to="735" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">The economic effects of constitutions: what do the data say</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tabellini</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Partisan self-interest and electoral reform: The new Italian electoral law of</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Renwick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hanretty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Electoral studies</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="437" to="447" />
+			<date type="published" when="2005">2009. 2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rokkan</surname></persName>
+		</author>
+		<title level="m">Citizens ElectionsParties</title>
+		<meeting><address><addrLine>NewYork</addrLine></address></meeting>
+		<imprint>
+			<publisher>David McKay</publisher>
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Electoral Incentives and Geographical Representation: Evidence from an Italian Electoral Reform</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Viganò</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>Legislative Studies Quarterly</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

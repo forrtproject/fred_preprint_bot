@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LOCO: the topic-matched corpus for studying conspiracy theories</title>
+				<funder ref="#_qDegDb5">
+					<orgName type="full">unknown</orgName>
+				</funder>
+				<funder ref="#_aCkJ6Pv">
+					<orgName type="full">Swiss National Science Foundation</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Alessandro</forename><surname>Miani</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">School of Psychological Science</orgName>
+								<orgName type="institution">University of Bristol</orgName>
+								<address>
+									<addrLine>12a, Priory Road</addrLine>
+									<postCode>BS8 1TU</postCode>
+									<settlement>Bristol</settlement>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">LOCO: the topic-matched corpus for studying conspiracy theories</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">92A2E2FA967F63325A343F7230386843</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:21+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>LOCO is an 88-million-token corpus of conspiracy and mainstream standalone documents (N = 96,743) gathered from 150 websites. LOCO has been built as a freely available resource to help researchers extract features, test hypotheses, and generate predictive and classification models. With its rich set of additional data (freely available at https://osf.io/snpcg), LOCO allows for the study of both the content and spread of CTs, permitting comparisons with a topic-matched corpus of mainstream documents.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Conspiracy theories (CTs) explain significant social events as being secretly orchestrated by powerful and malicious elites <ref type="bibr" target="#b3">(Douglas et al., 2019)</ref>. Associated with detrimental societal outcomes, such as vaccine hesitancy, climate skepticism, and non-normative political engagement <ref type="bibr" target="#b9">(Jolley et al., 2022)</ref>, CTs pose substantial threats to democracy and public health <ref type="bibr" target="#b4">(Ecker et al., 2024)</ref>. Therefore, understanding the content of CTs is crucial to combating their spread and mitigating their consequences. To achieve this goal, the first step is to build comprehensive corpora of CTs.</p><p>Since the advent of Web 2.0, studies devoted to understanding CTs have typically focused on user-generated texts from social media (e.g., <ref type="bibr" target="#b10">Klein et al., 2019;</ref><ref type="bibr" target="#b22">Samory &amp; Mitra, 2018)</ref>. However, posts and comments found on social media are not CTs per se, as they generally consist of short texts and are often tied to a thread. A better approach to address these limitations is to study CTs as texts from web pages. Compared to posts and tweets on social media, web pages provide space for in-depth and elaborated discourse, constituting standalone and structured texts.</p><p>Yet, even when researchers consider web pages, the resourceintensive nature of manual coding prevents the creation of corpora with sufficient statistical power for language analysis, typically limiting studies to a few hundred documents (see e.g., <ref type="bibr" target="#b21">Sak et al., 2015)</ref>. Thus, a solution is to automate text extraction by first compiling a list of websites delivering CTs and then extracting their content. For this purpose, pre-compiled lists of misinformation websites exist, such as the proprietary NewsGuard<ref type="foot" target="#foot_0">1</ref> and other freely available lists, like MediaBiasFactCheck (MBFC),<ref type="foot" target="#foot_1">2</ref> the Misinformation Domains dataset,<ref type="foot" target="#foot_2">3</ref> and the work of <ref type="bibr" target="#b12">Lin et al. (2023)</ref>. Works relying on these lists have typically reached large sample sizes, consisting of hundreds of thousands to millions of documents <ref type="bibr" target="#b1">(Carrella et al., 2023;</ref><ref type="bibr" target="#b14">Miani, Carrella, &amp; Lewandowsky, 2024)</ref>.</p><p>However, building a corpus solely of conspiracy documents is not sufficient because it does not enable comparisons beyond descriptive analyses. To systematically study the language of CTs, researchers need a control corpus that allows for between-group comparisons. Ideally, these two corpora should be matched by topics, meaning that for each topic, there is both a conspiracy and a non-conspiracy (mainstream) version. Such a structure facilitates language comparison and helps identify discriminating features of conspiratorial language. We thus created LOCO, a topic-matched corpus of web pages delivering CTs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">LOCO</head><p>LOCO (the Language Of COnspiracy theories; <ref type="bibr" target="#b15">Miani et al., 2021)</ref> is a turnkey resource for understanding the language of CTs that includes 23,937 conspiracy and 72,806 mainstream documents matched by topics that revolve around events that have generated CTs. Each document in LOCO is associated with both fine-and coarse-grained semantic indexing as well as a measure of spread.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Building LOCO</head><p>LOCO was built by retrieving documents via Google searches using seeds associated with events that generated CTs on websites previously classified as either conspiratorial or mainstream. Figure <ref type="figure" target="#fig_0">1</ref> illustrates the workflow to build LOCO. We paired a set of websites (W i ) with a set of seeds (S j ) to generate a series of Google queries (Q i j = W i × S j ). From each query, the HTML results page was parsed to extract the URLs needed to extract texts.</p><p>We started by compiling the two lists of seeds and websites. Seeds are search terms used to retrieve topic-specific text associated with popular and timely CTs (N = 47; e.g., Princess Diana's death, Moon Landing, 9/11). The list of conspiracy websites (N = 58; e.g., infowars.com) was obtained by selecting websites with the highest conspiratorial rating from MBFC. The list of mainstream websites (N = 92; e.g., bbc.com) was generated in a data-driven fashion by extracting websites returned by Google for each seed.</p><p>We combined the two lists to generate Google search queries that return web pages containing the seed's terms within a website (e.g., "site:bbc.com climate change"). Google was chosen because it allows for automated URL extraction and provides consistent search criteria across all websites, avoiding biases introduced by site-specific search engines. To ensure the results were in English, we added "hl=en" to the queries. For each results page, we parsed the HTML to extract URLs pointing to candidate web pages. The R scripts for reproducing LOCO's construction are available at https://osf.io/4vk7f.</p><p>The human-readable text was extracted from the HTML page via the Python package goose,<ref type="foot" target="#foot_3">4</ref> chosen for its superior performance from our tests compared to other packages. Next, we cleaned the corpus by removing documents where the percentage of the top 1,000 English words was below 40%, and those with word counts outside ± 2.5 standard deviations around the mean. The final word count range for each document was between 100 and 10,000 words.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Extracting Features from LOCO</head><p>LOCO includes a comprehensive set of additional data. At the document level, beyond typical text statistics (such as word, sentence, and paragraph counts) and the seeds used to retrieve the web pages, each text is provided with fine-grained semantic fingerprinting (see Box .1), including lexical features and topics. Lexical features (N = 286) were extracted using two popular word-counting tools, LIWC and Empath. Topics (N = 600) were extracted via topic modeling at three different resolutions (100, 200, and 300 topics) and labeled using the top 15 most important terms. We also included a measure of whether a text is a representative instance of the conspiracy subcorpus (N = 4,277). This was achieved by computing the similarity of each document to the overall conspiracy subcorpus. High similarity indicates that the document exhibits prototypical conspiratorial language. Each document also includes metrics of social media engagement, such as Facebook shares, comments, and reactions, obtained via the web tool SharedCount. <ref type="foot" target="#foot_4">5</ref>At the website level, we gathered information from MBFC about each website's political bias, factual reporting, and level of pseudoscientific claims. From the web tool SimilarWeb,<ref type="foot" target="#foot_5">6</ref> we collected metrics such as monthly global visits and rank, as well as the percentages for each type of incoming traffic (e.g., direct access, Google search, or social media).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Using LOCO</head><p>Given the large number of variables offered in LOCO, there is a risk of fishing expeditions, i.e., testing numerous variables simultaneously and then HARKing (Hypothesizing After the Results are Known; <ref type="bibr">Hills &amp; Miani, in press</ref>). When testing multiple variables at once, researchers should consider correcting for multiple tests to limit the rate of false positives. Furthermore, the unrestricted availability of LOCO complicates pre-registrations, as researchers might already be familiar with the data before pre-registering <ref type="bibr" target="#b23">(Søgaard et al., 2023)</ref>. Leveraging LOCO's topic-matching structure, researchers might consider multilevel modeling, cross-nesting documents within topics (or seeds) and/or websites. 7 Note also that the average explained variance (R 2 ) of individual lexical features is typically low (with an average marginal R 2 of .00055; Miani, van der Plas, &amp; Bangerter 2024).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Semantic fingerprinting</head><p>Each document in LOCO is provided with two types of fine-grained semantic fingerprinting: lexical features and topic modeling.</p><p>The extraction of lexical features is usually done by counting words using dictionaries, which are pre-compiled lists of words or features categorized by topic (e.g., health), psychological dimension (e.g., affection), or typographical/grammatical category (e.g., punctuation, pasttense verbs). Two widely used and complementary sets of dictionaries are LIWC (a proprietary standalone program; <ref type="bibr" target="#b25">Tausczik &amp; Pennebaker, 2009)</ref> and Empath (an open-source Python package; <ref type="bibr" target="#b5">Fast et al., 2016)</ref>. The main difference between the two is that LIWC was constructed based on human coding, whereas Empath was assembled in a data-driven fashion and can generate ad hoc categories. The two dictionaries highly correlate with each other on similar categories (for a comprehensive discussion, see <ref type="bibr">Hills &amp; Miani, in press)</ref>.</p><p>Topic modeling is based on Latent Dirichlet Allocation (LDA, <ref type="bibr" target="#b0">Blei et al., 2003)</ref>, which is an unsupervised probabilistic machine learning model capable of identifying co-occurring word patterns and extracting the underlying topic distribution for each text document within a corpus. Extracting LDA topics from a corpus requires researchers to set the desired number of topics (k): a larger number of topics provides a finegrained resolution, while a smaller number yields more general topics <ref type="bibr" target="#b2">(Colin &amp; Murdock, 2020)</ref>. Efforts are underway to develop unsupervised algorithms for identifying the optimal k, such as fitting an LDA model for each value of k provided by the researcher. This method has been used to estimate k from tweets, press articles, and web pages <ref type="bibr" target="#b11">(Lasser et al., 2023;</ref><ref type="bibr" target="#b13">Mayor &amp; Miani, 2023;</ref><ref type="bibr" target="#b16">Miani et al., 2022)</ref>. However, applying such algorithms to large corpora can be resource-and time-intensive. Therefore, for large corpora, researchers have typically chosen to provide different topic resolutions <ref type="bibr" target="#b1">(Carrella et al., 2023;</ref><ref type="bibr" target="#b14">Miani, Carrella, &amp; Lewandowsky, 2024)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Works using LOCO</head><p>Since its release, LOCO has been a valuable resource for various research endeavors. Comprising texts with additional metadata, LOCO provides a comprehensive tool for analyzing the content and spread of CTs. LOCO's construction method is versatile and can be applied to various types of corpora beyond CTs. For example, it was employed to create DONALD, the topic-matched corpus of 2 million documents focused on politically polarizing topics across four types of ideological biases, including a large set of CTs <ref type="bibr" target="#b14">(Miani, Carrella, &amp; Lewandowsky, 2024)</ref>.</p><p>Using LOCO's texts, researchers have applied various computational techniques to investigate conspiratorial discourse. Unlike the typically short posts on social media, the longer texts from LOCO provide a richer context for understanding conspiratorial incoherence <ref type="bibr" target="#b16">(Miani et al., 2022)</ref>. Results support the psychological notion that incoherence is a hallmark of conspiracism <ref type="bibr">(Miani &amp; Lewandowsky, 2024)</ref>. Additionally, other studies have used LOCO to analyze term co-occurrence in gender identity issues <ref type="bibr" target="#b6">(Fleckenstein, 2024)</ref> and to examine word-formation patterns in nominal 7 In R, using lme4: lmer(DV ∼ subcorpus + (1|topic) + (1|website))</p><p>This manuscript is a preprint and has not undergone proofreading or editing. It is being shared in its original form prior to formal publication in the International Encyclopedia of Language and Linguistics (3 rd edition). Readers should be aware that the content may contain errors or inconsistencies.</p><p>compounds <ref type="bibr" target="#b18">(Miani, van der Plas, &amp; Bangerter, 2024)</ref>. Future research could focus on parsing documents to identify narrative elements using syntactic rules, replicating methods applied to social media texts <ref type="bibr" target="#b22">(Samory &amp; Mitra, 2018;</ref><ref type="bibr" target="#b24">Tangherlini et al., 2020)</ref>.</p><p>By simply counting words, researchers can investigate the psychological dimensions of conspiracism. Using Empath, we found that conspiracy (vs. mainstream) documents frequently use language related to deception, dominance, terrorism, and power <ref type="bibr" target="#b15">(Miani et al., 2021)</ref>. This aligns with language patterns observed among conspiracy believers on social media <ref type="bibr" target="#b10">(Klein et al., 2019)</ref>. We also discovered that representative (vs. other) conspiratorial documents tend to exhibit exaggerated conspiratorial language associated with social identification, negative emotions, and refutational rhetoric. These documents are also more frequently shared on Facebook. Perhaps unsurprisingly, conspiratorial language appears intensified in both mainstream and conspiracy documents that mention (real or theorized) conspiracies.</p><p>Besides texts, LOCO includes a rich set of supplementary data. Topics, seeds, and lexical features can be used as independent or dependent variables, or to further subset LOCO for specific analyses, such as examining health-related content across different ideologies <ref type="bibr" target="#b20">(Reiter-Haas, 2023)</ref> or constructing networks based on topic cooccurrence patterns <ref type="bibr" target="#b16">(Miani et al., 2022)</ref>. On the website level, analysis of incoming traffic to LOCO's websites revealed that users of conspiratorial sites are more likely to gather information via bookmarked websites or through online social networks, rather than impartial search engines <ref type="bibr" target="#b15">(Miani et al., 2021;</ref><ref type="bibr" target="#b1">Carrella et al., 2023)</ref>. This behavior suggests the presence of confirmation bias.</p><p>Annotation schemes for CTs have been developed using LOCO <ref type="bibr" target="#b7">(Fort et al., 2023;</ref><ref type="bibr" target="#b19">Mompelat et al., 2022)</ref>. Future research should focus on developing tools for the automatic identification of CTs. For instance, leveraging LOCO's topic-matched structure, researchers can create dictionaries of CTs by contrasting mainstream and conspiracy narratives within each seed topic (e.g., Lady Diana), so to isolate conspiracy-specific terms, filtered from topic-specific words (e.g., car crash, Paris).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Conclusions</head><p>LOCO is a freely available topic-matched corpus from which researchers can extract features and generate predictive and classification models. The strength of LOCO lies in its richness in (meta-)data, which allows for the study of both the content and spread of CTs and facilitates comparisons with a topic-matched set of mainstream documents. The multilevel structure of LOCO allows researchers to consider the natural hierarchical grouping of documents cross-nested within websites and topics. This is useful for extracting conspiracy-specific linguistic markers. Concluding, LOCO is a rich resource that, while primarily providing data for lexical analysis and document spread, can also help to reveal psychological processes.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Fig. 1: LOCO's construction workflow</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>Climate change could move into uncharted... Doc2: The ultimate goal of the Arctic experiment...</figDesc><table><row><cell>Websites</cell><cell>Seeds</cell></row><row><cell>bbc.com</cell><cell>moon landing</cell></row><row><cell>foxnews</cell><cell>climate change</cell></row><row><cell>infowars</cell><cell>covid-19</cell></row><row><cell>...</cell><cell>...</cell></row><row><cell cols="2">Search query (website i × seed j )</cell></row><row><cell cols="2">site:bbc.com climate change</cell></row><row><cell>Google Search page</cell><cell></cell></row><row><cell>URLs Extraction</cell><cell></cell></row><row><cell cols="2">1. https://www.bbc.com/url 01.html</cell></row><row><cell cols="2">2. https://www.bbc.com/url 02.html</cell></row><row><cell cols="2">3. https://www.bbc.com/url 03.html</cell></row><row><cell>Texts Extraction</cell><cell></cell></row><row><cell>Doc1:</cell><cell></cell></row></table><note><p>Doc3: In a tumultuous year, the positive milestones...</p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>https://www.newsguardtech.com</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>https://mediabiasfactcheck.com</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>https://github.com/JanaLasser/misinformation domains</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>https://github.com/goose3/goose3This manuscript is a preprint and has not undergone proofreading or editing. It is being shared in its original form prior to formal publication in the International Encyclopedia of Language and Linguistics (3 rd edition). Readers should be aware that the content may contain errors or inconsistencies.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_4"><p>https://www.sharedcount.com</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_5"><p>https://www.similarweb.com/corp/ourdata/</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgments</head><p>AM (ORCID: <rs type="grantNumber">0000-0001-6610-3510</rs>) is supported by the <rs type="funder">Swiss National Science Foundation</rs> (SNSF, project number <rs type="grantNumber">214293</rs>, "In/coherent worldviews").</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_aCkJ6Pv">
+					<idno type="grant-number">0000-0001-6610-3510</idno>
+				</org>
+				<org type="funding" xml:id="_qDegDb5">
+					<idno type="grant-number">214293</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Latent dirichlet allocation</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003-03">2003. March</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">IRMA: the 335-million-word Italian coRpus for studying MisinformAtion</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Carrella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.eacl-main.171</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 17</title>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Vlachos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><surname>Augenstein</surname></persName>
+		</editor>
+		<meeting>the 17<address><addrLine>Dubrovnik, Croatia</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023-05">2023. May</date>
+			<biblScope unit="page" from="2339" to="2349" />
+		</imprint>
+	</monogr>
+	<note>th conference of the european chapter of the association for computational linguistics</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">LDA Topic Modeling: Contexts for the History &amp; Philosophy of Science</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Colin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Murdock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Dynamics Of Science: Computational Frontiers in History and Philosophy of Science. S.l</title>
+		<editor>
+			<persName><forename type="first">G</forename><surname>Ramsey</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Block</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Pittsburgh University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Understanding conspiracy theories</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Douglas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uscinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cichocka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nefes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Ang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Deravi</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/pops.12568</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Psychology</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">S1</biblScope>
+			<biblScope unit="page" from="3" to="35" />
+			<date type="published" when="2019-02">2019, 2</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Misinformation poses a bigger threat to democracy than you might think</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Ecker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Roozenbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Van Der Linden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">Q</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Oreskes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/d41586-024-01587-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">630</biblScope>
+			<biblScope unit="issue">8015</biblScope>
+			<biblScope unit="page" from="29" to="32" />
+			<date type="published" when="2024-06">2024. June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">E</forename><surname>Fast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Bernstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2858036.2858535</idno>
+		<title level="m">Empath. In Proceedings of the 2016 CHI conference on human factors in computing systems</title>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2016-05">2016. May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Representations of gender in conspiracy theories: a corpus-assisted critical discourse analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fleckenstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/17405904.2024.2334263</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Critical Discourse Studies</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Bigfoot in Big Tech: Detecting Out of Domain Conspiracy Theories</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fort</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Indiana University</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Usa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Gabel</surname></persName>
+		</author>
+		<idno type="DOI">10.26615/978-954-452-092-2040</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Conference Recent Advances in Natural Language Processing -Large Language Models for Natural Language Processings</title>
+		<meeting>the Conference Recent Advances in Natural Language Processing -Large Language Models for Natural Language Processings<address><addrLine>USA; Shoumen, BULGARIA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="353" to="363" />
+		</imprint>
+		<respStmt>
+			<orgName>Indiana University, USA, Georgiades, N., . . . Indiana University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">A short primer on historical natural language processing</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hills</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<editor>T. Hills &amp; G. Pogrebna</editor>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+	<note>Cambridge handbook of behavioral data science</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Shining a spotlight on the dangerous consequences of conspiracy theories</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Jolley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Marques</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cookson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.copsyc.2022.101363</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Current Opinion in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page">101363</biblScope>
+			<date type="published" when="2022-10">2022, October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Pathways to conspiracy: The social and linguistic precursors of involvement in Reddit&apos;s conspiracy theory forum</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Klein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Clutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Dunn</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0225098</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page">225098</biblScope>
+			<date type="published" when="2019-06">2019. June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">From alternative conceptions of honesty to alternative facts in communications by us politicians</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lasser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Aroyehun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Carrella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Simchon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Garcia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-023-01691-w</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature human behaviour</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2140" to="2151" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">High level of correspondence across different news domain quality rating sets</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lasser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gully</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Rand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pennycook</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pnasnexus/pgad286</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PNAS Nexus</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<date type="published" when="2023-09">2023, September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A topic models analysis of the news coverage of the omicron variant in the united kingdom press</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Mayor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12889-023-16444-7</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Public Health</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="18" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">DONALD: the 2m-document dataset of news articles for studying the language of dubious information</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Carrella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<ptr target="https://osf.io/6xpa2" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">LOCO: The 88-millionword language of conspiracy corpus</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hills</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bangerter</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-021-01698-z</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1794" to="1817" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Interconnectedness and (in)coherence as a signature of conspiracy worldviews</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hills</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bangerter</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/sciadv.abq3668</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science Advances</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">43</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Still very much dead and alive: Re-reconsidering belief in contradictory conspiracy theories</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/t6a54</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Loose and tight: Creative formation but rigid use of nominal compounds in conspiracist texts</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Der Plas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bangerter</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jocb.633</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Creative Behavior</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="114" to="127" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mompelat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Luettgen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rajanala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Seelig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename></persName>
+		</author>
+		<title level="m">Proceedings of the 16th linguistic annotation workshop</title>
+		<meeting>the 16th linguistic annotation workshop</meeting>
+		<imprint>
+			<date type="published" when="2022">2022. 2022</date>
+		</imprint>
+	</monogr>
+	<note>How &quot;loco&quot; is the loco corpus? annotating the language of conspiracy theories</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Exploration of Framing Biases in Polarized Online Content Consumption</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Reiter-Haas</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3543873.3587534</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Companion Proceedings of the ACM Web Conference 2023</title>
+		<meeting><address><addrLine>Austin TX USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="560" to="564" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Comparing the quality of pro-and anti-vaccination online information: a content analysis of vaccination-related webpages</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Diviani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Allam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Schulz</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12889-016-2722-9</idno>
+		<imprint>
+			<date type="published" when="2015-12">2015, December</date>
+			<publisher>BMC Public Health</publisher>
+			<biblScope unit="volume">16</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">the government spies using our webcams&quot;: The language of conspiracy theories in online discussions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Samory</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mitra</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3274421</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the ACM on Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1" to="24" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">A two-sided discussion of preregistration of NLP research</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Søgaard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hershcovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>De Lhoneux</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">An automated pipeline for the discovery of conspiracy and conspiracy theory narrative frameworks: Bridgegate, Pizzagate and storytelling on the web</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Tangherlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shahsavari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Shahbazi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ebrahimzadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Roychowdhury</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0233879</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">233879</biblScope>
+			<date type="published" when="2020-06">2020. June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">The psychological meaning of words: Liwc and computerized text analysis methods</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">R</forename><surname>Tausczik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Pennebaker</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0261927x09351676</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Language and Social Psychology</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="24" to="54" />
+			<date type="published" when="2009-12">2009. December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Synthetic Control Methods for Proportions *</title>
+				<funder ref="#_4gPUVku">
+					<orgName type="full">European Research Council</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-12">July 12, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Konstantin</forename><surname>Bogatyrev</surname></persName>
+							<email>konstantin.bogatyrev@phd.unibocconi.it</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Bocconi University</orgName>
+								<address>
+									<settlement>Milan</settlement>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Lukas</forename><forename type="middle">F</forename><surname>Stoetzer</surname></persName>
+							<email>lukas.stoetzer@uni-wh.de</email>
+							<affiliation key="aff1">
+								<orgName type="institution">University of Witten</orgName>
+								<address>
+									<settlement>Herdecke</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Synthetic Control Methods for Proportions *</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-12">July 12, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">91FE9B6218963CE5F1EB7A5F8E9153C9</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:26+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Synthetic control methods are extensively utilized in political science for estimating counterfactual outcomes in case studies and difference-in-differences settings, often applied to model counterfactual proportional data. However, the conventional synthetic control methods are designed for univariate outcomes, leading researchers to model counterfactuals for each proportion separately. This paper introduces an extension, proposing a method to simultaneously handle multivariate proportional outcomes. Our approach establishes constant control comparisons by using the same weights for each proportion, improving comparability while adhering to treatment constraints. Results from a simulation study and the application of our method to data from a recently published article on campaign effects in the 2019 Spanish general election underscore the benefits of accounting for the interplay of proportional outcomes. This advancement extends the validity and reliability of synthetic control estimates to common outcomes in political science.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Political and other social scientists are often interested in studying the effects of certain policies, events and interventions. For this purpose, causal inference methods such as the difference-in-differences (DID) have proven incredibly helpful and gained widespread use in analyzing time-series cross-sectional, or long panel data <ref type="bibr" target="#b36">(Liu, Wang, and Xu 2024;</ref><ref type="bibr">Xu 2024;</ref><ref type="bibr" target="#b7">Arkhangelsky and Imbens, Forthcoming)</ref>. However, the DID-type estimates commonly assume parallel trends between the treatment and control units in the absence of treatment, which proves difficult to evaluate and is often implausible (see e.g. <ref type="bibr" target="#b45">Roth 2022;</ref><ref type="bibr" target="#b17">Chiu et al. 2024;</ref><ref type="bibr" target="#b27">Hassell and Holbein 2024)</ref>. Following the premise that a convex combination of control units can better replicate the counterfactual trajectory for the treated <ref type="bibr">(Abadie, Diamond, and Hainmueller 2015)</ref>, synthetic controls have gained recognition as a path-breaking innovation for causal inference with time-series cross-sectional data <ref type="bibr">(Xu 2024)</ref>. Synthetic control methods (SCMs) 1 found a variety of applications to modeling univariate outcomes in political science, economics, and other social sciences 2 .</p><p>In many applications, however, political scientists deal with multivariate, compositional data in the form of proportions. As Katz and King noted already 25 years ago: "Compositional data are also common in political science and economics (as in multiparty voting data, the allocation of ministerial portfolios among political parties, trade flows or international conflict directed from each nation to several others, or pro-1. Hereinafter, we use the term "synthetic control methods" or simply "synthetic controls" to denote the entire family of methods, thus not limiting our discussion to the original method but also including recent advances such as generalized <ref type="bibr" target="#b54">(Xu 2017)</ref>, penalized <ref type="bibr" target="#b3">(Abadie and L'Hour 2021)</ref> and augmented <ref type="bibr">(Ben-Michael et al. 2021</ref>) synthetic controls as well as synthetic DID <ref type="bibr" target="#b6">(Arkhangelsky et al. 2021)</ref>.</p><p>2. This includes such outcomes as single-party vote shares <ref type="bibr" target="#b29">(Hilbig and Riaz 2024;</ref><ref type="bibr" target="#b11">Becher, González, and Stegmueller 2023;</ref><ref type="bibr" target="#b50">Thompson 2023;</ref><ref type="bibr" target="#b22">de Kadt, Johnson-Kanu, and Sands 2024)</ref>, policy adoption <ref type="bibr" target="#b26">(Gilens, Patterson, and Haines 2021;</ref><ref type="bibr" target="#b37">Meserve and Pemstein 2018)</ref>, welfare outcomes <ref type="bibr" target="#b24">(Eibl and Hertog 2023)</ref>, crime <ref type="bibr" target="#b5">(Alrababa'h et al. 2021;</ref><ref type="bibr" target="#b43">Pinotti 2015;</ref><ref type="bibr" target="#b53">Trejo and Nieto-Matiz 2023)</ref>, GDP <ref type="bibr" target="#b43">(Pinotti 2015;</ref><ref type="bibr" target="#b25">Funke, Schularick, and Trebesch 2023;</ref><ref type="bibr" target="#b23">de Kadt and Wittels 2019)</ref> and power personalization <ref type="bibr" target="#b51">(Timoneda, Escribà-Folch, and Chin 2023)</ref>.</p><p>portions of budget expenditures in each of several categories)" <ref type="bibr" target="#b33">(Katz and King 1999)</ref>.</p><p>In compositional data, each proportion is bound between 0 and 1, and all proportions sum up to 1. Due to these simple yet important properties, compositional data often require separate methods <ref type="bibr">(Philips, Rutherford, and Whitten 2016;</ref><ref type="bibr" target="#b52">Tomz, Tucker, and Wittenberg 2002;</ref><ref type="bibr" target="#b32">Jackson 2002;</ref><ref type="bibr" target="#b35">Lipsmeyer et al. 2019</ref>). As we show further on, SCMs are no exception.</p><p>When the primary outcomes of interest are proportions of the same whole, the separate application of SCMs to the different proportions violates -what we will call -the constant control comparison for compositional outcomes. Each synthetic control application generates its own set of weights, which results in different control groups for each proportion. This can lead to estimates of treatment effects that do not obey an essential sum constraint. It should hold that the sum of changes in compositional data is zero, because if one proportion increases, another must decrease.</p><p>We expand the synthetic control methods framework to align with the constant control comparison for compositional outcomes. This extension introduces a method for estimating models that utilize the same control weights across different proportions.</p><p>We demonstrate that this model adheres to the sum constraint on treatment effects, thereby offering a more accurate interpretation of treatment effects for proportional outcomes. A freely available R package, propsdid, implements the estimation.</p><p>A simulation study reveals that the synthetic control methods for proportions reduce bias compared to a DID methods (especially when the parallel trends assumption fails), and are more reliable, compared to the separate application of synthetic control methods that fail to meet the sum constraint of average treatment effects. The application of our method to a recent study in American Political Science Review <ref type="bibr">(Bolet, Green, and</ref> González-Eguino 2023) on campaign effects in the 2019 Spanish general election further shows that focusing on multivariate proportional outcomes in the form of voting data is beneficial. The article argues that the social democrats found an electorally successful campaign strategy to convince former coal areas to support their transition away from means of production that are harmful to the climate. Applying the synthetic control methods for proportions shows that not only the Social Democrats won in these areas, but also their main conservative competitor, which questions the main findings from the article.</p><p>Our paper makes a set of methodological contributions. We bridge the older and more established literature on compositional data <ref type="bibr" target="#b4">(Aitchison 1982;</ref><ref type="bibr" target="#b33">Katz and King 1999;</ref><ref type="bibr">Philips, Rutherford, and Whitten 2016;</ref><ref type="bibr" target="#b52">Tomz, Tucker, and Wittenberg 2002;</ref><ref type="bibr" target="#b32">Jackson 2002;</ref><ref type="bibr" target="#b35">Lipsmeyer et al. 2019)</ref> with the younger and burgeoning field of causal inference in panel data settings (recently reviewed by Xu 2024; <ref type="bibr" target="#b7">Arkhangelsky and Imbens, Forthcoming;</ref><ref type="bibr" target="#b46">Roth et al. 2023)</ref>. We highlight the relevance of constant control comparison for modeling compositional outcomes in any time-series cross-sectional set-up, regardless of whether SCMs are used. We address the shortcomings of existing synthetic control methods in handling compositional data and develop a novel approach to synthetic controls for proportions. Importantly, our approach can serve as a building block for both the original SC method <ref type="bibr" target="#b2">(Abadie and Gardeazabal 2003;</ref><ref type="bibr" target="#b1">Abadie, Diamond, and</ref><ref type="bibr">Hainmueller 2010, 2015)</ref> and its advanced successors <ref type="bibr" target="#b54">(Xu 2017;</ref><ref type="bibr">Ben-Michael et al. 2021;</ref><ref type="bibr" target="#b6">Arkhangelsky et al. 2021)</ref>. Finally, we provide a freely available R package propsdid to facilitate the use of synthetic controls for proportions in applied research.</p><p>The paper is organized as follows. In Section 2, we review the theoretical foundations and recent advances in synthetic control methods. Section 3 demonstrates the challenges of applying synthetic controls to compositional data in political and social science. We formally introduce our method extension for proportions in Section 4. Then, Section 5 presents a simulation study to evaluate the performance of our method compared to traditional approaches. In Section 6, we apply our method to the case study of the 2019 Spanish general election. We conclude with a discussion of the implications that our results provide for the research on causal inference with compositional panel data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Synthetic Control Methods</head><p>Researchers often seek to evaluate the effects of policies, events, and interventions using panel data, repeated observations of units over time where some units are exposed to these treatments during certain periods and not in others. The key challenge in this regard is the fact that these treatment changes typically are not random across units or time, challenging the assumption of unconfoundedness, even when observed covariates are accounted for. While the DID and the two-way fixed effects have become the dominant approaches to causal inference with panel data in political science and economics, synthetic control methods have established themselves in a smaller niche of applications where DID would not appear valid <ref type="bibr">(Xu 2024;</ref><ref type="bibr" target="#b21">Currie, Kleven, and Zwiers 2020)</ref>.</p><p>These methods create a synthetic version of the treated unit by reweighting control units to match pre-exposure trends, thus compensating for the lack of parallel trends <ref type="bibr" target="#b54">(Xu 2017)</ref>. While the original synthetic control (SC) method <ref type="bibr" target="#b2">(Abadie and Gardeazabal 2003;</ref><ref type="bibr" target="#b1">Abadie, Diamond, and</ref><ref type="bibr">Hainmueller 2010, 2015)</ref> was designed for small-sample single-unit case studies and did not allow for intercept shifts between the treated and control trajectories, recent methodological advancements (e.g., <ref type="bibr" target="#b54">Xu 2017;</ref><ref type="bibr" target="#b13">Ben-Michael, Feller, and Rothstein 2021;</ref><ref type="bibr" target="#b6">Arkhangelsky et al. 2021</ref>) have addressed those limitations and shown improved performance, both in small and large panel data settings.</p><p>For further discussion of SCMs in general, the synthetic difference in differences (SDID) approach by <ref type="bibr" target="#b6">Arkhangelsky et al. (2021)</ref> provides a useful methodological framework, offering a generalization of both DID and SC and combining their strengths. The SDID method matches and reweights pre-exposure trends, reducing reliance on parallel trend assumptions, akin to SC. It also maintains the invariant properties of DID related to the additive unit-level shifts, allowing for valid inference across large panels. The re-weighted post-treatment control outcomes in both methods then serve as the comparison for the estimation of average treatment effects (on the treated). For a formal description of SCMs following <ref type="bibr" target="#b6">Arkhangelsky et al. (2021)</ref>, please refer to the SM A. <ref type="bibr" target="#b6">Arkhangelsky et al. (2021)</ref> demonstrate both the theoretical robustness of their estimator and its empirical competitiveness with, or superiority to, traditional DID and SC methods in their respective typical applications.</p><p>Despite the recent methodological generalizations of SCMs, the outcomes modeled by these methods are univariate. Although current approaches allow for studying the effects on a particular outcome, often the outcomes of interest are multivariate and inextricably linked to one another. This is particularly true for compositional data, where proportions of the same whole are bound by a linear relationship. Thus, compositional outcome variables present distinct challenges for causal inference <ref type="bibr" target="#b8">(Arnold et al. 2020)</ref>.</p><p>Researchers who want to use SCMs on proportions would usually apply the methods separately to each proportional outcome. To what extent this is problematic has not been discussed in the literature. Researchers have, however, addressed the issue of multivariate outcomes in panel data more generally. A common strategy is to model outcomes jointly, relying on the joint distribution rather than treating each outcome independently <ref type="bibr" target="#b38">(Mullahy 2018;</ref><ref type="bibr" target="#b47">Samartsidis et al. 2021;</ref><ref type="bibr" target="#b39">Negi and Wooldridge 2024)</ref>.</p><p>For analyzing the treatment effects on each outcome, scholars proposed to account for multiple testing or to jointly test for effects on any outcomes <ref type="bibr" target="#b9">(Athey and Imbens 2017;</ref><ref type="bibr" target="#b44">Robbins, Saunders, and Kilmer 2017)</ref>. For SCMs in particular, <ref type="bibr" target="#b49">Sun, Ben-Michael, and Feller (2023)</ref> suggest optimizing the pre-treatment fit for concatenated standardized outcomes or the average of standardized outcomes.</p><p>Building upon this literature, our paper provides a statistical foundation for using SCMs with compositional data. In the following section, we discuss the issues that arise when researchers apply SCMs to proportions.</p><p>3 Compositional Effect Issues with Synthetic Control Estimates</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">A Motivating Example</head><p>Before discussing the framework in abstract terms, we present a deliberately simplified hypothetical example to illustrate the key concerns that motivated our approach to synthetic methods with compositional outcomes. Consider three countries A, B and C, where country A is affected by treatment at time T, while countries B and C were not treated and constitute the donor pool for creating synthetic controls for outcomes of interest. Suppose that we are interested in the treatment effects on party vote shares in country A, and all the voters in each country choose among three party families: X (e.g., left), Y (e.g., center-right), and Z (e.g., far right). Thus, the synthetic controls for vote shares of each party in country A are obtained by weighting the vote shares of the same party family in countries B and C.</p><p>In the approach to synthetic controls currently prevalent in political science, one would apply the method to each outcome variable separately (e.g., <ref type="bibr" target="#b20">Cremaschi et al. 2023)</ref>, often focusing on one party of interest (e.g., <ref type="bibr" target="#b11">Becher, González, and Stegmueller 2023;</ref><ref type="bibr" target="#b29">Hilbig and Riaz 2024)</ref>. Following this approach in a synthetic diff-in-diff framework, in our example, a researcher interested in the effects of the treatment would create a synthetic control for each party X, Y and Z separately, trying to approximate that party's pre-treatment trend in A by congenial party trends in B and C. For example, if A's pre-treatment trend is a bisector between the trends in B and C, then the optimal synthetic control for A comprises B and C half-and-half (Figure <ref type="figure" target="#fig_0">1</ref>, graph 1). However, this does not mean that synthetic controls for the vote shares of Y and Z will assign the same weights to countries B and C. Graphs 2 and 3 in Figure <ref type="figure" target="#fig_0">1</ref> show how this equivalence can easily be violated.</p><p>Thus, using the synthetic control methods on each party X, Y and Z separately can lead to effect estimates that do not add up to zero 3 because each estimate is essentially obtained using a different control. Meanwhile, using the same synthetic control weights obtained from analyzing one outcome for estimating the effects on the related proportional outcomes (e.g., vote shares for Y and Z using the weights from analyzing X) would make the effects compatible. However, such an approach could also come with downsides: the same weights that perfectly approximate the pre-treatment trend for X can imply quite imperfect synthetic controls for Y and Z. In what follows, we present this argument formally and propose an approach that takes into account proportional outcomes that form a whole.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Constant Control Comparison</head><p>We conceptualize the idea of constant control comparison for compositional outcomes in the following way. Consider K counterfactual proportions for a unit i under the control y ik (0) and under treatment y ik (1) condition with k ∈ {1, . . . , K}. <ref type="foot" target="#foot_1">4</ref> We observe N -N co treated (D i = 1) and N co not-treated, control units (D i = 0), where i ∈ {1, . . . , N co , N co + 1, . . . , N }. This formulation inherits the fundamental problems of causal inference that only one of the counterfactual outcomes for the different proportions can be observed. One of the key interest lies in the formulation of average effect estimates on the proportional outcomes, which depending on the assumptions identifies the average treatment effects ATE k = E[y ik (1)] -E[y ik <ref type="bibr">(0)</ref>] or the average treatment effects on the treated</p><formula xml:id="formula_0">τ k = E[y itk (1) | D i = 1] -E[y itk (0) | D i = 1].</formula><p>Compositional data implies that the proportions are bound between 0 and 1 (0 ≤ y ik (d) ≤ 1) and sum to one ( K k=1 y ik (a) = 1) for all observations i and the two treatment states d ∈ {0, 1}. The first lemma describes the fact that under the proportional constraint, the sum of average treatment effects on the separate proportions should be zero.</p><p>Lemma 1 Constraint on ATTs for proportions. For compositional, proportional out-</p><formula xml:id="formula_1">comes where 0 ≤ y ik (d) ≤ 1 ∀ k and K k=1 y itk = 1 it holds that K k=1 τ k = K k=1 (E[y ik (1) -y ik (0) | D i = 1]) = 0,<label>(1)</label></formula><p>where y itk (d) is the potential outcome of the proportion under treatment status d ∈ {0, 1}. 5 .</p><p>In other words, if one proportion goes up under treatment exposure, another has to go down, leading to a sum constraint over the treatment effects of zero. The same corollary holds for the ATE. Violations of the constraint on the ATTs (or ATEs) lead to contradictory interpretations of the results for different proportions.</p><p>To see if this corollary is met by an actual estimation method, it is useful to consider the way most of them evaluate the unobserved counterfactual. For the ATTs, the outcomes for the treated units under treatment E[y ik (1) Different methods can be understood as approximating the counterfactual as a weighing function of the control outcomes E[y ik <ref type="bibr">(0)</ref> </p><formula xml:id="formula_2">| D i = 1] is observable in the data and estimable as E[y ik | D i = 1] ≈ (N -N co ) -1 N i=Nco+1 y ik ,</formula><formula xml:id="formula_3">| D i = 1] ≈ Nco i=1 w ik y ik ,</formula><p>where w ik are the weights. For example, randomization would assign equal weights to the control units. DID also assigns the same weight to all control units, after subtracting the pre-treatment outcome. SCMs, however, estimate weights that are not equal for the control units. This also implies that the separate application to proportional outcomes can lead to non-constant weights w ik ̸ = w ik ∀k. To formulate this idea, we define a constant control comparison for compositional data in the following definition.</p><p>Definition 1 Constant control comparison imposes the same weights on control units for all proportional outcomes</p><formula xml:id="formula_4">w ik = w ik ′ ∀ {k, k ′ ∈ {1, . . . , K} | k ̸ = k ′ } in the estima- tion of the counterfactual expectation E[y ik (0) | D i = 1] ≈ Nco i=1 w ik y ik .</formula><p>On the one hand, this constant control comparison, in the form of the same weights on control units for the different proportional outcomes, assures that the constraint on 5. Proof directly follows from the constraint on proportions</p><formula xml:id="formula_5">K k=1 y ik (d) = 1 ∀ d</formula><p>ATTs for proportions is met. This leads to the first insight:</p><p>Theorem 1 Constant control comparison assures that the constraint on ATTs for proportions holds. 6 Given definition 1 it holds that the sum of the ATT estimates</p><formula xml:id="formula_6">K k=1 τ k ≈ K k=1 (N -N co ) -1 N i=Nco+1 y ik - Nco i=1 w ik y ik = 0 (2)</formula><p>If the constant control comparison is violated, the constraint on ATTs for proportions does not necessarily hold. 7</p><p>This leads to the central insight that SCMs that want to obey the constraint on the ATTs for proportional data need to estimate the same weights for all proportions, such that the constant control comparison holds. The common approach of applying the SCMs to proportional outcomes separately can lead to violations of the constraint on the ATTs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Constant Synthetic Control Weights Across Outcomes</head><p>Following Definition 1, any weights w ik for control units that are constant among all proportional outcomes ∀ k ∈ {1, . . . , K} satisfy the constant control comparison. In other words, the requirement to hold the weights constant alone does not yet imply which weights should be used.</p><p>In a DID set-up, constant weights for different outcomes would be imposed implicitly by having a control group pre-selected by the researcher before the effect estimation. For instance, <ref type="bibr" target="#b19">Cremaschi, Bariletto, and De Vries (2024)</ref> estimate ATTs of plant disease on party vote shares in the Italian region of Apulia, using uninfected Apulian municipalities as a DID control group across different parties. The choice of the control group for 6. Proof TBA 7. Proof by counter example. TBA.</p><p>compositional outcomes can be data-driven: <ref type="bibr" target="#b48">Selb and Munzert (2018)</ref> use either all</p><p>German counties not exposed to Hitler's speeches or only their subsample matched by covariates to estimate the speech on the votes for Nazis and Communists. Regardless of how the control is chosen, the researcher can hold the weights constant using the same control group for the effects on different proportions.</p><p>However, SCMs for univariate outcomes cannot guarantee constant control weights across different outcomes 8 . With SCMs, calculating these weights is a part of each estimation. Thus, starting with the same sample of treated and untreated (donor pool) units for different outcomes, one ends up with weights that fit this outcome best.</p><p>To ensure constant weights across different outcomes, the synthetic control approaches must be modified. One solution previously adopted by researchers is calculating the weights for just one outcome and using them across outcomes. Indeed, after calculating synthetic control weights based on the regional GDP and its predictors, <ref type="bibr" target="#b43">Pinotti (2015)</ref> uses the same weights to estimate the effects of organized crime on the GDP and the homicide rate. Such "incomplete" application of SCMs to all but one outcome resembles matching on covariates with subsequent DID application across outcomes, similar to <ref type="bibr" target="#b48">Selb and Munzert (2018)</ref>'s approach to parties in interwar Germany. However, deriving synthetic control weights from only one outcome variable risks over-fitting its pre-treatment trends <ref type="bibr" target="#b0">(Abadie 2021</ref>) and neglects the core purpose of SCMs for other outcomes.</p><p>We argue that for compositional data, synthetic control weights should maximize the goodness of pre-treatment fit for all proportional outcomes taken together. Indeed, in a DID set-up, one would require the parallel trends assumption to hold for each proportional outcome for valid inference. As violations of parallel trends in the pre-intervention (multivariate) outcomes invalidate the use of DID and make the case 8. Unless the chosen outcomes are perfectly collinear, e.g. shares of "Yes" and "No" in the sum of the two for synthetic controls, the latter should aim to maximize the pre-treatment fit for all proportional outcomes -simultaneously, i.e. using one constant set of weights. The next section formalizes our approach to calculating synthetic control weights.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Synthetic Control Methods for Proportions</head><p>Based on the insights and the motivating example, we formulate a synthetic control method for proportions that follows the constant control comparison. The formulation of it closely follows <ref type="bibr" target="#b6">Arkhangelsky et al. (2021)</ref>, except for the fact that we calculate the same set of pre-treatment weights for all proportions.</p><p>We consider a balanced panel with N units and T time periods. Here we denote units by i ∈ {1, . . . , N } and periods with t ∈ {1, . . . , T }. The outcomes of interest are K proportions, where each proportion value is denoted by k ∈ {1, . . . , K}. The outcome for unit i in period t is a multivariate vector of Y it = [y it1 , . . . , y itk ]. For compositional data of proportion, it holds that y itk ∈ [0, 1] ∀ k and K k=1 y itk = 1, forming a K-dimensional simplex. We also have a binary treatment D it ∈ {0, 1}. We assume that there is a share of control units that are never exposed to treatment N co , while there are units N tr that are treated after time T pre . For the analysis, we arrange the i units such that first all control units appear and then all treatment units i ∈ {1, . . . , N co , N co + 1, . . . , N }. Synthetic methods calculate a set of weights ωik that align pre-exposure trends in the control outcomes with the treatment units such that Nco i=1 ωik y itk ≈ 1 Ntr N i=Nco+1 y itk ∀ t ∈ {1, . . . , T pre }. As <ref type="bibr" target="#b6">Arkhangelsky et al. (2021)</ref> describe, the idea of weighting control units in a way that to align with the pre-exposure trends of the treated units can be applied to both classic synthetic control units, where weights are calculated such that the pretrends are matched directly, and synthetic DID methods, where weights are calculated such with a parallel shift and additional time weights. For more details on the models, see SM A.</p><p>In our application of synthetic control methods to proportions, we calculate the same set of individual weights for all proportions ωi , and in the case of synthetic DID time weights λt . The estimation of the weights has a minimization problem of the following form.</p><formula xml:id="formula_7">Nco i=1 ωi y itk ≈ 1 N tr N i=Nco+1 y itk ∀ t ∈ {1, . . . , T pre } ∧ k ∈ {1, . . . , K}<label>(3)</label></formula><p>This leads to a minimization problem, where we minimize squared deviations of overall proportions with one set of weights.</p><p>(ω 0 , ω) = arg min ω∈R,ω∈Ω ℓ uni (ω 0 , ω k ) where (4)</p><formula xml:id="formula_8">ℓ uni (ω 0 , ω) = K k=1 Tpre t=1 ω 0 + Nco i=1 ω i y itk - 1 N tr N i=Nco y itk 2 + ξ 2 T pre ||ω|| 2 2 , Ω = ω ∈ R N + : Nco i=1 ω i = 1, ω i = 1 N tr ∀ i ∈ {N co + 1, . . . , N }</formula><p>Important here is the summation over the pre-treatment periods and the different proportions Km with respect to the same set of weights for all proportions.</p><p>The formulation also includes a regularization parameter that penalizes weights that are too large using a L2 norm. The regularization parameter is pre-specified as ξ:</p><formula xml:id="formula_9">ξ = (N tr T post K) 1/4 σ with σ2 = 1 N co (T pre -1)K K k=1 Nco i=1 Tpre-1 t=1 (∆ itk -∆ k ) 2 ,<label>(5)</label></formula><p>where ∆ itk = y it(t+1)k -y ittk and ∆ k = 1 N co (T pre -1) Compute the SDID estimator via the weighted DID regression:</p><formula xml:id="formula_10">(τ sdid k , μk , αik , βtk ) = arg min τ,µ,α,β N i=1 T t=1 (y itk -µ k -α ik -β tk -D it τ ) 2 ωi λt (10) 6: end for</formula><p>The time weights λ pose a similar adapted minimization problem:</p><p>( λ0 , λ) = arg min λ 0 ∈R,λ∈Λ ℓ time (λ 0 , λ) where ( <ref type="formula">7</ref>)</p><formula xml:id="formula_11">ℓ uni (λ 0 , λ i ) = K k=1 Nco i=1   λ 0 + Tpre t=1 λ t y itk - 1 T post T t=Tpre1 y itk   2 , Λ = λ ∈ R T + : Tpre i=1 λ t = 1, λ t = 1 T post ∀ i ∈ {T pre + 1, . . . , T }<label>(8)</label></formula><p>The weights for unit and time can then be used in the two-way fixed effects model to estimate the synthetic DID estimator. The two-way fixed effect regression is of form:</p><formula xml:id="formula_12">(τ sdid k , μk , αik , βtk ) = arg min τ,µ,α,β N i=1 T t=1 (y itk -µ k -α ik -β tk -D it τ ) 2 ωi λt ,<label>(9)</label></formula><p>where α ik are unit fixed effects for each proportion, and β tk are time fixed effects for all proportions.</p><p>Algorithm 1 describes the overall procedure. We first calculate the regularization parameter, then compute the unit weights followed by the time weights. Afterward, separately estimate the treatment effects using the weighted two-way regression for each proportion. The result is a set of treatment estimates on the proportions. A similar producer can be used to estimate synthetic control methods models. For this, we skip the time weight estimation, and exclude the time weights from the regression model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Simulation Study</head><p>In this section, we evaluate the performance of the synthetic control methods estimator for proportions. The first parts describe a potential data generating process and set up the simulations parameters. The second part describes the results of the simple simulation, comparing the different estimators.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Data generating process</head><p>We use a dynamic latent state model to set up the data generating process for the simulation. We generate balanced panel data with T time points, N units, and K</p><p>proportions. As mentioned above, i ∈ {1, . . . , N } refers to units, t ∈ {0, . . . , T } refers to time points, and k ∈ {1, . . . , K} refers to proportions. N 1 treatment units are treated from time point T 1 onward. 9</p><p>First, we initialize latent unit factors (state variables) for each unit i and proportion k before the panel starts at t = 0 by taking draws from independent normal distributions:</p><formula xml:id="formula_13">γ i,k,0 ∼ N (µ γ k,0 , σ γ k,0 ), υ i,k,0 ∼ N (µ υ k,0 , σ υ k,0</formula><p>). γ describes the local levels for the different proportions and υ describes the local trends. The hyperparameters µ γ k,0 , σ γ k,0 , µ υ k,0 , and σ υ k,0 allow us to set initial differences between units. As we see later, the local trends model is useful for setting time processes that violate parallel trends 9. There is no sequential exposure to treatment and no treatment reversal, although these processes can easily be integrated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>assumptions.</head><p>Units are allocated to treatment and control probabilistically based on a linear combination of the latent factors of one of the proportions j and a parameter δ that governs whether the treatment is selected based on local level differences or local trend differences. We define: L i = ψγ i,j,0 + (1 -ψ)υ i,j,0 . Based on L i , we calculate treatment assignment probabilities using a logistic function with parameters λ 0 and λ: π i = 1 1+exp(-λ 0 -λ 1 L i ) . We draw treatment assignment from a Bernoulli distribution:</p><formula xml:id="formula_14">D i ∼ Bernoulli(π i ).</formula><p>Here, λ 1 is a hyperparameter that sets the strength of treatment selection based on latent factors. 10 Based on this, we set the treatment indicator W i,t for unit i at time t to 1 if W i = 1 and t ≥ T 1 , otherwise, zero.</p><p>To simulate the observed outcomes for different time points, we update the latent unit factors and time factors dynamically over time t:</p><formula xml:id="formula_15">γ i,k,t+1 = γ i,k,t + υ i,k,t + ϵ γ i,k,t , with ϵ γ i,k,t ∼ N (0, σ γ k ) υ i,k,t+1 = υ i,k,t + ϵ υ i,k,t , with ϵ υ i,k,t ∼ N (0, σ υ k )</formula><p>For each time t and factor k, the outcome Y k i,t for unit i is generated as:</p><formula xml:id="formula_16">Y i,k,t = γ i,k,t + τ k W i,t + δ k,t + ϵ i,k,t</formula><p>where ϵ i,t ∼ N (0, σ ϵ ) are idiosyncratic errors and δ k,t ∼ N (0, σ δ ) are common time effects. Based on these, we simulate the proportional outcomes using a multinomial 10. To ensure that the number of treated units in our dataset is exactly N 1 , we first set λ 0 = log N1 N . Then, we adjust the assignment such that if the number of treatment assignments exceeds the target, we resample:</p><formula xml:id="formula_17">• If D i &gt; N 1</formula><p>, select N 1 units from the assigned treated units.</p><p>• If D i &lt; N 1 , select (N -N 1 ) units from the assigned control units.</p><p>• If D i = 0, select N 1 units randomly from all units.</p><p>The final assignment ensures exactly N 1 treated units.</p><p>link:</p><formula xml:id="formula_18">Y i,t,k = exp Y i,t,k K k=1 exp Y i,t,k</formula><p>The multinomial link ensures that the sum of outcome proportions for each time point is defined on the simplex, i.e., K k=1 Y i,t,k = 1. With this data generating process, we can draw samples of compositional panel data. We can vary the time-horizon, the treatment process, the number of units and the local trend and level dynamics, and the type of treatment selection that induces violation of the parallel trends' assumption.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Results</head><p>For analysis, we use the Data Generating Process (DGP) described above with a local trend and a treatment effect on the first proportion. We analyse a scenario with four proportions and a latent treatment vector of <ref type="bibr">[0.5,0,0,0]</ref>. Figure <ref type="figure" target="#fig_2">2</ref> illustrates the average outcomes for treated and control units over time from an example data set with 400 units, of which 200 are treated at the final time point of the five observed. The effect in this figure is not as clear but indicates an increase in proportion one. It also shows that treatment selection based on local trends leads to a violation of the parallel trends assumption and that with compositional data, the effects we induce for proportion one affect the processes for the other proportional outcomes.</p><p>For the general analysis, we set up the parameters of the data generation in the following way. We study 5 and 10 time-points with the last period being the treatment period; 200,400, and 600 units; with a treatment proportion of 10%, 20% and 50%; and we select treatment once based on local level and once based on local trends.<ref type="foot" target="#foot_2">11</ref>  We draw 1000 independent sample for each combination and estimate a difference-indifference (DID) model using two-way fixed effects, synthetic difference-in-differences (SDID) model separately for all outcomes and our proposed synthetic difference-indifferences model for proportions (PropSDID). We compare the estimates based on standard deviation (S.D.), root-mean-square error (RMSE) and absolute valued bias (abs. bias). We also calculate the absolute deviation of the sum of the treatment effect estimates on the separate proportions, which under the constant control comparisons prior local trends are set to zero. The variability of the dynamics is set to σ γ k = 0.1 and σ υ k = 0.2. The standard deviation of the errors is set to σ ϵ = 0.1 and σ δ = 0.2.  <ref type="table">1</ref>: Monte-Carlo evaluation of difference-in-differences (DID), synthetic differencein-differences (SDID) and synthetic difference-in-differences model for proportions (PropSDID) for Monte Carlo simulations of data based on the data generating process.</p><p>should be zero 12 .</p><p>Table <ref type="table">1</ref> describes the results. We aggregate the results for all combinations of parameter setups but differentiate between the treatment selection based on local trends and local levels, aggregating the metrics over all kk proportions. First, the table shows that the constant comparison group indeed leads to the sum constraint holding. For both the Difference-in-Differences (DID) and the Proportional Synthetic Difference-in-Differences (PropSDID), the sum of the treatment effects on the different proportions is always zero, while for the separate application of the Synthetic Difference-in-Differences (SDID), there are deviations on average. For the simulations with treatment selection based on local levels, the average deviation is 0.8 percentage points, and for the selection based on local trends, it is 1.8 percentage points. Given that the average treatment effect on the treated (ATT) in our simulation is 1.7 percentage points, this is a substantial deviation, which can make it difficult to interpret the results from the separate application of DID accurately.</p><p>12. For all the calculations, we calculate the true ATTs in the sample by comparing the counterfactuals for treated units in treatment time points.</p><p>Second, the SCMs are superior to DID, which has a considerable bias of 3.2 percentage points when treatment selection is based on local levels, and an even higher bias of 4.7 percentage points when based on local trends. This bias is also reflected in high root mean square error (RMSE). Synthetic control methods are generally preferable with our data-generating process. The absolute error is below 2 percentage points for both SDID and PropSDID. In the case of PropSDID, we find a slightly smaller RMSE and absolute bias for treatment selection based on local trends but a slightly higher RMSE and absolute bias for selection based on local levels. These differences are almost negligible in practice. <ref type="foot" target="#foot_3">13</ref>Overall, the simulations confirm the central role the constant control comparison plays in ensuring the sum constraint of the ATT on proportional outcomes. They also highlight that the synthetic control estimation, which ensures that the control comparison holds, is on par with the separate application of the method in our simulations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Application: Climate Policy and Voting Outcomes</head><p>In this section, we apply our proportional synthetic control methods framework to reevaluate the findings presented by <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref> in the American Political Science Review. We use this example for three purposes. First, we demonstrate the importance of considering multivariate outcomes instead of focusing on one proportion, as previously discussed by political scientists analyzing compositional data <ref type="bibr" target="#b33">(Katz and King 1999;</ref><ref type="bibr">Philips, Rutherford, and</ref><ref type="bibr">Whitten 2015, 2016;</ref><ref type="bibr" target="#b35">Lipsmeyer et al. 2019)</ref>. Second, we demonstrate the imbalance of the effect estimates obtained from applying SCMs to compositional variables separately. Third, we show how this issue can be resolved by using the proportional method described in the current paper. <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref>   To reassess these findings, we first replicate the analysis by Bolet, Green, and González-Eguino (2023) for a complete set of party vote shares that sum up to 100: PSOE (the aforementioned center-left governing party), PP (People's Party, center-right opposition), PODEMOS (left opposition), Citizens (right-liberal opposition), VOX (farright opposition) and others (the residual category including all remaining small parties). For this, we downloaded the electoral results for 2008-2019 national elections from the Spanish Electoral Archive <ref type="bibr" target="#b40">(Pérez, Aybar, and Pavía 2021)</ref>. Our replication confirms the reproducibility of the findings by <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref> as can be seen in Figure <ref type="figure" target="#fig_2">2</ref> in <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref>. Thus, applying SDID can ensure the best pre-treatment fit in vote shares of the synthetic control municipalities and the coalmine municipalities for each party. The results of this estimation, presented in  Our analysis demonstrates the applicability of proportional synthetic control methods for causal inference with panel data on compositional outcomes. Moreover, in that case, the estimates provided by proportional SDID are more reliable than both DID and SDID, as our approach maximizes the fit in parallel pre-treatment trends while keeping the effects balanced with each other. The evidence obtained from this application complements and challenges the initial conclusions drawn by <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref>, showing that the Just Transition Agreement did not just draw voters to reward to governing party. Rather, it had a deradicalizing effect, making the citizens vote less for the far right and more for the large mainstream parties both in government and opposition. Besides, applying the synthetic DID estimator shows that those effects appear to be smaller than their estimates obtained by the DID methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Discussion</head><p>In this paper, we extend the synthetic control methods framework to handle proportions as outcomes. Our proposed approach, which ensures constant control comparison across different proportions, adheres to the essential sum constraint inherent in compositional data. This not only enhances the validity and reliability of the treatment effect estimates but also provides a more coherent interpretation of the results.</p><p>Our study builds on a long methodological tradition to take compositional outcomes seriously <ref type="bibr" target="#b4">(Aitchison 1982;</ref><ref type="bibr" target="#b33">Katz and King 1999;</ref><ref type="bibr" target="#b32">Jackson 2002;</ref><ref type="bibr" target="#b52">Tomz, Tucker, and Wittenberg 2002;</ref><ref type="bibr">Philips, Rutherford, and Whitten 2016;</ref><ref type="bibr" target="#b35">Lipsmeyer et al. 2019;</ref><ref type="bibr" target="#b8">Arnold et al. 2020;</ref><ref type="bibr" target="#b18">Cohen and Hanretty 2024)</ref>. The formulated framework demonstrates a way to include compositional outcomes in causal inference with time-series cross-sectional data, central to many recent methodological advances <ref type="bibr" target="#b36">(Liu, Wang, and Xu 2024;</ref><ref type="bibr">Xu 2024;</ref><ref type="bibr" target="#b7">Arkhangelsky and Imbens, Forthcoming;</ref><ref type="bibr" target="#b46">Roth et al. 2023;</ref><ref type="bibr" target="#b31">Imai, Kim, and Wang 2023;</ref><ref type="bibr" target="#b30">Imai and Kim 2019;</ref><ref type="bibr" target="#b14">Blackwell and Glynn 2018)</ref>. Whenever proportions are studied, our approach can serve as a building block for a whole range of synthetic control methods -from the standard SC <ref type="bibr" target="#b2">(Abadie and Gardeazabal 2003;</ref><ref type="bibr" target="#b1">Abadie, Diamond, and</ref><ref type="bibr">Hainmueller 2010, 2015)</ref> to generalized <ref type="bibr" target="#b54">(Xu 2017)</ref>, penalized <ref type="bibr" target="#b3">(Abadie and L'Hour 2021)</ref> and augmented <ref type="bibr">(Ben-Michael et al. 2021</ref>) synthetic controls as well as SDID <ref type="bibr" target="#b6">(Arkhangelsky et al. 2021)</ref>.</p><p>Our approach inherits the data requirements and assumptions of the synthetic control method implemented by the researcher. However, compared to separate outcome modeling, our approach to proportions reduces the necessity for extensive pre-treatment data for each outcome <ref type="bibr" target="#b0">(Abadie 2021)</ref>. Relying on the deterministic linear relationship among the proportions and the constant control comparison, one can effectively construct synthetic controls even for outcomes with limited pre-exposure data, such as a vote share for a recently formed political party. This capability is akin to using strong predictors of post-intervention values to mitigate the challenges posed by the lack of pre-exposure periods <ref type="bibr" target="#b0">(Abadie 2021)</ref>. By leveraging the interconnected nature of compositional data, our approach strengthens the basis for robust estimates, reducing the risk of over-fitting and enhancing the reliability of the synthetic control for when outcomes are unbalanced across time.</p><p>The implications of our research extend beyond synthetic control methods. The constant control comparison principle we outlined can be vital for other causal inference techniques that model or impute counterfactual outcomes, such as matching <ref type="bibr" target="#b31">(Imai, Kim, and Wang 2023;</ref><ref type="bibr" target="#b34">Kellogg et al. 2021)</ref>, trajectory balancing <ref type="bibr" target="#b28">(Hazlett and Xu 2018)</ref> or imputation-based methods <ref type="bibr" target="#b10">(Athey et al. 2021;</ref><ref type="bibr" target="#b16">Borusyak, Jaravel, and Spiess 2024;</ref><ref type="bibr" target="#b36">Liu, Wang, and Xu 2024)</ref>. For instance, in matching techniques where researchers study the effect of covariates on voting decisions, applying separate matching weights for binary representations of these decisions can lead to estimates that violate the sum constraint, rendering the results difficult to interpret. We highlight the importance of adapting causal inference approaches for producing valid and meaningful results with compositional data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: A hypothetical example illustrating the inconsistency in the weighting of control units (countries) for creating synthetic parallel trends for proportional outcomes (party vote shares).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>and the key challenge lays in evaluating what the outcome would have been without exposure E[y ik (0) | D i = 1].</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure2: Example Simulation data from the data generating process (DGP). We analyse a situation with 4 proportions, and a latent treatment vector of[0.5, 0, 0, 0]. The example is for 400 units (of which 200 are treated) and 5 times points, where in the last time points the treatment is introduced. The first proportion exhibits a local trend, and selection is based on the local trend.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>examine the electoral effects of a compensatory "Just Transition Agreement" negotiated by the Spanish government in coalmining areas transitioning away from environmentally harmful production. Using electoral data from 2008 to 2019 and focusing on the 2019 electoral result of the governing Spanish Socialist Workers' Party (PSOE) as the outcome of interest, the study applies a DID framework to compare changes in voting between mining and non-mining municipalities in three Spanish provinces. With a few DID specifications arriving at similar point estimates of plus 1.8 percentage point effect on PSOE's vote share, the authors interpret that as the electoral reward from the voters to the incumbent party for the Just Transition Agreement.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>The treatment selection parameter λ 1 is set to 2.</figDesc><table><row><cell>Method</cell><cell>S.D.</cell><cell>RMSE</cell><cell>abs Bias</cell><cell>Sum const.</cell></row><row><cell cols="3">Treatment selection: local levels</cell><cell></cell><cell></cell></row><row><cell>DID</cell><cell>0.060</cell><cell>0.040</cell><cell>0.032</cell><cell>0.000</cell></row><row><cell>SDID</cell><cell>0.033</cell><cell>0.021</cell><cell>0.016</cell><cell>0.008</cell></row><row><cell>PropSDID</cell><cell>0.031</cell><cell>0.022</cell><cell>0.017</cell><cell>0.000</cell></row><row><cell cols="3">Treatment selection: local trends</cell><cell></cell><cell></cell></row><row><cell>DID</cell><cell>0.060</cell><cell>0.060</cell><cell>0.047</cell><cell>0.000</cell></row><row><cell>SDID</cell><cell>0.033</cell><cell>0.026</cell><cell>0.019</cell><cell>0.018</cell></row><row><cell>PropSDID</cell><cell>0.031</cell><cell>0.022</cell><cell>0.017</cell><cell>0.000</cell></row><row><cell>Table</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>The DID estimates of the effects of the Just Transition Agreement on party vote shares in 2019 Spanish elections.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell>0.447</cell><cell cols="3">0.669 -4.593*** -0.071</cell></row><row><cell></cell><cell cols="4">(0.771) (0.940) (0.398) (0.814)</cell><cell>(0.482)</cell><cell>(0.531)</cell></row><row><cell>Num.Obs.</cell><cell>2455</cell><cell>2455</cell><cell>2455</cell><cell>2455</cell><cell>1473</cell><cell>2455</cell></row><row><cell>R2</cell><cell>0.364</cell><cell>0.488</cell><cell>0.520</cell><cell>0.650</cell><cell>0.752</cell><cell>0.214</cell></row><row><cell cols="5">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc>Table3, paint a picture similar to the DID results in terms of size and sign of the coefficients. The 1.8 p.p. effects on PSOE is very close to the DID estimate, while PP has gained 1.5 p.p. and VOX has lost 3.9 p.p. from the treatment, according to the SDID estimates. However, as anticipated in Section 3, these effect estimates should be interpreted carefully as they are not consistent with each other: instead of summing up to zero, these effects sum up to 1.82 + 1.52 + 0.39 + 0.69 -3.89 -0.04 = 0.89, which contradicts to the nature of proportions in compositional data.</figDesc><table><row><cell></cell><cell>PSOE</cell><cell>PP</cell><cell cols="4">PODEMOS Citizens VOX Others</cell></row><row><cell>coalXpost</cell><cell>1.82</cell><cell>1.52</cell><cell>0.39</cell><cell>0.69</cell><cell>-3.89</cell><cell>-0.04</cell></row><row><cell></cell><cell cols="2">(0.65) (0.76)</cell><cell>(0.34)</cell><cell cols="3">(0.65) (0.47) (0.29)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3 :</head><label>3</label><figDesc>The SDID estimates of the effects of the Just Transition Agreement on party vote shares in 2019 Spanish elections.To resolve this issue, we now estimate the same effects with our novel synthetic control methods tailored for multivariate proportional outcomes, using the propsdid package accompanying this paper. Thus, we ensure a constant synthetic control group for the coalmine municipalities, aligning the effects with the essential sum constraint where any increase in vote shares for one party necessitates a decrease in another. The results of this estimation, presented in Table4, are generally more conservative than any of the previous estimates, pointing that those could overestimate the effects. According to the proportional SDID, the overall negative effects on the far right VOX was about -3.4 percentage points. Though the positive effects on other parties lose significance due to their small sizes, the point estimates for the largest parties PSOE and PP remain positive and larger than for the remaining parties, suggesting that PSOE and PP were the main beneficiaries of the VOX losses.</figDesc><table><row><cell></cell><cell>PSOE</cell><cell>PP</cell><cell cols="4">PODEMOS Citizens VOX Others</cell></row><row><cell>coalXpost</cell><cell>1.33</cell><cell>1.08</cell><cell>0.26</cell><cell>0.77</cell><cell>-3.41</cell><cell>-0.03</cell></row><row><cell></cell><cell cols="2">(0.69) (0.82)</cell><cell>(0.36)</cell><cell cols="3">(0.69) (0.53) (0.26)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 :</head><label>4</label><figDesc>The proportional SDID estimates of the effects of the Just Transition Agreement on party vote shares in 2019 Spanish elections.</figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>Note that in Figure1, vote shares of X, Y and Z for each country always add up to 100, as in the example these three party categories obtain all the votes in each country.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_1"><p>For the simplified description of the results, we neglect the panel structure of the data applications. An extension to panel set-up with never-treated units is straightforward and will be added in later iterations of the paper.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="11" xml:id="foot_2"><p>We further fix the other parameters. All prior local levels parameters are set to σ γ k,0 = 1 and µ γ k,0 = 0. For prior local trends of the first proportion, we impose σ υ1,0 = 0.5 and µ υ1,0 = 0. All other</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="13" xml:id="foot_3"><p>We also find that that the bias decreases with larger sample size, partciluar in the number of control units.</p></note>
+		</body>
+		<back>
+
+			<div type="funding">
+<div> *   <p>The authors thank <rs type="person">Tom Pepinsky</rs>, <rs type="person">Paul Kellstedt</rs>, the participants of the 2024 European Political Science Association (EPSA) conference and the PhD seminar at <rs type="affiliation">Bocconi University</rs> for their helpful comments. The usual disclaimer applies. <rs type="person">Konstantin Bogatyrev</rs> received funding from the <rs type="funder">European Research Council</rs> (<rs type="grantName">ERC Grant</rs> Agreement <rs type="grantNumber">864687</rs>, PI: <rs type="person">Catherine E. de Vries</rs>). Contacts: <rs type="person">Konstantin Bogatyrev</rs></p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_4gPUVku">
+					<idno type="grant-number">864687</idno>
+					<orgName type="grant-name">ERC Grant</orgName>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>for PSOE vote shares 14 . Now, we estimate the effect of the Just Transition Agreement on a complete set of parties using the DID specification from the original study that also includes province and year fixed effects as well as covariates such as the log population, unemployment growth, the shares of immigrants, people with primary education and men over 50 in the population, all provided by the authors in their replication package.</p><p>The results of this estimation, presented in Table <ref type="table">2</ref>, paint an interesting picture: most notably, the radical right VOX has suffered a large negative effect of minus 4.6 percentage points. The votes lost by VOX did not only benefit PSOE by about 1.8 percentage points, as was already established by <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref>. The results also indicate an almost equally large positive effect, significant at 0.1 level, on the vote share of the center-right opposition PP. As always with the DID, the sum of the effects for an exhaustive set of compositional outcomes is equal to zero, i.e. the effects on different parties are consistent with each other and some parties' losses are translatable to other parties' gains. Now, we apply the synthetic difference-in-differences method to the same case. As SDID is a generalization of DID methods that relaxes the assumptions about the raw data and typically outperforms DID <ref type="bibr" target="#b6">(Arkhangelsky et al. 2021)</ref>, SDID is generally applicable to any DID setting. The pre-treatment trends in the voting outcomes between treated and control units are virtually never perfectly parallel, nor are they in our case, 14. We base the DID replication on the way the models are specified in the APSR replication package. While the article text states that model 1 includes municipal fixed effects, the code is missing them, thus we reproduce the code and not the paper description. The numerical results of <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref> can only be reproduced, provided we also deliberately introduce a data error from the replication package into our independently cleaned electoral data, understating PSOE's result in one of the municipalities in 2008 by about 15 percentage points. Without this error, all point estimates from <ref type="bibr" target="#b15">Bolet, Green, and González-Eguino (2023)</ref> become slightly smaller but remain close to the original results. Hereinafter, we use the data without that error. Furthermore, it appears that the authors defined PSOE vote share as a ratio of PSOE votes to the number of all ballots cast, including blank and null (invalid) votes. This differs from the way vote shares are commonly calculated by political scientists and electoral statistics, dividing the votes by party only by valid votes (excluding null ballots). We use that latter approach to ensure a more intuitive interpretation of our estimates and their direct applicability to the official electoral results calculated by the Spanish authorities. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Material</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Synthetic Control Methods for Proportions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Formalization of Synthetic Control Methods</head><p>We consider a balanced panel with N units and T time periods. Where we denote units with i ∈ {1, . . . , N } and periods with t ∈ {1, . . . , T }. The outcome of interest are K proportions, where each proportion value is denoted with k ∈ {1, . . . , K}. The outcome for unit i in period t is a multivariate vector of Y it = [y it1 , . . . , y itk ]. With a proportion, it holds that y itk ∈ [0, 1] ∀ k and K k=1 y itk = 1, forming a K-dimensional simplex. We further have a binary treatment D it ∈ {0, 1}. For (now) we assume that there is a share of control units that are never exposed to the treatment N co , while there are units N tr that are treated after time T pre . For the analysis, we arrange the i units such that first all control units appear and then all treatment units i ∈ {1, . . . , N co , N co + 1, . . . , N }.</p><p>A DID method would estimate separate average treatment effects of exposure for each proportion, τ did k essentially solving a two-way fixed effects regression problem:</p><p>for this specification, the (unweighted) average of the control units essentially serves as the counterfactual outcome for the treatment units after treatment exposure. The key identification parallel trend assumption makes this (unweighted) average a valid counterfactual outcome.</p><p>Synthetic methods instead calculate weights ωik that align pre-exposure trends in the outcomes of the control with the treatment units, such that Nco i=1 ωik y itk ≈ 1 Ntr N i=Nco+1 y itk ∀ t ∈ {1, . . . , T pre }. The approach further specifies time-weights λtk that balance pre-and postexposure periods for the different shares. The estimation then proceeds with finding a solution to the minimization problem.</p><p>As Arkhangelsky et al. point out, the synthetic difference-in-differences estimator can also be applied to classic synthetic method approaches <ref type="bibr" target="#b6">(Arkhangelsky et al. 2021)</ref>. Here the minimization problem excludes the time-weights and unit fixed effects.</p><p>Of central importance for SCMs is the calculation of the weights. In the application to proportions, these would be calculated for each proportion separably. <ref type="bibr">Arkhangelsky et al. approach</ref> for this is an optimization problem with regularization:</p><p>(ω 0k , ωk ) = arg min ω 0k ∈R,ω k ∈Ω ℓ uni (ω 0k , ω k ) where</p><p>(3)</p><p>where the regularization parameter is pre-specified as ξ</p><p>where</p><p>The time weights are analogously implemented by solving:</p><p>( λ0k , λk ) = arg min </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abadie</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/jel.20191450</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Literature</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="391" to="425" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of California&apos;s Tobacco Control Program</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Diamond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hainmueller</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12116</idno>
+		<idno>doi:10.1111/ajps.12116</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">490</biblScope>
+			<biblScope unit="page" from="495" to="510" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>American Journal of Political Science</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The Economic Costs of Conflict: A Case Study of the Basque Country</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gardeazabal</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/000282803321455188</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="113" to="132" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Penalized Synthetic Control Estimator for Disaggregated Data</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Hour</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2021.1971535</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="18" />
+			<date type="published" when="2021">2021. 1971535</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The Statistical Analysis of Compositional Data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Aitchison</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1982.tb01195.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="139" to="177" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Can Exposure to Celebrities Reduce Prejudice? The Effect of Mohamed Salah on Islamophobic Behaviors and Attitudes</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alrababa'h</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Marble</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mousa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Siegel</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055421000423</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1111" to="1128" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Synthetic Difference-in-Differences</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Arkhangelsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Athey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Hirshberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Imbens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wager</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/aer.20190159</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="4088" to="4118" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Causal Models for Longitudinal and Panel Data: A Survey</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Arkhangelsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Imbens</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Forthcoming</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2311.15458</idno>
+		<idno type="arXiv">arXiv:2311.15458</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Econometrics Journal</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A Causal Inference Perspective on the Analysis of Compositional Data</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">F</forename><surname>Arnold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Berrie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W G</forename><surname>Tennant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Gilthorpe</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/ije/dyaa021</idno>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1307" to="1313" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The Econometrics of Randomized Experiments</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Athey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Imbens</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/bs.hefe.2016.10.003</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Handbook of Economic Field Experiments</title>
+		<editor>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Banerjee</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">E</forename><surname>Duflo</surname></persName>
+		</editor>
+		<meeting><address><addrLine>North-Holland</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="73" to="140" />
+		</imprint>
+	</monogr>
+	<note>Handbook of Field Experiments</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Matrix Completion Methods for Causal Panel Data Models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Athey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bayati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Doudchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Imbens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Khosravi</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2021.1891924</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">536</biblScope>
+			<biblScope unit="page" from="1716" to="1730" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Proportional Representation and Right-Wing Populism: Evidence from Electoral System Change in Europe</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Becher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">M</forename><surname>González</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stegmueller</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0007123421000703</idno>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="261" to="268" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">The Balancing Act in Causal Inference</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ben-Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Feller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Hirshberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Zubizarreta</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2110.14831</idno>
+		<idno type="arXiv">arXiv:2110.14831</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note>stat</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The Augmented Synthetic Control Method</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ben-Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Feller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rothstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2021.1929245</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">536</biblScope>
+			<biblScope unit="page" from="1789" to="1803" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">How to Make Causal Inferences with Time-Series Cross-Sectional Data under Selection on Observables</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Blackwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">N</forename><surname>Glynn</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055418000357</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1067" to="1082" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">How to Get Coal Country to Vote for Climate Policy: The Effect of a &quot;Just Transition Agreement&quot; on Spanish Election Results</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bolet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>González-Eguino</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055423001235</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Revisiting Event-Study Designs: Robust and Efficient Estimation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Borusyak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jaravel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Spiess</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/restud/rdae007</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Economic Studies</title>
+		<imprint>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">What To Do (and Not to Do) with Causal Panel Analysis under Parallel Trends: Lessons from A Large Reanalysis Study *. SSRN Scholarly Paper</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.2139/ssrn.4490035</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<pubPlace>Rochester, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Simulating Party Shares</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hanretty</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/pan.2023.13</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="140" to="147" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cremaschi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bariletto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vries</surname></persName>
+		</author>
+		<title level="m">Without Roots: The Political Consequences of Plant Disease Epidemics</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Geographies of Discontent: Public Service Deprivation and the Rise of the Far Right in Italy</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cremaschi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Rettl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cappelluti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vries</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/5s2cu</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">HBS Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Technology and Big Data Are Changing Economics: Mining Text to Track Methods</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Currie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kleven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Zwiers</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/pandp.20201058</idno>
+	</analytic>
+	<monogr>
+		<title level="j">AEA Papers and Proceedings</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="page" from="42" to="48" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<author>
+			<persName><forename type="first">D</forename><surname>De Kadt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Johnson-Kanu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Sands</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055423000448</idno>
+	</analytic>
+	<monogr>
+		<title level="m">State Violence, Party Formation, and Electoral Accountability: The Political Legacy of the Marikana Massacre</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="page" from="563" to="583" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Democratization and Economic Output in Sub-Saharan Africa</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>De Kadt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Wittels</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2016.15</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="63" to="84" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">From Rents to Welfare: Why Are Some Oil-Rich States Generous to Their People?</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Eibl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hertog</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055423000977</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Populist Leaders and the Economy</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Funke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schularick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Trebesch</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/aer.20202045</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="3249" to="3288" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Campaign Finance Regulations and Public Policy</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gilens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Patterson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Haines</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055421000149</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1074" to="1081" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Navigating Potential Pitfalls in Differencein-Differences Designs: Reconciling Conflicting Findings on Mass Shootings&apos; Effect on Electoral Outcomes</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J G</forename><surname>Hassell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Holbein</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055424000108</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="21" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Trajectory Balancing: A General Reweighting Approach to Causal Inference With Time-Series Cross-Sectional Data. SSRN Scholarly Paper</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hazlett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.2139/ssrn.3214231</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<pubPlace>Rochester, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Natural Disasters and Green Party Support</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hilbig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Riaz</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/726917</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="241" to="256" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">When Should We Use Unit Fixed Effects Regression Models for Causal Inference with Longitudinal Data?</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Imai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">S</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12417</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="467" to="490" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Matching Methods for Causal Inference with Time-Series Cross-Sectional Data</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Imai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12685</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="587" to="605" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">A Seemingly Unrelated Regression Model for Analyzing Multiparty Elections</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Jackson</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/10.1.49</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="65" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A Statistical Model for Multiparty Electoral Data</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Katz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>King</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2585758</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="15" to="32" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Combining Matching and Synthetic Control to Tradeoff Biases From Extrapolation and Interpolation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kellogg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mogstad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Pouliot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Torgovitsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2021.1979562</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">536</biblScope>
+			<biblScope unit="page" from="1804" to="1816" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Comparing Dynamic Pies: A Strategy for Modeling Compositional Variables in Time and Space</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Lipsmeyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>Philips</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rutherford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Whitten</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2017.39</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="523" to="540" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">A Practical Guide to Counterfactual Estimators for Causal Inference with Time-Series Cross-Sectional Data</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12723</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="160" to="176" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Google Politics: The Political Determinants of Internet Censorship in Democracies</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Meserve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Pemstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2017.1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="245" to="263" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Treatment Effects with Multiple Outcomes</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mullahy</surname></persName>
+		</author>
+		<idno type="DOI">10.3386/w25307</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>National Bureau of Economic Research</publisher>
+			<biblScope unit="page">25307</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Doubly Robust Estimation of Multivariate Fractional Outcome Means with Multivalued Treatments</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Negi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Wooldridge</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07474938.2024.2310987</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Econometric Reviews</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">2-4</biblScope>
+			<biblScope unit="page" from="175" to="196" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Spanish Electoral Archive. SEA Database</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Pérez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Aybar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Pavía</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41597-021-00975-y</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Data</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">193</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Dynamic Pie: A Strategy for Modeling Trade-Offs in Compositional Variables over Time</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>Philips</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rutherford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Whitten</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ajps.12204</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>Electoral Studies</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title/>
+		<idno type="DOI">10.1111/ajps.12204</idno>
+		<imprint>
+			<date type="published" when="1111">1111/ajps.12204</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">The Economic Costs of Organised Crime: Evidence from Southern Italy</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Pinotti</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ecoj.12235</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Economic Journal</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="issue">586</biblScope>
+			<biblScope unit="page" from="203" to="F232" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">A Framework for Synthetic Control Methods With High-Dimensional, Micro-Level Data: Evaluating a Neighborhood-Specific Crime Intervention</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Robbins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Saunders</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kilmer</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2016.1213634</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">517</biblScope>
+			<biblScope unit="page" from="109" to="126" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Pretest with Caution: Event-Study Estimates after Testing for Parallel Trends</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Roth</surname></persName>
+		</author>
+		<idno type="DOI">10.1257/aeri.20210236</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review: Insights</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="305" to="322" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">What&apos;s Trending in Difference-in-Differences? A Synthesis of the Recent Econometrics Literature</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H C</forename><surname>Sant'anna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bilinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Poe</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2023.03.008</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">235</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="2218" to="2244" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">A Bayesian Multivariate Factor Analysis Model for Evaluating an Intervention by Using Observational Time Series Data on Multiple Outcomes</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Samartsidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Seaman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Montagna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Charlett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hickman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">De</forename><surname>Angelis</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/rssa.12569</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series A, (Statistics in Society)</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="155" to="166" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Examining a Most Likely Case for Strong Campaign Effects: Hitler&apos;s Speeches and the Rise of the Nazi Party, 1927-1933</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Selb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Munzert</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0003055418000424</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1050" to="1066" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Using Multiple Outcomes to Improve the Synthetic Control Method</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ben-Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Feller</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2311.16260</idno>
+		<idno type="arXiv">arXiv:2311.16260</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>econ, stat</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Do Citizens Vote against Incumbents Who Permit Local Immigration? Evidence from the Mariel Boatlift</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Thompson</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2021.76</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="728" to="745" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The Rush to Personalize: Power Concentration after Failed Coups in Dictatorships</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Timoneda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Escribà-Folch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chin</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0007123422000655</idno>
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="878" to="901" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">An Easy and Accurate Regression Model for Multiparty Electoral Data</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tomz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Tucker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wittenberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/pan/10.1.66</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="66" to="83" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Containing Large-Scale Criminal Violence Through Internationalized Prosecution: How the Collaboration Between the CICIG and Guatemala&apos;s Law Enforcement Contributed to a Sustained Reduction in the Murder Rate</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Trejo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Nieto-Matiz</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/00104140221139386</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comparative Political Studies</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1328" to="1364" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Generalized Synthetic Control Method: Causal Inference with Interactive Fixed Effects Models</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/pan.2016.2</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Oxford Handbook of Engaged Methodological Pluralism in Political Science</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Box-Steffensmeier</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Christenson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">V</forename><surname>Sinclair-Chapman</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="57" to="76" />
+		</imprint>
+	</monogr>
+	<note>Causal Inference with Time-Series Cross-Sectional Data: A Reflection</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<title/>
+		<idno type="DOI">10.1093/oxfordhb/9780192868282.013.30</idno>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

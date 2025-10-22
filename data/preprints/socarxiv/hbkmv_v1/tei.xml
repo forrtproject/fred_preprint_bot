@@ -1,0 +1,2223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Throwing Curveballs: Unpacking Surprising Questions in Evaluative Settings and Probing their Origins *</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-07-01">July 1, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Nandil</forename><surname>Bhatia</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Columbia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Wei</forename><surname>Cai</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">Columbia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sameer</forename><forename type="middle">B</forename><surname>Srivastava</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Berkeley</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Throwing Curveballs: Unpacking Surprising Questions in Evaluative Settings and Probing their Origins *</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-01">July 1, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">C956495FF0FB695F09E810B5B4911858</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:34+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>From the interview room to the press room, much of organizational life unfolds in evaluative contexts wherein evaluatees present information that positions themselves in a favorable light, while evaluators ask penetrating questions to evaluate these claims. Although some questions are readily addressed, others are surprising in ways that can unsettle even a carefully crafted presentation. We propose that questions can be surprising in two analytically distinct ways: when they are off-topic and when they are unexpected. We argue that questions that are on-topic but unexpected are most likely to be disruptive. We refer to such questions as curveballs and examine the situations under which they arise. Whereas prior work on interpersonal evaluation focuses on actor-and interaction-level explanations, we consider the role of a structural property: the information environment. We theorize that evaluators are more likely to pose curveball questions when there is a dearth, rather than abundance, of public information about the evaluatee. To evaluate these ideas, we develop a novel measure of curveball questions using natural language processing techniques. Using a corpus of quarterly earnings calls and data on newspaper closures, which induce exogenous variation in a locally headquartered firm's information environment, we find support for our theory. * We thank Sarayu Vyakaranam for excellent research assistance support and research seminar participants at Columbia Business School, the Computational Culture Lab, and the Berkeley Haas Macro Research Lunch for helpful feedback on this paper. Paul Gouvard, Daniel Keum, and Shiva Rajgopal provided valuable feedback on prior drafts. The usual disclaimer applies.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p>Much of organizational life unfolds in an interactional context that <ref type="bibr" target="#b39">Goffman (1970)</ref> referred to as an "expression game:" One party communicates information that aims to position itself in a favorable light, while another evaluates the quality of the expressed information.</p><p>Examples of such "games" include a job applicant meeting with an interviewer (e.g., Rivera 2012), an entrepreneur making a pitch to an angel investor (e.g., <ref type="bibr" target="#b54">Huang &amp; Pearce 2015)</ref>, an academic presenting new research in a seminar (e.g., Blair-Loy, <ref type="bibr" target="#b10">Rogers, Glaser, Wong, Abraham, &amp; Cosman 2017;</ref><ref type="bibr" target="#b31">Dupas, Modestino, Niederle, Wolfers et al. 2021)</ref>, and a management team conducting a quarterly earnings call with financial analysts (e.g., <ref type="bibr" target="#b43">Gouvard, Goldberg, &amp; Srivastava 2023</ref>).</p><p>Yet evaluators are typically not just passive recipients of information provided by evaluatees. Rather, given that evaluatees often have an interest in withholding or obfuscating negative information about themselves (e.g., <ref type="bibr" target="#b13">Bourdage, Roulin, &amp; Tarraf 2018;</ref><ref type="bibr" target="#b15">Bushee, Gow, &amp; Taylor 2018;</ref><ref type="bibr" target="#b36">Garud, Snihur, Thomas, &amp; Phillips 2023)</ref> or in dodging difficult or uncomfortable topics (e.g., <ref type="bibr" target="#b52">Hollander, Pronk, &amp; Roelofsen 2010;</ref><ref type="bibr" target="#b81">Rogers &amp; Norton 2011;</ref><ref type="bibr" target="#b7">Barth, Mansouri, &amp; Woebbeking 2023)</ref>, evaluators tend to pose questions that are designed to penetrate the communication veneer. Although evaluatees may try to anticipate and prepare for such queries, evaluators' questions sometimes genuinely surprise evaluatees and can unsettle even a carefully crafted presentation. These question-and-response dynamics can influence such consequential outcomes as who gets hired, funded, favorably evaluated, or rewarded in the financial markets. What makes a question surprising in ways that it can be disruptive to evaluatees and under what conditions are such questions most likely to be posed?</p><p>To shed light on these matters, we first develop a conceptual framework that clarifies the ways in which a question can be surprising in the context of an expression game. We propose that questions posed by evaluators can be surprising to evaluatees in two analytically distinct ways: when they are off-topic and when they are unexpected. We further argue that a particular form of surprising question-one that is on-topic but unexpected -is most likely to be disruptive to evaluatees. Borrowing from the language of baseball and the types of pitches that get thrown to batters, we refer to such questions as curveballs.</p><p>Next, we consider the conditions under which curveball questions are most likely to arise. Whereas prior work on expression games focuses on characteristics of actors or the nature of their interactions, we highlight the role of a structural property in which such an interaction is embedded: the quality of the information environment in which evaluators form judgments about an evaluatee. We theorize that, when information about evaluatees is readily accessible-for example, when star ratings exist of job seekers on an online platform or when a regional news outlet exists that reports on a locally headquartered firm-evaluators will tend to have common knowledge about, and will therefore be likely to converge in their interpretations of, a given evaluatee <ref type="bibr" target="#b24">(Chwe 2013)</ref>. As a result, the questions they pose during an expression game to pierce an evaluatee's communication facade will tend to be on a more similar and more predictable set of topics. Hence, curveball questions are unlikely to arise in such an information environment. Conversely, when information about evaluatees is scant or costly to obtain, there will be less common knowledge about evaluatees and evaluators' interpretations will tend to diverge. The questions evaluators pose during an expression game will thus tend to surface a wider array of issues that are more difficult for evaluatees to predict. It is under these conditions that they are most likely to throw curveballs at evaluatees.</p><p>We evaluate these ideas in the context of quarterly earnings calls (QECs), wherein the management team of a publicly traded firm (the evaluatee in our context) presents strategic and financial information and then engages in a question-and-answer session with the financial analysts who cover their stock (the evaluators in our setting). Our sample includes 126,910 earnings call transcripts between 2011 and 2021 for 5,609 listed firms from the United States. Building on the burgeoning literature that employs the tools of computational linguistics in organizational research <ref type="bibr" target="#b26">(Corritore, Goldberg, &amp; Srivastava 2020;</ref><ref type="bibr" target="#b90">Vicinanza, Goldberg, &amp; Srivastava 2023;</ref><ref type="bibr" target="#b59">Kovács, Hsu, &amp; Sharkey 2023;</ref><ref type="bibr" target="#b1">Aceves &amp; Evans 2023)</ref>, we use the transformer family of models-specifically, a sentence transformer model (SBERT) that is trained on 20 million sentence pairs and a transformer model that is fine-tuned to the context of financial discourse (FinBERT)-to derive measures of the degree to which a question posed by an analyst is off-topic (based on SBERT) and unexpected (based on FinBERT). We combine these indicators to derive our measure of curveball questions. Given that this a novel measure, we report a battery of analyses that help to validate it, showing that that our main measure relates to such consequential behaviors as CEO non-responses and that a call-level version of the measure is positively related to same-day volatility.</p><p>We then employ an empirical strategy that has been used in the finance and accounting literature <ref type="bibr" target="#b3">(Allee, Cating, &amp; Rawson 2023;</ref><ref type="bibr" target="#b35">Gao, Lee, &amp; Murphy 2020;</ref><ref type="bibr" target="#b57">Kim, Stice, Stice, &amp; White 2021)</ref> to identify exogenous shifts in the quality of the information environment about a focal firm: the closure of a regional newspaper that is located in close proximity to the firm's headquarters. Specifically, we combine data from multiple sources to create a composite dataset of 103 newspaper closures between 2012 and 2017 across a broad set of U.S. counties. Using a staggered difference-in-differences design, we find support for our main hypothesis. We discuss implications of these findings for research on expression games, social evaluations of economic actors, and use of computational methods to measure different facets of interactional dynamics in groups.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SOCIAL EVALUATIONS AND EXPRESSION GAMES</head><p>Across such diverse domains as feature films <ref type="bibr" target="#b53">(Hsu 2006;</ref><ref type="bibr" target="#b20">Cattani, Ferriani, &amp; Allison 2014)</ref>, commercial music <ref type="bibr" target="#b5">(Askin &amp; Mauskapf 2017;</ref><ref type="bibr" target="#b85">Shi 2023)</ref>, financial investing <ref type="bibr" target="#b87">(Stuart, Hoang, &amp; Hybels 1999;</ref><ref type="bibr" target="#b93">Zott &amp; Huy 2007;</ref><ref type="bibr" target="#b38">Giorgi &amp; Weber 2015;</ref><ref type="bibr" target="#b46">Hallen &amp; Pahnke 2016)</ref>, books <ref type="bibr" target="#b61">(Kovács &amp; Sharkey 2014)</ref>, restaurants <ref type="bibr" target="#b58">(Kovács, Carroll, &amp; Lehman 2014;</ref><ref type="bibr" target="#b40">Goldberg, Hannan, &amp; Kovács 2016;</ref><ref type="bibr" target="#b12">Botelho &amp; Gertsberg 2022)</ref>, and beverages <ref type="bibr" target="#b74">(Negro &amp; Leung 2013;</ref><ref type="bibr" target="#b89">Verhaal, Khessina, &amp; Dobrev 2015)</ref>, an extensive literature has examined the social processes through which an audience evaluates the worth of an entity or actor based on its self-presentation (for a review, see <ref type="bibr" target="#b64">Lamont 2012;</ref><ref type="bibr" target="#b94">Zuckerman 2012;</ref><ref type="bibr" target="#b60">Kovács, Negro, Pólos, Pontikes, Sharkey, Le Mens, &amp; Hsu 2019)</ref>. In many cases, such self-presentational displays and audience evaluations happen passively and indirectly-for example, when a firm chooses a set of labels to describe itself or its product offerings on a website or in a press release and, separately, a venture capitalist reviews such labels in making an assessment of the firm's worth <ref type="bibr" target="#b77">(Pontikes 2012)</ref>.</p><p>We focus instead on evaluative contexts in which an actor actively seeks to shape an audience's perceptions of worth through real-time communication-for example, in a job interview, a fund-raising pitch, a research seminar, or-as in our setting-a quarterly earnings call between a firm's management team and the financial analysts who cover its stock.</p><p>It is this class of interactions and what they unearth about "the individual's capacity to acquire, reveal, and conceal information" that <ref type="bibr">Goffman (1970, p. 4</ref>) examines in his essay, "Expression Games." Using the motivating example of an intelligence agent conducting an interview with a suspected spy, Goffman conceptualizes such interactions as a type of strategic game. Evaluatees can make a number of moves to position themselves in a favorable light-for example, "covering" moves that seek to mask or conceal unfavorable information or "feigning" moves that aim to misrepresent the subject's beliefs, attitudes, and preferences. Similarly, evaluators can engage in "uncovering" moves that are designed to "crack, pierce, penetrate, and otherwise get behind the apparent facts to uncover the real ones" <ref type="bibr">(Goffman 1970, pp. 17-18)</ref>. Evaluatees can, of course, also anticipate evaluators' uncovering moves and pursue "counter-uncovering" strategies.</p><p>Building on this conceptual apparatus, we consider a particular form of uncovering move made by evaluators: the posing of probing questions that can reveal information an evaluatee might otherwise seek to cover. In many cases, such queries are easily handled because evaluatees have not only anticipated but also formulated a response to them even before the evaluative interaction takes place. Yet on occasion such questions not only surprise evaluatees but can also throw off self-presentational display, even it has been carefully crafted and thoroughly rehearsed. To clarify the conditions under which questions might have such an effect, we develop a framework of surprising questions using the motivating example of an academic "job talk."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FORMS OF SURPRISE IN QUESTIONS</head><p>In our hypothetical example, a PhD candidate is giving a presentation that aims to position her research and her skills in the most favorable light to her audience-the faculty at the institution she hopes will hire her. Her job market paper is solid but not without some flaws and limitations. To prepare for the talk, she crafts and rehearses her presentation, thinks through the questions and objections she is most likely to receive, and preformulates responses to those queries. The faculty attending her talk seek to pressure test the validity of the claims she is making, the depth of her thinking, and her creativity. Over the course of her presentation, they interject periodically with questions designed to assess these qualities.</p><p>We propose that the questions audience members pose to the job candidate could surprise her in two analytically distinct ways. First, they could be off-topic rather than on-topic. For example, she might be discussing the relevant literature that informs a core hypothesis when someone interjects with a question about her causal identification strategy. Second, they could be unexpected rather than expected, independent of whether they are on-topic or off-topic. For example, someone might raise an endogeneity threat that she had previously failed to consider.</p><p>Juxtaposing these two dimensions, we develop a framework, shown in Figure <ref type="figure" target="#fig_6">1</ref>, that clarifies the forms of surprise in evaluators' questions that are most likely to disrupt an evaluatee's self-presentational display. We use a metaphor from the domain of baseballthe types of pitches that might get thrown to a batter and the ease with which they can be handled-to characterize these archetypes. We begin with a type of question that is unlikely to produce much, if any, surprise: one that is both on-topic and expected. We refer to these as "meatball pitch" questions. In baseball, a meatball pitch is one thrown directly over home plate at relatively low velocity and with little movement. Such a pitch is relatively easy for a batter to put into play. Similarly, in the context of our illustrative academic job talk, when a job candidate confronts a question that is both on-topic and expected, she is likely to already have back-up slides prepared in response and may even have hyperlinks to these slides embedded in the places of her talk where each question is most likely to arise.</p><p>At the other extreme are "wild pitch" questions, which are both off-topic and unexpected. In baseball, such an errant pitch follows a trajectory that never comes close to the strike zone over home plate. It is therefore relatively easy for batters to simply avoid swinging at it. In a similar vein, a question in an academic job talk that is both off-topic and unexpected can sometimes be readily dismissed with a polite response such as: "That's an interesting idea that might be useful to explore in future research but is outside the scope of my present study." Of course, not every such question can be so parried. Yet, we contend, it is relatively easy to turn away or at least defer an oddball question when it is off-topic.</p><p>More complicated are the two off-diagonal positions in our framework. We refer to questions that are expected but off-topic as "paint-the-corners pitch" questions. In baseball, such a pitch is likely to be thrown when the count of balls and strikes strongly favors the pitcher over the batter (e.g., zero balls and two strikes). In such cases, the pitcher will tend to throw pitches not directly over home plate but at the edges of the plate, thereby increasing the chances that the batter swings and misses or fails to swing at a pitch that is just barely a strike. Yet batters can anticipate that such pitches will be thrown when they face an unfavorable count and therefore tend to make defensive swings that redirect the ball out of play, thus spoiling the pitch and forcing the pitcher to try again. A parallel in an academic job talk would be deflecting a question that is expected but either not directly relevant or posed at an inopportune time. The job candidate might, for example, tell a person posing a question about an alternative explanation for her findings to hold off until later in the talk when she will discuss a robustness check she has already run to help rule it out. Alternatively, the job candidate could simply take a short detour and recite the prepared response to the question that she was prepared to address later in the talk.</p><p>Finally, we turn to questions that are on-topic but unexpected, which we label "curveball pitch" questions. In baseball, a curveball is a pitch thrown with a spin that causes it to dive as it approaches the plate. The specific trajectory is often difficult to predict and can therefore lead the batter to take a swing but miss the ball. Colloquially, throwing someone a curveball refers to the act of posing a surprising query that is difficult to respond to. In a similar vein, we propose that, in the context of an interrogation game, questions that are on-topic but unexpected are the ones that are most likely to function as curveballs.</p><p>Because they are on topic, they cannot be readily dismissed or deflected. Yet, because they are unexpected, the evaluatee is forced to improvise a response, which may inadvertently reveal gaps and shortcomings in her crafted presentation. In our hypothetical example, the job candidate may be presenting her robustness checks when an audience member raises a question about a different alternative explanation she had not previously thought of.</p><p>She may then be forced to either concede the point or come up with a real-time response, which may in turn trigger a cascade of additional curveball questions from the questioner or others in the audience. Thus we propose that, relative to the other three question types, curveball questions are most likely to disrupt and potentially undermine a presenter's flow.</p><p>Insert Figure <ref type="figure" target="#fig_6">1</ref> here WHEN CURVEBALLS ARE MOST LIKELY TO BE THROWN Although we are not aware of any literature that has sought to examine the origins of surprising questions per se, prior work on interrogation games has highlighted the factors that shape the quality of moves and countermoves made by evaluatees and evaluators. For example, <ref type="bibr" target="#b39">Goffman (1970)</ref> traced the quality and relative efficacy of the two parties' actions in part to attributes of their physical setting, their skills and knowledge, their psychological dispositions, and prevailing social norms. More recent work has called attention to how the framing of question-for example, whether it is directly or indirectly stated <ref type="bibr" target="#b9">(Bitterly &amp; Schweitzer 2020)</ref>, open-or closed-ended <ref type="bibr" target="#b86">(Sternberg, Lamb, Hershkowitz, Esplin, Redlich, &amp; Sunshine 1996)</ref>, or stated with the assumption that a problem does or does not exist <ref type="bibr" target="#b73">(Minson, VanEpps, Yip, &amp; Schweitzer 2018</ref>)-can influence an evaluatee's likelihood of telling the truth or revealing compromising information. Yet these studies are silent on the question of whether such framing choices matter for the degree of surprise experienced by evaluatees or the conditions under which evaluators tend to resort to such tactics.</p><p>Whereas interdisciplinary research on the broad class of "expression games" has focused on on attributes of actors and their interpersonal dynamics, we highlight the role of the external environment in which such an interaction is embedded. We build on a long line of research in organizational theory that has examined how properties of the external environment-for example, market competition or resource abundance-shape different facets of an organization's inner workings <ref type="bibr" target="#b48">(Hannan &amp; Freeman 1984;</ref><ref type="bibr" target="#b29">Davis, Eisenhardt, &amp; Bingham 2009;</ref><ref type="bibr" target="#b2">Alexy, Poetz, Puranam, &amp; Reitzig 2021)</ref>.</p><p>To identify the conditions under which curveball questions are most likely to be thrown, we focus on a different contextual attribute-the quality of the information environment in which evaluators form judgments about an evaluatee-and consider its impact not on the focal entity but on the external audiences with which it communicates. For example, in the context of freelance work, the information environment about job candidates shifted considerably with the arrival of online platforms that provided employers with ratings and reviews of each candidate's past work <ref type="bibr" target="#b66">(Leung 2018)</ref>. A similar change occurred in the restaurant industry with the development of online reviews <ref type="bibr">(Kovács et al. 2014)</ref>.</p><p>While the previous two examples represent positive shocks to the information environment, it is also possible for the information environment to become more impoverished.</p><p>An example that is salient in our empirical context is the closure of a regional newspaper, which covers (among other topics) the firms that have headquarters in its vicinity.</p><p>Recent work has documented the steady drumbeat of newspaper closures throughout the United States <ref type="bibr" target="#b35">(Gao et al. 2020)</ref>. Given that local papers serve as the primary source of "accountability journalism" in a community, these closures can have consequences for organizational behavior-for example, the propensity of a firm to engage in wrongdoing absent the watchdog function of a local paper <ref type="bibr" target="#b23">(Choi &amp; Valente 2023)</ref>. (In the Empirical Setting and Data section below, we provide further evidence of how a newspaper closure represents a negative shock to the information environment of a proximally headquartered firm.)</p><p>Building on this intuition, we argue that shocks to an information environment, ones that change the ease or cost of access to salient information about an evaluatee, can influence the extent to which evaluators and evaluatees have common knowledge about the evaluatee. A fact is common knowledge when all parties in a group know it, when everyone knows that everyone knows it, when everyone knows that everyone knows that everyone knows it, and so on <ref type="bibr" target="#b24">(Chwe 2013)</ref>. The presence or absence of common knowledge, in turn, shapes how evaluators understand and interpret information about an evaluatee and thereby affect the types of questions they pose. In our context, the analysts who cover a given stock are united in simultaneously seeking to make sense of a given firm's past performance and future prospects.</p><p>When information about evaluatees is widely available-for example, when a local paper reports on a local firm's activities, investments, and personnel decisions-evaluators and evaluatees will tend to have common knowledge about the evaluatee. Thus, evaluators will be apt to pose questions on more similar topics-ones that are informed by their shared understanding of the firm-and evaluatees, knowing that evaluators have these shared interpretations, will more readily anticipate these questions. Thus, it is unlikely that a question posed by evaluators to an evaluatee will be a curveball.</p><p>Conversely, when the information environment becomes impoverished-for example, because a regional newspaper that historically reported on a local firm shutters-there will be a concomitant loss of common knowledge about the firm. Evaluators will then tend to ask questions about a wider variety of topics. Morevover, evaluatees will be left guessing about the information sources evaluators might have consulted beforehand, thus making it harder for them to anticipate and prepare for the broader set of topics that might be covered. It is under these conditions, we contend, that curveball questions are most likely to arise. Thus, we propose:</p><p>Main Hypothesis: In an expression game, evaluators are more likely to pose a curveball question (i.e., one that is on-topic but unexpected) to an evaluatee when there is a dearth, rather than abundance, of common knowledge about the evaluatee.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DATA AND METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Quarterly Earnings Calls as a Form of an Expression Game</head><p>We test our main hypothesis in the context of quarterly earnings calls (QECs) conducted by publicly traded firms that are based in the United States. In these calls, a firm's manage-ment team first presents information about its strategy, financial performance, and outlook and then engages in a question-and-answer session with the sell-side analysts who cover its stock <ref type="bibr" target="#b21">(Chen, Nagar, &amp; Schoenfeld 2018;</ref><ref type="bibr" target="#b70">Mayew, Sethuraman, &amp; Venkatachalam 2020)</ref>.</p><p>The former typically follows a well-rehearsed script, while the latter is more open-ended and, despite the management team's best intentions, may veer into topics and territory that the management team would prefer not to discuss. <ref type="bibr" target="#b39">Goffman (1970)</ref> referred to as an expression game. The firm's management team, the evaluatee in the game, seeks to present the firm's performance and its outlook in as favorable a light as possible to its shareholders, sell-side analysts, and the broader market. The analysts, the evaluators in the game, ask probing questions of executives to clarify, challenge, or induce them to reveal additional information. The interests of the two parties are not completely aligned: The management team aims to leave a positive impression of the firm, whereas the analysts strive to gain an accurate assessment. Both parties are aware of each other's incentives and anticipate their likely moves and countermoves.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>QECs are a classic form of what</head><p>QECs are an ideal setting in which to examine the emergence and potential consequences of curveball questions. Prior work has used QECs to study executive behavior, highlighting how they can be high-pressure situations that require executives to respond in real-time to difficult lines of questioning <ref type="bibr" target="#b51">(Hobson, Mayew, &amp; Venkatachalam 2012;</ref><ref type="bibr" target="#b65">Larcker &amp; Zakolyukina 2012;</ref><ref type="bibr" target="#b67">Li, Minnis, Nagar, &amp; Rajan 2014;</ref><ref type="bibr" target="#b17">Cai, Rouen, &amp; Zou 2022;</ref><ref type="bibr" target="#b43">Gouvard et al. 2023)</ref>. Although the management team typically possesses more information about the firm than do the analysts who cover the firm, they cannot plausibly anticipate every contingency that might arise and, forced to respond in real-time, may be caught off-guard by a given analyst's query. Such a dynamic is not, of course, limited to QECs and is also present in such other evaluative contexts as interviews or depositions or police interrogations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Empirical Setting and Data</head><p>Our sample consists of 126,910 QEC transcripts for 5,609 listed firms in the United States and spans the period from 2011 to 2021. We downloaded this corpus from Capital IQ, which partially structures the data by identifying blocks of utterances during the call and the speaker's name and affiliation. Thus, we could clearly identify the transition from the scripted initial part of the call to the less structured question-and-answer session, as well as identify when a particular analyst posed a question and how members of the management team responded.</p><p>We obtain data on the changing information environment related to firms in our sample by examining the closures of local newspapers in counties where those firms are headquartered. Prior work has used such data to examine how newspaper closures influence such outcomes as local county borrowing <ref type="bibr" target="#b35">(Gao et al. 2020</ref>) and corporate misconduct <ref type="bibr" target="#b23">(Choi &amp; Valente 2023)</ref>. Studies in this vein have documented a variety of ways in which the closure of local newspapers influences the information environment of firms headquartered in close proximity, especially for sell-side analysts. One reason is that even local newspapers employ financial journalists who believe that monitoring companies and holding them accountable for their actions are among their most important roles. Moreover, many rely on their personal relationships with company management and corporate communications departments to help them conduct research on firm conduct <ref type="bibr" target="#b18">(Call, Emett, Maksymov, &amp; Sharp 2022)</ref>. Beyond financial journalists per se, <ref type="bibr" target="#b23">Choi &amp; Valente (2023)</ref> and <ref type="bibr" target="#b47">Hamilton (2016)</ref> highlight the broader "accountability journalism" role of local newspapers, which produce investigative reports about the ethical conduct of firms in the community. In many cases, these local reports are then disseminated more broadly by national mainstream media.</p><p>Corroborating that a link exists between local media and the information environment about proximately headquartered firms, <ref type="bibr" target="#b3">Allee et al. (2023)</ref> find that stock-level volatility, spreads, and illiquidity all increase as local newspaper intensity declines. These effects are amplified when analysts are more dependent on the local newspaper as an information source-for example, when they are busier or when the firm is especially important in the community. Further supporting the idea that local newspaper closures represent a negative information shock for nearby firms, <ref type="bibr" target="#b28">Das &amp; Zhong (2024)</ref> find that the unexpected loss of local media coverage leads to a decline in analysts' research quality: Analysts who cover such an affected firm produce less frequent, less timely, and less accurate forecasts about the firm following a newspaper closure.</p><p>In light of these studies on the informational consequences of local media loss, we begin with a subset of the newspaper closure data, covering the period from 2012 to 2014, from <ref type="bibr" target="#b35">Gao et al. (2020)</ref>. We then supplement these data with information from the University of North Carolina Hussman Database on newspapers and news deserts in the United States <ref type="bibr" target="#b0">(Abernathy 2018)</ref>. This allows us to extend the dataset to 2017. Following prior literature, we define "closure" broadly as encompassing three types of events: a newspaper fully shutting down, transitioning from being a weekly to a daily, or merging with another paper. We focus on counties with three or fewer newspapers given that a "closure" event in a county with more than three newspapers is less likely to have a material impact on the information environment about a local firm. Our resulting dataset includes closures in 103 counties across the United States between 2012 and 2017.</p><p>Our regression models include several control variables, which we obtain from the Center for Research in Security Prices (CRSP) and Compustat. We also use security-level data on abnormal stock returns and idiosyncratic volatility to help validate our empirical strategy.</p><p>We gained access to these data using the beta-suite that is available to subscribers of CRSP via the Wharton Research Data Services.</p><p>Dependent Variable: Curveball Question Score As a reminder, our theory suggests that an evaluator question is most likely to be viewed as a curveball by an evaluatee when the question is both on-topic and unexpected. To develop such a measure, we first had to make a choice about which question or questions to score along these dimensions. One important consideration is that, given the presence of multiple evaluators (i.e., sell-side analysts), the degree to which a question is on-topic or unexpected may vary based not only on what questions were previously posed and how the management team responded to them but also based on the management team's initial presentation. For example, if a person opens up an entirely new line of questioning following a string of questions on a given topic, it might be unexpected relative to the last question asked; however, it might be expected relative to the management team's original presentation. To circumvent such complications, we opted to focus on the very first question posed by an analyst following the management team's scripted presentation. The downside of this choice is that we limit the sample of questions that can be assessed on our curveball question score. Yet the advantage is that the measure is cleaner in assessing the likelihood that the management team perceived the question as a curveball. Recognizing the tradeoffs involved in the construction of this measure, we report in the Appendix an analysis showing the robustness of our measure to the inclusion of questions beyond the first one.</p><p>Our measure of curveball questions is a composite of two measures of this construct's underlying dimensions (i.e., on-topic and unexpected). We first develop separate measures of these dimensions using language models from the BiDirectional Encoder Representations The On-Versus Off-Topic Dimension. To gauge whether a question is on-or offtopic, we use the Sentence Transformers (SBERT) library. Sentence Transformers, built on the BERT architecture to accomplish the downstream task of semantic comparison, generates embedding vectors for sentences and short pieces of text <ref type="bibr" target="#b78">(Reimers &amp; Gurevych 2019)</ref>. Vectors corresponding to different texts can then be compared to each other to infer the semantic similarity between them. We begin with a pre-trained SBERT model "all-MiniLM-L6-v2" from the website HuggingFace. The model represents a given text as 384-dimensional embedding vector. Given that the model was trained on data from a wide range of settings (e.g., Reddit), we fine-tuned the model to the financial services context. Specifically, we fine-tuned the SBERT model on more than 20 million sentence pairs from our sample of earnings calls, under the assumption that consecutive sentences from an executive's answer to a particular question should be semantically close to one another. SBERT has the same token limit as BERT (512 tokens), thereby limiting the amount of text that can be input at a given time. To overcome this limitation, we broke the management presentation into multiple chunks of texts and then used the fine-tuned SBERT model to measure the semantic distance between each question and each chunk of the management presentation (based on cosine distance). Larger distances imply that the question is more off-topic. Our resulting measure of "off-topicness" is provided below:</p><formula xml:id="formula_0">Off-topic i = 1 N N j=1 CosineDistance(Mgmnt. Presentation j , Question i ) (1)</formula><p>The Expected Versus Unexpected Dimension. To quantify the degree to which a question was expected versus unexpected, we employed the next sentence prediction capability of FinBERT <ref type="bibr" target="#b4">(Araci 2019)</ref>. FinBERT is a pre-trained language model that has already been fine-tuned on financial text. The next sentence prediction function estimates the likelihood of a particular text following a given piece of text that is entered as an input. We utilized the publicly available language model of FinBERT from GitHub to access this function. Given BERT's token limit, we again divided the management team presentation into smaller chunks. We then computed pair-wise predictive probabilities using the different parts from the management's introduction and the first question posed by a sell-side ana-lyst. Specifically, we calculated the likelihood of the question following each chunk of the management's presentation. Lower predictive probabilities are interpreted as markers of greater unexpectedness in the question relative to the management team's scripted presentation. We took the inverse of the result from Next Sentence Prediction, such that greater values present greater unexpectedness<ref type="foot" target="#foot_0">1</ref> . Our measure of unexpectedness is provided below:</p><formula xml:id="formula_1">Unexpectedness i = 1 N N j=1 NextSentencePrediction(Mgmnt. Presentation j , Question i ) (2)</formula><p>The Composite Measure of Curveball Questions. Our measure of curveball questions is a composite of the two described above. Specifically, we first invert the off-topic measure such that it reflects the extent to which a question is on-topic. We then multiply this inverted measure by our measure of unexpectedness. We use percentile scores in making this calculation to ensure proportional aggregation of the two measures. The composite score is explained below:</p><p>Curveball Question Score = (Percentile Unexpectedness)×(Percentile On-topic) /100 (3)</p><p>Recognizing that this is a novel measure, we report below a series of analyses we ran to validate it and show that it relates behaviors that prior work has linked to consequential economic outcomes. In the Appendix, we also report results of models in which we include not the composite measure but instead the two dimensions of unexpectedness and off-topicness separately, as well as their interaction. (For our main hypothesis, which focuses on the likelihood of a curveball question being asked, we had no choice but to use the composite measure as our dependent variable.)</p><p>Independent Variables</p><p>Newspaper Closure. As noted above, we treat closures of regional newspapers as exogenous shocks to the information environment about locally headquartered firms. For each firm, we identify the zip code of its headquarters location, as recorded in Compustat. We then match each zip code to a county using the U.S. government's crosswalk between the two data. Each firm, depending on whether its county experiences a closure of a local newspaper between 2012 and 2017, is identified as being treated or not. We use a six-year treatment window, wherein treated firms are present in the sample three years prior to the change in the information environment (including the year of closure) and three years after, following a similar approach to the one used by Heese, Perez-Cavazos, &amp; Peter (2022). Our variable of interest is Treated * Post, which takes the value of 1 for treated firms for the three years after the closure of the local newspaper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Control Variables</head><p>We account for multiple variables that could potentially influence the likelihood that a management team receives surprising questions from sell-side analysts during a QEC. First, we control for firm size, as the complexity of operations in larger firms might naturally lead to more surprising questions from analysts. The information environments of larger firms may also differ from those of smaller firms. Next, we account for the firm's stock performance and trading volume for the quarter leading up to the call. This allows us to mitigate the influence of short-term market perceptions on the types of questions that analysts may ask management. Similarly, we control for the firm's financial and operational metrics, incorporating both return on assets and Tobin's Q as control variables. To further account for the firm's financial health, we include controls for leverage and the firm's cash ratio. Finally, to capture any shifts in strategic direction, we control for the firm's capital and research intensity. We winsorize the financial and operational metrics by year at the 2% and 98% levels to mitigate the impact of outliers.</p><p>In regression models that examine the impact of local newspaper closures on firmlevel outcomes, we control for local economic conditions at the county level. Changes in these conditions might simultaneously affect the closure of local newspapers and firmlevel outcomes. To account for this possibility, we include as controls the county-level unemployment rate, as well as county-level median income. The former is downloaded from the Economic Research Service of the U.S Department of Agriculture, while the latter is downloaded from the U.S. Census Bureau.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analytical Strategy</head><p>As a preliminary step, we sought to validate our measure of curveball questions. As described in greater detail below, we first examined how management teams responded when they faced curveball questions. We anticipated that curveball questions would be unsettling to a management team such that: (a) they were more likely to obfuscate by giving non-answers; (b) they tended to give longer responses; (c) the CEO was more likely to respond instead of other executives who were present; and (d) conditional on the CEO giving a response, that response was more likely to be a non-answer.</p><p>Not only are these behaviors consistent with the interpretation that curveball questions surprise management teams in ways that disrupt their communication strategy, but some of these outcomes may also have material economic consequences. For example, prior work has demonstrated that non-answers are associated with lower cumulative abnormal stock returns and higher volatility <ref type="bibr" target="#b7">(Barth et al. 2023)</ref>. Given that the market is more responsive to communication from CEOs than from other executives <ref type="bibr" target="#b41">(Goldman &amp; Zhang 2022)</ref>, nonresponses by CEOs may elicit especially strong market responses.</p><p>As an alternative way of validating our curveball measure question, we also implemented an analyst-side analysis. Given that an analyst's likelihood of being able to formulate a question that the management team perceives to be a curveball is likely to be positively related to her skills and experience, we expected that such questions were more likely to be posed by star analysts relative to non-star ones.</p><p>Finally, we also conducted a call-level validation check. Although our main analyses focus on the first question posed by an analyst following the management team presentation, we also created a call-level curveball measure that is based on the first question posed by every analyst who attends the call. We then examine the association between this call-level measure and the stock's volatility on the day of the earnings call. If curveball questions are more likely to elicit surprise and unearth novel information, we expect our call-level measure to be positively correlated with the stock's volatility on the day of the call. We recognize that this analysis is only correlational; nevertheless, we think it provides suggestive evidence that curveball questions can have consequential market outcomes.</p><p>Next we sought to validate our assumption that the closure of a regional newspaper reflected a shock to the information environment about locally headquartered firms. We did so by comparing call-day stock returns (both raw returns and abnormal returns) and stock volatility (both raw and idiosyncratic volatility) in the period before a newspaper closure to the period after. We reasoned that the loss of news coverage about the firm would increase the importance of QECs as a source of novel (though not necessarily more positive or more negative) information about the firm. Given that the market is likely to be sensitive to disclosure of novel information, we therefore anticipated that a closure would be positively associated with an increase in the call-day volatility of the stocks of locally headquartered firms. Moreover, assuming the closure is a shock to the information environment that is unrelated to the focal firm's financial health or prospects, we assumed that it would not be significantly associated with call-day stock returns in the post-newspaper-closure period.</p><p>Turning to the empirical tests of our main hypothesis-that newspaper closures should produce a negative shock to the information environment that increases the likelihood of curveball questions being asked-we conducted our analyses at the firm-quarter level.</p><p>Unless otherwise specified, all models incorporate time-varying controls at the firm level.</p><p>We also employ fixed effects for both the firm and the quarter to account for time-varying heterogeneity at the firm level. In models examining the impact of newspaper closures, standard errors are clustered at the county level, given that this is the level at which the treatment of newspaper closures operates.</p><p>Given that firms get treated at different points in time, we employ a staggered differencein-differences design. The main variable of interest is the interaction term, "Treated * Post," which captures the marginal impact of newspaper closures on treated firms after the treatment has taken place (i.e., post-closure).<ref type="foot" target="#foot_1">2</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head><p>Table <ref type="table" target="#tab_0">1</ref> reports descriptive statistics for the variables used in our analyses. We first report results of analyses designed to validate our measure of curveball questions, then present results that help to validate that newspaper closures represent a shock to the information environment about a firm, then turn to our main results, and conclude by reporting robustness checks and supplemental analyses designed to address potential alternative explanations for our findings and to investigate the underlying mechanisms.</p><p>Insert Table <ref type="table" target="#tab_0">1</ref> here</p><p>In the Appendix ( Of course, the extent to which a question is a curveball depends on the management team presentation that came before it. Thus, it is difficult to interpret the extent to which a question is a curveball in isolation. Nevertheless, some informative patterns emerge from this exercise. For example, questions that are simple clarifications or requests for elaboration (e.g., Tim Cook being asked about the iPhone sales momentum) have especially low curveball scores. In contrast, questions that require the management team to envision and respond to complex but plausible scenarios appear to score higher on the curveball question score. For example, a question posed to Reed Hastings of Netflix about his potential competitive response to Amazon entering the strategic market and its implications for Netflix's pricing strategy scores especially high on our curveball measure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Validation of Curveball Question Measure</head><p>To validate our composite measure for the degree to which a question from a sell-side analyst is curveball, we examine the responses by a firm's management team when it encounters such a question, as well as the types of analysts who are apt to ask such questions. We expect management to respond to curveball questions by obfuscating, which would be reflected in both non-answers and longer responses, as well as to defer to the CEO in formulating a response. We also anticipate that analyst skill (as measured by their designation as star analysts) will be positively related to their propensity to ask curveball questions. Finally, we examine how the degree to which questions in the call are curveball correlates with stock volatility on the day of the call.</p><p>Non-answers: Our measure of non-answers comes from <ref type="bibr" target="#b7">Barth et al. (2023)</ref>. Their methodology uses sets of trigrams (i.e., three consecutive words) that were developed using a robust machine learning approach to identify obfuscating language in the context of QECs, making it an excellent fit for our context. Due to the nature of the variable and the presence of outliers, we winsorize it at the 99% level to reduce the impact of outliers.</p><p>Length of response to question: We measure response length based on the natural logarithm of the total number of words in the management's response to the question.</p><p>CEO involvement in answer: To identify the executives who responded to a curveball question, we fuzzy-matched the names in the QEC with those listed in the Execucomp database by year. Due to a significantly lower number of firms being covered in the Execucomp database relative to the Capital IQ transcripts database, we lose a part of our sample while conducting this validation check. We still retain more than half of our corpus of transcripts for this analysis. We estimate logit models of whether a CEO is likely to respond as a function of the extent to which a question is a curveball.</p><p>Non-answers from the CEO: Conditional on a question being answered by the CEO, we also separately measure the extent to which the response is a non-answer. (This variable takes the value of 0 if the CEO does not respond to the question.) Call-level Curveball Measure: For the analysis concerning the impact of curveball questions on the firm's stock volatility, we create a call-level curveball score by calculating the median curveball-ness of the first question asked by every analyst in the call.</p><p>The results from our validation checks are included in Table <ref type="table" target="#tab_1">2</ref>. All models are run with time-varying controls at the firm level and fixed effects for the firm and quarter in which the call occurred. We cluster the standard errors at the level of the firm. In Model 1, we find that the degree to which executives provide non-answers is positively related to our measure of curveball questions (β = 0.010, p &lt; 0.01). In Model 2, we find that executives provide much longer answers to curveball questions (β = 0.076, p &lt; 0.001). Model 3 demonstrates that the likelihood of the CEO, rather than other executives, responding to a question is positively related to its curveball question score (β = 0.142, p &lt; 0.001). In Model 4, we find that curveball questions also elicit greater non-answers when it is the CEO who responds (β = 0.033, p &lt; 0.001). In Model 5, we find that our measure of curveball questions is positively related to whether the analyst posing the question is a designated star analyst (β = 0.060, p &lt; 0.01). Finally, in Model 6, we find that our call-level curveball score is positively associated with the stock's volatility on the day of the call (β = 0.005, p &lt; 0.05).</p><p>Together, these analyses provide consistent, albeit indirect, evidence that our measure of curveball questions produces unsettling surprise in a management team.</p><p>Insert Table <ref type="table" target="#tab_1">2</ref> here</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Validation of Newspaper Closures as a Shock to the Firm's Information Environment</head><p>The results of analyses designed to validate that newspaper closures represent a shock to the firm's information environment are included in Table <ref type="table" target="#tab_2">3</ref>. As a reminder, we expect that the loss of information about a firm following a newspaper closure will make subsequent</p><p>QECs more important sources of novel information, which analysts will be sensitive to. This sensitivity will be reflected in greater stock volatility. However, assuming the closure is not related to fundamental shifts in the firm's financial outlook, it should have no relationship with stock returns. Consistent with the latter expectation, we find in Models 1 and 2 that the variable of interest, "Treated * Post," is not significant in predicting either call-day stock returns or call-day abnormal returns. In line with the former expectation, we find that this variable is positively and significantly related to call-day stock volatility and call-day idiosyncratic stock volatility in Models 3 (β = 0.074, p &lt; 0.01) and 4 (β = 0.062, p &lt; 0.01),</p><p>respectively. These results suggest that newspaper closures represent an information shock yet are not a signal of either positive or negative information about the firm's future prospects.</p><p>Insert Table <ref type="table" target="#tab_2">3</ref> here</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Main Results</head><p>We report tests of our main hypothesis, that a newspaper closure will increase the likelihood that the management team of a locally headquartered firm will face curveball questions from analysts, in Table <ref type="table" target="#tab_3">4</ref>. In Model 1, which is run without the inclusion of time-varying controls, we find the coefficient of the variable "Treated * Post" to be positive and significant (β = 0.060, p &lt; 0.01). The fixed effects for the firm and the quarter in which the call happened absorb the individual coefficients of "Treated" and "Post." In Model 2, we see that the inclusion of time-varying firm controls has little impact on the size or significance of the coefficient of interest (β = 0.058, p &lt; 0.01). Consequently, we find support for our main hypothesis.</p><p>Insert Table <ref type="table" target="#tab_3">4</ref> here in Table <ref type="table" target="#tab_3">4</ref>, except that the marginal effect is split by the number of years to treatment. It suggests that the effect of being treated is not distinguishable from zero prior to the closure of the newspaper. However, in each of the three years after the newspaper closure, we see an increase in the degree of curveball question score of the first question posed by analysts following the management team presentation.</p><p>Insert Figure <ref type="figure" target="#fig_3">2</ref> here</p><p>Assessing the Theorized Mechanism</p><p>Our theory posits that local newspaper closures represent a negative information shock about proximately headquartered firms, which in turn erodes common knowledge about the firm and increases the likelihood of curveball questions being posed. Yet we do not directly observe analysts' knowledge or interpretations about firms nor what management knows that analysts know and so on. We therefore conduct three supplemental analyses that each provide indirect evidence of our theorized mechanism. First, we examine the topical breadth of management team presentations (i.e., the range of topics they speak to in their formal remarks) and, separately, the topical breadth of analyst questions (i.e., the range of topics they ask about) for the subset of treated firms in our sample before and after they experience the closure of a local newspaper. We use BERTopic <ref type="bibr" target="#b44">(Grootendorst 2022)</ref> to classify each utterance in the management presentation and each question by sellside analysts into a distinct topic (or set of topics). Subsequently, using the distribution of topics discussed in the call, we develop a call-level measure of topical breadth (or entropy)</p><p>for both management presentations and analyst questions.</p><p>Figure <ref type="figure">3</ref> depicts the results of this analysis. Recall that our data on the timing of newspaper closures is coarse-at the annual level. It is therefore not possible to clearly identify the first QEC that takes place after a local paper shutters. We thus consider the year in which a newspaper closes as t=0, recognizing that some calls in this year may have taken place before the closure event. Although we might not expect to see a shift in this year, we do expect to see one in subsequent years. Such a pattern emerges across both panels of Figure <ref type="figure">3</ref>. In Panel A, we see that topical breadth in management team presentations begins to rise in the year a local newspaper closes and continues to do so in subsequent years. The increase becomes statistically significant two years after closure.</p><p>Panel B tells a similar story regarding the topical breadth of analyst questions; however, the increase becomes significant just one year after the closure event. We believe these results are consistent with the story of a negative information shock: The loss of common knowledge leads analysts to diverge in their understandings and interpretations of the firm and thus to ask a wider range of questions; moreover, because the topics analysts are interested in are harder to anticipate, management errs on the side of discussing a broader array of topics. For both reasons, the likelihood of a curveball question arising increases because it is simply harder for management to anticipate and prepare for the increased variety of questions they might face.</p><p>Insert Figure <ref type="figure">3</ref> here A second approach to assessing our theorized mechanism is to examine substitute channels of common knowledge about firms. Prior research points to the role of social connectedness in a community as a conduit through which information about local firms flows <ref type="bibr" target="#b23">(Choi &amp; Valente 2023)</ref>. Following a similar logic, we reason that the effects of a local newspaper closure on the loss of common knowledge about a nearby firm will attenuate when the community in which it is located is highly socially connected. This is because information about a firm-for example, whether it is planning to open a new facility in anticipation of rapid growth-is more readily disseminated within a community and transmitted to mainstream media in area with high levels of social connectedness. Table <ref type="table">5</ref> reports the relevant results. We include Model 1, which is identical to our main Model 2 in Table <ref type="table" target="#tab_3">4</ref>, for ease of comparison. Using measures developed by <ref type="bibr" target="#b82">Rupasingha, Goetz, &amp; Freshwater (2006)</ref> (and subsequently updated in 2014), we find in Table <ref type="table">5</ref>, Model 2 that the treatment effect attenuates with the social capital of a community.</p><p>Finally, a third approach to assessing the mechanism is to consider heterogeneity by type of firm. Firms vary in the extent to which they receive coverage by local media. Moreover, <ref type="bibr" target="#b3">Allee et al. (2023)</ref> highlight that the effects of newspaper closures on the information environment of a firm are greater for firms that are more important to their local community because analysts are more dependent on the local news source for information about such firms. In line with this view, we expect that the loss of local media coverage will lead to a greater loss of common knowledge about more prominent local firms relative to less prominent ones. Using firm size as a proxy for prominence, we expect that, all else equal, larger firms are more likely to receive curveball questions following a local newspaper closure than smaller firms. As reported in Table <ref type="table">5</ref>, Model 3, this is, indeed, what we find.</p><p>Insert Table <ref type="table">5</ref> here</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Robustness Checks and Supplemental Analyses</head><p>We conducted a few additional analyses to assess the robustness of our findings and better interpret our results. In Table <ref type="table">5</ref>, Model 4, we address the previously noted limitation:</p><p>that our data on newspaper closures do not indicate the specific date of the closure, just the year. Given that we are analyzing quarterly earnings calls, it is unclear if every call in our staggered difference-in-differences models represents a treated call. To increase the likelihood that our estimates are based only on calls that occurred following a newspaper closure, we report in Model 4 the results of an analysis in which we restricted the sample to only the first call of the year, which corresponds to results from the fourth quarter of the prior year. We obtain similar results in this model.</p><p>Next, recall that our measure of curveball questions is a composite of two separate measures. It was necessary to construct the composite measure because our main hypothesis pertains to the conditions under which such a question would arise, and we needed a single dependent variable to test this hypothesis. To ensure that our validation checks of this measure were not an artifact of the fact that we are using a composite measure, we first sought to test the robustness of our validation checks to disentangle the composite measure into its component parts. This was possible to do for three of our validation analyses in which the curveball question score is an independent, rather than dependent, variable. As shown in Appendix Table <ref type="table" target="#tab_4">A</ref>.1, we obtain comparable results to the ones reported in Table <ref type="table" target="#tab_1">2</ref>, Models 1-3, wherein we disentangle the composite measure into separate measures of unexpectedness, off-topicness, and the interaction between the two. The marginal effects from these models are plotted in Figure A.3 in the Appendix.</p><p>We also decomposed the treatment effect of newspaper closures on the two underlying dimensions of curveball questions: unexpectedness and off-topicness. These results are reported in Appendix Table <ref type="table" target="#tab_4">A</ref>.2. For ease of comparison, Models 1 and 2 report again the results displayed in Table <ref type="table" target="#tab_3">4</ref>. As shown in the remaining models, the overall treatment effect appears to be driven primarily by an increase in the unexpectedness of questions that are posed to the management team.</p><p>Finally, in Table <ref type="table" target="#tab_4">A</ref>.3 in the Appendix, we establish that our findings pertaining to the treatment effect of newspaper closures on curveball questions are not an artifact of our empirical choice to select the first question in the earnings call. We find consistently positive and sizeable effects when we include the curveball score of the first question asked by the second and third analyst in our dependent variable. However, the results attenuate as we include more questions, highlighting the challenge of measuring curveball questions beyond the first question. This is due to the degree to which subsequent questions are curveballs depends partly partly on how unexpected or off-topic they are relative to the prior questions and the management team's response to them.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head><p>The goals of this article have been to explore why and how questions posed in evaluative contexts can sometimes surprise an actor and throw off an even carefully crafted presentation and to probe the origins of such questions. We did so by first developing a taxonomy of surprising questions that is based on the two underlying dimensions of offtopicness and unexpectedness. We first proposed that a curveball question-one that is on-topic and expected-is most likely to surprise an evaluatee in ways that unsettle her self-presentation. Next we argued that curveball questions can arise for macro-structural reasons that are unrelated to actor-or interaction-level dynamics. Specifically, we theorized that curveball questions will tend to arise when the information environment about a focal firm is or becomes impoverished. This is because, in the absence of common knowledge about evaluatees, evaluators will have divergent understandings of an evaluatee and thus formulate questions on a broader array of topics, while evaluatees will have a tougher time anticipating and preparing for this wider question range. Using the tools of computational linguistics, we then developed and validated a measure of curveball questions based on separate measures of its two component parts. Applying this measure to a corpus of corporate quarterly earnings calls and using the closure of regional newspapers as an exogenous shock to the information environment about a locally headquartered firm, we found support for our theory.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>This article makes noteworthy contributions to several literatures. First, it contributes to research on interpersonal evaluation by developing a taxonomy of surprising questions.</p><p>We believe that this taxonomy can be readily extended to evaluative contexts beyond our empirical setting of QECs. For example, in developing our theory, we used the motivating example of an academic job talk. Yet the framework would appear to have application across the broad spectrum of settings that fit the profile of an "expression game" <ref type="bibr" target="#b39">(Goffman 1970</ref>)-for example, police interrogations, venture capital pitches, political press conferences, safety inspections, financial audits, and regulatory approvals. Moreover, prior work on interpersonal evaluation has tended to emphasize actor-and interaction-level dynamics. For example, the literature on entrepreneurial venture evaluation has focused on such factors as entrepreneur minority status <ref type="bibr" target="#b92">(Younkin &amp; Kuppuswamy 2018)</ref>, investor gut feel <ref type="bibr" target="#b54">(Huang &amp; Pearce 2015)</ref>, and even incidental weather-related factors such as sunlight on the day of the entrepreneurial pitch <ref type="bibr" target="#b32">(Dushnitsky &amp; Sarkar 2022)</ref>.</p><p>Similarly, in the sociological literature on labor markets and the evaluation of candidates, the focus has been on interpersonal referral networks <ref type="bibr" target="#b33">(Fernandez, Castilla, &amp; Moore 2000)</ref>, applicant sex and race <ref type="bibr" target="#b42">(Gorman 2005;</ref><ref type="bibr" target="#b75">Pager 2003</ref>), and evaluator emotions <ref type="bibr" target="#b80">(Rivera 2015)</ref>. In contrast to these approaches, we highlight how the structural property of an interaction, completely outside of the immediate context of the interaction itself, can impinge on its dynamics. This finding opens the door to understanding how other macro-structural properties-for example, shifts in the norms that prevail in a community or changes in the legal or regulatory environment-might influence the micro-dynamics of interpersonal evaluation.</p><p>Our findings also complement related research on question-asking in social psychology, political science, and criminology. Much of this work has focused on the consequences of how questions are framed-for example, whether they are directly versus indirectly stated <ref type="bibr" target="#b9">(Bitterly &amp; Schweitzer 2020)</ref> or open-versus close-ended <ref type="bibr" target="#b86">(Sternberg et al. 1996)</ref>. Whereas these attributes of a question are fairly static, our conceptualization of question surprise is dynamic in that the same question may or may not be surprising to an evaluatee based on when it is asked during a presentation, how it relates to what the evaluatee has previously reported, and how it relates to other potential questions that might have been previously asked. For example, if an evaluator simply rephrases a surprising question that was previously asked by a different evaluatee, it may no longer be unexpected and therefore fail to surprise the evaluatee-independent of how it is framed. This property of what makes a question surprising may have implications for question-based behavioral interventions.</p><p>For example, men and women tend to get asked different types of questions when seeking entrepreneurial funding <ref type="bibr" target="#b56">(Kanze, Huang, Conley, &amp; Higgins 2018)</ref>. More, a recent working paper suggests that a question-based intervention-encouraging evaluators to ask all evaluators, regardless of gender, about the risks and potential of their venture-can reduce discrimination in the evaluation process <ref type="bibr" target="#b72">(Miller, Lall, Goldstein, &amp; Montalvao 2023</ref>). Yet the efficacy of such an intervention may depend on the extent to which it is unexpected by evaluatees. If such a question becomes institutionalized within the evaluation process, evaluatees may begin to anticipate and prepare for it, thereby potentially diminishing its efficacy.</p><p>Second, we contribute to the interdisciplinary literature that analyzes discourse in quarterly earnings calls. In the accounting and finance literatures, QECs have served as a setting in which to examine executive behavior and management's decision to disclose information <ref type="bibr" target="#b67">(Li et al. 2014;</ref><ref type="bibr" target="#b16">Bushee, Matsumoto, &amp; Miller 2004;</ref><ref type="bibr" target="#b51">Hobson et al. 2012;</ref><ref type="bibr" target="#b69">Matsumoto, Pronk, &amp; Roelofsen 2011;</ref><ref type="bibr" target="#b68">Li, Mai, Shen, &amp; Yan 2021)</ref>. For example, <ref type="bibr" target="#b65">Larcker &amp; Zakolyukina (2012)</ref> detect deceptive executives by analyzing word categories associated with deception in executive speeches. <ref type="bibr" target="#b51">Hobson et al. (2012)</ref> uncover financial misreporting based on vocal dissonance markers in conference call audios. In more recent work, <ref type="bibr" target="#b17">Cai et al. (2022)</ref> investigate the firm and individual career outcomes of interactions among executives in earnings calls. In the more sociological tradition, <ref type="bibr" target="#b90">Vicinanza et al. (2023)</ref> identify the types of firms that are likely to communicate in ways that are prescient about how the field as a whole will evolve, while <ref type="bibr" target="#b43">Gouvard et al. (2023)</ref> show how atypical forms of discourse relate to analysts' evaluations of firms.</p><p>Whereas these prior studies have focused on the speech acts of the management team, we highlight the importance of also attending to the nature and quality of questions posed by analysts. Moreover, while prior measures of discourse in analyst calls have focused on one side of the interaction or the other (i.e., the management team or analysts), we develop a construct and associated measure (i.e., the curveball question score) that is inherently Our study shows a different consequence of the closure of newspapers and the subsequent decline in local information availability: the spillover effect of such an event on sell-side analysts covering firms headquartered in counties that experience such shocks. We also report evidence consistent with prior work <ref type="bibr" target="#b23">(Choi &amp; Valente 2023)</ref>, which suggests that the degree of social connectedness in a community functions as a substitute for the local information provided by a local newspaper. In our setting too, we find that the effects of a newspaper closure attenuate in more socially connected communities.</p><p>Lastly, our paper contributes to the growing body of research that uses transformerbased machine learning models in organizational research. Whereas the prior decade saw the growing use of natural language processing methods such as word-embeddings <ref type="bibr" target="#b71">(Mikolov, Sutskever, Chen, Corrado, &amp; Dean 2013)</ref> and topic modeling <ref type="bibr" target="#b11">(Blei, Ng, &amp; Jordan 2003)</ref>  Limitations and Future Directions</p><p>Our study is not without limitations. First, our measure of curveball questions uses preceding text from a question in a QEC to classify it as being surprising or not. Although we try to validate this measure in different ways, we do not have the ground truth of which questions the management team actually found surprising and unsettling. To more thoroughly validate and potentially refine our measure, it would be useful in future research to interview management teams after a call and have them identify which questions they perceived to be curveballs.</p><p>Second, our data on newspaper closures does not indicate the exact closure date. Thus, there is some amount of measurement error in our difference-in-differences identification strategy. Although our robustness check that restricts the sample to calls that take place in the first quarter (reflecting the information environment that existed in the fourth quarter of the prior year) yields comparable results, it would be better still to have more precise closure dates.</p><p>Finally, we made the analytical choice to derive our curveball question measure based on the first question asked after the management team's presentation given that this question's potential surprise is not confounded by the surprise of other questions or the management team's response to those questions. One implication of this choice is that it is difficult to assess the economic consequences of curveball questions. Although we show that our measure is related to the tendency of the management team to give non-responses and that a call-level version of our measure is positively correlated with same-day volatility, our method would need to be adapted to more comprehensively assess whether the call as a whole represented a curveball from the perspective of management. The development of such a measure would allow for a more robust analysis of how curveball questions relate to more consequential economic outcomes.</p><p>Beyond these limitations, our study opens several pathways for future research. In this study, except for the robustness check related to star analysts, we mostly sidestep the question of how the relative status of evaluators and evaluatees might influence the likelihood of curveball questions being posed. Yet we know that status plays an important role in evaluative contexts in organizations <ref type="bibr" target="#b83">(Russell &amp; Fiske 2008;</ref><ref type="bibr" target="#b8">Bianchi, Kang, &amp; Stewart 2012;</ref><ref type="bibr" target="#b76">Pearce &amp; Xu 2012;</ref><ref type="bibr" target="#b84">Sharkey 2014)</ref>. Future research could examine the extent to which evaluatee status might, for example, mitigate the propensity for evaluators to pose curveball questions to evaluatees or the extent to which such an effect attenuates as a function of evaluator status. In a similar vein, gender-an ascribed status characteristic-may also play a critical role in dictating discourse in the evaluative context. Recent work has called attention to such gendered patterns as lower visibility for women and a greater likelihood that they will face more aggressive questioning than men <ref type="bibr" target="#b25">(Comprix, Lopatta, &amp; Tideman 2022;</ref><ref type="bibr" target="#b34">Francis, Shohfi, &amp; Xin 2020)</ref>. We leave to future research the task of investigating how gender might play a role in the likelihood of an evaluatee being thrown curveballs.</p><p>In this study, we report evidence that star analysts are more likely to pose curveball questions than their peers who are not designated as stars. This result raises the question of what other analyst attributes might be related to the tendency to ask curveball questions.</p><p>Factors that may be useful to investigate include the quality of analyst networks (e.g., the extent to which their network spans structural holes <ref type="bibr" target="#b14">(Burt 2007</ref>)) and the extent to which they cover celebrated innovators or firms <ref type="bibr" target="#b43">(Gouvard et al. 2023)</ref>.</p><p>Finally, future research could profitably uncover the conditions under which a curveball question posed in the context of a QEC is more (or less) likely to reveal material information.</p><p>The responses to some curveball questions may be benign, while the responses to others may shape such economically meaningful outcomes as stock returns and earning forecasts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONCLUSION</head><p>In sum, the study suggests that, in evaluative contexts, the surprises that can throw one off course have elements of both unfamiliarity and novelty (i.e., they are unexpected) but also familiarity and conventionality (i.e., they are on-topic). Moreover, when one is thrown for a curve, it can be because of macro-structural factors that are unrelated to the characteristics of actors or their interactions. Finally, we hope that the development of a novel measure of curveball questions paves the way for understanding their origins and consequences across the many types of expression games that are played in social life.       </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TABLES AND FIGURES</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>from Transformers (BERT) family<ref type="bibr" target="#b30">(Devlin, Chang, Lee, &amp; Toutanova 2019)</ref> and then combine the two measures to develop a curveball question score. BERT is a neural networkbased language model that can identify the semantic and contextual information in a given text<ref type="bibr" target="#b30">(Devlin et al. 2019;</ref><ref type="bibr" target="#b88">Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, &amp; Polosukhin 2017)</ref>.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Figure A.1), we provide additional information on the distribution of three measures of interest: the off-topic, unexpected, and curveball scores of questions. The off-topic measure resembles a Gaussian distribution, whereas the unexpectedness score's distribution has a long right tail (akin to a distribution emerging from a power law). The two individual measures have a correlation coefficient close to 0.35. This is intuitive as off-topic questions are more likely to be unexpected, but not always. The aggregated curveball question score, which uses the percentiles of the two individual dimensions, is slightly left-censored. 3 To give a flavor of what curveball questions look like in our setting, we include in the Appendix (Figure A.2) illustrative examples of the five questions with the highest curveball score and the five questions with the lowest curveball score for two recognizable companies in data set: Apple and Netflix.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Star analysts :</head><label>analysts</label><figDesc>The magazine, Institutional Investor, provides rankings of star analysts in the United States. Consistent with prior literature<ref type="bibr" target="#b91">(Vukovic, Kurbonov, Maiti, Ãzer, &amp; Radovanovic 2024)</ref>, we use this designation as an indicator of analyst reputation and human capital.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2</head><label>2</label><figDesc>Figure 2 depicts the marginal effect of being treated from our staggered difference-indifferences estimates. The plot shows the results from the same specification as Model 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>dyadic in nature. The extent to which a question posed by an analyst is a curveball cannot be assessed in isolation; it can only be assessed in relationship to the prior discourse of the management team. It remains to be explored what other dyadic measures might prove informative in the QEC context. Finally, in light of prior work showing the link between non-responses and such outcomes as stock volatility (Barth et al. 2023), we highlight the role of curveball questions as an antecedent to non-responses by the management team, including the CEO.Within the accounting and finance literature, we also add to the emerging understanding of the consequences of declines in local information availability, which is frequently examined by studying the closures of local newspapers<ref type="bibr" target="#b0">(Abernathy 2018)</ref>. The dearth of local news and information has been linked to societal-level consequences of interest such as lower voter turnout<ref type="bibr" target="#b37">(Gentzkow, Shapiro, &amp; Sinkinson 2011)</ref>, polarized voting behavior<ref type="bibr" target="#b27">(Darr, Hitt, &amp; Dunaway 2018)</ref>, and a rise in borrowing costs for local governments<ref type="bibr" target="#b35">(Gao et al. 2020)</ref>. Particularly to firms, research has demonstrated how newspaper closures and news deserts may potentially increase firm and facility level misconduct due to the absence of available monitors on behalf of local stakeholders<ref type="bibr" target="#b49">(Heese et al. 2022;</ref><ref type="bibr" target="#b55">Jiang &amp; Kong 2023)</ref>.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>to measure such constructs as firm diversification (Choi, Menon, &amp; Tabakovic 2021), strategic differentiation (Guzman &amp; Li 2023; Hoberg &amp; Phillips 2016) and patent similarity/scope (Kuhn &amp; Teodorescu 2021; Kuhn &amp; Thompson 2019), recent years have seen transformer models gaining traction in organizational research. For example, Carlson (2023) uses sentence embeddings from the sentence transformers library (SBERT) to construct a measure that captures the degree to which a particular micro enterprise is differentiated. Vicinanza et al. (2023) train BERT models on different text corpuses, and use the decline in perplexity (or inverse-likelihood) of a given text across current and future time periods to study its prescience. Kovács et al. (2023) use BERT for a classification task, wherein books are classified into genres based on the synopses provided by the publisher. Broadly speaking, these prior studies use BERT models to measure different facets of differentiation and category alignment. Borrowing from the logic of these prior measures, we combine a form of differentiation (unexpectedness) with a form of category alignment (on-topicness) to derive a novel measure of curveball questions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: A Baseball-Inspired Framework of Surprising Questions in Expression Games</figDesc><graphic coords="50,74.85,99.26,576.00,324.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure A. 2 :</head><label>2</label><figDesc>Figure A.2: Examples of Curveball Questions -Apple and Netflix</figDesc><graphic coords="57,78.33,99.28,453.60,604.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="51,81.58,99.25,447.12,325.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Key Variables and Summary Statistics</figDesc><table><row><cell>Variable</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Validation of Curveball Question Score</figDesc><table><row><cell></cell><cell>(1)</cell><cell>(2)</cell><cell>(3)</cell><cell>(4)</cell><cell>(5)</cell><cell>(6)</cell></row><row><cell></cell><cell>Non-Answers</cell><cell>Answer Length</cell><cell>CEO Answer</cell><cell>CEO Non-answers</cell><cell>Ques. Curveb. Score</cell><cell>Stock Volatility</cell></row><row><cell>Quest. Curveball Score</cell><cell>0.010  *  *</cell><cell cols="3">0.076  *  *  *  0.142  *  *  *  0.033  *  *  *</cell><cell></cell><cell></cell></row><row><cell></cell><cell>(2.68)</cell><cell cols="2">(22.16) (14.59)</cell><cell>(7.61)</cell><cell></cell><cell></cell></row><row><cell>Star Analyst Question</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>0.060  *  *</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>(3.18)</cell><cell></cell></row><row><cell>Call-level Curveball</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>0.005  *</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>(2.02)</cell></row><row><cell>Prior Q. Trading Vol</cell><cell>0.001</cell><cell>-0.002</cell><cell>-0.008</cell><cell>-0.003</cell><cell>0.003</cell><cell>0.226  *  *  *</cell></row><row><cell></cell><cell>(0.32)</cell><cell cols="2">(-0.35) (-0.45)</cell><cell>(-0.68)</cell><cell>(0.49)</cell><cell>(7.86)</cell></row><row><cell>Prior Q. Stock Ret.</cell><cell>0.006</cell><cell>0.005</cell><cell>0.024</cell><cell>0.016  *</cell><cell>0.000</cell><cell>0.032  *  *  *</cell></row><row><cell></cell><cell>(1.47)</cell><cell>(1.44)</cell><cell>(1.61)</cell><cell>(2.06)</cell><cell>(0.04)</cell><cell>(4.47)</cell></row><row><cell>Firm Size</cell><cell cols="3">0.098  *  *  *  0.110  *  *  *  -0.119</cell><cell>0.028</cell><cell>0.055</cell><cell>-0.326  *  *  *</cell></row><row><cell></cell><cell>(4.81)</cell><cell cols="2">(4.74) (-1.91)</cell><cell>(0.89)</cell><cell>(1.56)</cell><cell>(-10.99)</cell></row><row><cell>Capital Int.</cell><cell>0.010</cell><cell cols="2">0.023  *  *  -0.037</cell><cell>-0.002</cell><cell>-0.014</cell><cell>-0.064  *  *  *</cell></row><row><cell></cell><cell>(1.39)</cell><cell cols="2">(2.84) (-1.68)</cell><cell>(-0.16)</cell><cell>(-1.30)</cell><cell>(-8.19)</cell></row><row><cell>Research Int.</cell><cell>0.005</cell><cell>0.003</cell><cell>-0.011</cell><cell>-0.011</cell><cell>0.000</cell><cell>-0.030</cell></row><row><cell></cell><cell>(0.54)</cell><cell cols="2">(0.24) (-0.22)</cell><cell>(-0.40)</cell><cell>(0.01)</cell><cell>(-1.47)</cell></row><row><cell>Cash Ratio</cell><cell>0.006</cell><cell>0.010</cell><cell>-0.039</cell><cell>-0.023</cell><cell>-0.010</cell><cell>-0.021</cell></row><row><cell></cell><cell>(0.58)</cell><cell cols="2">(0.99) (-1.28)</cell><cell>(-1.49)</cell><cell>(-0.71)</cell><cell>(-1.45)</cell></row><row><cell>Leverage</cell><cell>0.002</cell><cell>0.007</cell><cell>-0.026</cell><cell>-0.003</cell><cell>0.001</cell><cell>0.022  *  *</cell></row><row><cell></cell><cell>(0.35)</cell><cell cols="2">(1.30) (-1.95)</cell><cell>(-0.53)</cell><cell>(0.14)</cell><cell>(3.03)</cell></row><row><cell>Firm RoA</cell><cell>-0.001</cell><cell>0.016</cell><cell>-0.040</cell><cell>-0.025</cell><cell>-0.005</cell><cell>-0.135  *  *  *</cell></row><row><cell></cell><cell>(-0.10)</cell><cell cols="2">(1.74) (-1.21)</cell><cell>(-1.34)</cell><cell>(-0.61)</cell><cell>(-6.88)</cell></row><row><cell>Tobin's Q</cell><cell>0.002</cell><cell>0.016  *</cell><cell>0.029</cell><cell>0.003</cell><cell>0.015</cell><cell>-0.054  *  *  *</cell></row><row><cell></cell><cell>(0.43)</cell><cell>(2.53)</cell><cell>(1.49)</cell><cell>(0.36)</cell><cell>(1.44)</cell><cell>(-5.47)</cell></row><row><cell>Constant</cell><cell>0.002  *  *  *</cell><cell>0.000</cell><cell></cell><cell>-0.012</cell><cell>0.017  *  *  *</cell><cell>-0.000</cell></row><row><cell></cell><cell>(6.10)</cell><cell>(0.50)</cell><cell></cell><cell>(-0.95)</cell><cell>(6.41)</cell><cell>(-0.02)</cell></row><row><cell>Observations</cell><cell>100659</cell><cell cols="2">100659 64393</cell><cell>67416</cell><cell>65291</cell><cell>108762</cell></row><row><cell>R-Squared</cell><cell>0.080</cell><cell>0.172</cell><cell></cell><cell>0.118</cell><cell>0.220</cell><cell>0.724</cell></row><row><cell>LR Chi-sq</cell><cell></cell><cell></cell><cell>2264.785</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Firm F.E.</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell></row><row><cell>Time(Quarter) F.E.</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell></row></table><note><p>t statistics in parentheses * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 :</head><label>3</label><figDesc>Newspaper Closures and Stock Outcomes on the Call Day</figDesc><table><row><cell></cell><cell>(1)</cell><cell>(2)</cell><cell>(3)</cell><cell>(4)</cell></row><row><cell></cell><cell cols="4">Return Ab. Return Stock Volatility Idio. Volatility</cell></row><row><cell>Treated * Post</cell><cell>-0.004</cell><cell>-0.009</cell><cell>0.074  *  *</cell><cell>0.062  *  *</cell></row><row><cell></cell><cell>(-0.24)</cell><cell>(-0.61)</cell><cell>(3.12)</cell><cell>(3.10)</cell></row><row><cell>Prior Q. Trading Vol</cell><cell>0.005</cell><cell>0.006</cell><cell>0.236  *  *  *</cell><cell>0.245  *  *  *</cell></row><row><cell></cell><cell>(0.70)</cell><cell>(1.00)</cell><cell>(7.05)</cell><cell>(7.10)</cell></row><row><cell>Prior Q. Stock Return</cell><cell>-0.017  *</cell><cell>-0.018  *</cell><cell>0.037  *  *  *</cell><cell>0.042  *  *  *</cell></row><row><cell></cell><cell>(-2.40)</cell><cell>(-2.56)</cell><cell>(4.03)</cell><cell>(4.39)</cell></row><row><cell>Firm Size</cell><cell>-0.161  *  *  *</cell><cell>-0.165  *  *  *</cell><cell>-0.299  *  *  *</cell><cell>-0.403  *  *  *</cell></row><row><cell></cell><cell>(-5.06)</cell><cell>(-4.97)</cell><cell>(-10.36)</cell><cell>(-14.08)</cell></row><row><cell>Capital Int.</cell><cell>-0.007</cell><cell>-0.009</cell><cell>-0.062  *  *  *</cell><cell>-0.063  *  *  *</cell></row><row><cell></cell><cell>(-0.89)</cell><cell>(-1.18)</cell><cell>(-5.62)</cell><cell>(-5.88)</cell></row><row><cell>Research Int.</cell><cell>-0.003</cell><cell>-0.001</cell><cell>-0.024</cell><cell>-0.026</cell></row><row><cell></cell><cell>(-0.23)</cell><cell>(-0.09)</cell><cell>(-1.13)</cell><cell>(-1.19)</cell></row><row><cell>Cash Ratio</cell><cell>-0.006</cell><cell>-0.011</cell><cell>-0.025</cell><cell>-0.035  *</cell></row><row><cell></cell><cell>(-0.67)</cell><cell>(-1.20)</cell><cell>(-1.59)</cell><cell>(-2.22)</cell></row><row><cell>Leverage</cell><cell>-0.004</cell><cell>-0.005</cell><cell>0.020  *  *</cell><cell>0.022  *  *</cell></row><row><cell></cell><cell>(-0.60)</cell><cell>(-0.91)</cell><cell>(2.87)</cell><cell>(3.09)</cell></row><row><cell>Firm RoA</cell><cell>-0.016</cell><cell>-0.011</cell><cell>-0.125  *  *  *</cell><cell>-0.125  *  *  *</cell></row><row><cell></cell><cell>(-1.79)</cell><cell>(-1.24)</cell><cell>(-5.61)</cell><cell>(-5.62)</cell></row><row><cell>Tobin's Q</cell><cell>-0.043  *  *  *</cell><cell>-0.043  *  *  *</cell><cell>-0.049  *  *  *</cell><cell>-0.065  *  *  *</cell></row><row><cell></cell><cell>(-4.75)</cell><cell>(-4.66)</cell><cell>(-5.13)</cell><cell>(-7.05)</cell></row><row><cell>County Median Income</cell><cell>0.031</cell><cell>0.032</cell><cell>-0.103  *  *</cell><cell>-0.086  *  *</cell></row><row><cell></cell><cell>(1.86)</cell><cell>(1.72)</cell><cell>(-2.98)</cell><cell>(-2.62)</cell></row><row><cell>County Unemployment Rate</cell><cell>0.026  *</cell><cell>0.019</cell><cell>0.027</cell><cell>0.023</cell></row><row><cell></cell><cell>(2.41)</cell><cell>(1.89)</cell><cell>(1.68)</cell><cell>(1.48)</cell></row><row><cell>Constant</cell><cell>0.003  *  *</cell><cell>0.003  *  *</cell><cell>-0.002</cell><cell>-0.001</cell></row><row><cell></cell><cell>(2.59)</cell><cell>(2.68)</cell><cell>(-1.34)</cell><cell>(-0.44)</cell></row><row><cell>Observations</cell><cell>99260</cell><cell>99251</cell><cell>99266</cell><cell>99266</cell></row><row><cell>R-Squared</cell><cell>0.060</cell><cell>0.057</cell><cell>0.730</cell><cell>0.727</cell></row><row><cell>Firm, Time F.E.</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell></row></table><note><p>t statistics in parentheses * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 :</head><label>4</label><figDesc>Newspaper Closures and Curveball Question Score</figDesc><table><row><cell>(1)</cell><cell>(2)</cell></row><row><cell cols="2">Curveball Question Score</cell></row></table><note><p>t statistics in parentheses * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table A .</head><label>A</label><figDesc>1: Interaction Between Unexpectedness and Off-topic Scores statistics in parentheses * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001Table A.2: Newspaper Closures and the Underlying Dimensions of Curveball Questions</figDesc><table><row><cell></cell><cell></cell><cell>(1)</cell><cell>(2)</cell><cell>(3)</cell><cell></cell><cell>(4)</cell><cell>(5)</cell><cell>(6)</cell></row><row><cell></cell><cell cols="6">(1) Curveball Question Score Unexpectedness (2)</cell><cell>(3)</cell><cell>Off-topic</cell></row><row><cell>Treated * Post</cell><cell cols="2">0.060  *  *</cell><cell cols="5">Non-Answers Answer Length CEO Answer 0.058  *  *  0.037  *  0.042  *  0.011</cell><cell>0.033</cell></row><row><cell>Unexpectedness</cell><cell cols="2">(2.61)</cell><cell>0.009 (2.65)</cell><cell cols="2">0.048  *  *  *  (2.47)</cell><cell>(2.47)</cell><cell>0.097  *  *  *  (0.48)</cell><cell>(1.45)</cell></row><row><cell>Prior Q. Trading Vol</cell><cell></cell><cell></cell><cell>(1.74) 0.000</cell><cell>(9.20)</cell><cell></cell><cell>-0.000</cell><cell>(7.08)</cell><cell>0.003</cell></row><row><cell>Off-topic</cell><cell></cell><cell></cell><cell>-0.007 (0.17)</cell><cell cols="2">-0.117  *  *  *</cell><cell>(-0.07)</cell><cell>-0.163  *  *  *</cell><cell>(1.02)</cell></row><row><cell>Prior Q. Stock Return</cell><cell></cell><cell></cell><cell>(-1.55) -0.001</cell><cell cols="2">(-27.33)</cell><cell>-0.003</cell><cell>(-14.77)</cell><cell>-0.003</cell></row><row><cell cols="3">Unexpectedness * Off-topic Prior Q. Trading Vol Firm Size Prior Q. Stock Return Capital Int.</cell><cell>-0.014  *  *  *  (-3.75) (-0.17) 0.001 0.042 (0.33) (1.53) 0.006 -0.007</cell><cell cols="2">-0.025  *  *  *  (-6.28) -0.002 (-0.30) 0.005</cell><cell>(-1.06) -0.021 (-0.85) -0.014</cell><cell>-0.035  *  *  *  (-3.45) -0.006 (-0.36) 0.025</cell><cell>(-0.99) -0.073  *  *  (-2.93) -0.021  *  *</cell></row><row><cell></cell><cell></cell><cell></cell><cell>(1.47) (-0.83)</cell><cell>(1.32)</cell><cell></cell><cell>(-1.85)</cell><cell>(1.68)</cell><cell>(-2.87)</cell></row><row><cell>Firm Size Research Int.</cell><cell></cell><cell></cell><cell>0.098  *  *  *  -0.005</cell><cell cols="2">0.104  *  *  *</cell><cell>0.001</cell><cell>-0.130  *</cell><cell>0.002</cell></row><row><cell></cell><cell></cell><cell></cell><cell>(4.82) (-0.42)</cell><cell>(4.50)</cell><cell></cell><cell>(0.07)</cell><cell>(-2.08)</cell><cell>(0.14)</cell></row><row><cell>Capital Int. Cash Ratio</cell><cell></cell><cell></cell><cell>0.010 -0.010</cell><cell>0.021  *  *</cell><cell></cell><cell>0.002</cell><cell>-0.039</cell><cell>0.002</cell></row><row><cell></cell><cell></cell><cell></cell><cell>(1.39) (-1.00)</cell><cell>(2.60)</cell><cell></cell><cell>(0.15)</cell><cell>(-1.78)</cell><cell>(0.19)</cell></row><row><cell>Research Int. Leverage Cash Ratio Firm RoA</cell><cell></cell><cell></cell><cell>0.005 (0.53) -0.002 0.006 (-0.31) (0.56) -0.006</cell><cell>0.002 (0.16) 0.010 (0.93)</cell><cell></cell><cell>0.000 (0.07) -0.002</cell><cell>-0.021 (-0.42) -0.040 (-1.32)</cell><cell>0.006 (1.19) -0.001</cell></row><row><cell>Leverage</cell><cell></cell><cell></cell><cell>0.002 (-1.09)</cell><cell>0.007</cell><cell></cell><cell>(-0.47)</cell><cell>-0.026</cell><cell>(-0.14)</cell></row><row><cell>Tobin's Q</cell><cell></cell><cell></cell><cell>(0.34) 0.015  *  *</cell><cell>(1.31)</cell><cell></cell><cell>0.001</cell><cell>(-1.90)</cell><cell>-0.016  *  *</cell></row><row><cell>Firm RoA</cell><cell></cell><cell></cell><cell>-0.001 (3.03)</cell><cell>0.016</cell><cell></cell><cell>(0.13)</cell><cell>-0.039</cell><cell>(-2.78)</cell></row><row><cell>County Med. Income</cell><cell></cell><cell></cell><cell>(-0.11) -0.008</cell><cell>(1.68)</cell><cell cols="2">-0.061  *  *</cell><cell>(-1.20)</cell><cell>-0.078  *  *</cell></row><row><cell>Tobin's Q</cell><cell></cell><cell></cell><cell>0.002 (-0.32)</cell><cell>0.015  *</cell><cell></cell><cell>(-2.68)</cell><cell>0.029</cell><cell>(-2.62)</cell></row><row><cell>Constant County Unemp. Rate Constant</cell><cell cols="2">-0.002  *</cell><cell>(0.44) 0.006  *  *  *  -0.007 (4.99) (-0.64) 0.001</cell><cell cols="4">(2.43) 0.009  *  *  *  (6.74) -0.001 -0.004  *  *  *  0.004  *  *  *  -0.004  *  *  *  (1.46) 0.009 0.008 (0.75) (0.72)</cell></row><row><cell>Observations</cell><cell cols="2">(-2.22)</cell><cell>100,659 (1.00)</cell><cell cols="3">100,659 (-1.40) (-4.78)</cell><cell>64,393 (3.58)</cell><cell>(-3.69)</cell></row><row><cell>R-Squared Observations</cell><cell cols="2">115246</cell><cell>0.080 104783</cell><cell cols="3">0.176 115246 104783</cell><cell>115246</cell><cell>104783</cell></row><row><cell>LR Chi-sq R-Squared</cell><cell></cell><cell>0.199</cell><cell>0.202</cell><cell>0.213</cell><cell></cell><cell>0.210</cell><cell>2274.706 0.300</cell><cell>0.300</cell></row><row><cell>Firm F.E. Controls</cell><cell></cell><cell>No</cell><cell>Yes Yes</cell><cell>Yes No</cell><cell></cell><cell>Yes</cell><cell>Yes No</cell><cell>Yes</cell></row><row><cell cols="2">Time(Quarter) F.E. Firm F.E.</cell><cell>Yes</cell><cell>Yes Yes</cell><cell>Yes Yes</cell><cell></cell><cell>Yes</cell><cell>Yes Yes</cell><cell>Yes</cell></row><row><cell>Time(Quarter) F.E.</cell><cell></cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell><cell></cell><cell>Yes</cell><cell>Yes</cell><cell>Yes</cell></row></table><note><p>t t statistics in parentheses * p &lt; 0.05, * * p &lt; 0.01, * * * p &lt; 0.001</p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>We use the term "unexpected" to refer to a question that is deemed unlikely, based on BERT's Next Sentence Prediction feature, relative to the management team presentation that preceded it. It is possible that the management team might have anticipated that such a question would arise at some point during their presentation; however, the timing of the question might still be unexpected given the conversation's narrative flow.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>It is important to note that our design incorporates control firms throughout the sample, eliminating the need to compare treated firms to one another based on the timing of treatment. Moreover, the issue of treatment timing is relatively inconsequential in our context. A substantial proportion (roughly 90%) of our control sample is never treated in our observation period. This mitigates concerns regarding potential biases that could arise when firms treated at different times serve as controls for each other, as highlighted in<ref type="bibr" target="#b6">Baker, Larcker, &amp; Wang (2022)</ref>. We also focus on a relatively short time window, three years before and after the newspaper closure, thus reducing the likelihood that a firm treated early in the sample period would unduly influence treatment effects estimated for firms treated at a later time.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>The censoring of a distribution from the left for the dependent variable may potentially introduce bias in estimation of a standard OLS regression; for the sake of robustness, we log transform the curveball question score, turning it into a Gaussian-like distribution, and re-run the regression models where the curveball question score is a dependent variable. We find no differences in our results.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The expanding news desert</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Abernathy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Chapel Hill: Center for Innovation and Sustainability in local media, University of North Carolina at Chapel Hill)</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Mobilizing conceptual spaces: How word embedding models can inform measurement and theory within organization science</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Aceves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Evans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="788" to="814" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Adaptation or persistence? emergence and revision of organization designs in new ventures</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Alexy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Poetz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Puranam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Reitzig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1439" to="1472" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">No news is bad news: local news intensity and firmsâ information environments</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Allee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cating</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rawson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Accounting Studies</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Araci</surname></persName>
+		</author>
+		<title level="m">FinBERT: Financial Sentiment Analysis with Pre-trained Language Models Publisher: arXiv Version Number: 1</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">What makes popular culture popular? product features and optimal differentiation in music</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Askin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mauskapf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="910" to="944" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">How much should we trust staggered differencein-differences estimates</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Baker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">F</forename><surname>Larcker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="370" to="395" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">let me get back to you&apos;-a machine learning approach to measuring nonanswers</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mansouri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Woebbeking</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="6333" to="6348" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The organizational selection of status characteristics: Status evaluations in an open source community</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Bianchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stewart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="341" to="354" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The economic and interpersonal consequences of deflecting direct questions</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">B</forename><surname>Bitterly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Schweitzer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Personality and Social Psychology</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="945" to="990" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Gender in engineering departments: Are there gender differences in interruptions of academic job talks?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Blair-Loy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">E</forename><surname>Rogers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Glaser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">A</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Abraham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Cosman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Sciences</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">29</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Latent dirichlet allocation</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">The disciplining effect of status: Evaluator status awards and observed gender bias in evaluations</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">L</forename><surname>Botelho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gertsberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="5311" to="5329" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">i (might be) just that good&quot;: Honest and deceptive impression management in employment interviews</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Bourdage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tarraf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="597" to="632" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Brokerage and Closure: An Introduction to Social Capital</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Burt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>Oxford University Press</publisher>
+			<pubPlace>Oxford</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Linguistic complexity in firm disclosures: Obfuscation or information</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Bushee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">D</forename><surname>Gow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Taylor</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting Research</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="85" to="121" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Managerial and investor responses to disclosure regulation: The case of reg fd and conference calls</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Bushee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Matsumoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Accounting Review</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="617" to="643" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Passing the mic: Career and firm outcomes of executive interactions</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Rouen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zou</surname></persName>
+		</author>
+		<idno>SSRN 3942049</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Meet the press: Survey evidence on financial journalists as information intermediaries</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Call</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Emett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Maksymov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">Y</forename><surname>Sharp</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting and Economics</title>
+		<imprint>
+			<biblScope unit="volume">73</biblScope>
+			<biblScope unit="issue">2-3</biblScope>
+			<biblScope unit="page">101455</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Differentiation in microenterprises</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Carlson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Strategic Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1141" to="1167" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Insiders, outsiders, and the struggle for consecration in cultural fields: A core-periphery perspective</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cattani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ferriani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Allison</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="258" to="281" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Manager-analyst conversations in earnings conference calls</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">V</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Nagar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schoenfeld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Accounting Studies</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1315" to="1354" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Using machine learning to revisit the diversification -performance relationship</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Menon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tabakovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Strategic Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1632" to="1661" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The crisis in local newspapers and organizational wrongdoing: The role of community social connectedness</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Valente</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1777" to="1799" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Rational ritual: Culture, coordination, and common knowledge</title>
+		<author>
+			<persName><forename type="first">Msy</forename><surname>Chwe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Princeton University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">The Role of Gender in the Aggressive Questioning of CEOs During Earnings Conference Calls</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Comprix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lopatta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Tideman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Accounting Review</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="79" to="107" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Duality in diversity: How intrapersonal and interpersonal cultural heterogeneity relate to firm performance</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Corritore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="359" to="394" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Newspaper Closures Polarize Voting Behavior</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Darr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Hitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Dunaway</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Communication</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1007" to="1028" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zhong</surname></persName>
+		</author>
+		<title level="m">Do Analysts Learn from the News Media? Evidence from a Natural Experiment</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note>Working paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Eisenhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">B</forename><surname>Bingham</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Optimal structure, market dynamism, and the strategy of simple rules</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="413" to="452" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Toutanova</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference of the North</title>
+		<meeting>the 2019 Conference of the North<address><addrLine>Minneapolis, Minnesota</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4171" to="4186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Gender and the dynamics of economics seminars</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dupas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Modestino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Niederle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wolfers</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<publisher>National Bureau of Economic Research</publisher>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Here Comes the Sun: The Impact of Incidental Contextual Factors on Entrepreneurial Resource Acquisition</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Dushnitsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sarkar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Academy of Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="66" to="92" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Social Capital at Work: Networks and Employment at a Phone Center</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Castilla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Moore</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1288" to="1356" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">B</forename><surname>Francis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shohfi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Gender and Earnings Conference Calls</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Financing dies in darkness? the impact of newspaper closures on public finance</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Murphy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">135</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="445" to="467" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">The dark side of entrepreneurial framing: A process model of deception and legitimacy loss</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Garud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Snihur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">D</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Phillips</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>Academy of Management Review</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">The Effect of Newspaper Entry and Exit on Electoral Politics</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gentzkow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Shapiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sinkinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="2980" to="3018" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Marks of distinction: Framing and audience appreciation in the context of investment advice</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Giorgi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Weber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="333" to="367" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Strategic Interaction</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Goffman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1970">1970</date>
+			<publisher>University of Pennsylvania Press</publisher>
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">What does it mean to span cultural boundaries? variety and atypicality in cultural consumption</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Hannan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kovács</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="215" to="241" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Look whoâs talking: An analysis of market responses to executive earnings call communication</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">C</forename><surname>Goldman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno>SSRN 4115713</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Gender Stereotypes, Same-Gender Preferences, and Organizational Variation in the Hiring of Women: Evidence from Law Firms</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Gorman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="702" to="728" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Doing organizational identity: Earnings surprises and the performative atypicality premium</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Gouvard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="781" to="823" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">BERTopic: Neural topic modeling with a class-based TF-IDF procedure</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Grootendorst</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Measuring Founding Strategy</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Guzman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="101" to="118" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">When do entrepreneurs accurately evaluate venture capital firmsâ track records? a bounded rationality perspective</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">L</forename><surname>Hallen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Pahnke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Academy of Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1535" to="1560" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Democracy&apos;s detectives: the economics of investigative journalism</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hamilton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>Harvard university press</publisher>
+			<pubPlace>Cambridge (Mass.</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Structural inertia and organizational change</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Hannan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Freeman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="page" from="149" to="164" />
+			<date type="published" when="1984">1984</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">When the local newspaper leaves town: The effects of local newspaper closures on corporate misconduct</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Heese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Perez-Cavazos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Peter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">145</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="445" to="463" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Text-Based Network Industries and Endogenous Product Differentiation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hoberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Phillips</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Political Economy</title>
+		<imprint>
+			<biblScope unit="volume">124</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1423" to="1465" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Analyzing speech to detect financial misreporting</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Hobson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Mayew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Venkatachalam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="349" to="392" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Does Silence Speak? An Empirical Analysis of Disclosure Choices During Conference Calls</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hollander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pronk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Roelofsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting Research</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="531" to="563" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Jacks of all trades and masters of none: Audiences&apos; reactions to spanning genres in feature film production</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hsu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative science quarterly</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="420" to="450" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Managing the unknowable: The effectiveness of early-stage investor gut feel in entrepreneurial investment decisions</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Pearce</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="634" to="670" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Green dies in darkness? environmental externalities of newspaper closures</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">X</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Accounting Studies</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">We Ask Men to Win and Women Not to Lose: Closing the Gender Gap in Startup Funding</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kanze</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Conley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">T</forename><surname>Higgins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Academy of Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="586" to="614" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Stop the presses! or wait, we might need them: Firm responses to local newspaper closures and layoffs</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>White</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Corporate Finance</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page">102035</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Authenticity and consumer value ratings: Empirical tests from the restaurant domain</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kovács</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Carroll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Lehman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="458" to="478" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">The stickiness of category labels: Audience perception and evaluation of producer repositioning in creative markets</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kovács</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sharkey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kovács</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Negro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Pólos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pontikes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajv</forename><surname>Sharkey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Mens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename></persName>
+		</author>
+		<title level="m">Concepts and Categories: Foundations for Sociological and Cultural Analysis</title>
+		<imprint>
+			<publisher>Columbia University Press</publisher>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">The paradox of publicity: How awards can negatively affect the evaluation of quality</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kovács</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Sharkey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="33" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">The Track One Pilot Program: Who benefits from prioritized patent examination?</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mhm</forename><surname>Teodorescu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Strategic Entrepreneurship Journal</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="185" to="208" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">How to Measure and Draw Causal Inferences with Patent Scope</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">C</forename><surname>Thompson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of the Economics of Business</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="38" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Toward a comparative sociology of valuation and evaluation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lamont</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="201" to="221" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Detecting deceptive discussions in conference calls</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">F</forename><surname>Larcker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Zakolyukina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="495" to="540" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Learning to hire? hiring as a dynamic experiential learning process in an online market for contract labor</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Leung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="5651" to="5668" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Knowledge, compensation, and firm value: An empirical analysis of firm communication</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Minnis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Nagar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rajan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Accounting and Economics</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="96" to="116" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Measuring corporate culture using machine learning</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Mai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Review of Financial Studies</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="3265" to="3315" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">What makes conference calls useful? the information content of managers&apos; presentations and analysts&apos; discussion sessions</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Matsumoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pronk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Roelofsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Accounting Review</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1383" to="1414" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Individual Analysts&apos; Stock Recommendations, Earnings Forecasts, and the Informativeness of Conference Call Question and Answer Sessions</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Mayew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sethuraman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Venkatachalam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Accounting Review</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="311" to="337" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Distributed Representations of Words and Phrases and their Compositionality</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<editor>
+			<persName><forename type="first">L</forename><surname>Bottou</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><surname>Welling</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Z</forename><surname>Ghahramani</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">K</forename><forename type="middle">Q</forename><surname>Weinberger</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">26</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Asking Better Questions: The Effect of Changing Investment Organizations&apos; Evaluation Practices on Gender Disparities in Funding Innovation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Lall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goldstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Montalvao</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>The World Bank</publisher>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">Eliciting the truth, the whole truth, and nothing but the truth: The effect of question phrasing on deception. Organizational Behavior and Human Decision Processes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Minson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Vanepps</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Yip</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Schweitzer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page" from="76" to="93" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Actual and perceptual effects of category spanning</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Negro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Leung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="684" to="696" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">The Mark of a Criminal Record</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Pager</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="937" to="975" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Rating performance or contesting status: Evidence against the homophily explanation for supervisor demographic skew in performance ratings</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">J</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="373" to="385" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Two sides of the same coin: How ambiguous classification affects multiple audiences evaluations</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Pontikes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="81" to="118" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<monogr>
+		<author>
+			<persName><forename type="first">N</forename><surname>Reimers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Gurevych</surname></persName>
+		</author>
+		<title level="m">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks Publisher: arXiv Version Number: 1</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Hiring as cultural matching: The case of elite professional service firms</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Rivera</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="999" to="1022" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Go with Your Gut: Emotion and Evaluation in Job Interviews</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Rivera</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1339" to="1389" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">The artful dodger: Answering the wrong question the right way</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Rogers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Norton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Applied</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">139</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">The production of social capital in us counties</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rupasingha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Goetz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Freshwater</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Socio-economics</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="83" to="101" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">It&apos;s all relative: Competition and status drive interpersonal perception</title>
+		<author>
+			<persName><forename type="first">Amt</forename><surname>Russell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Fiske</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Social Psychology</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1193" to="1201" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Categories and organizational status: The role of industry status in the response to organizational deviance</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Sharkey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1380" to="1433" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">A change of tune: The democratization of market mediation and crossover production in the us commercial music industry</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="319" to="354" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">The relation between investigative utterance types and the informativeness of child witnesses</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Sternberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Lamb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Hershkowitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Esplin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Redlich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sunshine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Developmental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="439" to="451" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<analytic>
+		<title level="a" type="main">Interorganizational endorsements and the performance of entrepreneurial ventures</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">E</forename><surname>Stuart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hoang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Hybels</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="315" to="349" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Attention is All you Need. Guyon I, Luxburg UV</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Å</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<editor>
+			<persName><forename type="first">S</forename><surname>Bengio</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">H</forename><surname>Wallach</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Fergus</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">S</forename><surname>Vishwanathan</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Garnett</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">30</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Oppositional product names, organizational identities, and product appeal</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Verhaal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">M</forename><surname>Khessina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Dobrev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Organization Science</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1466" to="1484" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<analytic>
+		<title level="a" type="main">A deep-learning model of prescient ideas demonstrates that they emerge from the periphery</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Vicinanza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PNAS nexus</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">275</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<analytic>
+		<title level="a" type="main">Outperforming the market: a comparison of Star and NonStar analystsâ investment strategies and recommendations</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Vukovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oou</forename><surname>Kurbonov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maiti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ãzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Radovanovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Humanities and Social Sciences Communications</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">16</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">The Colorblind Crowd? Founder Race and Performance in Crowdfunding</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Younkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Kuppuswamy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="3269" to="3287" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">How entrepreneurs use symbolic management to acquire resources</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">N</forename><surname>Huy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Administrative Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="70" to="105" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Construction, concentration, and (dis) continuities in social valuations</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">W</forename><surname>Zuckerman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Sociology</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="223" to="245" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

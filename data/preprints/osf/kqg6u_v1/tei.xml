@@ -1,0 +1,2863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Computational Models for In-Vehicle User Interface Design: A Systematic Literature Review</title>
+				<funder ref="#_fHvBK8e">
+					<orgName type="full">unknown</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>ACM</publisher>
+				<availability status="unknown"><p>Copyright ACM</p>
+				</availability>
+				<date type="published" when="2024-09-22">2024-09-22</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Martin</forename><surname>Lorenz</surname></persName>
+							<email>lorenz@cs.uni-leipzig.de</email>
+							<idno type="ORCID">0009-0003-3517-5839</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Tiago</forename><surname>Amorim</surname></persName>
+							<email>amorim@cs.uni-koeln.de</email>
+							<idno type="ORCID">0000-0003-0930-2307</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Debargha</forename><surname>Dey</surname></persName>
+							<email>debargha.dey@cornell.edu</email>
+							<idno type="ORCID">0000-0001-9266-0126</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Mersedeh</forename><surname>Sadeghi</surname></persName>
+							<email>sadeghi@cs.uni-koeln.de</email>
+							<idno type="ORCID">0000-0001-6405-8824</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+							<idno type="ORCID">0000-0002-4437-2821</idno>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="institution">University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Computational Models for In-Vehicle User Interface Design: A Systematic Literature Review</title>
+					</analytic>
+					<monogr>
+						<title level="m">Proceedings of the 16th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+						<meeting>the 16th International Conference on Automotive User Interfaces and Interactive Vehicular Applications						</meeting>
+						<imprint>
+							<publisher>ACM</publisher>
+							<biblScope unit="page" from="204" to="215"/>
+							<date type="published" when="2024-09-22" />
+						</imprint>
+					</monogr>
+					<idno type="MD5">4F34C92DF0F1CD54491F7B854764BA27</idno>
+					<idno type="DOI">10.1145/3640792.3675735</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:37+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>computational modeling</term>
+					<term>user interfaces</term>
+					<term>literature review</term>
+					<term>cognitive modeling</term>
+					<term>automated driving</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In this review, we analyze the current state of the art of computational models for in-vehicle User Interface (UI) design. Driver distraction, often caused by drivers performing Non Driving Related Tasks (NDRTs), is a major contributor to vehicle crashes. Accordingly, in-vehicle UIs must be evaluated for their distraction potential. Computational models are a promising solution to automate this evaluation, but are not yet widely used, limiting their real-world impact. We systematically review the existing literature on computational models for NDRTs to analyze why current approaches have not yet found their way into practice. We found that while many models are intended for UI evaluation, they focus on small and isolated phenomena that are disconnected from the needs of automotive UI designers. In addition, very few approaches make predictions detailed enough to inform current design processes. Our analysis of the state of the art, the identified research gaps, and the formulated research potentials can guide researchers and practitioners toward computational models that improve the automotive UI design process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CCS CONCEPTS</head><p>• Human-centered computing → HCI theory, concepts and models; User models; User studies; • General and reference → Surveys and overviews.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Driver distraction is a leading cause of vehicle crashes <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b27">28,</ref><ref type="bibr" target="#b96">96]</ref>. Nevertheless, modern vehicles are equipped with a variety of invehicle UIs that allow the driver to access and control driving and infotainment functions while driving. While interacting with such in-vehicle UIs, drivers divide their attention between the primary driving task and a secondary Non Driving Related Tasks (NDRTs). This diversion of attention away from the road can impair driving performance and increase crash risk. While driver distraction, its consequences, and mitigation strategies have been discussed for many years <ref type="bibr" target="#b96">[96]</ref>, the discussion has recently gained momentum due to large center stack touchscreens becoming the de facto standard interface <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b87">87,</ref><ref type="bibr" target="#b89">89]</ref>. Growing concern about the impact of touchscreens and infotainment displays on driver distraction has prompted regulatory bodies like the European New Car Assessment Programme (Euro NCAP) to mandate a return to haptic controls for critical functionalities in order for vehicles to achieve a fivestar safety rating <ref type="bibr" target="#b3">[4]</ref>. Currently, the automotive industry primarily relies on empirical user studies to evaluate in-vehicle interfaces for usability and distraction potential. However, the complexity of modern infotainment systems makes these studies resourceintensive and limits their ability to provide holistic distraction evaluations <ref type="bibr" target="#b15">[16]</ref>. A promising solution are computational models that can automate (parts of) the interface evaluation and thus help designers to evaluate designs not only more efficiently, but also earlier in the design process and on a larger scale. Outside the automotive domain, there are already many approaches that make detailed predictions about the impact of design features on user behavior, for example in web design <ref type="bibr" target="#b4">[5]</ref>, mobile app design <ref type="bibr" target="#b10">[11]</ref>, or desktop GUI design <ref type="bibr" target="#b66">[66]</ref>. However, while computational models for in-vehicle interface evaluation exist <ref type="bibr" target="#b73">[73,</ref><ref type="bibr" target="#b74">74]</ref>, they have not yet found their way into the industrial UX design process <ref type="bibr" target="#b18">[19]</ref>. Understanding what models currently exist, what their capabilities are, and what is missing could help in the challenge of making computational models a standard tool within the design process of in-vehicle UIs.</p><p>In this systematic literature review, therefore, we analyze the current state of computational models that can be used to support Automotive user interfaces include all interfaces that allow the driver to interact with the vehicle. The purpose of these interfaces may be to provide information to support the driving task or to provide entertainment to the driver <ref type="bibr" target="#b25">[26]</ref>. Interfaces that provide both, such as large center stack touchscreens, are called infotainment-systems <ref type="bibr" target="#b58">[59]</ref>. Drivers can interact with such interfaces in a variety of modalities, including but not limited to speech, touch, or hard keys <ref type="bibr" target="#b58">[59]</ref>. Recently, touchscreens not only became the de-facto interface to acess most of the functionalities but also a frequently discussed topic when it comes to driver distraction <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b70">70]</ref>. Driver distraction is defined as "a diversion of attention from the activities critical for safe driving toward a competing activity" <ref type="bibr" target="#b49">[50]</ref>. The relevance of touchscreen interactions for driver distraction becomes clear considering that drivers are forced to divide their visual attention between the primary driving task and the secondary touchscreen task. In contrast to hard key interactions, drivers do not receive any haptic feedback and must visually verify that their interaction has resulted in the intended action, which increases the amount of time they spend looking away from the road. If drivers are too engaged in NDRTs their awareness of the driving environment and situation around them decreases, which can be a contributing factor to road accidents <ref type="bibr" target="#b78">[78]</ref>. For this reason, driver distraction has to be reduced as, for example, stated in the National Highway Traffic Association (NHTSA) driver distraction guidelines <ref type="bibr" target="#b0">[1]</ref>. To do so, vehicle manufactures traditionally conduct extensive user studies to evaluate and reduce the distraction potential of the in-vehicle user interfaces. However, modern systems are too complex and user studies are too time-consuming and expensive, that it is not possible to perform holistic system tests in a sufficient manner. Computational models can provide a remedy here, because they can already be used in the design cycle and not only after developing the UI. They are way less expensive than traditional user studies and they can be used for testing complex scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Computational Models</head><p>Computational models in the area of HCI can help researchers and practitioners alike to understand, explain, and predict human behavior. In line with Shmueli <ref type="bibr" target="#b84">[84]</ref>, models can be divided into statistical models, which are concerned with the generation of new insights on human behavior and computational models that predict or simulate human behavior. Although both types of models can theoretically be used for either purpose, in HCI statistical models are used primarily for explanation and computational models for prediction.</p><p>Computational models have been used to evaluate driver behavior since the 1970s <ref type="bibr" target="#b71">[71]</ref>. Aligned with Park and Zahabi <ref type="bibr" target="#b71">[71]</ref>, following categories of computational models to model driver behavior exist. For completeness we also introduce Machine Learning (ML) models:</p><p>Adaptive Control of Thought-Rational (ACT-R). ACT-R is a cognitive architecture and was developed by Anderson et al. <ref type="bibr" target="#b2">[3]</ref>. The model is composed of several modules, representing different cognitive functions, such as vision or memory. ACT-R is used in the automotive domain in multiple ways for driver behavior prediction, such as braking, lane changing, multitasking or steering <ref type="bibr" target="#b71">[71]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Goals, Operations, Methods, and Selection Rules (GOMS).</head><p>These models describe the relationship between a task and a user knowing how to achieve the task. Goals are the goals the user wants to achieve. Operators are the basic actions of an application, methods describe a sequence of operators and sub-goals the user learned before to accomplish a goal, and selection rules are heuristics that differ between users to select a method when multiple methods could be applied to accomplish the goal <ref type="bibr" target="#b38">[39]</ref>. The most widely used GOMS variation for modeling drivers secondary task interaction are Keystroke-Level-Models (KLMs) <ref type="bibr" target="#b6">[7]</ref>. Such approaches decompose an entire task into a sequence of specific primitive operators and empirically determine the interaction time for each operator. The total task time is then equal to the sum of the individual operator times.</p><p>Queueing Networks (QNs). QN-models are models based on the mathematical field of Queueing Theory. A QN consists of several connected nodes (called servers), that provide some service to a so called customer. After processing, the customer follows the network to the next server. A general example for a QN is a routing network for internet traffic. As computational models in the field of HCI those models help to employ some kind of real multitasking behavior, such as in QN-MHP by Liu et al. <ref type="bibr" target="#b56">[57]</ref> and Liu <ref type="bibr" target="#b55">[56]</ref>.</p><p>Machine Learning (ML). ML techniques, such as supervised or unsupervised ML, can learn from data to predict human behavior. Therefore, these algorithms optimize the parameters of a given model. Supervised methods transform input data to labeled output data during training, minimizing a loss-function. Unsupervised methods learn without labeling the output. An assumption for these models is that user behavior can be modeled via distinct clusters <ref type="bibr" target="#b68">[68]</ref>.</p><p>Others. This category contains models such as Saliency, Effort, Expectancy, and task Value model (SEEV) or Improved Performance Research Integration Tool (IMPRINT). SEEV was developed by Wickens et al. <ref type="bibr" target="#b90">[90]</ref> and is a cognitive architecture. It connects the elements of attention allocation in dynamic environments, namely the salience of an event in an area of interest and the effort to look at this event, with the expected value such an action may have for the user. <ref type="bibr" target="#b90">[90]</ref> IMPRINT is a discrete human-performance modeling software tool developed by the US Army Research Laboratory. Based on four classes of human resources that may contribute to driver workload, namely visual, cognitive, auditory, and psychomotor, it computes demand scores for different tasks. The linking between the task or interfaces and the score has to be done manually <ref type="bibr" target="#b41">[42,</ref><ref type="bibr" target="#b71">71]</ref>.</p><p>Recent work shows that there is a strong need for computational models that are valuable in practice and make predictions that are explicitly linked to the design of user interfaces <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b63">64]</ref>. Therefore, in this paper we focus on predictive computational models that can be used to evaluate and inform user interface designs and assist designers in their design process. Outside of the automotive domain, various approaches of such computational models already exist. Li et al. <ref type="bibr" target="#b53">[54]</ref> apply Deep Learning methods to predict human performance in various vertical menu selection tasks. Leiva et al. <ref type="bibr" target="#b51">[52]</ref> predict how different cohorts perceive web page aesthetics using computational models, and Rawles et al. <ref type="bibr" target="#b75">[75]</ref> utilize machine learning methods to generate models of mobile device control for Android based systems. Recent works also employ the concept of computational rationality <ref type="bibr" target="#b67">[67]</ref>. Therefore, these models use Reinforcement Learning (RL) methods where a control policy is learned automatically overcoming the need for large amounts of labeled training data <ref type="bibr" target="#b60">[61]</ref>. Such approaches have been used to model various tasks <ref type="bibr" target="#b60">[61]</ref>, such as pointing <ref type="bibr" target="#b32">[33]</ref>, menu search <ref type="bibr" target="#b8">[9]</ref> or touchscreen typing <ref type="bibr" target="#b39">[40]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Related Work</head><p>Previous approaches have focused on computational models within the domain of driver behavior modeling. Janssen et al. <ref type="bibr" target="#b35">[36]</ref> not only provide a framework that defines the terms agents, environments, and scenarios along specified dimensions, they also identify research opportunities in the human-vehicle interaction domain. Janssen et al. <ref type="bibr" target="#b35">[36]</ref> conclude that there is a need for models and studies, that simulate either the environment or the scenario, but not both. This would increase the realism compared to simulator studies but would not be as costly or resource intensive as naturalistic driving studies <ref type="bibr" target="#b35">[36]</ref>.</p><p>The work of Park and Zahabi <ref type="bibr" target="#b71">[71]</ref> reviews Human Performance Models in the surface transportation domain regarding the prediction of driver behavior and the interaction with NDRTs. Therefore Park and Zahabi <ref type="bibr" target="#b71">[71]</ref> analyze a combinations of dependent and independent variables and the used model type, where they identify the following categories: ACT-R, QNs, GOMS, and an others category with models such as SEEV or IMPRINT. The main purpose of the paper is to help modeling experts to select models appropriate to their modeling needs regarding dependent and independent variables.</p><p>In their review from 2011, Hurts et al. <ref type="bibr" target="#b31">[32]</ref> investigate the mental demand placed on the driver by primary driving tasks, such as lane keeping, speed control or following behavior, and NDRTs, such as the use of nomadic devices or the control of Heating, Ventilation and Air Conditioning (HVAC). They also review how the distracting effects of various tasks, , such as occlusion tasks, lane changing tasks or car following tasks, can be assessed by measuring driving performance or vision-related measures, such as gaze behavior and what official guidelines exist for such tasks.</p><p>The review by Doshi and Trivedi <ref type="bibr" target="#b13">[14]</ref> (2011) looks into 19 studies and how these model tactical driving maneuver prediction. The aim of these models is to model short term goals, such as turns, lane changes, and stops. Doshi and Trivedi <ref type="bibr" target="#b13">[14]</ref> categorize the respective models by inputs, the environment and scenario of data acquisition, the used modeling algorithm such as CAN data, physiological data, motoric behavior or the driving environment (naturalistic or simulator), in which the data were collected. Furthermore, the authors evaluate the prediction accuracy of the models in scope. They find that "models incorporating measures of driver behavior perform better, and earlier at predicting [driving maneuvers]" <ref type="bibr">[14, p. 1896]</ref>.</p><p>All the existing reviews investigate different kind of models for cognitive load, driver maneuver prediction or which models are the most state of the art modelling a NDRT given an environment. However, none of these models predicts the distraction potential of an In-Vehicle-Information-System (IVIS) while driving.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">METHOD</head><p>The goal of this literature review is to present, map, and compare computational models in the automotive domain that can improve the interaction between the driver and the in-vehicle UI . We report our methods and results according to the PRISMA 2020 checklist <ref type="bibr" target="#b69">[69]</ref>. Our identification process consists of a database search and a subsequent round of forward and backward snowballing to further extent the set of papers as suggested by Wohlin <ref type="bibr" target="#b92">[92]</ref>. The complete process is visualized in Figure <ref type="figure" target="#fig_0">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Database Search</head><p>We searched three different databases, namely Scopus, IEEE Explore, and the ACM Digital Library, to ensure the broadest coverage possible. To extract relevant papers we developed our search string according to the guidelines presented by Kitchenham et al. <ref type="bibr" target="#b42">[43]</ref>.</p><p>Based on the research questions and intended contribution of this work we developed a list of synonyms that represent the fact that we are searching for approaches that predict specific phenomena relevant to the interaction between driver and vehicle. We performed trial searches using different combinations of search strings and evaluated the results according to two criteria, namely the number of papers returned (rationale: Is it manageable to review this number of papers?) and the coverage of papers we considered relevant in an initial collection of papers (rationale: Are we retrieving the papers we are interested in?). The final search strategy considers only full research articles and applies the keywords to a combination of article title and article abstract. The database search was conducted in two stages, with the first search on May 4, 2022 and the final search on February 29, 2024. We used the following search string:<ref type="foot" target="#foot_0">1</ref> (Title: "driver behavior" ∨ "glance behavior" ∨ "driver behaviour" ∨ "glance behaviour" ∨ "distract*" ∨ "secondary task" ∨ "workload" ∨ "visual demand" ∨ "cognitive demand" ∨ "mental demand" ∨ "task demand" ∨ "visual load" ∨ "cognitive load" ∨ "mental load" ∨ "task load" ∨ "visual attention" ∨ "driver attention") ∧ (Title: "predict*" ∨ "model*" ∨ "assess*" ∨ "detect*" ∨ "simulat*" ∨ "classif*" ∨ "identif*") ∧ (Abstract: "car" ∨ "automotive" ∨ "vehicle" ∨ "ivis" ∨ "transportation")</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Database Selection Process</head><p>The database search described in 3.1 resulted in 1679 papers. For the paper selection process, we used CADIMA <ref type="bibr" target="#b43">[44]</ref>, a free web-based tool for conducting collaborative systematic reviews. After removing all duplicates using the semi-automated duplicate removal tool provided by CADIMA, we selected relevant papers in a two-stage process. In the first stage, after an initial consistency check in which 100 papers were independently reviewed by three authors, each paper was coded for eligibility based on whether its title and abstract met inclusion criteria IC1 and IC2 (described below). To ensure consistency, each paper was coded by two independent reviewers, and differences were discussed in conflict resolution meetings. At the title and abstract stage, 1148 articles were excluded. The full-texts of the remaining 143 articles were then coded for all inclusion and exclusion criteria as described in detail the codebook and listed below:</p><formula xml:id="formula_0">Inclusion Criteria:</formula><p>• IC1: The approach develops/evaluates/validates/utilizes a computational model of any kind. • IC2: The approach is concerned with the interaction between the driver and the IVIS or another (digital) mobile device. • IC3: The presented model quantifies the effect of secondary task engagements on driver behavior or vice versa. This excludes approaches that only predict a certain driver state (e.g., distracted driving).</p><p>Exclusion Criteria:</p><p>• EC1: The paper was not subject of a peer review process.</p><p>• EC2: The model is purely theoretical/conceptual.</p><p>• EC3: No evaluation is presented.</p><p>• EC4: No details regarding the modeling (method/algorithm, inputs, outputs) are presented. • EC5: No details regarding the data used to either evaluate or fit/train the model is given.</p><p>Again, each article was coded by two coders and differences were discussed in conflict resolution meetings. We also excluded 5 papers because the full-text was either not accessible or not assessable (mostly because the paper was written in a language other than English) or because a duplicate was not detected in previous stages. After the full-text stage, 26 articles were included for further analysis. The database selection process resulted in 21 papers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Forward and Backward Snowballing</head><p>Based on the final set of 21 papers from the database search, we performed a round of forward and backward snowballing to further extend our results. We performed the snowballing according to the guidelines suggested by <ref type="bibr" target="#b92">[92]</ref>. In the backward snowballing process, we examined the reference lists of the 21 papers resulting from the database search. In the forward snowballing process, we examined all papers that cited the 21 papers according to Google Scholar. If the title of a paper appeared of interested we included the paper for further examination. This process was performed by two coders and the resulting papers were merged. After removing duplicates, 88 candidate papers were included for further review. Forward and backward snowballing was performed on April 13, 2024.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Snowballing Selection Process</head><p>Methodologically, the snowballing selection process was the same as the database selection process described in subsection 3.2. After reviewing the titles and abstracts, the list of papers was reduced from 88 to 38, resulting in 13 papers after full-text review. These 13 papers were then added to the 21 papers, resulting in a final list of 34 papers for data extraction. During both selection processes, the co-authors performed between 349 and 1031 title and abstract reviews and between 67 and 135 full-text reviews.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Data Extraction Process</head><p>The data extraction process aims to identify features within the papers that are relevant to answering our research questions. To achieve this, we use a mixture of a priori and inductive coding <ref type="bibr" target="#b76">[76]</ref>.</p><p>We categorized the models across 8 dimensions and several codes per dimension. The set of 8 distinct dimensions (target variable, modality, system interaction, environment, scenario, model inputs, intended application, model type) was developed a priori based on the expertise of the co-authors and an initial screening of papers published in a related Dagstuhl Report <ref type="bibr" target="#b35">[36]</ref>. The dimensions are reported in Table <ref type="table">1</ref>, and served as the starting point for the codes, which we generated using an inductive process.</p><p>The inductive coding process for each dimension was carried out in two cycles, as suggested by Saldaña <ref type="bibr" target="#b76">[76]</ref>. The first author (Coder 1) and last author (Coder 2) each coded half of the papers, cross-checking each other's work in an open coding approach. During this process, loose codes were developed to describe each of the dimensions, and new codes were introduced when they provided a more informative or distinctive categorization than the existing code set. In the second cycle, Coder 1 applied pattern coding to reduce the number of codes from the open coding cycle and to categorize these initial codes. Coder 2 reviewed the code set developed during the pattern coding cycle and discussed the existing code book as well as additions to the code set. Subsequently, simulator fidelity was assessed based on the categorization developed by Wynne et al. <ref type="bibr" target="#b94">[94]</ref> and to reduce the various scenario codes into sub-dimensions driving task, occurrence of traffic, and regulation. Coder 1 then re-coded all papers with the final set of codes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">RESULTS</head><p>In the following, we present the results of our analysis of the 34 papers structured according to the dimensions described in Table <ref type="table">1</ref>. Figure <ref type="figure" target="#fig_2">2</ref> shows the number of reviewed papers by their publication year. A visualization of the results is shown in Figure <ref type="figure" target="#fig_4">3</ref>. The models we reviewed can generally be divided into two types: (1) models that predict latent states (e.g., distraction, workload) based on physiological measures or on features that describe driver behavior, or (2) models that predict behavior (e.g., steering or task interleaving) based on design artifacts (e.g., UI layout, display size) or information derived from the driving environment (e.g., lane position).</p><p>2 0 0 1 2 0 0 2 2 0 0 3 2 0 0 4 2 0 0 5 2 0 0 6 2 0 0 7 2 0 0 8 2 0 0 9 2 0 1 0 2 0 1 1 2 0 1 2 2 0 1 3 2 0 1 4 2 0 1 5 2 0 1 6 2 0 1 7 2 0 1 8 2 0 1 9 2 0 2 0 2 0 2 1 2 0 2 2 2 0 2 3 Publication Year  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Target Variable -What to Predict?</head><p>The target variables predicted by the models can be categorized under the umbrella terms vision, driving, task, and mental. Models that predict glance behavior (vision) mostly predict metrics such as mean glance duration (4 papers), total glance duration <ref type="bibr" target="#b4">(5)</ref>, or number of glances <ref type="bibr" target="#b5">(6)</ref>. Other variables that are modeled include dwell times or occlusion-related metrics such as shutter open times. Models that predict driving-related variables mostly focus on the prediction of lateral (8) and longitudinal (5) control but also on more abstract variables such as crash risk <ref type="bibr" target="#b0">(1)</ref>. The task category encompasses performance measurements related to NDRTs such as task completion time <ref type="bibr" target="#b7">(8)</ref>, task reaction time (1), or task switching probability <ref type="bibr" target="#b0">(1)</ref>. mental target variables include the degree of distraction (4) or workload metrics <ref type="bibr" target="#b3">(4)</ref>. With regard to the latter, we found that the terms workload and cognitive load are not used consistently and are often confused. For example, it is not always clear whether authors are referring to cognitive load, with its origins in educational psychology <ref type="bibr" target="#b85">[85]</ref>, or to workload theory from the engineering and cognitive sciences <ref type="bibr" target="#b91">[91]</ref>. Traditionally, however, papers in HCI are most often concerned with workload as measured by the NASA Task Load Index (NASA-TLX) <ref type="bibr" target="#b23">[24]</ref>. Overall, our analysis shows that the majority of the papers target vision-related variables (𝑛 = 16 (47%)), followed by driving-related variables (𝑛 = 11 (32%)), task-related variables (𝑛 = 9 (26%)), and mental variables (𝑛 = 8 (23%)). Only three models (9%) predict a combination of variables from different categories. They predict driving together with vision <ref type="bibr" target="#b57">[58]</ref>, mental <ref type="bibr" target="#b1">[2]</ref>, or task <ref type="bibr" target="#b79">[79]</ref>.</p><p>Table <ref type="table">1</ref>: Eight modeling dimensions that were determined a-priori and reflect the topics we consider for further analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dimension Description target variable</head><p>The specific aspect that the model predicts model inputs</p><p>The data the model uses for prediction model type</p><p>The computational approach used system interaction</p><p>The type of NDRT that is being modeled modality Modality used to perform the NDRT scenario Description of the driving scenario environment</p><p>The environment in which the data was collected or the model evaluated intended application area The use case for which the model was developed</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Model Inputs -What Kind of Data is Used</head><p>for Modeling?</p><p>The models reviewed in this paper predict the above-introduced variables using a variety of different features (i.e., model inputs). We identified the the following categories: ui design, driving behavior, glance behavior, physiological measurements, scenario information and other. ui design contains any variables that describe some aspect of the interface (e.g., display size (1) or button types (2)) and variables that are derived or manually specified based on the design of the interface (e.g., KLM operator sequences (4), SEEV values (2), or ACT-R production rules (3)). While the latter are not inputs in the traditional sense, they describe the effect that the design has on the interaction and thus on the prediction. 56% of all models consider features of this category. driving behavior contains variables that are connected to the driving task itself, e.g. lane position <ref type="bibr" target="#b5">(6)</ref>, vehicle speed (7) braking behavior (3), acceleration behavior (2). 32% of models use driving-related variables as input. glance behavior includes vision related measures such as eye movements (1), eyes-off-road-time (1) or blinking behavior (1). These metrics are often used to predict driver states such as distraction or workload. The same applies to physiological measurements that are used in 9% of the papers and describe physiological measurements (e.g., heart rate or electrodermal activity). scenario information describes information such as road curvature (2) or target speed <ref type="bibr" target="#b1">(2)</ref>. Other is a catch-all category that covers a broad range of different inputs that did not fit well into the other categories, such as demand scores for different tasks obtained from the literature or acoustic data from the vehicle interior. Our analysis shows that most papers (𝑛 = 25 (74%)) use input variables from only one category. When categories are combined, the combinations often include driving behavior (𝑛 = 7 (77% of combinations)). Two out of three papers using physiological measurements combine them with other variables <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b26">27]</ref>. Three papers (33% of the combinations) combine glance behavior with other variables <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b26">27,</ref><ref type="bibr" target="#b52">53]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Model Types -ML, Cognitive Architectures, or Something Else?</head><p>This dimension describes the different categories of models used by the reviewed papers. Some papers compare models of different categories. In this case the paper is listed in both categories. We have identified the following types of models: ml, cognitive architectures, regression, stochastic, goms, other, mechanistic, and qn. stochastic models are Hidden Markov Modelss (HMMs), Bayesian filters, or particle filters. Papers that use Fitts' law for modeling belong to mechanistic. ACT-R, SEEV, or IMPRINT are examples for cognitive architectures. goms includes all modeling approaches that use GOMS, but especially KLMs. Models that do not fit into any of these categories are listed under other. Our analysis shows that most approaches rely on ml or cognitive architectures (e.g., ACT-R, SEEV, or IMPRINT) (8, 24% each). Most of the papers in the ml category compare their models to other ML or regression modeling approaches. Jokinen et al. <ref type="bibr" target="#b40">[41]</ref> presents the only approach that uses RL. Five papers (15%) use regression models for prediction, while 4 papers (12%) <ref type="bibr" target="#b50">[51,</ref><ref type="bibr" target="#b73">73,</ref><ref type="bibr" target="#b74">74,</ref><ref type="bibr" target="#b83">83]</ref> use goms and in particular KLMs. These models are used to predict task or glance times for interactions with in-vehicle interfaces. We also identified one paper that uses qn for modeling driver's NDRT behavior <ref type="bibr" target="#b56">[57]</ref>. Four works are coded as other <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b24">25,</ref><ref type="bibr" target="#b54">55,</ref><ref type="bibr" target="#b98">98]</ref> (12%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">System Interaction -Which NDRTs are Modeled?</head><p>This dimension describes the interaction that is modeled. We identify the following categories: ivis, mobile phone, conversation, and other. Two-thirds (𝑛 = 23 (67%)) of approaches model ivis interactions. These interactions can be divided into real-world tasks (13), artificial tasks <ref type="bibr" target="#b9">(10)</ref>, and semi-artificial tasks (1)<ref type="foot" target="#foot_1">2</ref> . Real-world tasks use consumer-grade in-vehicle interfaces or an interface that is similar in design and tasks that can be performed (e.g., reading a map, making a phone call). In contrast, artificial tasks serve as surrogate tasks, often manipulating only one specific feature (e.g., the number of elements on the screen) to increase controllability. Semi-artificial tasks are real-world tasks, such as making a phone call, but performed on a task-specific interface designed for the specific modeling task (c.f., <ref type="bibr" target="#b54">[55]</ref>) mobile phone interactions are modeled in 10 papers (29%) and include interactions such as calling, texting or dialing. Approaches that model conversational interactions (conversation) make up 15% of all approaches. These conversational interactions include talking to a passenger or performing an auditory n-back task. other describes the approach of Pekkanen et al. <ref type="bibr" target="#b72">[72]</ref> who model NDRTs indirectly via an occlusion experiment. Our evaluation also shows that 20 papers (59%) present computational models that deal only with ivis interaction and six papers (17%) deal only with mobile phone. Only 6 papers ML ( <ref type="formula">8</ref>)</p><p>QN ( <ref type="formula">1</ref>) Stochastic ( <ref type="formula">4</ref>) GOMS ( <ref type="formula">4</ref>) Other ( <ref type="formula">4</ref>)</p><formula xml:id="formula_1">Mechanistic (3) Cognitive Architecture (8)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Regression</head><p>(5)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Type</head><p>Product Development <ref type="bibr" target="#b15">(16)</ref> Crash Risk Prediction ( <ref type="formula">1</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Environment</head><p>Car Following <ref type="bibr" target="#b12">(13)</ref> constant speed <ref type="bibr" target="#b8">(9)</ref> variable speed <ref type="bibr" target="#b3">(4)</ref> Drive Freely, Simulator ( <ref type="formula">2</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Driving Scenario</head><p>No Traffic <ref type="bibr" target="#b10">(11)</ref> Traffic <ref type="bibr" target="#b15">(16)</ref> No Information <ref type="bibr" target="#b6">(7)</ref> Mobile Phone <ref type="bibr" target="#b9">(10)</ref> Conversation ( <ref type="formula">5</ref>)</p><p>Other ( <ref type="formula">1</ref>) IVIS ( <ref type="formula">23</ref>)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>System Interaction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Target Variables</head><p>Mental <ref type="bibr" target="#b7">(8)</ref> Vision <ref type="bibr" target="#b15">(16)</ref> Task <ref type="bibr" target="#b8">(9)</ref> Driving <ref type="bibr" target="#b10">(11)</ref> Touch ( <ref type="formula">19</ref>)</p><formula xml:id="formula_2">Visual (<label>6</label></formula><formula xml:id="formula_3">)</formula><p>Hard Keys ( <ref type="formula">14</ref>) Voice ( <ref type="formula">13</ref>) Modality (17%) combine system interactions from different categories. Li and Busso <ref type="bibr" target="#b52">[53]</ref> investigate interactions from three categories, namely ivis, mobile phone and conversation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Modality -Touch or No Touch?</head><p>Our analysis shows the majority of works investigates touch tasks (𝑛 = 19 (56%)), followed by hard keys (𝑛 = 14 (41%)), voice (𝑛 = 13 (38%)) and visual tasks. The latter category describes tasks where the interaction was either conversational (e.g., reading aloud visual information on the screen) or indirect (e.g., occlusion). For works that model interactions with smartphones or mobile phones but do not list the specific phone, we assume touch for all papers that were published after 2013 <ref type="foot" target="#foot_2">3</ref> . In total, 14 papers (41%) investigate tasks with modalities from more than one category. The most frequent combinations include voice, namely voice + touch (𝑛 = 6 (43% of all combinations)) and voice + hard keys (𝑛 = 5 (35% of all combinations)). The papers by Li and Busso <ref type="bibr" target="#b52">[53]</ref>, Muñoz et al. <ref type="bibr" target="#b61">[62]</ref> investigates different tasks from three modality categories, namely touch, hard keys, and voice.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.6">Environment -Simulator Studies vs. Naturalistic Driving Studies</head><p>According to the framework of Janssen et al. <ref type="bibr" target="#b35">[36]</ref>, the environment can be described as "the world being modeled". Accordingly, environments can range from simulated as in a driving simulator to real as in naturalistic driving study. Our analysis reveals that the majority (𝑛 = 26 (76%)) of the works use driving simulators to evaluate their models or to gather data for their models. Since the fidelity of a driving simulator can influence driver behavior <ref type="bibr" target="#b28">[29]</ref>, we further categorize each driving simulator according to the classification theme proposed by Wynne et al. <ref type="bibr" target="#b94">[94]</ref>. Most of the simulators are low-fidelity (𝑛 = 14 (53% of all simulators)), followed by mediumfidelity (23%) and high-fidelity (19%). For real-world driving studies, we distinguish between test-track and naturalistic driving studies. While naturalistic driving studies were used in five of the papers (14%), test-track was used two times in total.</p><p>A Wizard-of-Oz simulator was used in only one paper <ref type="bibr" target="#b82">[82]</ref>. The paper by Pekkanen et al. <ref type="bibr" target="#b72">[72]</ref> is the only one that compares driver performance in two different environments, a medium-fidelity simulator and on a test-track.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.7">Scenario -Controlled or Uncontrolled?</head><p>Janssen et al. <ref type="bibr" target="#b35">[36]</ref> describe scenarios "the way one moves through the world", denoting "what types of situations are encountered or not". To describe the scenarios we introduce the following sub-dimension: driving task, occurrence of traffic and regulation. driving task refers to scenarios, such as lane keeping or car following, which are mostly used in driving simulators. For naturalistic studies, this sub-dimension includes whether the participants drove a predefined route or were allowed to drive wherever they wanted. traffic describes the occurrence of other traffic participants. Regulation describes the degree to which the scenarios have been controlled. In a fully controlled scenario, each participant experiences the exact same task, route, and traffic conditions at the exact same time.</p><p>In an uncontrolled scenario, on the other hand, drivers may be able to choose the route they take and the task they perform. An example of the latter would be data collected from different customers across the country. Our analysis shows that the majority of studies were conducted in a controlled setting (𝑛 = 31 (91%)).</p><p>Only Ebel et al. <ref type="bibr" target="#b17">[18]</ref> and Young <ref type="bibr" target="#b97">[97]</ref> use data from an uncontrolled scenario. The ratio of papers with traffic (𝑛 = 16 (47%)) and without traffic (𝑛 = 11 (33%)) is almost equal. However, seven papers (20%) do not report whether their scenario included traffic. Regarding the driving task, the papers using a simulator are almost equally divided between car following scenarios (𝑛 = 13 (50% of the simulator studies)) and lane keeping scenarios (𝑛 = 10 (38%)). An exception are the works by Watkins et al. <ref type="bibr" target="#b88">[88]</ref> and Chen et al. <ref type="bibr" target="#b7">[8]</ref> who allowed their participants to drive relatively freely in a simulator. Of the naturalistic driving studies, most used a predefined route (𝑛 = 3 (60% of naturalistic studies)).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.8">Intended Application Area -What's the Goal of the Model?</head><p>This dimension describes the application the models are targeted at and where the authors anticipate these models to be valuable. Our analysis shows that nearly the half of the developed models aim to be valuable in the product development of in-vehicle interfaces (𝑛 = 16 (47%)). The second most targeted application is distraction detection (𝑛 = 8 (24%)) followed by human behavior analysis (20%). The latter includes models that aim to understand human behavior and improve performance <ref type="bibr" target="#b48">[49]</ref>, create plausible models for car following <ref type="bibr" target="#b72">[72]</ref>, or predict interleaving strategies in multitasking <ref type="bibr" target="#b36">[37,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b40">41,</ref><ref type="bibr" target="#b45">46]</ref>. The model proposed by Young <ref type="bibr" target="#b97">[97]</ref> is intended for crash risk prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">RESEARCH GAPS</head><p>Our literature review highlights several research gaps, which we discuss below. They all contribute directly or indirectly to the development of more accurate computational models for the design and evaluation of in-vehicle UIs.</p><p>Tools for application of models to HCI problems. Of all 34 models that we reviewed, only three <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b79">79,</ref><ref type="bibr" target="#b83">83]</ref> are associated with a tool that allows users to operationalize the predictions made by the model. The tool presented by Harvey and Stanton <ref type="bibr" target="#b24">[25]</ref> is a spreadsheet that allows users to specify sequences of manual, visual, and cognitive operators that serve as an input to the critical path analysis. Schneegaß et al. <ref type="bibr" target="#b83">[83]</ref> present a tool that, lets users annotate UI screenshots with UI elements to then automatically compute a KLM. The most advanced tool is presented by Salvucci et al. <ref type="bibr" target="#b81">[81]</ref>. Distract-R is based on an ACT-R model and allows users to prototype basic interfaces from which the model predicts drivingrelated metrics. These metrics serve as proxies for evaluating the distraction potential of early stage UI designs. In addition to the fact that only 3 out of 34 models were integrated into tools it needs to be emphasized that these tools are between 10 -18 years old. Therefore downstream research should look into operationalizing state of the art computational models into accessible tools that allows leveraging their benefits.</p><p>Scenarios are simplistic and model predictions context specific. Almost all models (except of the work presented by Ebel et al. <ref type="bibr" target="#b17">[18]</ref>) are developed and evaluated based on small data sets collected in controlled (simulator) environments with simplistic driving scenarios (e.g., lane keeping or car following tasks). Furthermore 18 out of 34 scenarios do not consider other traffic. While these models may make accurate predictions in the context in which they were developed, it is not clear how they generalize to real-world problems with complex and dynamic driving scenarios. Thus, future research and future models should address what is known in robotics as the Sim2Real gap <ref type="bibr" target="#b100">[100]</ref> by including more diverse and realistic scenarios, which helps to increase traffic safety through models that generalize to real-world conditions.</p><p>Large open datasets. While there are large publicly available datasets for driver distraction detection (e.g., <ref type="bibr" target="#b59">[60]</ref>), there are no such datasets that also provide detailed information about driver interaction with in-vehicle interfaces. Publicly available datasets from naturalistic driving studies <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b86">86]</ref> do not contain user interaction or interface design information and are therefore not useful for the modeling approaches reviewed in this work. Accordingly, the few models that are based on large datasets from real world driving or naturalistic driving studies <ref type="bibr" target="#b17">[18]</ref> are developed in cooperation with Original Equipment Manufacturers (OEMs). In this context, it is interesting to note that while OEMs are interested in such models and see their potential <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b63">64]</ref>, they do not conduct or publish much research in this direction. We argue that future naturalistic driving studies should also collect detailed interaction and behavioral data. Also, given that OEMs are already lagging behind digital companies when it comes to data-driven UX evaluation <ref type="bibr" target="#b18">[19]</ref>, they should consider being more open so that they can leverage the progress being made in the research community.</p><p>Grand modeling challenges. In total we count 21 different target variables that the models in this review predict. Furthermore the datasets used in this approaches are almost always specific to the respective model. While this is not bad in itself, it shows that there is no consensus toward grand challenges for designing models of future interaction behavior with in-vehicle interfaces. While recognizing the various different facets of driver modeling, we argue that grand challenges for modeling, such as those established in other domains (e.g., DARPA challenge <ref type="bibr" target="#b5">[6]</ref>, ImageNet <ref type="bibr" target="#b44">[45]</ref>), could benefit progress toward better and more accurate models.</p><p>Models that generalize to arbitrary interface designs. Most of the models in this review are very specific to the exact use case they were developed for and require manual specification as soon as the task or design to be evaluated changes. This applies for example to models that rely on ACT-R <ref type="bibr" target="#b45">[46,</ref><ref type="bibr" target="#b79">79,</ref><ref type="bibr" target="#b80">80]</ref>. While they might provide accurate and transparent predictions, the production rules must be manually specified by experts. The same applies to models based on the KLM technique <ref type="bibr" target="#b50">[51,</ref><ref type="bibr" target="#b73">73,</ref><ref type="bibr" target="#b74">74,</ref><ref type="bibr" target="#b83">83]</ref> or SEEV <ref type="bibr" target="#b30">[31]</ref>. A valuable next step would be to develop models that generalize to arbitrary interface designs. This can be achieved, for example, by models trained on generic data such as pixels. In this way, any screenshot or driving scene generated by a simulation could be used as input to the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Consideration of interpersonal and demographic factors.</head><p>Of the models in this review only one approach <ref type="bibr" target="#b50">[51]</ref> incorporates interpersonal differences or demographic factors for prediction. However, related work shows that age, cultural background, and other individual characteristics impact driving behavior <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b95">95]</ref>, distraction <ref type="bibr" target="#b65">[65]</ref> or the willingness to engage in NDRTs <ref type="bibr" target="#b22">[23]</ref>. Leveraging this approach could enhance the modeling of driver behavior and improve the design of in-vehicle interfaces. Outside of the automotive domain, approaches such as data-driven personas, incorporating demographic information, are already successfully used <ref type="bibr" target="#b77">[77,</ref><ref type="bibr" target="#b99">99]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">DISCUSSION</head><p>Most of the models reviewed in this paper aim to improve the design or evaluation of in-vehicle interfaces. Still, there is no documentation of such models being used in the industrial UX design and evaluation process. Our results presented in section 4 and research gaps identified in section 5 elucidate several open research questions. Drawing connections with related work, we formulate research potentials for future work towards computational models that can support the automotive UI design process.</p><p>Align computational modeling with real-world design problems. Our analysis shows that most models seem to focus on explaining isolated psychological or behavioral phenomena (e.g. workload <ref type="bibr" target="#b41">[42,</ref><ref type="bibr" target="#b46">47,</ref><ref type="bibr" target="#b82">82]</ref>, task reaction time <ref type="bibr" target="#b54">[55]</ref> or the scenario in which the task is performed <ref type="bibr" target="#b88">[88]</ref>) by replicating experimental results from controlled user studies, rather than solving concrete HCI problems. However, to improve the way in-vehicle interfaces are designed today, we propose a shift towards computational models that directly target the specific problems within the automotive UI design process. Similar to what Janssen et al. <ref type="bibr" target="#b33">[34]</ref> call "[f]rom description to prescription" [34, p. 3], we argue that computational models for in-vehicle user interfaces must be aligned with real-world HCI problems and oriented toward the needs that automotive designers and safety engineers face. Looking at the needs of HCI professionals in the automotive domain, Ebel et al. <ref type="bibr" target="#b15">[16]</ref> argue that practitioners need models and tools that can be integrated into their design process and that allow early design evaluation for metrics such as distraction potential and usability. This would imply that future models (1) must be able to make predictions based on features derived directly from prototypical UI designs and mock-ups (c.f., <ref type="bibr" target="#b17">[18]</ref>), (2) models must be integrated into tools that allow non-experts to use them (c.f., <ref type="bibr" target="#b81">[81,</ref><ref type="bibr" target="#b83">83]</ref>), and (3) predictions must be accurate enough to drive design decisions in such a high-stakes (economic and safety) environment.</p><p>Move from models that need manual specification to models that adapt to new data and new problems. Our analysis shows that (1) there is a gap for models that are not only generalizable to different interface designs, but also generalizable to different scenarios and that (2) many models rely on manual specifications performed by experts <ref type="bibr" target="#b74">[74,</ref><ref type="bibr" target="#b79">79,</ref><ref type="bibr" target="#b93">93]</ref>. To move from models that need manual specification to models that adapt to new data and new problems wee see two research potentials: (1) data-driven ML-based models that are trained on large general data (see section 5) that is continuously updated, allowing the models to generalize over different designs and adapt to distribution shifts in the data, or (2) computationally rational models <ref type="bibr" target="#b67">[67]</ref> whose internal information processing mechanisms are grounded in theory and whose behavioral policies are approximated via RL (e.g., <ref type="bibr" target="#b40">[41]</ref>). The latter combination can be a promising solution to the trade-off between explainability and predictive accuracy often faced by supervised ML-based approaches <ref type="bibr" target="#b9">[10]</ref>.</p><p>Increase openness and transparency. An analysis of where the final set of papers was published shows that researchers from a variety of backgrounds (psychology, human factors, engineering, HCI) are developing computational models of driver interaction behavior. This diversity in backgrounds makes it particular important to be transparent and open. However, our review discloses a lack of shared source code and data (only 3 papers shared artifacts <ref type="bibr" target="#b40">[41,</ref><ref type="bibr" target="#b50">51,</ref><ref type="bibr" target="#b72">72]</ref>), ambiguous model descriptions, and inconsistent terminology, all of which hinder replicability, reproducability and eventually progress. We argue that more openness in terms of artifact sharing and more transparency in reporting would benefit the model development in general. For the latter, a modeling taxonomy that unifies terminology can foster collaboration and bridge gaps between psychology, human factors, engineering, and HCI. The dimensions developed in this paper can serve as a basis for such a taxonomy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations</head><p>As with any literature review, we acknowledge the potential for coding errors or subjective interpretation. However, because each paper was independently reviewed by two authors and disagreements were resolved in discussion, these errors should be minimized. Furthermore, the ambiguity in the model descriptions, the large number of different phenomena being modeled and the variety research field the models come from led to many discussions among the coders to define appropriate categories. We want to state that this categorization is one categorization that can be used, but may not be the best. However, we do not claim to have developed a taxonomy and see this as future work (see section 5).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: The search process.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: The number of reviewed papers with their publication year.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Orbit diagrams showing the coding dimension with the identified categories from the analysis.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>The asterisk (*) indicates a wildcard character and the he search queries specific to each of the databases are given in the supplemental material: https://osf.io/6dytr</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>One study Large et al.<ref type="bibr" target="#b47">[48]</ref> modeled both an artificial and a real task.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>See the steep increase in smartphone sales during this time: https://www.statista. com/statistics/263437/global-smartphone-sales-to-end-users-since-2007/</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>ACKNOWLEDGMENTS</head><p>We thank <rs type="person">Christian P Janssen</rs> for the initial discussions that led to our research questions, and everyone involved in the <rs type="projectName">Cadima</rs> project for making such a tool freely available.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funded-project" xml:id="_fHvBK8e">
+					<orgName type="project" subtype="full">Cadima</orgName>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SUPPLEMENTARY MATERIAL</head><p>All research artifacts (codebook, search strings, references after title -abstract screening) and the final coding results can be found at https://osf.io/qgxty/</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Visual-manual NHTSA driver distraction guidelines for in-vehicle electronic devices. Washington, DC: National Highway Traffic Safety Administration (NHTSA)</title>
+		<imprint>
+			<date type="published" when="2012">2012. 2012</date>
+			<publisher>Department of Transportation</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Detection and Evaluation of Driver Distraction Using Machine Learning and Fuzzy Logic</title>
+		<author>
+			<persName><forename type="first">Andrei</forename><surname>Aksjonov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pavel</forename><surname>Nedoma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valery</forename><surname>Vodovozov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eduard</forename><surname>Petlenkov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Herrmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TITS.2018.2857222</idno>
+		<ptr target="https://doi.org/10.1109/TITS.2018.2857222" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Intelligent Transportation Systems</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="2048" to="2059" />
+			<date type="published" when="2019-06">2019. June 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">ACT-R: A Theory of Higher Level Cognition and Its Relation to Visual Attention</title>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">R</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Matessa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Lebiere</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/s15327051hci1204_5</idno>
+		<ptr target="https://doi.org/10.1207/s15327051hci1204_5" />
+	</analytic>
+	<monogr>
+		<title level="j">Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="439" to="462" />
+			<date type="published" when="1997-12">1997. Dec. 1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Avery</surname></persName>
+		</author>
+		<ptr target="https://www.linkedin.com/feed/update/urn:li:activity:7170356955910254592/" />
+		<title level="m">Bring Back Buttons</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Men-uOptimizer: interactive optimization of menu systems</title>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Kötzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sabrina</forename><surname>Hoppe</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2501988.2502024</idno>
+		<ptr target="https://doi.org/10.1145/2501988.2502024" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th annual ACM symposium on User interface software and technology</title>
+		<meeting>the 26th annual ACM symposium on User interface software and technology<address><addrLine>St. Andrews Scotland, United Kingdom</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="331" to="342" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Buehler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karl</forename><surname>Iagnemma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjiv</forename><surname>Singh</surname></persName>
+		</author>
+		<title level="m">The 2005 DARPA grand challenge: the great robot race</title>
+		<imprint>
+			<publisher>springer</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">36</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The psychology of human-computer interaction</title>
+		<author>
+			<persName><forename type="first">Stuart</forename><surname>Card</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">L. Erlbaum Associates</title>
+		<imprint>
+			<date type="published" when="1983">1983</date>
+			<pubPlace>Hillsdale, N.J.</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Fine-Grained Detection of Driver Distraction Based on Neural Architecture Search</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanan</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhixiang</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohui</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bocai</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TITS.2021.3055545</idno>
+		<ptr target="https://doi.org/10.1109/TITS.2021.3055545" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Intelligent Transportation Systems</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="5783" to="5801" />
+			<date type="published" when="2021-09">2021. Sept. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The Emergence of Interactive Behavior: A Model of Rational Menu Search</title>
+		<author>
+			<persName><forename type="first">Xiuli</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2702123.2702483</idno>
+		<ptr target="https://doi.org/10.1145/2702123.2702483" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 33rd Annual ACM Conference on Human Factors in Computing Systems. ACM, Seoul Republic of Korea</title>
+		<meeting>the 33rd Annual ACM Conference on Human Factors in Computing Systems. ACM, Seoul Republic of Korea</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="4217" to="4226" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Revisiting the Performance-Explainability Trade-Off in Explainable Artificial Intelligence (XAI)</title>
+		<author>
+			<persName><forename type="first">Barnaby</forename><surname>Crook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maximilian</forename><surname>Schlüter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Speith</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/REW57809.2023.00060</idno>
+		<ptr target="https://doi.org/10.1109/REW57809.2023.00060" />
+	</analytic>
+	<monogr>
+		<title level="m">2023 IEEE 31st International Requirements Engineering Conference Workshops (REW)</title>
+		<meeting><address><addrLine>Hannover, Germany</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="316" to="324" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Rico: A Mobile App Dataset for Building Data-Driven Design Applications</title>
+		<author>
+			<persName><forename type="first">Biplab</forename><surname>Deka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zifeng</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chad</forename><surname>Franzen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Hibschman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Afergan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Nichols</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ranjitha</forename><surname>Kumar</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3126594.3126651</idno>
+		<ptr target="https://doi.org/10.1145/3126594.3126651" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 30th Annual ACM Symposium on User Interface Software and Technology</title>
+		<meeting>the 30th Annual ACM Symposium on User Interface Software and Technology<address><addrLine>Québec City QC Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="845" to="854" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Driver crash risk factors and prevalence evaluation using naturalistic driving data</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">A</forename><surname>Dingus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suzie</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">F</forename><surname>Antin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miguel</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mindy</forename><surname>Buchanan-King</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Hankey</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1513271113</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1513271113" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="2636" to="2641" />
+			<date type="published" when="2016-03">2016. March 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Dingus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">G</forename><surname>Klauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">L</forename><surname>Neale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Petersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sudweeks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hankey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ramsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bucher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">R</forename><surname>Doerzaph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jermeland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Knipling</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/e624282011-001</idno>
+		<ptr target="https://doi.org/10.1037/e624282011-001" />
+		<title level="m">The 100-Car Naturalistic Driving Study: Phase II -Results of the 100-Car Field Experiment</title>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Tactical driver behavior prediction and intent inference: A review</title>
+		<author>
+			<persName><forename type="first">Anup</forename><surname>Doshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohan</forename><forename type="middle">M</forename><surname>Trivedi</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ITSC.2011.6083128</idno>
+		<ptr target="https://doi.org/10.1109/ITSC.2011.6083128" />
+	</analytic>
+	<monogr>
+		<title level="m">2011 14th International IEEE Conference on Intelligent Transportation Systems (ITSC)</title>
+		<meeting><address><addrLine>Washington, DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="1892" to="1897" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">How Do Drivers Self-Regulate their Secondary Task Engagements? The Effect of Driving Automation on Touchscreen Interactions and Glance Behavior</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moritz</forename><surname>Berger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Lingenfelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Vogelsang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3543174.3545173</idno>
+		<ptr target="https://doi.org/10.1145/3543174.3545173" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 14th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+		<meeting>the 14th International Conference on Automotive User Interfaces and Interactive Vehicular Applications<address><addrLine>Seoul Republic of Korea</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="263" to="273" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The Role and Potentials of Field User Interaction Data in the Automotive UX Development Lifecycle: An Industry Perspective</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Brokhausen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Vogelsang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3409120.3410638</idno>
+		<ptr target="https://doi.org/10.1145/3409120.3410638" />
+	</analytic>
+	<monogr>
+		<title level="m">12th International Conference on Automotive User Interfaces and Interactive Vehicular Applications. ACM, Virtual Event DC USA</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="141" to="150" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Multitasking While Driving: How Drivers Self-Regulate Their Interaction with In-Vehicle Touchscreens in Automated Driving</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Lingenfelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Vogelsang</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10447318.2023.2215634</idno>
+		<ptr target="https://doi.org/10.1080/10447318.2023.2215634" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="18" />
+			<date type="published" when="2023-06">2023. June 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">On the forces of driver distraction: Explainable predictions for the visual demand of in-vehicle touchscreen interactions</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Lingenfelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Vogelsang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.aap.2023.106956</idno>
+		<ptr target="https://doi.org/10.1016/j.aap.2023.106956" />
+	</analytic>
+	<monogr>
+		<title level="j">Accident Analysis &amp; Prevention</title>
+		<imprint>
+			<biblScope unit="volume">183</biblScope>
+			<biblScope unit="page">106956</biblScope>
+			<date type="published" when="2023-04">2023. April 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Automotive UX design and data-driven development: Narrowing the gap to support practitioners</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Ebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julia</forename><surname>Orlovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Hünemeyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casper</forename><surname>Wickman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.trip.2021.100455</idno>
+		<ptr target="https://doi.org/10.1016/j.trip.2021.100455" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Interdisciplinary Perspectives</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">100455</biblScope>
+			<date type="published" when="2021-09">2021. Sept. 2021</date>
+		</imprint>
+	</monogr>
+	<note>Andreas Vogelsang, and Rikard Söderberg</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Impacts of Touch Screen Size, User Interface Design, and Subtask Boundaries on In-Car Task&apos;s Visual Demand and Driver Distraction</title>
+		<author>
+			<persName><forename type="first">Hilkka</forename><surname>Grahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Kujala</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2020.102467</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2020.102467" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page">102467</biblScope>
+			<date type="published" when="2020-10">2020. Oct. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Gross</surname></persName>
+		</author>
+		<ptr target="https://newsroom.aaa.com/2017/10/new-vehicle-infotainment-systems-create-increased-distractions-behind-wheel/" />
+		<title level="m">New Vehicle Infotainment Systems Create Increased Distractions Behind the Wheel</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Gross</surname></persName>
+		</author>
+		<ptr target="https://newsroom.aaa.com/2019/07/vehicle-infotainment-systems-especially-distracting-older-drivers/" />
+		<title level="m">Vehicle Infotainment Systems Especially Distracting to Older Drivers</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">The effects of age on crash risk associated with driver distraction</title>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheila</forename><forename type="middle">G</forename><surname>Klauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Youjia</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">M</forename><surname>Hankey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">F</forename><surname>Antin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miguel</forename><forename type="middle">A</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suzanne</forename><forename type="middle">E</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">A</forename><surname>Dingus</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/ije/dyw234</idno>
+		<ptr target="https://doi.org/10.1093/ije/dyw234" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Epidemiology</title>
+		<imprint>
+			<biblScope unit="page">234</biblScope>
+			<date type="published" when="2016-10">2016. Oct. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">NASA task load index (TLX)</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sandra</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hart</surname></persName>
+		</author>
+		<ptr target="https://ntrs.nasa.gov/api/citations/20000021487/downloads/20000021487.pdf" />
+		<imprint>
+			<date type="published" when="1986">1986. 1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Modelling the hare and the tortoise: predicting the range of in-vehicle task times using critical path analysis</title>
+		<author>
+			<persName><forename type="first">Catherine</forename><surname>Harvey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neville</forename><forename type="middle">A</forename><surname>Stanton</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00140139.2012.733031</idno>
+		<ptr target="https://doi.org/10.1080/00140139.2012.733031" />
+	</analytic>
+	<monogr>
+		<title level="j">Ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="16" to="33" />
+			<date type="published" when="2013-01">2013. Jan. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<author>
+			<persName><forename type="first">Catherine</forename><surname>Harvey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neville</forename><forename type="middle">A</forename><surname>Stanton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><forename type="middle">A</forename><surname>Pickering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Mcdonald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengjun</forename><surname>Zheng</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10447318.2011.555296</idno>
+		<ptr target="https://doi.org/10.1080/10447318.2011.555296" />
+	</analytic>
+	<monogr>
+		<title level="m">Vehicle Information Systems to Meet the Needs of Drivers</title>
+		<imprint>
+			<date type="published" when="2011-06">2011. June 2011</date>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="505" to="522" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Classification of Driver Cognitive Load: Exploring the Benefits of Fusing Eye-Tracking and Physiological Measures</title>
+		<author>
+			<persName><forename type="first">Dengbo</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziquan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elias</forename><forename type="middle">B</forename><surname>Khalil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Birsen</forename><surname>Donmez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangkai</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shekhar</forename><surname>Kumar</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/03611981221090937</idno>
+		<ptr target="https://doi.org/10.1177/03611981221090937" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Record: Journal of the Transportation Research Board</title>
+		<imprint>
+			<biblScope unit="volume">2676</biblScope>
+			<biblScope unit="page" from="670" to="681" />
+			<date type="published" when="2022-10">2022. Oct. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">What factors results in having a severe crash? a closer look on distraction-related factors</title>
+		<author>
+			<persName><forename type="first">Ahmadreza</forename><surname>Mahmoudzadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hesamoddin</forename><surname>Razi-Ardakani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Kermanshah</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/23311916.2019.1708652</idno>
+		<ptr target="https://doi.org/10.1080/23311916.2019.1708652" />
+	</analytic>
+	<monogr>
+		<title level="m">Publisher: Cogent OA tex</title>
+		<imprint>
+			<date type="published" when="2019">2019. 2019</date>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">1708652</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The bigger the better? Investigating the effects of driving simulator fidelity on driving behavior and perception</title>
+		<author>
+			<persName><forename type="first">Chantal</forename><surname>Himmels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joost</forename><surname>Venrooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arben</forename><surname>Parduzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Peller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Riener</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.trf.2024.01.007</idno>
+		<ptr target="https://doi.org/10.1016/j.trf.2024.01.007" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Part F: Traffic Psychology and Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="250" to="266" />
+			<date type="published" when="2024-02">2024. Feb. 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Driver distraction: The effects of concurrent in-vehicle tasks, road environment complexity and age on driving performance</title>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Horberry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janet</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">A</forename><surname>Regan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">J</forename><surname>Triggs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Brown</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.aap.2005.09.007</idno>
+		<ptr target="https://doi.org/10.1016/j.aap.2005.09.007" />
+	</analytic>
+	<monogr>
+		<title level="j">Accident Analysis &amp; Prevention</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="185" to="191" />
+			<date type="published" when="2006-01">2006. Jan. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Modeling drivers&apos; visual attention allocation while interacting with in-vehicle technologies</title>
+		<author>
+			<persName><forename type="first">William</forename><forename type="middle">J</forename><surname>Horrey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Wickens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><forename type="middle">P</forename><surname>Consalus</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/1076-898X.12.2.67</idno>
+		<ptr target="https://doi.org/10.1037/1076-898X.12.2.67" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Applied</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="67" to="78" />
+			<date type="published" when="2006">2006. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<author>
+			<persName><forename type="first">Karel</forename><surname>Hurts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linda</forename><forename type="middle">S</forename><surname>Angell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miguel</forename><forename type="middle">A</forename><surname>Perez</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1557234X11410387</idno>
+		<ptr target="https://doi.org/10.1177/1557234X11410387" />
+	</analytic>
+	<monogr>
+		<title level="m">The Distracted Driver: Mechanisms, Models, and Measurement</title>
+		<imprint>
+			<date type="published" when="2011-09">2011. Sept. 2011</date>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="3" to="57" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Breathing Life Into Biomechanical User Models</title>
+		<author>
+			<persName><forename type="first">Aleksi</forename><surname>Ikkala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Klar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miroslav</forename><surname>Bachinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Fleig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Perttu</forename><surname>Hämäläinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jörg</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roderick</forename><surname>Murray-Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3526113.3545689</idno>
+		<ptr target="https://doi.org/10.1145/3526113.3545689" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 35th Annual ACM Symposium on User Interface Software and Technology</title>
+		<meeting>the 35th Annual ACM Symposium on User Interface Software and Technology<address><addrLine>Bend OR USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Computational models of cognition for human-automated vehicle interaction: State-ofthe-art and future directions</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Baumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2024.103230</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2024.103230" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">185</biblScope>
+			<biblScope unit="page">103230</biblScope>
+			<date type="published" when="2024-05">2024. May 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Computational Models of Human-Automated Vehicle Interaction (Dagstuhl Seminar 22102)</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Baumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tamara</forename><surname>Shamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Heinrich</surname></persName>
+		</author>
+		<idno type="DOI">10.4230/DAGREP.12.3.15</idno>
+		<ptr target="https://doi.org/10.4230/DAGREP.12.3.15" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical Report</note>
+	<note>object Object]. 67 pages, 7782081 bytes pages. Artwork Size: 67 pages, 7782081 bytes ISSN: 2192-5283 Medium: application/pdf</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Agents, environments, scenarios: A framework for examining models and simulations of human-vehicle interaction</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linda</forename><forename type="middle">Ng</forename><surname>Boyle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wendy</forename><surname>Ju</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Riener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ignacio</forename><surname>Alvarez</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.trip.2020.100214</idno>
+		<ptr target="https://doi.org/10.1016/j.trip.2020.100214" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Interdisciplinary Perspectives</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">100214</biblScope>
+			<date type="published" when="2020">2020. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Strategic Adaptation to Performance Objectives in a Dual-Task Setting</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1551-6709.2010.01124.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1551-6709.2010.01124.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Science</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="1548" to="1560" />
+			<date type="published" when="2010-11">2010. Nov. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Natural Break Points: The Influence of Priorities and Cognitive and Motor Cues on Dual-Task Interleaving</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rae</forename><surname>Garnett</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1555343411432339</idno>
+		<ptr target="https://doi.org/10.1177/1555343411432339" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognitive Engineering and Decision Making</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="29" />
+			<date type="published" when="2012-03">2012. March 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<author>
+			<persName><forename type="first">Bonnie</forename><surname>John</surname></persName>
+		</author>
+		<title level="m">Why goms? interactions</title>
+		<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="1995">1995. 1995</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="80" to="89" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Touchscreen Typing As Optimal Supervisory Control</title>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Acharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Uzair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinhui</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3411764.3445483</idno>
+		<ptr target="https://doi.org/10.1145/3411764.3445483" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems. ACM, Yokohama Japan</title>
+		<meeting>the 2021 CHI Conference on Human Factors in Computing Systems. ACM, Yokohama Japan</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Multitasking in Driving as Optimal Adaptation Under Uncertainty</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Jussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Kujala</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0018720820927687</idno>
+		<ptr target="https://doi.org/10.1177/0018720820927687Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Factors: The Journal of the Human Factors and Ergonomics Society</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="page" from="1324" to="1341" />
+			<date type="published" when="2020-07">2020. July 2020</date>
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">A workload model to evaluate distracters and driver&apos;s aids</title>
+		<author>
+			<persName><forename type="first">Cansu</forename><surname>Kandemir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Holly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deborah</forename><surname>Handley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Thompson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ergon.2016.09.004</idno>
+		<idno>09.004</idno>
+		<ptr target="https://doi.org/10.1016/j.ergon.2016" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Industrial Ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="page" from="18" to="36" />
+			<date type="published" when="2018-01">2018. Jan. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Guidelines for performing systematic literature reviews in software engineering</title>
+		<author>
+			<persName><forename type="first">Barbara</forename><surname>Kitchenham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stuart</forename><surname>Charters</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Online tools supporting the conduct and reporting of systematic reviews and systematic maps: a case study on CADIMA and review of existing tools</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Kohl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emma</forename><forename type="middle">J</forename><surname>Mcintosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Unger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neal</forename><forename type="middle">R</forename><surname>Haddaway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steffen</forename><surname>Kecke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Schiemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ralf</forename><surname>Wilhelm</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s13750-018-0115-5</idno>
+		<ptr target="https://doi.org/10.1186/s13750-018-0115-5Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Environmental Evidence</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2018-02">2018. Feb. 2018</date>
+			<publisher>Springer Science and Business Media LLC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">ImageNet classification with deep convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3065386</idno>
+		<ptr target="https://doi.org/10.1145/3065386" />
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="84" to="90" />
+			<date type="published" when="2017-05">2017. May 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Modeling visual sampling on in-car displays: The challenge of predicting safety-critical lapses of control</title>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Kujala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2015.02.009</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2015.02.009" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="66" to="78" />
+			<date type="published" when="2015-07">2015. July 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Classification of Driver Cognitive Load based on Physiological Data: Exploring Recurrent Neural Networks</title>
+		<author>
+			<persName><forename type="first">Shekhar</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dengbo</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangkai</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Birsen</forename><surname>Donmez</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICARM54641.2022.9959588</idno>
+		<ptr target="https://doi.org/10.1109/ICARM54641.2022.9959588" />
+	</analytic>
+	<monogr>
+		<title level="m">2022 International Conference on Advanced Robotics and Mechatronics (ICARM)</title>
+		<meeting><address><addrLine>Guilin, China</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="19" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Developing Predictive Equations to Model the Visual Demand of In-Vehicle Touchscreen HMIs</title>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">R</forename><surname>Large</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>Burnett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><surname>Crundall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Editha</forename><surname>Van Loon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ayse</forename><forename type="middle">L</forename><surname>Eren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lee</forename><surname>Skrypchuk</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10447318.2017.1306940</idno>
+		<ptr target="https://doi.org/10.1080/10447318.2017.1306940" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="14" />
+			<date type="published" when="2018-01">2018. Jan. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Predicting the visual demand of finger-touch pointing tasks in a driving context</title>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">R</forename><surname>Large</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><surname>Crundall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>Burnett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lee</forename><surname>Skrypchuk</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2799250.2799256</idno>
+		<ptr target="https://doi.org/10.1145/2799250.2799256" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 7th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+		<meeting>the 7th International Conference on Automotive User Interfaces and Interactive Vehicular Applications<address><addrLine>Nottingham United Kingdom</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="221" to="224" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Defining Driver Distraction</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristie</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Regan</surname></persName>
+		</author>
+		<idno type="DOI">10.1201/9781420007497.ch3</idno>
+		<ptr target="https://doi.org/10.1201/9781420007497.ch3" />
+		<editor>Driver Distraction, Michael Regan, John Lee, and Kristie Young</editor>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<publisher>CRC Press</publisher>
+			<biblScope unit="page" from="31" to="40" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Modeling task completion time of in-vehicle information systems while driving with keystroke level modeling</title>
+		<author>
+			<persName><forename type="first">Chan</forename><surname>Seul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sol</forename><forename type="middle">Hee</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ji</forename><surname>Gu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ergon.2019.06.001</idno>
+		<ptr target="https://doi.org/10.1016/j.ergon.2019.06.001" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Industrial Ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="page" from="252" to="260" />
+			<date type="published" when="2019-07">2019. July 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Modeling how different user groups perceive webpage aesthetics</title>
+		<author>
+			<persName><forename type="first">Luis</forename><forename type="middle">A</forename><surname>Leiva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morteza</forename><surname>Shiripour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10209-022-00910-x</idno>
+		<ptr target="https://doi.org/10.1007/s10209-022-00910-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Universal Access in the Information Society</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="1417" to="1424" />
+			<date type="published" when="2023-11">2023. Nov. 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Predicting Perceived Visual and Cognitive Distractions of Drivers With Multimodal Features</title>
+		<author>
+			<persName><forename type="first">Nanxiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><surname>Busso</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TITS.2014.2324414</idno>
+		<ptr target="https://doi.org/10.1109/TITS.2014.2324414" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Intelligent Transportation Systems</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="51" to="65" />
+			<date type="published" when="2015-02">2015. Feb. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Predicting Human Performance in Vertical Menu Selection Using Deep Learning</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samy</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3173574.3173603</idno>
+		<ptr target="https://doi.org/10.1145/3173574.3173603" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2018 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2018 CHI Conference on Human Factors in Computing Systems</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="1" to="7" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Mathematical modeling of the human cognitive system in two serial processing stages with its applications in adaptive workloadmanagement systems</title>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changxu</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TITS.2010.2081359</idno>
+		<ptr target="https://doi.org/10.1109/TITS.2010.2081359" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Intelligent Transportation Systems</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="221" to="231" />
+			<date type="published" when="2011">2011. 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Queueing network modeling of elementary mental processes</title>
+		<author>
+			<persName><forename type="first">Yili</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.103.1.116</idno>
+		<ptr target="https://doi.org/10.1037/0033-295X.103.1.116" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="page" from="116" to="136" />
+			<date type="published" when="1996">1996. 1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Queueing Network-Model Human Processor (QN-MHP): A computational architecture for multitask performance in human-machine systems</title>
+		<author>
+			<persName><forename type="first">Yili</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Feyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omer</forename><surname>Tsimhoni</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1143518.1143520</idno>
+		<ptr target="https://doi.org/10.1145/1143518.1143520" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Computer-Human Interaction</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="37" to="70" />
+			<date type="published" when="2006-03">2006. March 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Assessing the driving distraction effect of vehicle HMI displays using data mining techniques</title>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zaiyan</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianjie</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qianwen</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanyang</forename><surname>Zuo</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.trf.2020.01.016</idno>
+		<ptr target="https://doi.org/10.1016/j.trf.2020.01.016" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Part F: Traffic Psychology and Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="235" to="250" />
+			<date type="published" when="2020-02">2020. Feb. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Automotive User Interfaces: Creating Interactive Experiences in the Car</title>
+		<idno type="DOI">10.1007/978-3-319-49448-7</idno>
+		<ptr target="https://doi.org/10.1007/978-3-319-49448-7" />
+		<editor>Gerrit Meixner and Christian Müller</editor>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Springer International Publishing</publisher>
+			<pubPlace>Cham</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Montoya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Holman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Taylor</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wendy</forename><surname>Kan</surname></persName>
+		</author>
+		<ptr target="https://kaggle.com/competitions/state-farm-distracted-driver-detection" />
+		<title level="m">State farm distracted driver detection</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Amortized Inference with User Simulations</title>
+		<author>
+			<persName><forename type="first">Hee-Seung</forename><surname>Moon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Byungjoo</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3544548.3581439</idno>
+		<ptr target="https://doi.org/10.1145/3544548.3581439" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2023 CHI Conference on Human Factors in Computing Systems<address><addrLine>Hamburg Germany</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1" to="20" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Distinguishing patterns in drivers&apos; visual attention allocation using Hidden Markov Models</title>
+		<author>
+			<persName><forename type="first">Mauricio</forename><surname>Muñoz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Reimer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joonbum</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bruce</forename><surname>Mehler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lex</forename><surname>Fridman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.trf.2016.09.015</idno>
+		<ptr target="https://doi.org/10.1016/j.trf.2016.09.015" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Part F: Traffic Psychology and Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="90" to="103" />
+			<date type="published" when="2016-11">2016. Nov. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Myles</surname></persName>
+		</author>
+		<ptr target="https://www.wardsauto.com/industry/distraction-study-calls-out-touchscreens" />
+		<title level="m">Distraction Study Calls Out Touchscreens</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Big Data Usage Can Be a Solution for User Behavior Evaluation: An Automotive Industry Example</title>
+		<author>
+			<persName><forename type="first">Julia</forename><surname>Orlovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casper</forename><surname>Wickman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rikard</forename><surname>Söderberg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.1016/j.procir.2018.03.102</idno>
+		<ptr target="https://doi.org/10.1016/j.procir.2018.03" />
+	</analytic>
+	<monogr>
+		<title level="j">Procedia CIRP</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="page">102</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Driver distraction by smartphone use (WhatsApp) in different age groups. Accident Analysis &amp; Prevention 117</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ortiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ortiz-Peregrina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Castro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Casares-López</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Salas</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.aap.2018.04.018</idno>
+		<ptr target="https://doi.org/10.1016/j.aap.2018.04.018" />
+		<imprint>
+			<date type="published" when="2018-08">2018. Aug. 2018</date>
+			<biblScope unit="page" from="239" to="249" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Combinatorial Optimization of Graphical User Interface Designs</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Niraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morteza</forename><surname>Dayama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maximilian</forename><surname>Shiripour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karrenbauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/JPROC.2020.2969687</idno>
+		<ptr target="https://doi.org/10.1109/JPROC.2020.2969687" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc. IEEE</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page" from="434" to="464" />
+			<date type="published" when="2020-03">2020. March 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Computational Rationality as a Theory of Interaction</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Jussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3491102.3517739</idno>
+		<ptr target="https://doi.org/10.1145/3491102.3517739" />
+	</analytic>
+	<monogr>
+		<title level="m">CHI Conference on Human Factors in Computing Systems</title>
+		<meeting><address><addrLine>New Orleans LA USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.1093/oso/9780198799603.001.0001</idno>
+		<ptr target="https://doi.org/10.1093/oso/9780198799603.001.0001" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Interaction</title>
+		<editor>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ola</forename><surname>Per</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Xiaojun</forename><surname>Kristensson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Andrew</forename><surname>Bi</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Howes</surname></persName>
+		</editor>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<date type="published" when="2018">2018</date>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">The PRISMA 2020 statement: an updated guideline for reporting systematic reviews</title>
+		<author>
+			<persName><forename type="first">Matthew</forename><forename type="middle">J</forename><surname>Page</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joanne</forename><forename type="middle">E</forename><surname>Mckenzie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><forename type="middle">M</forename><surname>Bossuyt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Isabelle</forename><surname>Boutron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tammy</forename><forename type="middle">C</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cynthia</forename><forename type="middle">D</forename><surname>Mulrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Larissa</forename><surname>Shamseer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename><forename type="middle">M</forename><surname>Tetzlaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elie</forename><forename type="middle">A</forename><surname>Akl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sue</forename><forename type="middle">E</forename><surname>Brennan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roger</forename><surname>Chou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julie</forename><surname>Glanville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeremy</forename><forename type="middle">M</forename><surname>Grimshaw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asbjørn</forename><surname>Hróbjartsson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Manoj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianjing</forename><surname>Lalu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><forename type="middle">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Loder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Mayo-Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><forename type="middle">A</forename><surname>Mcdonald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lesley</forename><forename type="middle">A</forename><surname>Mcguinness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><forename type="middle">C</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vivian</forename><forename type="middle">A</forename><surname>Tricco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Penny</forename><surname>Welch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Whiting</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Moher</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s13643-021-01626-4</idno>
+		<ptr target="https://doi.org/10.1186/s13643-021-01626-4Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Systematic Reviews</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2021-03">2021. March 2021</date>
+			<publisher>Springer Science and Business Media LLC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Fitts goes autobahn: Assessing the visual demand of finger-touch pointing tasks in an on-road study</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sanna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>Pampel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chrisminder</forename><surname>Burnett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harpreet</forename><surname>Hare</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arber</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lee</forename><surname>Shabani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Skrypchuk</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mouzakitis</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3342197.3344538</idno>
+		<ptr target="https://doi.org/10.1145/3342197.3344538" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 11th international conference on automotive user interfaces and interactive vehicular applications (AutomotiveUI &apos;19)</title>
+		<meeting>the 11th international conference on automotive user interfaces and interactive vehicular applications (AutomotiveUI &apos;19)<address><addrLine>New York, NY, USA; Utrecht; Netherlands</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="254" to="261" />
+		</imprint>
+	</monogr>
+	<note>Number of pages: 8 Place</note>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">A review of human performance models for prediction of driver behavior and interactions with in-vehicle technology</title>
+		<author>
+			<persName><forename type="first">Junho</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maryam</forename><surname>Zahabi</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/00187208221132740</idno>
+		<ptr target="https://doi.org/10.1177/00187208221132740" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Factors</title>
+		<imprint>
+			<biblScope unit="volume">0</biblScope>
+			<biblScope unit="page">00187208221132740</biblScope>
+			<date type="published" when="2022">2022. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">A computational model for driver&apos;s cognitive state, visual perception and intermittent attention in a distracted car following task</title>
+		<author>
+			<persName><forename type="first">Jami</forename><surname>Pekkanen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Otto</forename><surname>Lappi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paavo</forename><surname>Rinkkala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuel</forename><surname>Tuhkanen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roosa</forename><surname>Frantsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Heikki</forename><surname>Summala</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rsos.180194</idno>
+		<ptr target="https://doi.org/10.1098/rsos.180194" />
+	</analytic>
+	<monogr>
+		<title level="j">Royal Society Open Science</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">180194</biblScope>
+			<date type="published" when="2018-09">2018. Sept. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">An extended keystroke level model (KLM) for predicting the visual demand of in-vehicle information systems</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Pettitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gary</forename><surname>Burnett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Stevens</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1240624.1240852</idno>
+		<ptr target="https://doi.org/10.1145/1240624.1240852" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI conference on human factors in computing systems (CHI &apos;07)</title>
+		<meeting>the SIGCHI conference on human factors in computing systems (CHI &apos;07)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="1515" to="1524" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Evaluating distraction of in-vehicle information systems while driving by predicting total eyes-off-road times with keystroke level modeling</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Purucker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frederik</forename><surname>Naujoks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Prill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexandra</forename><surname>Neukum</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.apergo.2016.04.012</idno>
+		<ptr target="https://doi.org/10.1016/j.apergo.2016.04.012" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="page" from="543" to="554" />
+			<date type="published" when="2017-01">2017. Jan. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Android In The Wild: A large-scale dataset for android device control</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Rawles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alice</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oriana</forename><surname>Riva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothy</forename><surname>Lillicrap</surname></persName>
+		</author>
+		<ptr target="https://proceedings.neurips.cc/paper_files/paper/2023/file/bbbb6308" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Oh</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Neumann</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Globerson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><surname>Hardt</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">S</forename><surname>Levine</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="59708" to="59728" />
+		</imprint>
+	</monogr>
+	<note>b402fe909c39dd29950c32e0-Paper-Datasets_and_Benchmarks.pdf</note>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<author>
+			<persName><forename type="first">Johnny</forename><surname>Saldaña</surname></persName>
+		</author>
+		<idno>OCLC: ocn796279115</idno>
+	</analytic>
+	<monogr>
+		<title level="m">The coding manual for qualitative researchers</title>
+		<meeting><address><addrLine>Los Angeles</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">A Survey of 15 Years of Data-Driven Persona Development</title>
+		<author>
+			<persName><forename type="first">Joni</forename><surname>Salminen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kathleen</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soon-Gyo</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernard</forename><forename type="middle">J</forename><surname>Jansen</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10447318.2021.1908670</idno>
+		<ptr target="https://doi.org/10.1080/10447318.2021.1908670" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="1685" to="1708" />
+			<date type="published" when="2021-11">2021. Nov. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Situation awareness on the road: review, theoretical and methodological issues, and future directions</title>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">M</forename><surname>Salmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neville</forename><forename type="middle">A</forename><surname>Stanton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristie</forename><forename type="middle">Lee</forename><surname>Young</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/1463922X.2010.539289</idno>
+		<ptr target="https://doi.org/10.1080/1463922X.2010.539289" />
+	</analytic>
+	<monogr>
+		<title level="j">Theoretical Issues in Ergonomics Science</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="472" to="492" />
+			<date type="published" when="2012-07">2012. July 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Predicting the effects of in-car interface use on driver performance: an integrated model approach</title>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/ijhc.2001.0472</idno>
+		<ptr target="https://doi.org/10.1006/ijhc.2001.0472" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="85" to="107" />
+			<date type="published" when="2001-07">2001. July 2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Predicting the effects of cellularphone dialing on driver performance</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dario</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristen</forename><forename type="middle">L</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Macuga</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S1389-0417(01)00048-1</idno>
+		<ptr target="https://doi.org/10.1016/S1389-0417(01)00048-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Systems Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="95" to="102" />
+			<date type="published" when="2002-03">2002. March 2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">Distract-R: rapid prototyping and evaluation of in-vehicle interfaces</title>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Zuber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ekaterina</forename><surname>Beregovaia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Markley</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1054972.1055052</idno>
+		<ptr target="https://doi.org/10.1145/1054972.1055052" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Portland Oregon USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2005">2005</date>
+			<biblScope unit="page" from="581" to="589" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Classifying Cognitive Load for a Proactive In-car Voice Assistant</title>
+		<author>
+			<persName><forename type="first">Maria</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ojashree</forename><surname>Bhandare</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajinkya</forename><surname>Prabhune</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wolfgang</forename><surname>Minker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steffen</forename><surname>Werner</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/BigDataService49289.2020.00010</idno>
+		<ptr target="https://doi.org/10.1109/BigDataService49289.2020.00010" />
+	</analytic>
+	<monogr>
+		<title level="m">2020 IEEE Sixth International Conference on Big Data Computing Service and Applications (BigDataService)</title>
+		<meeting><address><addrLine>Oxford, United Kingdom</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="9" to="16" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">Support for Modeling Interaction with Automotive User Interfaces</title>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Schneegaß</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bastian</forename><surname>Pfleging</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dagmar</forename><surname>Kern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Albrecht</forename><surname>Schmidt</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2381416.2381428</idno>
+		<ptr target="https://doi.org/10.1145/2381416.2381428event-place" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Conference on Automotive User Interfaces and Interactive Vehicular Applications (AutomotiveUI &apos;11)</title>
+		<meeting>the 3rd International Conference on Automotive User Interfaces and Interactive Vehicular Applications (AutomotiveUI &apos;11)<address><addrLine>New York, NY, USA; Salzburg, Austria</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="71" to="78" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">To Explain or to Predict?</title>
+		<author>
+			<persName><forename type="first">Galit</forename><surname>Shmueli</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/10-STS330</idno>
+		<ptr target="https://doi.org/10.1214/10-STS330" />
+	</analytic>
+	<monogr>
+		<title level="j">Statist. Sci</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<date type="published" when="2010-08">2010. Aug. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Cognitive load theory, learning difficulty, and instructional design</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Sweller</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0959-4752(94)90003-5</idno>
+		<ptr target="https://doi.org/10.1016/0959-4752" />
+	</analytic>
+	<monogr>
+		<title level="j">Learning and Instruction</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="90003" to="90005" />
+			<date type="published" when="1994">1994. 1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<monogr>
+		<title level="m" type="main">Analysis of naturalistic driving study data: Safer glances, driver inattention, and crash risk</title>
+		<author>
+			<persName><forename type="first">Trent</forename><surname>Victor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Dozza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Bärgman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian-Nils</forename><surname>Boda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johan</forename><surname>Engström</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gustav</forename><surname>Markkula</surname></persName>
+		</author>
+		<idno>SHRP 2 Report S2-S08A-RW-1</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<monogr>
+		<author>
+			<persName><forename type="first">Frederik</forename><surname>Diits</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vikström</forename></persName>
+		</author>
+		<ptr target="https://www.vibilagare.se/english/physical-buttons-outperform-touchscreens-new-cars-test-finds#vote" />
+		<title level="m">Physical buttons outperform touchscreens in new cars, test finds | Vi Bilägare</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Autonomous detection of distracted driving by cell phone</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ivan</forename><forename type="middle">A</forename><surname>Watkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">E</forename><surname>Amaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">A</forename><surname>Keller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edward</forename><forename type="middle">D</forename><surname>Hughes</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Beck</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ITSC.2011.6083026</idno>
+		<ptr target="https://doi.org/10.1109/ITSC.2011.6083026" />
+	</analytic>
+	<monogr>
+		<title level="m">2011 14th International IEEE Conference on Intelligent Transportation Systems (ITSC)</title>
+		<meeting><address><addrLine>Washington, DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="1960" to="1965" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<monogr>
+		<author>
+			<persName><forename type="first">Emmet</forename><surname>White</surname></persName>
+		</author>
+		<ptr target="https://www.autoweek.com/news/technology/a42384978/infotainment-screens-make-distracted-drivers-swedish-study-finds/" />
+		<title level="m">Infotainment Screens Actually Distract Drivers, Study Shows</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<analytic>
+		<title level="a" type="main">Attention-situation awareness (A-SA) model</title>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Wickens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Mccarley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lisa</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Foyle</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Goodman</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hooey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NASA aviation safety program conference on human performance modeling of approach and landing with augmented displays</title>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="page">189</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<monogr>
+		<idno type="DOI">10.1201/b18362</idno>
+		<ptr target="https://doi.org/10.1201/b18362" />
+		<title level="m">Evaluation of Human Work</title>
+		<editor>
+			<persName><forename type="first">John</forename><forename type="middle">R</forename><surname>Wilson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sarah</forename><surname>Sharples</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>CRC Press</publisher>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>0 ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">Guidelines for snowballing in systematic literature studies and a replication in software engineering</title>
+		<author>
+			<persName><forename type="first">Claes</forename><surname>Wohlin</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2601248.2601268</idno>
+		<ptr target="https://doi.org/10.1145/2601248.2601268" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 18th International Conference on Evaluation and Assessment in Software Engineering</title>
+		<meeting>the 18th International Conference on Evaluation and Assessment in Software Engineering</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="1" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<monogr>
+		<title level="m" type="main">Simulating Attention Distribution of a Driver Model: How to Relate Expectancy and Task Value?</title>
+		<author>
+			<persName><forename type="first">Bertram</forename><surname>Wortelen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Systematic review of driving simulator validation studies</title>
+		<author>
+			<persName><forename type="first">Rachael</forename><forename type="middle">A</forename><surname>Wynne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vanessa</forename><surname>Beanland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">M</forename><surname>Salmon</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ssci.2019.04.004</idno>
+		<ptr target="https://doi.org/10.1016/j.ssci.2019.04.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Safety Science</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="138" to="151" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b95">
+	<analytic>
+		<title level="a" type="main">Correlation Among Behavior, Personality, and Electroencephalography Revealed by a Simulated Driving Experiment</title>
+		<author>
+			<persName><forename type="first">Lirong</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changhao</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mutian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fuwu</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Konghui</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2019.01524</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2019.01524" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">1524</biblScope>
+			<date type="published" when="2019-07">2019. July 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b96">
+	<monogr>
+		<title level="m" type="main">Driver distraction: A review of the literature. Distracted driving</title>
+		<author>
+			<persName><forename type="first">Kristie</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Regan</surname></persName>
+		</author>
+		<ptr target="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=" />
+		<imprint>
+			<date type="published" when="2007">2007. 2007. 2007</date>
+			<biblScope unit="page" from="379" to="405" />
+		</imprint>
+	</monogr>
+	<note>48ed46e3a2c83529e0961c83a3710b9a Publisher: Australasian College of Road Safety</note>
+</biblStruct>
+
+<biblStruct xml:id="b97">
+	<monogr>
+		<title level="m" type="main">Predicting Relative Crash Risk from the Attentional Effects of the Cognitive Demand of Visual-Manual Secondary Tasks</title>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Young</surname></persName>
+		</author>
+		<idno type="DOI">10.4271/2017-01-1384</idno>
+		<ptr target="https://doi.org/10.4271/2017-01-1384" />
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2017" to="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b98">
+	<analytic>
+		<title level="a" type="main">Car Following and Microscopic Traffic Simulation Under Distracted Driving</title>
+		<author>
+			<persName><forename type="first">Sunbola</forename><surname>Zatmeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">-Kanj</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomer</forename><surname>Toledo</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/03611981211000357</idno>
+		<ptr target="https://doi.org/10.1177/03611981211000357" />
+	</analytic>
+	<monogr>
+		<title level="j">Transportation Research Record: Journal of the Transportation Research Board</title>
+		<imprint>
+			<biblScope unit="volume">2675</biblScope>
+			<biblScope unit="page" from="643" to="656" />
+			<date type="published" when="2021-08">2021. Aug. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b99">
+	<analytic>
+		<title level="a" type="main">Data-driven Personas: Constructing Archetypal Users with Clickstreams and User Telemetry</title>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hans-Frederick</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anil</forename><surname>Shankar</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2858036.2858523</idno>
+		<ptr target="https://doi.org/10.1145/2858036.2858523" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2016 CHI Conference on Human Factors in Computing Systems<address><addrLine>San Jose California USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="5350" to="5359" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b100">
+	<analytic>
+		<title level="a" type="main">Sim-to-Real Transfer in Deep Reinforcement Learning for Robotics: a Survey</title>
+		<author>
+			<persName><forename type="first">Wenshuai</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jorge</forename><surname>Pena Queralta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomi</forename><surname>Westerlund</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/SSCI47803.2020.9308468</idno>
+		<ptr target="https://doi.org/10.1109/SSCI47803.2020.9308468" />
+	</analytic>
+	<monogr>
+		<title level="m">2020 IEEE Symposium Series on Computational Intelligence (SSCI)</title>
+		<meeting><address><addrLine>Canberra, ACT, Australia</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="737" to="744" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">To appear as a part of an upcoming textbook on deep learning. Diffusion Models: Tutorial and Survey</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Benyamin</forename><surname>Ghojogh</surname></persName>
+						</author>
+						<author>
+							<persName><roleName>{BGHOJOGH</roleName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Ali</forename><surname>Ghodsi}</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Uwaterloo</forename><surname>Ca</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Waterloo</forename><surname>Ontario</surname></persName>
+						</author>
+						<title level="a" type="main">To appear as a part of an upcoming textbook on deep learning. Diffusion Models: Tutorial and Survey</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">0FD329B459F4C3ED7565B204470456F2</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T06:19+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Diffusion models are a family of generative models which work based on a Markovian process. In their forward process, they gradually add noise to data until it becomes a complete noise. In the backward process, the data are gradually generated out of noise. In this tutorial paper, the Denoising Diffusion Probabilistic Model (DDPM) is fully explained. Detailed simplification of the variational lower bound of its likelihood, parameters of the distributions, and the loss function of the diffusion model are discussed. Some modifications to the original DDPM, including nonfixed covariance matrix, reducing the gradient noise, improving the noise schedule, and nonstandard Gaussian noise distribution, and conditional diffusion model are introduced. Finally, continuous noise schedule by Stochastic Differential Equation (SDE), where the noise schedule is in a continuous domain, is explained.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Diffusion models take their inspiration from the principles of non-equilibrium thermodynamics. They use a Markov chain (Markovian process) to gradually introduce noise into data and then they learn to reverse this process to recreate the desired data from the noise. As shown in Fig. <ref type="figure" target="#fig_0">1</ref>, a diffusion model has two processes with opposite directions. In the fixed forward diffusion process, it starts with the data and gradually adds noise to it until it becomes a complete noise. Then, in the generative reverse denoising process, it reverses that forward process and generates data out of the noise by denoising it gradually. As Fig. <ref type="figure" target="#fig_1">2</ref> depicts, the forward and reverse processes can be modeled by the encoder and decoder of an autoencoder, respectively. As the forward process merely needs to make data noisy, it does not involve any learning and thus is fixed. Therefore, only the decoder needs to be learned in diffusion models. This is one of the differences of diffusion models from variational autoencoder <ref type="bibr" target="#b10">(Kingma &amp; Welling, 2014;</ref><ref type="bibr" target="#b6">Ghojogh et al., 2022)</ref> in which both encoder and decoder  are learned.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Denoising Diffusion Probabilistic Model (DDPM)</head><p>The first and original diffusion model is the Denoising Diffusion Probabilistic Model (DDPM), proposed in <ref type="bibr" target="#b9">(Ho et al., 2020)</ref>. This section explains DDPM in details.</p><p>The process of adding noise to data can be seen as a sequence or chain {x 0 , x 1 , . . . , x T } where x 0 ∈ R d and x T ∈ R d are the original data and data completely corrupted with noise, respectively. Figure <ref type="figure" target="#fig_2">3</ref> depicts such a chain. In this notation, x t+1 is x t plus some noise. As the noise is random, there can be a conditional distribution q(x t+1 |x t ) to model the probability of obtaining x t+1 from x t . The goal of diffusion models is to learn the conditional distribution q(x t |x t+1 ) modeling how to generate data out of noise. This is because when q(x t |x t+1 ) is learned, t can be swept from T to 0 to generate a non-noisy data instance out of the complete noise. The distribution q(x t |x t+1 ) is intractable and it should be approximated using a neural network. Let p θ (x t |x t+1 ) denote the neural network with weights θ which approx- imates this conditional distribution. It is noteworthy that q(x t |x t+1 , x 0 ) is obviously tractable because it is conditioning on the original data x 0 . However, modeling q(x t |x t+1 , x 0 ) is not useful because the goal of diffusion models is to find x 0 and the goal cannot be used in the model. In fact, that is a chicken and egg problem. Although this distribution is not practical, but it will appear later in the derivations of this chapter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">The Forward Process</head><p>The forward process is for making data noisy gradually:</p><formula xml:id="formula_0">x 0 → x 1 → • • • → x T .<label>(1)</label></formula><p>The forward process is defined by the following Gaussian conditional distribution:</p><formula xml:id="formula_1">q(x t |x t-1 ) = N (x t ; 1 -β t x t-1 , β t I),<label>(2)</label></formula><p>where √ 1 -β t x t-1 is the mean and β t I is the covariance, I is the identity matrix, and β t ∈ (0, 1) is the noise level parameter in a pre-determined noise schedule:</p><formula xml:id="formula_2">β 1 &lt; β 2 &lt; • • • &lt; β T .</formula><p>(3)</p><p>The β t parameter increases gradually in the forward process, so that the mean √ 1 -β t x t-1 deviates more and more from the previously noisy data x t-1 and the variance β t I increases. The closer the t gets to T , the more noisy the data x t becomes. The forward process is considered as a Markov chain with the first Markovian property. In the Markov chain, every state is merely dependant on its previous state and not the entire previous sequence <ref type="bibr" target="#b3">(Ghojogh et al., 2019)</ref>:</p><formula xml:id="formula_3">q(x t |x t-1 , x t-2 , . . . , x 0 ) = q(x t |x t-1 ).</formula><p>(4)</p><p>Therefore, the joint distribution of the forward process is:</p><formula xml:id="formula_4">q(x 1:T |x 0 ) = T t=1 q(x t |x t-1 ),<label>(5)</label></formula><p>where x 1:T represents all latent states from x 1 to x T and x 0 is the initial state, i.e., the original data. The probabilistic graphical model <ref type="bibr" target="#b12">(Koller &amp; Friedman, 2009)</ref> of the diffusion model is illustrated in Fig. <ref type="figure" target="#fig_3">4</ref> where the states x 1:T are the latent (or hidden) variables for the observed data x 0 . This figure also compares the diffusion model with the variational autoencoder where a variable z is the latent variable for the observed data x.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">The Generative Backward Process</head><p>The diffusion process, or the generative backward process, is the reverse process for generating data out of noise gradually:</p><formula xml:id="formula_5">x T → x T -1 → • • • → x 0 .<label>(6)</label></formula><p>As the forward process has Gaussian distributions in Eq.</p><p>(2), it makes sense to use Gaussian distributions for the backward process, too. A generator machine learning model, with parameters or weights θ, is used to model the backward process:</p><formula xml:id="formula_6">p θ (x t-1 |x t ) = N x t-1 ; µ θ (x t ; t), Σ θ (x t ; t) ,<label>(7)</label></formula><p>where µ θ (x t ; t) ∈ R d and Σ θ (x t ; t) ∈ R d×d are the mean and covariance of the distribution at iteration t, respectively. For simplicity, the covariance is usually set to be isotropic and diagonal:</p><formula xml:id="formula_7">Σ θ (x t ; t) = σ 2 t I. (<label>8</label></formula><formula xml:id="formula_8">)</formula><p>The goal of diffusion model is to learn the parameters of this Gaussian distribution, which are the mean and variance.</p><p>The generative process is also considered as a Markov chain with the first Markovian property <ref type="bibr" target="#b3">(Ghojogh et al., 2019)</ref>:</p><formula xml:id="formula_9">q(x t-1 |x t , x t+1 , . . . , x T ) = q(x t-1 |x t ).<label>(9)</label></formula><p>Therefore, the joint distribution of the generative process is:</p><formula xml:id="formula_10">p θ (x 0:T ) = p(x T ) T t=1 p θ (x t-1 |x t ),<label>(10)</label></formula><p>where x 0:T represents all states from x T to x 0 and x T is the state corresponding to the complete noise. Usually, the p(x T ) is defined to be the noise with standard Gaussian distribution:</p><p>p(x T ) = N (0, I).</p><p>(11)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Variational Lower Bound of the Likelihood</head><p>As discussed before, variational autoencoders consider a latent variable z as the latent factor for the observed data x.</p><p>Likewise, the diffusion models consider the latent variables {x 1 , x 2 , . . . , x T } for the observed data x 0 (see Fig. <ref type="figure" target="#fig_3">4</ref>).</p><p>The likelihood of data in the variational autoencoders and diffusion models are:</p><formula xml:id="formula_11">p θ (x) = p θ (x, z) dz,<label>(12)</label></formula><formula xml:id="formula_12">p θ (x 0 ) = p θ (x 0 , x 1:T ) dx 1:T ,<label>(13)</label></formula><p>respectively. Recall that in variational inference, maximization of the likelihood was not tractable so a lower bound of the likelihood, named evidence lower bound (ELBO), was maximized instead <ref type="bibr" target="#b5">(Ghojogh et al., 2021)</ref>:</p><formula xml:id="formula_13">E q(z|x) log p θ (x|z) -KL q(z|x)∥p θ (z) ≤ p θ (x),<label>(14)</label></formula><p>where E[.] denotes expectation and KL(.∥.) denotes the Kullback-Leibler (KL) divergence <ref type="bibr" target="#b13">(Kullback &amp; Leibler, 1951)</ref>. See <ref type="bibr" target="#b5">(Ghojogh et al., 2021;</ref><ref type="bibr" target="#b7">2023)</ref> for the derivation of the ELBO in Eq. ( <ref type="formula" target="#formula_13">14</ref>).</p><p>Similarly, the diffusion models maximize the variational lower bound of the likelihood of data:</p><formula xml:id="formula_14">L := E q(x 1:T |x) log p θ (x 0 |x 1:T ) -KL q(x 1:T |x 0 )∥p θ (x 1:T ) ≤ p θ (x 0 ).<label>(15)</label></formula><p>The variational lower bound of likelihood in diffusion mod-els can be simplified as follows:</p><formula xml:id="formula_15">L = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) -KL q(x 1:T |x 0 )∥p θ (x 1:T ) (a) = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) -q(x 1:T |x 0 ) log q(x 1:T |x 0 ) p θ (x 1:T ) dx 1:T (b) = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) -E q(x 1:T |x0) log q(x 1:T |x 0 ) p θ (x 1:T ) (c) = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) -log q(x 1:T |x 0 ) p θ (x 1:T ) (d) = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) + log p θ (x 1:T ) q(x 1:T |x 0 ) (e) = E q(x 1:T |x0) log p θ (x 0 |x 1:T ) p θ (x 1:T ) q(x 1:T |x 0 ) (f ) = E q(x 1:T |x0) log p θ (x 0:T ) q(x 1:T |x 0 ) ,<label>(16)</label></formula><p>where (a) is because of the definition of the KL divergence, (b) is because of the definition of the expectation in the second term of expression, (c) is because expectation is a linear operator, (d) and (e) are because of the property of logarithm, and (f ) is because p θ (x 0 |x 1:T ) p θ (x 1:T ) = p θ (x 0 , x 1:T ) = p θ (x 0:T ).</p><p>The Eq. ( <ref type="formula" target="#formula_15">16</ref>) can be simplified further:</p><formula xml:id="formula_16">L = E q(x 1:T |x0) log p θ (x 0:T ) q(x 1:T |x 0 ) (10) = E q(x 1:T |x0) log p(x T ) T t=1 p θ (x t-1 |x t ) q(x 1:T |x 0 ) (a) = E q(x 1:T |x0) log p(x T ) + T t=1 E q(x 1:T |x0) log p θ (x t-1 |x t ) -E q(x 1:T |x0) log q(x 1:T |x 0 ) (5) = E q(x 1:T |x0) log p(x T ) + T t=1 E q(x 1:T |x0) log p θ (x t-1 |x t ) -E q(x 1:T |x0) log T t=1 q(x t |x t-1 ) (b) = E q(x 1:T |x0) log p(x T ) + T t=1 E q(x 1:T |x0) log p θ (x t-1 |x t ) - T t=1 E q(x 1:T |x0) log q(x t |x t-1 ) (c) = E q(x 1:T |x0) log p(x T ) + T t=1 E q(x 1:T |x0) log p θ (x t-1 |x t ) q(x t |x t-1 ) (d) = E q(x 1:T |x0) log p(x T ) + T t=1 log p θ (x t-1 |x t ) q(x t |x t-1 ) ,<label>(17)</label></formula><p>where (a) is because of the properties of logarithm and linearity of the expectation, (b) is because logarithm of multiplication becomes summation of logarithms, (c) is for the properties of logarithm, and (d) is because expectation is a linear operator.</p><p>According to the definition of the KL divergence, the Eq. ( <ref type="formula" target="#formula_16">17</ref>), i.e., the variational lower bound, can be stated as follows:</p><formula xml:id="formula_17">L = E q(x 1:T |x0) log p(x T ) -KL q(x t |x t-1 )∥p θ (x t-1 |x t ) .</formula><p>This is the variational lower bound which needs to be maximized; therefore, the KL divergence is minimized.</p><p>Here, the KL divergence is between the forward process q(x t |x t-1 ) and the generative process p θ (x t-1 |x t ). Minimization of this KL divergence makes sense because the distribution of the generative process should mimic the distribution of the forward process.</p><p>As the sequence of states in the diffusion process is a Markov chain, the following holds:</p><formula xml:id="formula_18">q(x t |x t-1 ) = q(x t |x t-1 , x 0 ). (<label>18</label></formula><formula xml:id="formula_19">)</formula><p>According to the Bayes' rule, there is:</p><formula xml:id="formula_20">q(x t |x t-1 , x 0 ) = q(x t-1 |x t , x 0 ) q(x t |x 0 ) q(x t-1 |x 0 ) ,<label>(19)</label></formula><p>where q(x t-1 |x t , x 0 ) is tractable in contrast to q(x t-1 |x t ) because it is conditioning on the original data. In fact, Eqs. ( <ref type="formula" target="#formula_18">18</ref>) and ( <ref type="formula" target="#formula_20">19</ref>) are used to make q(x t-1 |x t ) tractable. The tractable distribution q(x t-1 |x t , x 0 ) is called the ground truth denoising distribution because it sees the original data x 0 .</p><p>Plugging Eqs. ( <ref type="formula" target="#formula_18">18</ref>) and ( <ref type="formula" target="#formula_20">19</ref>) in Eq. ( <ref type="formula" target="#formula_16">17</ref>) results in:</p><formula xml:id="formula_21">L = E q(x 1:T |x0) log p(x T ) + T t=1 log p θ (x t-1 |x t ) q(x t-1 |x 0 ) q(x t-1 |x t , x 0 ) q(x t |x 0 ) (a) = E q(x 1:T |x0) log p(x T ) + T t=2 log p θ (x t-1 |x t ) q(x t-1 |x t , x 0 ) + T t=2 log q(x t-1 |x 0 ) q(x t |x 0 ) + log p θ (x 0 |x 1 ) q(x 0 |x 0 ) q(x 0 |x 1 , x 0 ) q(x 1 |x 0 ) (b) = E q(x 1:T |x0) log p(x T ) + T t=2 log p θ (x t-1 |x t ) q(x t-1 |x t , x 0 ) + T t=2 log q(x t-1 |x 0 ) q(x t |x 0 ) + log p θ (x 0 |x 1 ) q(x 1 |x 0 ) ,<label>(20)</label></formula><p>where (a) breaks down the logarithm and takes out the t = 1 from the summation, and</p><formula xml:id="formula_22">(b) is because q(x 0 |x 0 ) = q(x 0 |x 1 , x 0 ) = 1.</formula><p>The third term in the expectation is a telescoping summation and can be simplified as follows:</p><formula xml:id="formula_23">T t=2 log q(x t-1 |x 0 ) q(x t |x 0 ) = log q(x T -1 |x 0 ) + • • • + log q(x 2 |x 0 ) + log q(x 1 |x 0 ) -log q(x T |x 0 ) -log q(x T -1 |x 0 ) -• • • -log q(x 2 |x 0 ) = -log q(x T |x 0 ) + log q(x 1 |x 0 ) = log q(x 1 |x 0 ) q(x T |x 0 ) .</formula><p>Therefore, the variational lower bound in Eq. ( <ref type="formula" target="#formula_21">20</ref>) becomes:</p><formula xml:id="formula_24">L = E q(x 1:T |x0) log p(x T ) + T t=2 log p θ (x t-1 |x t ) q(x t-1 |x t , x 0 ) + log q(x 1 |x 0 ) q(x T |x 0 ) + log p θ (x 0 |x 1 ) q(x 1 |x 0 ) (a) = E q(x 1:T |x0) log p(x T ) q(x T |x 0 ) + T t=2 log p θ (x t-1 |x t ) q(x t-1 |x t , x 0 ) + log p θ (x 0 |x 1 ) (b) = E q(x 1:T |x0) log p(x T ) q(x T |x 0 ) + T t=2 E q(x 1:T |x0) log p θ (x t-1 |x t ) q(x t-1 |x t , x 0 ) + E q(x 1:T |x0) log p θ (x 0 |x 1 ) (c) = -KL q(x T |x 0 )∥p(x T ) - T t=2 KL q(x t-1 |x t , x 0 )∥p θ (x t-1 |x t ) + E q(x 1:T |x0) log p θ (x 0 |x 1 ) ,</formula><p>where (a) is because of the properties of logarithm, (b) is because expectation is a linear operator, and (c) is because of the definition of KL divergence. The variational lower bound of the likelihood should be maximized with respect to the parameters θ. The first KL divergence is constant with respect to θ so it can be dropped. Maximization of the lower bound is equivalent to minimization of it multiplied by negative one:</p><formula xml:id="formula_25">minimize θ T t=2 KL q(x t-1 |x t , x 0 )∥p θ (x t-1 |x t ) -E q(x 1:T |x0) log p θ (x 0 |x 1 ) .<label>(21)</label></formula><p>Therefore, it can be the loss function of a neural network with weights θ. This loss function makes sense because it learns the backward distribution p θ (x t-1 |x t ) to become close to the ground truth denoising distribution q(x t-1 |x t , x 0 ) by minimizing their KL divergence. That is why the focus of the loss function is on the KL divergence and the second term in Eq. ( <ref type="formula" target="#formula_25">21</ref>) can be ignored. Remember this loss function and we will get back to it later in the chapter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.">Parameters of the Distributions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.1.">SAMPLING IN FORWARD PROCESS AT</head><p>ARBITRARY ITERATIONS Recall the Gaussian distributions of the forward process in Eq. ( <ref type="formula" target="#formula_1">2</ref>). That conditional distribution was for sampling x t given x t-1 . However, it is also possible to sample x t at any arbitrary iteration t in a closed form. Consider the following definitions:</p><formula xml:id="formula_26">α t := 1 -β t , (<label>22</label></formula><formula xml:id="formula_27">) ᾱt = t i=1 α i .<label>(23)</label></formula><p>Therefore, Eq. ( <ref type="formula" target="#formula_1">2</ref>) can be restated as:</p><formula xml:id="formula_28">q(x t |x t-1 ) = N x t ; √ α t x t-1 , (1 -α t )I .<label>(24)</label></formula><p>Here, the reparameterization technique <ref type="bibr" target="#b10">(Kingma &amp; Welling, 2014</ref>) can be used. In this technique, for sampling from a non-standard Gaussian distribution z ∼ N (µ, σ 2 I), one can sample from a standard distribution instead, i.e., ϵ ∼ N (0, I) and obtain the sample z as z = µ + σϵ. Here, using the reparameterization technique, the ϵ ∼ N (0, I) is sampled and then {x t , x t-1 , . . . , x 1 } are each obtained as:</p><formula xml:id="formula_29">x t = √ α t x t-1 + √ 1 -α t ϵ,<label>(25)</label></formula><formula xml:id="formula_30">x t-1 = √ α t-1 x t-2 + 1 -α t-1 ϵ, (<label>26</label></formula><formula xml:id="formula_31">)</formula><formula xml:id="formula_32">x t-2 = √ α t-2 x t-3 + 1 -α t-2 ϵ,<label>(27)</label></formula><p>. . . Plugging x t-1 , Eq. ( <ref type="formula" target="#formula_30">26</ref>), in x t , Eq. ( <ref type="formula" target="#formula_29">25</ref>), gives:</p><formula xml:id="formula_33">x t = √ α t √ α t-1 x t-2 + 1 -α t-1 ϵ + √ 1 -α t ϵ = √ α t α t-1 x t-2 + α t (1 -α t-1 )ϵ + √ 1 -α t ϵ. (<label>28</label></formula><formula xml:id="formula_34">)</formula><p>Note that the ϵ in the second and third terms are two different samples from the standard Gaussian distributions. Therefore, the second and third terms are two independent random Gaussian distributions:</p><formula xml:id="formula_35">α t (1 -α t-1 )ϵ ∼ N 0, α t (1 -α t-1 ) =αt-αtαt-1 , √ 1 -α t ϵ ∼ N (0, 1 -α t ),</formula><p>so their summation becomes a Gaussian distribution whose variance is summation of the two variances:</p><formula xml:id="formula_36">α t (1 -α t-1 )ϵ + √ 1 -α t ϵ ∼ N (0, 1 -α t α t-1 ).</formula><p>As a result, Eq. ( <ref type="formula" target="#formula_33">28</ref>) can be stated as:</p><formula xml:id="formula_37">x t = √ α t α t-1 x t-2 + 1 -α t α t-1 ϵ</formula><p>Plugging x t-2 , Eq. ( <ref type="formula" target="#formula_32">27</ref>), in this expression gives:</p><formula xml:id="formula_38">x t = √ α t α t-1 √ α t-2 x t-3 + 1 -α t-2 ϵ + 1 -α t α t-1 ϵ = √ α t α t-1 α t-2 x t-3 + α t α t-1 -α t α t-1 α t-2 ϵ + 1 -α t α t-1 ϵ. (<label>29</label></formula><formula xml:id="formula_39">)</formula><p>Again, the second and third terms are two independent random Gaussian distributions:</p><formula xml:id="formula_40">α t α t-1 -α t α t-1 α t-2 ϵ ∼ N (0, α t α t-1 -α t α t-1 α t-2 ), 1 -α t α t-1 ϵ ∼ N (0, 1 -α t α t-1 ),</formula><p>so their summation becomes a Gaussian distribution whose variance is summation of the two variances:</p><formula xml:id="formula_41">α t α t-1 -α t α t-1 α t-2 ϵ + 1 -α t α t-1 ϵ ∼ N 0, 1 -α t α t-1 α t-2 ).</formula><p>As a result, Eq. ( <ref type="formula" target="#formula_38">29</ref>) can be stated as:</p><formula xml:id="formula_42">x t = √ α t α t-1 α t-2 x t-3 + 1 -α t α t-1 α t-2 ϵ.</formula><p>By induction, continuing this recursion until x 0 gives x t in terms of the original data x 0 and the noise ϵ:</p><formula xml:id="formula_43">x t = t i=1 α i x 0 + 1 - t i=1 α i ϵ (23) = √ ᾱt x 0 + √ 1 -ᾱt ϵ,<label>(30)</label></formula><p>which states x t in terms of the original data x 0 and noise ϵ. As x 0 is not random and ϵ has standard Gaussian distribution, the distribution of x t in this equation has mean √ ᾱt x 0 and covariance (1 -ᾱt )I. Therefore:</p><formula xml:id="formula_44">q(x t |x 0 ) = N x t ; √ ᾱt x 0 , (1 -ᾱt )I . (<label>31</label></formula><formula xml:id="formula_45">)</formula><p>By this conditional distribution, the noisy data x t at any iteration t can be sampled based on the original data x 0 .</p><p>2.4.2. THE GROUND TRUTH DENOISING DISTRIBUTION A neural network is required to learn the parameters, i.e., the mean and covariance, of the backward process in Eq. ( <ref type="formula" target="#formula_6">7</ref>). Similar to Eq. ( <ref type="formula" target="#formula_6">7</ref>), the ground truth denoising distribution can be a Gaussian distribution:</p><formula xml:id="formula_46">q(x t-1 |x t , x 0 ) = N x t-1 ; µ(x t , x 0 ), Σ(x t , x 0 ) , (32)</formula><p>where µ(x t , x 0 ) ∈ R d and Σ(x t , x 0 ) ∈ R d×d are the mean and covariance of the distribution, respectively. For simplicity, similar to Eq. ( <ref type="formula" target="#formula_7">8</ref>), the covariance is usually set to be isotropic and diagonal, i.e., Σ(x t , x 0 ) = σ 2 t I. By Bayes' rule, we have:</p><formula xml:id="formula_47">q(x t-1 |x t , x 0 ) = q(x t |x t-1 , x 0 ) q(x t-1 |x 0 ) q(x t |x 0 ) .<label>(33)</label></formula><p>According to Eqs. ( <ref type="formula" target="#formula_18">18</ref>), ( <ref type="formula" target="#formula_26">22</ref>), (24), and (31), the probabili-ties in this Bayes' rule are:</p><formula xml:id="formula_48">q(x t |x t-1 , x 0 ) (18) = q(x t |x t-1 ) (22),(24) = N (x t ; √ α t x t-1 , β t I), ∝ exp - 1 2 (x t - √ α t x t-1 ) 2 β t , q(x t-1 |x 0 ) (31) = N x t-1 ; √ ᾱt-1 x 0 , (1 -ᾱt-1 )I , ∝ exp - 1 2 (x t-1 - √ ᾱt-1 x 0 ) 2 1 -ᾱt-1 , q(x t |x 0 ) (31) = N x t ; √ ᾱt x 0 , (1 -ᾱt )I ∝ exp - 1 2 (x t - √ ᾱt x 0 ) 2 1 -ᾱt .</formula><p>Therefore:</p><formula xml:id="formula_49">q(x t-1 |x t , x 0 )<label>(33)</label></formula><p>∝ exp -1 2</p><formula xml:id="formula_50">(x t - √ α t x t-1 ) 2 β t + (x t-1 - √ ᾱt-1 x 0 ) 2 1 -ᾱt-1 - (x t - √ ᾱt x 0 ) 2 1 -ᾱt (a) = exp - 1 2 x 2 t -2 √ α t x t x t-1 + α t x 2 t-1 β t + x 2 t-1 -2 √ ᾱt-1 x 0 x t-1 + ᾱt-1 x 2 0 1 -ᾱt-1 - (x t - √ ᾱt x 0 ) 2 1 -ᾱt (b) = exp - 1 2 α t β t + 1 1 -ᾱt-1 x 2 t-1 -2 √ α t β t x t + √ ᾱt-1 1 -ᾱt-1 x 0 x t-1 + C(x t , x 0 ) (c) ∝ exp - 1 2 x t-1 - √ α t β t xt+ √ ᾱt-1 1-ᾱt-1 x0 α t β t + 1 1-ᾱt-1 2 1/( αt βt + 1 1-ᾱt-1 ) ,<label>(34)</label></formula><p>where (a) and (c) are because of the binomial theorem, (b) is because of factoring out the terms x 2 t-1 and x t-1 , and C(x t , x 0 ) is a function not including x t-1 and thus it can be dropped and ignored for optimization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.3.">MEAN OF THE GROUND TRUTH DENOISING</head><p>DISTRIBUTION According to Eq. ( <ref type="formula" target="#formula_50">34</ref>), the mean of the ground truth denoising distribution, in Eq. ( <ref type="formula">32</ref>), is as follows:</p><formula xml:id="formula_51">µ(x t , x 0 ) = √ αt βt x t + √ ᾱt-1 1-ᾱt-1 x 0 αt βt + 1 1-ᾱt-1 = √ αt βt x t + √ ᾱt-1 1-ᾱt-1 x 0 αt-αt ᾱt-1+βt βt(1-ᾱt-1) (a) = √ αt βt x t + √ ᾱt-1 1-ᾱt-1 x 0 1-ᾱt βt(1-ᾱt-1) = √ α t β t x t + √ ᾱt-1 1 -ᾱt-1 x 0 1 -ᾱt-1 1 -ᾱt β t = √ α t (1 -ᾱt-1 ) 1 -ᾱt x t + √ ᾱt-1 β t 1 -ᾱt x 0 ,<label>(35)</label></formula><p>where (a) is because α t + β t = 1 and α t ᾱt-1 = ᾱt by Eqs. ( <ref type="formula" target="#formula_26">22</ref>) and ( <ref type="formula" target="#formula_27">23</ref>). According to Eq. ( <ref type="formula" target="#formula_43">30</ref>), we have:</p><formula xml:id="formula_52">x t = √ ᾱt x 0 + √ 1 -ᾱt ϵ =⇒ x 0 = 1 √ ᾱt (x t - √ 1 -ᾱt ϵ).<label>(36)</label></formula><p>Substituting Eq. ( <ref type="formula" target="#formula_52">36</ref>) in Eq. ( <ref type="formula" target="#formula_51">35</ref>) gives:</p><formula xml:id="formula_53">µ(x t , x 0 ) = √ α t (1 -ᾱt-1 ) 1 -ᾱt x t + √ ᾱt-1 β t 1 -ᾱt 1 √ ᾱt (x t - √ 1 -ᾱt ϵ) (a) = 1 √ α t x t - 1 -α t √ 1 -ᾱt ϵ (22) = 1 √ α t x t - β t √ 1 -ᾱt ϵ ,<label>(37)</label></formula><p>where (a) is because of simplification of the expression while noticing Eqs. ( <ref type="formula" target="#formula_26">22</ref>) and ( <ref type="formula" target="#formula_27">23</ref>). Eq. ( <ref type="formula" target="#formula_53">37</ref>) is the mean of the tractable backward distribution q(x t-1 |x t , x 0 ) as in Eq. ( <ref type="formula">32</ref>). Let µ θ (x t , t) denote the mean of the distribution of the backward process, i.e., p θ (x t-1 |x t ). This mean also has a similar format as the mean µ(x t , x 0 ); therefore:</p><formula xml:id="formula_54">µ θ (x t , t) = 1 √ α t x t - β t √ 1 -ᾱt ϵ θ (x t , t) ,<label>(38)</label></formula><p>where ϵ θ (x t , t) is a function approximator (i.e., neural network) intended to predict ϵ from x t . In summary, the backward process p θ (x t-1 |x t ) has a Gaussian distribution as in the Eq. ( <ref type="formula" target="#formula_6">7</ref>), whose mean and covariance are Eqs. ( <ref type="formula" target="#formula_54">38</ref>) and (8), respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.">The Loss Function of the Diffusion Model</head><p>Recall the KL-divergence in the loss function of Eq. ( <ref type="formula" target="#formula_25">21</ref>):</p><formula xml:id="formula_55">KL q(x t-1 |x t , x 0 )∥p θ (x t-1 |x t ) ,</formula><p>where q(x) = N (x; µ, Σ) and p(x) = N (x; µ θ , Σ θ ).</p><p>There is a closed form expression for the KL divergence of two Gaussian distributions:</p><formula xml:id="formula_56">KL(q∥p) = 1 2 tr(Σ -1 θ Σ) + (µ θ -µ) ⊤ Σ -1 θ (µ θ -µ) -d + ln det(Σ θ ) det( Σ) , (<label>39</label></formula><formula xml:id="formula_57">)</formula><p>where d is the dimensionality of x, and tr(.) and det(.) denote trace and determinant of matrix, respectively. For simplicity, assume the covariances of the two distributions are diagonal and equal, i.e., Σ θ = Σ q = λI (see Eq. ( <ref type="formula" target="#formula_7">8</ref>)). Then, Eq. ( <ref type="formula" target="#formula_56">39</ref>) is simplified to:</p><formula xml:id="formula_58">KL(q∥p) = 1 2 (µ θ -µ) ⊤ Σ -1 θ (µ θ -µ),</formula><p>which is the squared Mahalanobis distance between the means of distributions. This makes sense because the two distributions p and q are normal distributions and their covariances -related to the second moment -are equal. So, for making them the same, their first moments, i.e., their means, should become the same. As a result, the loss function can be written as the squared Mahalanobis distance between the means of distributions:</p><formula xml:id="formula_59">ℓ t := E x0,ϵ 1 2∥Σ θ (x t , t)∥ 2 2 ∥ µ(x t , x 0 ) -µ θ (x t , t)∥ 2 2 (a) = E x0,ϵ 1 2∥Σ θ (x t , t)∥ 2 2 1 √ α t x t - 1 -α t √ 1 -ᾱt ϵ - 1 √ α t x t - 1 -α t √ 1 -ᾱt ϵ θ 2 2 = E x0,ϵ (1 -α t ) 2 2α t (1 -ᾱt )∥Σ θ (x t , t)∥ 2 2 ∥ϵ -ϵ θ (x t , t)∥ 2 2 (30) = E x0,ϵ (1 -α t ) 2 2α t (1 -ᾱt )∥Σ θ (x t , t)∥ 2 2 × ϵ -ϵ θ ( √ ᾱt x 0 + √ 1 -ᾱt ϵ, t) 2 2 , (40)</formula><p>where (a) is because of Eqs. ( <ref type="formula" target="#formula_53">37</ref>) and ( <ref type="formula" target="#formula_54">38</ref>) while noticing Eq. ( <ref type="formula" target="#formula_26">22</ref>). Ho et al. <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> discovered empirically that the diffusion model produces better-quality images when using a simplified loss function, omitting the weighting term:</p><formula xml:id="formula_60">ℓ = E t∼[1,T ],x0,ϵ ϵ -ϵ θ ( √ ᾱt x 0 + √ 1 -ᾱt ϵ, t) 2 2 , (<label>41</label></formula><formula xml:id="formula_61">)</formula><p>where t ∼ [1, T ] means sampling t from the set {1, 2, . . . , T } uniformly. Recall that ᾱt is calculated by Eq. ( <ref type="formula" target="#formula_26">22</ref>) based on the selected noise schedule β t in Eq.</p><p>(3). Note that the expectation can be approximated by average according to the Monte Carlo approximation <ref type="bibr" target="#b4">(Ghojogh et al., 2020)</ref>.</p><p>1 while not converged do 2</p><p>x 0 ∼ q 0 (x 0 ) The training algorithm of the DDPM is in Algorithm 1. In every iteration, an image x 0 is sampled from the training dataset. Then, the time step t is sampled uniformly from {1, . . . , T }. Then, for the sampled time step t, the noise ϵ is sampled from the standard Gaussian distribution. Finally, a backpropagation step is performed by the gradient of the loss function in Eq. ( <ref type="formula" target="#formula_60">41</ref>). This makes the neural network learn the noise. In other words, it learns how much noise it should have in the backward process to reverse the forward process. This procedure is repeated until convergence of the weights θ of neural network. One of the advantages of DDPM compared to GAN (Generative Adversarial Network) <ref type="bibr" target="#b8">(Goodfellow et al., 2014)</ref>, is that this is a simple algorithm to train and it is stable. This is while training GAN is hard and tricky.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.7.">Inference (Sampling) Phase of DDPM</head><p>In the inference phase, the network has been trained, meaning that the distribution p θ is learned. This distribution can be used to start with a complete noise and generate (or sample) data out of it in a backward process.</p><p>The inference phase starts with the complete noise, i.e., x T ∼ N (0, I). Let σ t I denote the covariance of x t . By use of the reparameterization technique <ref type="bibr" target="#b10">(Kingma &amp; Welling, 2014)</ref> and according to Eq. ( <ref type="formula" target="#formula_54">38</ref>) while noticing Eq. ( <ref type="formula" target="#formula_26">22</ref>), we have:</p><formula xml:id="formula_62">x t-1 = 1 √ α t x t - 1 -α t √ 1 -ᾱt ϵ θ (x t , t) + σ t ϵ,<label>(42)</label></formula><p>where ϵ ∼ N (0, I) and α t and ᾱt are calculated by Eqs. ( <ref type="formula" target="#formula_26">22</ref>) and ( <ref type="formula" target="#formula_27">23</ref>) based on the selected noise schedule β t in Eq.</p><p>(3). Note that ϵ θ (x t , t) is outputted by the trained network. Iterating over t from T to 1 gives the generated data x 0 . The inference phase of DDPM is in Algorithm 2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Modifications to the Original DDPM</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Non-fixed Covariance Matrix</head><p>Recall Eq. ( <ref type="formula" target="#formula_7">8</ref>) in which Σ θ is assumed to be fixed and diagonal, i.e., Σ θ (x t ; t) = σ 2 t I, in the original DDPM (Ho</p><formula xml:id="formula_63">1 x T ∼ N (0, I) 2 for t from T to 1 do 3 ϵ ∼ N (0, I) 4 x t-1 = 1 √ αt x t -1-αt √ 1-ᾱt ϵ θ (x t , t) + σ t ϵ 5 Return x 0</formula><p>Algorithm 2: Inference algorithm for generating data in DDPM et al., 2020). We define:</p><formula xml:id="formula_64">β t := 1 -ᾱt-1 1 -ᾱt β t .<label>(43)</label></formula><p>Nichol et al. <ref type="bibr" target="#b16">(Nichol &amp; Dhariwal, 2021)</ref> found out empirically that the covariance Σ θ (x t ; t) used in Eq. ( <ref type="formula">40</ref>) is better to be learned as a linear combination of β t and β t in the log domain:</p><formula xml:id="formula_65">Σ θ (x t ; t) = diag exp v log β t + (1 -v) log β t ,<label>(44)</label></formula><p>where diag(.) makes a diagonal matrix with its input as the diagonal, exp is the exponential operator, 1 ∈ R d is the vector of ones, and v ∈ R d is a vector outputted by the network of DDPM which is learned by backpropagation.</p><p>The loss function of the network is changed from Eq. ( <ref type="formula" target="#formula_60">41</ref>) to:</p><formula xml:id="formula_66">ℓ + λ T t=0 ℓ t ,<label>(45)</label></formula><p>where ℓ t and ℓ are defined in Eqs. ( <ref type="formula">40</ref>) and ( <ref type="formula" target="#formula_60">41</ref>), respectively, and λ = 0.001 is the regularization hyperparameter. Note that Σ θ (x t ; t), defined by Eq. ( <ref type="formula" target="#formula_65">44</ref>), is used in ℓ t so its v is learned by backpropagation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Reducing the Gradient Noise</head><p>One might wonder why a regularized loss function, as in Eq. ( <ref type="formula" target="#formula_66">45</ref>), is required while ℓ is the simplification of summation of ℓ t 's; meaning that the information of the first term is contained in the second term of Eq. ( <ref type="formula" target="#formula_66">45</ref>). By use of gradient noise scale <ref type="bibr" target="#b15">(McCandlish et al., 2018)</ref>, Nichol et al. <ref type="bibr" target="#b16">(Nichol &amp; Dhariwal, 2021)</ref> empirically observed that the gradient noise of ℓ t is much more than that of ℓ. They observed that this gradient noise is caused by the uniform sampling of t in Algorithm 1. By replacing the uniform sampling with importance sampling <ref type="bibr" target="#b4">(Ghojogh et al., 2020)</ref>, which records a history of previous values, they reduced this gradient noise. When using importance sampling, they could use merely T t=0 ℓ t as the loss function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Improving the Noise Schedule</head><p>Recall the noise schedule stated in Eq. ( <ref type="formula">3</ref>). While linear noise schedule used in the original DDPM <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> works well on high-resolution images, Nichol et al.</p><p>(Nichol &amp; Dhariwal, 2021) observed that it does not work properly on the small 32 × 32 or 64 × 64 images. This is because the linear noise schedule makes the x T too noisy at the end of the forward process. They proposed a cosine noise schedule which works well also on the small images (Nichol &amp; Dhariwal, 2021):</p><formula xml:id="formula_67">ᾱt = f (t) f (0) ,<label>(46)</label></formula><formula xml:id="formula_68">f (t) := cos t/T + s 1 + s × π 2 2 ,<label>(47)</label></formula><p>where s = 0.008 is the offset. Note that according to Eqs. ( <ref type="formula" target="#formula_26">22</ref>) and ( <ref type="formula" target="#formula_27">23</ref>), we have:</p><formula xml:id="formula_69">β t = 1 -α t = 1 - ᾱt ᾱt-1 . (<label>48</label></formula><formula xml:id="formula_70">)</formula><p>Using Eq. ( <ref type="formula" target="#formula_67">46</ref>) in Eq. ( <ref type="formula" target="#formula_69">48</ref>) gives β t at time t in the schedule.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Non-Standard Gaussian Noise Distribution</head><p>The original DDPM <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> considers standard Gaussian distribution for the noise ϵ. However, the corresponding data distribution may be more complicated than the standard Gaussian distribution making this noise distribution not necessarily suitable for the process. PriorGrad <ref type="bibr" target="#b14">(Lee et al., 2022)</ref> takes care of this concern and modifies DDPM to use a data-dependent prior distribution. Suppose the mean µ and the covariance Σ are obtained from some data-dependent prior; for example, they can be the mean and variance of the training data. In PriorGrad, the noise is sampled from the Gaussian distribution with covariance Σ, i.e., ϵ ∼ N (0, Σ). It changes Eq. ( <ref type="formula" target="#formula_43">30</ref>) to:</p><formula xml:id="formula_71">x t = √ ᾱt (x 0 -µ) + √ 1 -ᾱt ϵ,<label>(49)</label></formula><p>in which the mean is deducted from the data x 0 . This algorithm also changes the loss function from Eq. ( <ref type="formula" target="#formula_60">41</ref>) to:</p><formula xml:id="formula_72">ℓ = E t∼[1,T ],x0,ϵ ϵ -ϵ θ (x t , t) 2 Σ -1 ,<label>(50)</label></formula><p>where x t is obtained from Eq. ( <ref type="formula" target="#formula_71">49</ref>) and ∥x∥ 2 Σ -1 := x ⊤ Σ -1 x. In the inference phase, it simply adds back the subtracted mean µ to the generated data x 0 . The main ideas of PriorGrad <ref type="bibr" target="#b14">(Lee et al., 2022)</ref> are two-fold: (1) subtracting the mean of data in the training and adding it back in sampling, and (2) using the inverse of covariance matrix in the loss function. Therefore, it can use a non-standard Gaussian distribution in the diffusion model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.">Some Other Improvements</head><p>An additional improvements over DDPM is the Denoising Diffusion Implicit Model (DDIM) <ref type="bibr">(Song et al., 2021a</ref>) </p><formula xml:id="formula_73">1 x T ∼ N (0, I) 2 for t from T to 1 do 3 ϵ ∼ N (0, I) 4 x t-1 = 1 √ αt x t -1-αt √ 1-ᾱt ϵ θ (x t , t) + σ t ϵ 5 y t-1 = √ ᾱt-1 y + √ 1 -ᾱt-1 ϵ 6 x t-1 ← x t-1 -ϕ n (x t</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Conditional Diffusion Model</head><p>DDPM <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> is unconditional; meaning that it generates any data, from the data distribution, in the inference (sampling) phase. Iterative Latent Variable Refinement (ILVR) <ref type="bibr" target="#b2">(Choi et al., 2021</ref>) is a conditional diffusion model which can generate data from a specific category or class of data chosen by the user. In this algorithm, the algorithm takes a reference data instance (e.g., a reference image) and generates a data instance similar to, or in the category of, the reference. The training phase of ILVR is the same as training in DDPM. In fact, this algorithm modifies the inference (sampling) phase of DDPM to become a conditional generator. The inference algorithm of ILVR is Algorithm 3. Let ϕ n (.) be a low-pass filter which downsamples data by a factor of n and then upsamples it again by the factor n. This only preserves the low frequency of data and omits its high frequency. For example, in images, it makes the image blurred. Obviously, if x ∈ R d , then ϕ n (x) ∈ R d . Suppose the unconditional sample x t-1 ∈ R d has been calculated by Eq. ( <ref type="formula" target="#formula_62">42</ref>). Let the reference data instance be denoted by y ∈ R d . Similar to Eq. ( <ref type="formula" target="#formula_43">30</ref>), y t-1 can be obtained from y and the noise ϵ as:</p><formula xml:id="formula_74">y t-1 = √ ᾱt-1 y + 1 -ᾱt-1 ϵ.<label>(51)</label></formula><p>The unconditional sample x t-1 can then be modified to be similar to the noisy reference y t-1 at time slot (t -1). For this, the low frequency of x t-1 , i.e., ϕ n (x t-1 ) ∈ R d , is subtracted from it and, instead, the low frequency of y t-1 is added back to it. This replaces the low frequency of x t-1 with the low frequency of the noisy reference at time slot (t -1). Performing this iteratively from t = T to t = 1 gives the sample similar to the reference sample. It is noteworthy that n is a positive integer selected by the user. The smaller the n, the more similar the sample will be to the reference. This is because a small n makes the bandwidth of the low pass filter larger, replacing most of the frequencies of the sample with the reference data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Continuous Noise Schedule by Stochastic Differential Equation</head><p>The noise schedule in DDPM <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> is in the discrete domain; meaning that there are T discrete steps from the original data to the complete noise and backwards. However, it is possible to have noise schedule of diffusion models in a continuous domain; meaning that t ∈ [0, T ] can be continuous rather than being discrete t ∈ {1, 2, . . . , T }.</p><p>The continuous noise schedule converts the Markov chain of diffusion model to a Stochastic Differential Equation (SDE) <ref type="bibr">(Song et al., 2021b)</ref>. Consider Eq. ( <ref type="formula" target="#formula_29">25</ref>):</p><formula xml:id="formula_75">x t = √ α t x t-1 + √ 1 -α t ϵ (22) = 1 -β t x t-1 + β t ϵ,</formula><p>in DDPM in which t ∈ {1, 2, . . . , T }. If T → ∞, the number of steps in the noise schedule becomes huge making the flow of time almost continuous. By T → ∞, Eq. ( <ref type="formula" target="#formula_29">25</ref>) converges to the following SDE <ref type="bibr">(Song et al., 2021b)</ref>:</p><formula xml:id="formula_76">dx = - 1 2 β(t) x dt + β(t) dw,<label>(52)</label></formula><p>where w ∈ R d is the standard Wiener process (Brownian motion), x ∈ R d is the data variable, and dx and dw are the differentials of x and w. As a result, DDPM <ref type="bibr" target="#b9">(Ho et al., 2020)</ref> is a special case of diffusion model with SDE <ref type="bibr">(Song et al., 2021b)</ref>. In a more general case, the forward process in the diffusion model with SDE is the following SDE <ref type="bibr">(Song et al., 2021b)</ref>:</p><formula xml:id="formula_77">dx = f (x, t) dt + g(t) dw,<label>(53)</label></formula><p>where w ∈ R d is the standard Wiener process (Brownian motion), f (., t) : R d → R d is a function named the drift coefficient of x(t), and g(.) : R → R is a function called the diffusion coefficient of x(t). The backward process of the diffusion model with SDE is the following reverse-time SDE <ref type="bibr">(Song et al., 2021b)</ref>:</p><formula xml:id="formula_78">dx = f (x, t) -g(t) 2 ∇ x log p t (x) dt + g(t) d w, (<label>54</label></formula><formula xml:id="formula_79">)</formula><p>where w is the standard Wiener process when time flows backwards from T to 0 and dt is the infinitesimal negative time. The operator ∇ x is the derivative with respect to x, the p t (x) is the probability distribution of x at time t, and the ∇ x log p t (x) is the time-dependant gradient field, called score briefly. As long as the score gets estimated, this reverse-time SDE can be solved and therefore the sample can be generated out of noise in the backward process of diffusion model. According to <ref type="bibr">(Song et al., 2021b)</ref>, the loss function of the original DDPM, for maximizing the ELBO, can be stated in the form of a weighted sum of denoising score matching <ref type="bibr" target="#b19">(Vincent, 2011)</ref>:</p><formula xml:id="formula_80">ℓ = T t=1</formula><p>(1 -α t )E pdata(x) E q(xt|x0) s θ (x t , t)</p><p>-∇ xt log q(x t |x 0 ) , (55</p><formula xml:id="formula_81">)</formula><p>where s θ (x t , t) is the output of the neural network with weights θ. Likewise, the loss function in the diffusion model with SDE is <ref type="bibr">(Song et al., 2021b)</ref>:</p><formula xml:id="formula_82">ℓ = E t λ(t) E x(0) E x(t)|x(0) s θ (x t , t) -∇ x(t) log q x(t)|x(0) ,<label>(56)</label></formula><p>where λ : [0, T ] → R &gt;0 is a positive weighting function, t is sampled from the uniform distribution in range [0, T ], the x(0) is a sampled data instance from the training dataset, and x(t) ∼ q x(t)|x(0) . This loss function is minimized by backpropagation until the output of network, i.e., s θ (x t , t), becomes a good estimator of the score ∇ x(t) log q x(t)|x(0) .</p><p>After training, the neural network becomes a function approximator for the score. Therefore, the reverse-time SDE, Eq. ( <ref type="formula" target="#formula_78">54</ref>), can be solved by numerical SDE solvers to generate data in the backward process of diffusion model. Various numerical methods exist for solving SDEs, some of which are Euler-Maruyama and stochastic Runge-Kutta <ref type="bibr" target="#b11">(Kloeden &amp; Platen, 1992)</ref>. Any SDE solver can be used to solve the reverse-time SDE of the diffusion model to generate data.</p><p>It is noteworthy that continuous noise schedule by SDE has been also extended for discrete-state (categorical) data <ref type="bibr" target="#b1">(Campbell et al., 2022)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>This was a tutorial paper about diffusion models -a family of generative models in machine learning. The original DDPM, its forward and backward processes, its variational lower bound, and parameters of distributions were covered. Some modifications and improvements to DDPm were also introduced. Then, conditional diffusion model for generating data similar to a reference data instance was explained.</p><p>Finally, the diffusion model using SDE was covered for having a continuous noise schedule.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. The forward and backward processes of the diffusion model. The credit of the used images is for Arash Vahdat.</figDesc><graphic coords="1,307.44,194.07,243.00,94.53" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. The diffusion model as an autoencoder.</figDesc><graphic coords="1,307.44,340.04,238.14,55.47" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. The conditional distributions in the forward and backward processes of the diffusion model.</figDesc><graphic coords="2,63.09,67.06,218.69,86.29" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. The probabilistic graphical models of (a) the diffusion model and (b) variational autoencoder (VAE).</figDesc><graphic coords="2,315.09,67.06,218.70,160.98" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>-1 ) + ϕ n (y t-1 )</figDesc><table><row><cell>7 Return x 0</cell></row><row><cell>Algorithm 3: Inference algorithm for generating</cell></row><row><cell>data in ILVR (conditional diffusion model)</cell></row><row><cell>which generalizes DDPM from Markov chains to non-</cell></row><row><cell>Markovian chains to make inference (sampling) faster. An-</cell></row><row><cell>other improvement over DDPM is the Discrete Denois-</cell></row><row><cell>ing Diffusion Probabilistic Model (D3PM) (Austin et al.,</cell></row><row><cell>2021) which extends DDPM from generating continuous-</cell></row><row><cell>state data to discrete-state data. In other words, D3PM</cell></row><row><cell>works on categorical (discrete) data rather than the conven-</cell></row><row><cell>tional float data as in DDPM.</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgement</head><p>Some of the materials in this tutorial paper have been covered by <rs type="person">Prof. Ali Ghodsi</rs>'s videos (Data Science Courses) and <rs type="person">Tushar Kumar</rs>'s videos (Explaining AI) on YouTube.</p></div>
+			</div>			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Structured denoising diffusion models in discrete state-spaces</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Austin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johnson</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Tarlow</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Den</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rianne</forename><surname>Berg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Arnaud. A continuous time framework for discrete denoising models</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joe</forename><surname>Benton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De</forename><surname>Bortoli</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Valentin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rainforth</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Deligiannidis</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Doucet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">ILVR: Conditioning method for denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Jooyoung</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sungwon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yonghyun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Youngjune</forename><surname>Gwon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sungroh</forename><surname>Yoon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="14367" to="14376" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Crowley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hidden Markov model: Tutorial. Engineering Archive</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Sampling algorithms, from survey sampling to Monte Carlo methods: Tutorial and literature review</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nekoei</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hadi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Aydin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Crowley</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2011.00901</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Factor analysis, probabilistic principal component analysis, variational inference, and variational autoencoder: Tutorial and survey</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ghodsi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ali</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Crowley</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2101.00734</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Crowley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Autoencoders</surname></persName>
+		</author>
+		<title level="m">Elements of Dimensionality Reduction and Manifold Learning</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="563" to="576" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Factor analysis and probabilistic principal component analysis</title>
+		<author>
+			<persName><surname>Ghojogh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benyamin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Crowley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karray</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Ghodsi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Elements of Dimensionality Reduction and Manifold Learning</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="355" to="374" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Generative adversarial nets</title>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jean</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mehdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Warde</forename><forename type="middle">-</forename><surname>Farley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ozair</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sherjil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="volume">27</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Advances in neural information processing systems</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pieter</forename><surname>Abbeel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="6840" to="6851" />
+		</imprint>
+	</monogr>
+	<note>Denoising diffusion probabilistic models</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Auto-encoding variational Bayes</title>
+		<author>
+			<persName><forename type="first">Diederik</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Welling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">E</forename><surname>Kloeden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eckhard</forename><surname>Platen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992">1992</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Probabilistic graphical models: principles and techniques</title>
+		<author>
+			<persName><forename type="first">Daphne</forename><surname>Koller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nir</forename><surname>Friedman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">On information and sufficiency. The annals of mathematical statistics</title>
+		<author>
+			<persName><forename type="first">Solomon</forename><surname>Kullback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">A</forename><surname>Leibler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1951">1951</date>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="79" to="86" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">PriorGrad: Improving conditional denoising diffusion models with data-dependent adaptive prior</title>
+		<author>
+			<persName><forename type="first">Sang-Gil</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Heeseung</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chaehun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sungroh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tie-Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Mccandlish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Amodei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Openai</forename><surname>Team</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dota</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1812.06162</idno>
+		<title level="m">An empirical model of large-batch training</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Improved denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Nichol</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Quinn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8162" to="8171" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion implicit models</title>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Score-based generative modeling through stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jascha</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Abhishek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">A connection between score matching and denoising autoencoders</title>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Vincent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural computation</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1661" to="1674" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

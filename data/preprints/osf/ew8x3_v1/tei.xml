@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Is it time to de-normalize the normalization procedures based on ratio variables? Preprint</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2024-06-10">10 June 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><roleName>PT</roleName><forename type="first">Rubén</forename><surname>Fernández-Matías</surname></persName>
+							<email>ruben.fernanmat@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Research Unit</orgName>
+								<orgName type="institution" key="instit2">Hospital Universitario Fundación Alcorcón</orgName>
+								<address>
+									<settlement>Madrid</settlement>
+									<country key="ES">Spain</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="laboratory">Physical Therapy and Rehabilitation Unit</orgName>
+								<orgName type="institution">Hospital Universitario Fundación Alcorcón</orgName>
+								<address>
+									<settlement>Madrid</settlement>
+									<country key="ES">Spain</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Doctoral School</orgName>
+								<orgName type="department" key="dep2">Department of Physical Therapy</orgName>
+								<orgName type="institution">Universitat de València</orgName>
+								<address>
+									<settlement>Valencia</settlement>
+									<country key="ES">Spain</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff3">
+								<orgName type="laboratory">Physical Therapy and Rehabilitation Unit</orgName>
+								<orgName type="institution">Hospital Universitario Fundación Alcorcón</orgName>
+								<address>
+									<addrLine>Street Budapest 1</addrLine>
+									<postCode>28922</postCode>
+									<settlement>Alcorcón, Madrid</settlement>
+									<country>Postal Code, Spain</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Is it time to de-normalize the normalization procedures based on ratio variables? Preprint</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-06-10">10 June 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">B64965297BDE7E4B4837C85C207A52C6</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:31+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>ratio</term>
+					<term>normalize</term>
+					<term>normative values</term>
+					<term>regression model</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Ratio variables are created by dividing one variable by another variable. This procedure is usually done with the aim of "normalizing" for the denominator variable, to obtain associations adjusted for that confounding variable, or to calculate ranges of normative values. Despite its widespread use, ratio variables bring with them many statistical problems. In this editorial, the reader will be introduced to the statistical assumptions of using ratio variables, the problems that arise when those assumptions are not met, and how to use proper regression models to achieve the desired objectives without the need to use ratio variables.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p>Ratio variables, which are formed by dividing one variable by another, are widely used within physical therapy and sports science research fields, and clinical practice.</p><p>The rationale behind the use of ratio variables is to "normalize" for the denominator. Some examples are the scapulohumeral rhythm, <ref type="bibr" target="#b2">3</ref> the between-limb normative ratio values <ref type="bibr" target="#b3">4</ref> (i.e., limb strength asymmetry as a risk factor for sport injuries), the percent change of muscle thickness, <ref type="bibr" target="#b1">2</ref> the percent change from baseline in clinical trials, the normalization procedures of electromyographic signals, or the Y-balance test (i.e., distance reached divided by lower limb length).</p><p>However, despite their widespread use, ratio variables bring with them many statistical problems, which is why several authors have already expressed their concern and warned about the inadequacy of their use. <ref type="bibr" target="#b0">1,</ref><ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b8">9</ref> In this study, the reader will be introduced to the statistical assumptions of using ratio variables, and the problems that arise when those assumptions are not met.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical analysis</head><p>All the statistical analysis were conducted using R software v.4.1.0 (R Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/). The R code for all the simulations and figures is presented in Supplementary Material.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical assumptions on the use of ratio variables</head><p>When we use ratio variables within regression models, we are making four assumptions (FIGURE <ref type="figure" target="#fig_0">1</ref>): <ref type="bibr" target="#b1">2</ref> 1) There is a positive linear relationship between de numerator and the denominator.</p><p>2) There is heteroskedasticity within that association, with a pattern of increased error variance as the denominator value increases.</p><p>3) The intercept of the regression model predicting the numerator by the denominator is equal to zero. However, even when the statistical assumptions appear to be met in the scatter plots, the use of ratio variables may still be inappropriate, as it is showed elsewhere. 2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Wrong predictions and normative values</head><p>Two of the objectives of using ratio variables are to predict the numerator as a function of the denominator, and the range of normative values of the numerator for different values of the denominator. The ratio model assumes that the regression coefficient for the denominator predicting the numerator is equal to the mean or median of the ratio variable, and that the intercept of this regression model is equal to zero. Whenever there is a difference between the mean of the ratio variable and the real regression coefficient fitted using an ordinary least squares model, as well as a deviation from zero of the intercept of this fitted model, there will be bias in the numerator predictions made by the ratio model.</p><p>I have exemplified this situation with a simulated dataset of shoulder external and internal rotation strength. As can be seen in FIGURE <ref type="figure">2</ref>, the ratio model does not fit well the data, with huge bias in the predictions made about the numerator variable, as well as the range of normative values.</p><p>Figure <ref type="figure">2</ref>. Scatterplot for the simulated dataset of shoulder strength. Blue lines refer to a linear regression fitted by ordinary least squares, being the dashed ones the 95% prediction interval. Red lines refer to the predictions of the mean, and percentiles 2.5 and 97.5, calculated using the ratio model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Spurious correlations when using ratio variables</head><p>Another problem of using ratio variables is the presence of spurious correlations derived from the inappropriate adjustment for the denominator variable (i.e., the ratio is still correlated with the denominator variable).</p><p>If we assume that the denominator variable is related to an outcome measure, but the numerator is not (null hypothesis is true), and we aim to evaluate the relationship between the numerator and the outcome measure, adjusted for the denominator variable by using the ratio model, this will lead to an increase in the type 1 error rate (false positive results). This is proven by Monte Carlo simulations, which results are presented in FIGURE 3. As can be seen, there is a huge increase in type 1 error rates. For example, assuming a sample size of 50 subjects, with a correlation of r = 0.50 between denominator and the outcome measure, and the denominator and the numerator, the rate of false positive results is 42.6%. Another scenario is when the denominator is present in both sides of the regression equation (i.e., outcome divided by the denominator predicted by the numerator divided by the denominator), leading to what is called mathematical coupling. <ref type="bibr" target="#b4">5</ref> An example of this kind of analysis is presented in the study of Martins et al., <ref type="bibr" target="#b7">8</ref> who predicted hip external rotator strength by hip extensor strength, normalizing both measures by body mass. In 1999, Ji-Hyun Kim <ref type="bibr" target="#b4">5</ref> provided and exact formula for estimating the spurious correlation between ratios with a common divisor, when all three variables are uncorrelated, as a function of their coefficients of variation. For example, when all three variables have the same coefficient of variation, the spurious correlation is expected to be r = 0.51. <ref type="bibr" target="#b4">5</ref> In FIGURE <ref type="figure" target="#fig_2">4</ref> it is presented a full simulation of the expected spurious correlations for different combinations of coefficients of variation. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>An example of how to calculate normative values using regression analyses</head><p>There are many ways to model data properly using regression analyses, even when there is heteroskedasticity, in aim to estimate normative values for an outcome measure as a function of one or more predictors, without the need of using ratio variables.</p><p>A simulated dataset of 400 subjects was created for shoulder isometric internal rotation and external rotation strength measurements in Newtons, assuming a positive linear heteroskedastic relationship. The selected statistical model was quantile regression, using the package 'quantreg' by Roger Koenker. <ref type="bibr" target="#b5">6</ref> This kind of regression analysis allows to directly estimate desired quantiles of the outcome measure, allowing for the presence of heteroskedasticity, and even non-linear relationships. Furthermore, this model has the advantage of not making distributional assumptions of the outcome measure. A scatterplot of the predictions made by the two models is presented in FIGURE 5.</p><p>The 10 th , 50 th (median), and 90 th percentiles were estimated by three quantile Based on these equations, we can estimate if a given subject is within "normative" values (i.e., expected 10 th and 90 th population values). For example, let's imagine that we have an athlete who has suffered a shoulder injury a couple of months ago.</p><p>The patient presents with 105N of shoulder internal rotation strength, and 75N of shoulder external rotation strength. The estimated range of normative values is 80.70N to 102.78N. Based on this information, we could state that the patient has too low external rotation strength for its amount of internal rotation one, so we could prescribe some exercise to improve it in aim to prevent another injury. We could have defined the normative range with other percentiles, such as 25 th and 75 th or 2.5 th and 97.5 th , that could be estimated also with quantile regression models. The purpose of this example is not to recommend quantile regression as the best option, but to show the reader the benefits of using regression models to obtain normative values instead of using ratio variables.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>The use of ratio variables in aim to "normalize" data is problematic and presents with multiple statistical assumptions that, if not met, lead to wrong predictions and estimation of normative values, and the presence of spurious associations.</p><p>Researcher should implement appropriate regression models to avoid these issues when analyzing their data. Numerator))$coefficients [3,4]   return(list("pvalue_ratio"=pvalue_ratio, "pvalue_regression"=pvalue_regression)) } cor1 &lt;-c(seq(0,0.9, by = 0.1)) cor2 &lt;-c(seq(0.1,0.9, by = 0.1))</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SUPPLEMENTARY MATERIAL</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>R code used for simulations</head><p>n &lt;-c(50, 100, 150, 300) param_list &lt;-list("n"=n, "cor1"=cor1, "cor2"=cor2) </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Scatterplot for the statistical assumptions on the use of ratio variables. Left figure shows first to third assumptions, and right figure shows fourth assumption.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Type 1 error rate (false positive rate) when using the ratio model to adjust for a confounding variable, as a function of the correlation between the denominator and the outcome measure, and the numerator, as well as the sample size. The Monte Carlo simulations are based on 1,000 samples per combination of correlations and sample size, with the three variables having the same coefficient of variation.</figDesc><graphic coords="6,72.00,72.00,451.30,296.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Spurious correlation between variables with common divisor. VX, VY and V1/Z refer to the coefficient of variation of the numerator variables X, Y and the inverse of Z (denominator variable).</figDesc><graphic coords="7,72.00,72.00,425.20,354.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>regression models. The predictions equations are: Quantile regression 𝑀𝑒𝑑𝑖𝑎𝑛 (𝑆ℎ𝐸𝑅) = 36.77 + 0.53 * 𝑆ℎ𝐼𝑅 10 𝑡ℎ 𝑝𝑒𝑟𝑐𝑒𝑛𝑡𝑖𝑙𝑒 (𝑆ℎ𝐸𝑅) = 35.55 + 0.43 * 𝑆ℎ𝐼𝑅 90 𝑡ℎ 𝑝𝑒𝑟𝑐𝑒𝑛𝑡𝑖𝑙𝑒 (𝑆ℎ𝐸𝑅) = 35.43 + 0.65 * 𝑆ℎ𝐼𝑅 Ratio model 𝑀𝑒𝑑𝑖𝑎𝑛 (𝑆ℎ𝐸𝑅) = 0 + 0.82 * 𝑆ℎ𝐼𝑅 10 𝑡ℎ 𝑝𝑒𝑟𝑐𝑒𝑛𝑡𝑖𝑙𝑒 (𝑆ℎ𝐸𝑅) = 0 + 0.70 * 𝑆ℎ𝐼𝑅 90 𝑡ℎ 𝑝𝑒𝑟𝑐𝑒𝑛𝑡𝑖𝑙𝑒 (𝑆ℎ𝐸𝑅) = 0 + 0.95 * 𝑆ℎ𝐼𝑅 ShER = Predicted shoulder external rotation strength ShIR = Observed shoulder internal rotation strength</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Scatterplot for the simulated dataset (n = 400) of shoulder internal (IR) and external (ER) rotation strength measurements in Newtons. The blue lines refer to the predictions made by the quantile regression models, and the red lines refer to the predictions made by the ratio model. Solid lines reflect predicted median external rotation strength, and dashed lines refer to the 10 th and 90 th percentiles.</figDesc><graphic coords="9,72.00,72.00,425.20,311.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>ER</head><label></label><figDesc>as.data.frame(cbind(Denominator,Numerator,Ratio)) p1 &lt;-ggplot(data = DF_assumptions, aes(x = Denominator, y = Numerator)) + geom_point(size = 2.5, colour = "#A9A684") + geom_smooth(method = "lm", colour = "#678374", size = 3, se = FALSE) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) p2 &lt;-ggplot(data = DF_assumptions, aes(x = Denominator, y = Ratio)) + geom_point(size = 2.5, colour = "#A9A684") + geom_smooth(method = "lm", colour = "#678374", size = 3, se = FALSE) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) ggarrange(p1,p2) # Export size: 12x5 # Wrong predictions and normative values. Example with simulated shoulder mvrnorm(n = 1000, mu = c(130, 80), Sigma = matrix(ncol=2,nrow=2, c(sd1^2,sd1*sd2*cor,sd1*sd2*cor,sd2^2))) colnames(Shoulder_Strength) &lt;-c("Shoulder_IR", "Shoulder_ER") Shoulder_Strength &lt;-as.data.frame(Shoulder_Strength) Shoulder_Strength$Ratio &lt;-Shoulder_Strength$Shoulder_ER/Shoulder_Strength$Shoulder_IR Mean_Ratio &lt;-mean(Shoulder_Strength$Ratio) reg_model &lt;-lm(Shoulder_ER ~ Shoulder_IR, data = Shoulder_Strength) predictions &lt;-predict(reg_model, interval = "prediction") predictions &lt;-as.data.frame(predictions) predictions$Shoulder_IR &lt;-Shoulder_Strength$Shoulder_IR pctl_2.5 &lt;-quantile(Shoulder_Strength$Ratio, probs = 0.025) pctl_97.5 &lt;-quantile(Shoulder_Strength$Ratio, probs = 0.975) ggplot(data = Shoulder_Strength, aes(x = Shoulder_IR, y = Shoulder_ER)) + geom_point(size = 2.5, colour = "#A9A684") + geom_segment(x = min(Shoulder_Strength$Shoulder_IR+11), y = Mean_Ratio*min(Shoulder_Strength$Shoulder_IR+11), xend = max(Shoulder_Strength$Shoulder_IR-11), yend = Mean_Ratio*max(Shoulder_Strength$Shoulder_IR-11), colour = "coral1", size = 3) + geom_segment(x = min(Shoulder_Strength$Shoulder_IR+30), y = pctl_2.5*min(Shoulder_Strength$Shoulder_IR+30), xend = max(Shoulder_Strength$Shoulder_IR), yend = pctl_2.5*max(Shoulder_Strength$Shoulder_IR), colour = "coral1", size = 1.5, linetype = "dashed") + geom_segment(x = min(Shoulder_Strength$Shoulder_IR), y = pctl_97.5*min(Shoulder_Strength$Shoulder_IR), xend = max(Shoulder_Strength$Shoulder_IR-50), yend = pctl_97.5*max(Shoulder_Strength$Shoulder_IR-50), colour = "coral1", size = 1.5, linetype = "dashed") + geom_smooth(method = "lm", colour = "#678374", size = 3, se = FALSE) + geom_line(data = predictions, aes(x = Shoulder_IR, y = lwr), colour = "#678374", size = 1.5, linetype = "dashed") + geom_line(data = predictions, aes(x = Shoulder_IR, y = upr), colour = "#678374", size = 1.5, linetype = "dashed") + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) + xlab("Shoulder IR Strength") + ylab("Shoulder ER Strength") # Spurious correlations when using ratio variables. Simulation number one. simulate_spurious &lt;-function(n, cor1, cor2){ Denominator &lt;-rnorm(n) Numerator &lt;-cor1*Denominator + rnorm(n,0,sd = sqrt(1-cor1^2)) Outcome &lt;-cor2*Denominator + rnorm(n,0,sd = sqrt(1-cor2^2)) Denominator &lt;-Denominator + 10 Numerator &lt;-Numerator + 10 Outcome &lt;-Outcome + 10 Ratio &lt;-Numerator/Denominator pvalue_ratio &lt;-cor.test(Ratio, Outcome)$p.value pvalue_regression &lt;-summary(lm(Outcome ~ Denominator +</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Frame_simulations</head><label></label><figDesc>MC_simulations &lt;-MonteCarlo(func = simulate_spurious, nrep = 1000, param_list = param_list) &lt;-as.factor(Frame_false_positives$cor1) plot_50 &lt;-ggplot(data = Frame_false_positives[Frame_false_positives$n == "50",], aes(x = cor2, y = false_positive_rate, colour = cor1)) + geom_line(size = 1.5) + geom_hline(yintercept = 0.05, size = 1.5, colour = "black", linetype = "dashed") + scale_color_manual(values = pal_jco()(10)) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) + theme(legend.title = element_text(size = 15), legend.text = element_text(size = 15)) + xlab("Correlation between denominator and outcome") + ylab("False positive rate") + labs(color = "Correlation D vs. N") plot_100 &lt;-ggplot(data = Frame_false_positives[Frame_false_positives$n == "100",], aes(x = cor2, y = false_positive_rate, colour = cor1)) + geom_line(size = 1.5) + geom_hline(yintercept = 0.05, size = 1.5, colour = "black", linetype = "dashed") + scale_color_manual(values = pal_jco()(10)) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) + theme(legend.title = element_text(size = 15), legend.text = element_text(size = 15)) + xlab("Correlation between denominator and outcome") + ylab("False positive rate") + labs(color = "Correlation D vs. N") plot_150 &lt;-ggplot(data = Frame_false_positives[Frame_false_positives$n == "150",], aes(x = cor2, y = false_positive_rate, colour = cor1)) + geom_line(size = 1.5) + geom_hline(yintercept = 0.05, size = 1.5, colour = "black", linetype = "dashed") + scale_color_manual(values = pal_jco()(10)) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) + theme(axis.title = element_text(size = 20, face = "bold", colour = "black")) + theme(panel.grid.major = element_blank()) + theme(panel.grid.minor = element_blank()) + theme(panel.border = element_blank()) + theme(panel.background = element_rect(colour = "black", size = 2, fill = "#F1EFEB")) + theme(legend.title = element_text(size = 15), legend.text = element_text(size = 15)) + xlab("Correlation between denominator and outcome") + ylab("False positive rate") + labs(color = "Correlation D vs. N") plot_300 &lt;-ggplot(data = Frame_false_positives[Frame_false_positives$n == "300",], aes(x = cor2, y = false_positive_rate, colour = cor1)) + geom_line(size = 1.5) + geom_hline(yintercept = 0.05, size = 1.5, colour = "black", linetype = "dashed") + scale_color_manual(values = pal_jco()(10)) + theme(axis.text = element_text(size = 15, face = "bold", colour = "black")) +</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="5,154.95,72.00,285.40,195.09" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Explorations in statistics: The analysis of ratios and normalized data</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Curran-Everett</surname></persName>
+		</author>
+		<idno type="DOI">10.1152/ADVAN.00053.2013</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Physiol -Adv Physiol Educ</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="213" to="219" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">On the use of percent change within rehabilitative ultrasound imaging research: a systematic review with Monte Carlo simulations. OSF Prepr</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fernández-Matías</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y-K</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Koppenhaver</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/OSF.IO/K9QG4</idno>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="1" to="82" />
+		</imprint>
+	</monogr>
+	<note>Published online August</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Differences in scapular kinematics and scapulohumeral rhythm during elevation and lowering of the arm between typical children and healthy adults</title>
+		<author>
+			<persName><forename type="first">Fap</forename><surname>Habechian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">G</forename><surname>Fornasari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">S</forename><surname>Sacramento</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Camargo</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jelekin.2013.10.013</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Electromyogr Kinesiol</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="78" to="83" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Eccentric and Isometric Shoulder Rotation Strength and Range of Motion: Normative Values for Adolescent Competitive Tennis Players</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Johansson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Asker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Malmberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fernández-Fernández</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Warnqvist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cools</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Sport Act living</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">798255</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Spurious correlation between ratios with a common divisor</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0167-7152(99)00030-9</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Stat Probab Lett</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="383" to="386" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Quantile Regression</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Koenker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">F</forename><surname>Hallock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Econ Perspect</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="143" to="156" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Spurious Correlation and the Fallacy of the Ratio Standard Revisited</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Kronmal</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2983064</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J R Stat Soc</title>
+		<imprint>
+			<biblScope unit="volume">156</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="379" to="392" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Prediction equation of hip external rotators maximum torque in healthy adults and older adults using the measure of hip extensors maximum torque</title>
+		<author>
+			<persName><forename type="first">Scs</forename><surname>Martins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Resende</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lsp</forename><surname>Pinheiro</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/J.BJPT.2020.08.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Brazilian J Phys Ther</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="415" to="420" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The use of percentage change from baseline as an outcome in a controlled trial is statistically inefficient: A simulation study</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Vickers</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2288-1-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Med Res Methodol</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="4" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

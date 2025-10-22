@@ -1,0 +1,1229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">RL or not RL? Parsing the processes that support human reward-based learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Anne</forename><surname>Ge</surname></persName>
+							<email>annecollins@berkeley.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology Helen Wills Neuroscience Institute</orgName>
+								<orgName type="institution">University of California</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">RL or not RL? Parsing the processes that support human reward-based learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">9B0BED10333AF5598D1167E20ECEF352</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:34+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Reinforcement Learning (RL) algorithms have had tremendous success accounting for reward-based learning across species, in both behavior and brain. In particular, simple model-free RL models, such as delta-rule or Qlearning, are routinely used to model instrumental learning in bandit tasks, and they capture variance in brain signals. However, reward-based learning in humans recruits multiple processes, including high-level processes such as memory and low-level ones such as choice perseveration; their contributions can easily be mistakenly attributed to RL computations. Here, we investigate how much of RL-like behavior is supported by RL computations in a context where other processes can be factored out. Re-analysis and computational modeling of seven data sets spanning hundreds of participants show that in this instrumental context, reward-based learning is best explained by a combination of working memory and a habit-like associative process, with no RL-like value-based incremental learning. Simulations show that this combination nevertheless approximates the adaptive policy of a valuebased RL agent, explaining why RL computations are mistakenly inferred when working memory is not parsed out. Our results raise important questions for the interpretation of RL as a meaningful process across brain and behavior, and call for a reconsideration of how we interpret findings in reinforcement learning across levels of analysis.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The reinforcement learning (RL) framework in computational cognitive neuroscience has been tremendously successful, largely because RL purportedly bridges between behavior and brain levels of analysis <ref type="bibr" target="#b24">(Niv, 2009;</ref><ref type="bibr" target="#b26">Niv &amp; Langdon, 2016)</ref>. Model-free RL algorithms track the expected value of a state and update it in proportion to a reward prediction error (RPE) <ref type="bibr" target="#b36">(Sutton &amp; Barto, 2018)</ref>; this interpretable computation also accounts for important aspects of dopaminergic signaling and striatal activity <ref type="bibr" target="#b22">(Montague, Dayan, &amp; Sejnowski, 1996;</ref><ref type="bibr" target="#b34">Schultz, Dayan, &amp; Montague, 1997)</ref>. Indeed, extensive research has supported the theory that cortico-striatal networks support RL-like computations for reward-based learning, and that disruption of this network causes predicted deficits in behavior <ref type="bibr" target="#b16">(Frank, Seeberger, &amp; O'reilly, 2004;</ref><ref type="bibr" target="#b37">Tai, Lee, Benavidez, Bonci, &amp; Wilbrecht, 2012)</ref>. In parallel, similar model-free RL algorithms have been broadly and successfully used to explain and capture many aspects of reward-based learning behavior across species, from simple classical conditioning <ref type="bibr" target="#b40">(Wagner &amp; Rescorla, 1972)</ref> to more complex multi-armed contextual bandit tasks <ref type="bibr" target="#b13">(Daw &amp; Tobler, 2014;</ref><ref type="bibr" target="#b28">Palminteri &amp; Lebreton, 2022)</ref>.</p><p>However, there is also strong evidence that other cognitive processes, supported by separable brain networks, also contribute to reward-based learning <ref type="bibr" target="#b33">(Rmus, McDougle, &amp; Collins, 2021;</ref><ref type="bibr" target="#b44">Yoo &amp; Collins, 2022)</ref>. Early research in rodents showed a double dissociation between so-called "habits" (thought to relate to the RL process) and more "goal-directed" processes, which are more sensitive to knowledge about the task environment, and thus support more flexible behavior <ref type="bibr" target="#b38">(Tolman, 1948;</ref><ref type="bibr" target="#b42">Yin, Knowlton, &amp; Balleine, 2004;</ref><ref type="bibr" target="#b43">Yin, Ostlund, Knowlton, &amp; Balleine, 2005)</ref>. Widely accepted dual process theories of learning typically capture the slow/inflexible processes with model-free RL algorithms <ref type="bibr" target="#b12">(Daw, Gershman, Seymour, Dayan, &amp; Dolan, 2011)</ref>. However this apparent consensus hides broad ambiguity and disagreement about what the fast/flexible vs. slow/inflexible processes are <ref type="bibr" target="#b7">(Collins &amp; Cockburn, 2020)</ref>. Indeed, recent literature has highlighted multiple processes that strongly contribute to learning. In more complex environments with navigation-like properties this may entail the use of a map of the environment for forward planning <ref type="bibr" target="#b12">(Daw et al., 2011)</ref>. Even in simple environments typically modeled with model-free RL, additional processes such as working memory <ref type="bibr" target="#b44">(Yoo &amp; Collins, 2022)</ref>, episodic memory <ref type="bibr" target="#b0">(Bornstein &amp; Norman, 2017;</ref><ref type="bibr" target="#b17">Gershman &amp; Daw, 2017)</ref>, and choice perseveration strategies <ref type="bibr" target="#b35">(Sugawara &amp; Katahira, 2021)</ref> have been found to play an important role. In particular, instrumental learning tasks such as contextual multi-armed bandits rely mostly on working memory, with contributions of a slow RL-like process when load overcomes working memory resources <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012;</ref><ref type="bibr">McDougle &amp; Collins, 2021)</ref>.</p><p>Because the RL family of models is highly flexible <ref type="bibr" target="#b36">(Sutton &amp; Barto, 2018)</ref>, RL models have nonetheless successfully captured behavior that is likely more driven by other processes such as working memory. Indeed, in most simple laboratory tasks, non-RL processes make very similar predictions to RL ones -for example, perseveration strategies might be mistaken for a learning rate asymmetry in RL <ref type="bibr" target="#b35">(Sugawara &amp; Katahira, 2021)</ref>, and working memory contributions might be mistaken for high learning rates <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>. Non-RL processes become identifiable only in environments explicitly designed to attempt to disentangle them <ref type="bibr" target="#b0">(Bornstein &amp; Norman, 2017;</ref><ref type="bibr" target="#b8">Collins &amp; Frank, 2012)</ref>. Thus, non-RL processes' contributions to learning are often attributed to RL computations, and this misattribution of various processes' to "RL" may lead to confusion in the literature, when findings relying on RL modeling are mistakenly attributed to RL brain processes <ref type="bibr" target="#b5">(Collins, Brown, Gold, Waltz, &amp; Frank, 2014;</ref><ref type="bibr" target="#b15">Eckstein, Wilbrecht, &amp; Collins, 2021)</ref>.</p><p>Here, we investigate how much of reward-based instrumental learning actually reflects a model-free RL process, as typically formulated in the literature. Because of the well characterized and major contributions of working memory in instrumental learning, we focus on a task context where working memory's contribution can be adequately parsed out, the RLWM paradigm <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>. We reason that a key characteristic of model-free RL is that it integrates reward outcomes over time to build a cached value esti-mate that drives policy; more generally, negative prediction error in model-free RL should make an agent less likely to repeat the corresponding choice. We thus focus here on how positive ("correct, +1") and, more importantly, negative ("incorrect, 0") outcomes affect later choices.</p><p>Behavioral analysis and computational modeling of 7 datasets across two experimental paradigm versions (5 previously published and one novel for the deterministic version, RLWM; 1 previously published for the probabilistic version, RLWMP) show that, when parsing out working memory, we cannot detect evidence of RL in reward-based learning. Indeed, predictions including an RL process are falsified <ref type="bibr" target="#b29">Palminteri, Wyart, and Koechlin (2017)</ref>. Instead, all behavior can be explained by a mixture of a fast, flexible, and capacity limited process (working memory) and a slower, broader process that tracks stimulus-action associations, irrespective of outcomes, and is thus not RL. These findings call for a reconsideration of how we interpret findings in reinforcement learning across levels of analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The RLWM task was designed to disentangle the contributions of working memory (WM) learning from those of slower RL processes to reward-based learning by manipulating information load. Across independent blocks, participants learned stable stimulus-action associations between a novel set of stimuli (set size ranging from 2 to 6 items within participants) and 3 actions. The correct action for each stimulus was deterministically signaled by a correct (or +1) feedback, while the other two incorrect actions were signaled with incorrect (or 0) (Fig. <ref type="figure">1A</ref>). Participants' behavior in low set sizes appeared was close to optimal, but increasing set size led to increasingly incremental learning curves(Fig. <ref type="figure">1B</ref>), a pattern replicated across multiple previous studies in diverse populations <ref type="bibr">(Collins, 2018a</ref><ref type="bibr" target="#b3">(Collins, , 2018b;;</ref><ref type="bibr" target="#b4">Collins, Albrecht, Waltz, Gold, &amp; Frank, 2017;</ref><ref type="bibr" target="#b5">Collins et al., 2014;</ref><ref type="bibr" target="#b6">Collins, Ciullo, Frank, &amp; Badre, 2017;</ref><ref type="bibr" target="#b8">Collins &amp; Frank, 2012</ref><ref type="bibr">, 2018;</ref><ref type="bibr" target="#b19">Master et al., 2020;</ref><ref type="bibr">McDougle &amp; Collins, 2021;</ref><ref type="bibr" target="#b32">Rmus et al., 2023;</ref><ref type="bibr" target="#b45">Yoo, Keglovits, &amp; Collins, 2023;</ref><ref type="bibr" target="#b46">Zou, Muñoz Lopez, Johnson, &amp; Collins, 2022)</ref>. This pattern could only be captured by the RLWM model, a mixture model of two processes representing WM and RL. In this model, the RL process is a standard delta-rule learner; the WM module has a learning rate of 1 to capture immediate perfect learning, but also decay to capture WM's short time scale of maintenance; the mixture reflects WM resource limitations, such that behavior is mostly driven by fast and forgetful WM when the load is within WM resources, but supplemented by RL with increasing load (see Methods). This model included a bias weight parameterizing asymmetric updating of positive and negative feedback. This bias was shared between WM and RL and modulated learning rates for incorrect vs. correct outcomes. Previous model fitting of the bias parameter (shared between WM and RL) revealed that incorrect outcomes had a weaker impact on subsequent choices than correct outcomes (see e.g. <ref type="bibr" target="#b19">(Master et al., 2020)</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Value and reward integration</head><p>To better identify the slower (RL) learning component in this task, we first sought to understand how positive and negative outcomes were integrated to impact policy. Specifically, we reasoned that a process learning from reward prediction errors in an RL-like way should use negative feedback in error trials to make participants less likely to repeat mis-takes, and more so the more they made the same mistakes (see methods, Fig. <ref type="figure">1C</ref>). We thus computed, within error trials, whether the specific error participants made (out of 2 possible errors for a given stimulus) was indeed the one that had been made less frequently than the other error.</p><p>Across all 6 datasets in the RLWM task, the number of previous errors was overall lower for the chosen vs. unchosen error (all ts &gt; 4, ps &lt; 10 -4 , see table <ref type="table">1</ref>), showing that participants did use negative feedback overall in the task. As expected if participants' ability to use WM to guide choices decreased with set size, higher set sizes led to an increase in the number of previous errors for both chosen and unchosen. The difference between error type numbers, indicating participants' ability to avoid previously unrewarded choices, decreased with set size, as expected if higher set sizes reflected a higher portion of responsibility from a slower learning process (all ts &gt; 2.28, ps &lt; 0.05; see supplementary table <ref type="table">2</ref>). However, we observed in all data sets that the difference decreased strongly (see blue vs. purple curves in Fig. <ref type="figure">1B</ref>, arrows at ns = 6), such that participants' policy appeared to become insensitive to negative outcomes selectively in set size ns = 6 in 4 out of 5 data sets that included set size 6 (see supplementary table <ref type="table">1</ref>). The effect even appeared to reverse in late learning in two datasets (Dev and SZ), such that errors committed late in learning in large set sizes had been repeated more often than the other error (t ′ s &gt; 4.4,p &lt; 10 -4 , see table <ref type="table">3</ref>), showing error perseveration effects.</p><p>We compared participants' patterns of errors to the predictions from four variants of the RLWM model -one treating gains and losses equally in both WM and RL models, one with a shared bias <ref type="bibr" target="#b19">(Master et al., 2020)</ref>, and the two best fitting RLWM models with no or weak bias against errors in WM and full bias in RL, indicating complete neglect of negative outcomes in the RL module. All models captured the set-size effect of performance in the qualitative pattern of the learning curves (Fig. <ref type="figure">2B</ref>), the main effect of the chosen vs. unchosen error, and the increase in number of previous errors for both chosen and unchosen. The models also predicted that the difference between error type numbers (indicating participants' ability to avoid previously unrewarded choices) decreased with set size. However, all models predicted that the difference should remain large even in large set sizes (see blue vs. purple curves in Fig. <ref type="figure">2B</ref>, arrows at ns = 6), contrary to what we observed empirically. In all 6 data sets, the magnitude of the difference decrease between the past number of chosen vs. unchosen errors could not be accounted for by any RLWM model, particularly late in learning (Fig. <ref type="figure">2B</ref> bottom, grey curves).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>New WMH model explains behavior</head><p>The behavioral and modeling results so far showed efficient integration of negative outcomes in low set sizes but not high set sizes, supporting the idea that working memory uses negative outcomes to guide avoidance in policy, but the slower, less resource limited process that supports instrumental learning under higher load does not. However, even with an RL negative learning rate α -= 0, RLWM models could not capture the pattern, because WM contributes to the choices even in high set sizes. Further variants of the RLWM family model, including with policy-compression mechanisms, could not reproduce the qualitative pattern (see supplementary figure <ref type="figure">9</ref>). We reasoned that the slow process should, to a degree, counteract WM's ability to learn to avoid errors from negative outcomes. We thus explored a family of models where the slow module association weights (Q-values for RL) A -RLWM Experimental paradigm. Participants performed multiple independent blocks of reinforcement learning task, using deterministic binary feedback to identify which of three actions is correct for each of ns stimuli. Varying set size ns targets working memory load and allows us to isolate its contribution <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>. B -Behavior (mean, standard error) across 6 data sets on the RLWM task: CF12 <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>; SZ <ref type="bibr" target="#b5">(Collins et al., 2014)</ref>; EEG <ref type="bibr">(Collins, 2018a)</ref>; fMRI <ref type="bibr" target="#b6">(Collins, Ciullo, et al., 2017)</ref>; Dev <ref type="bibr" target="#b19">(Master et al., 2020)</ref>; GL (unpublished). Top: learning curves show the probability of a correct action choice as a function of stimulus iteration number, plotted per set size, illustrating a strong set-size effect that highlights working memory contributions to behavior. Bottom: Error trial analysis: number of previous errors that are the same as the chosen error (purple) or the other possible error (unchosen; teal) as a function of set size. The large gap in low set sizes indicates that participants avoid errors they made previously more often than other errors; the absence of a gap in high set sizes indicates that participants are unable to learn to avoid their past errors (black arrows). C -qualitative predictions for the RL, WM and novel H modules, based on trial example in panel A). Only WM modules predict a set size effect <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>. Only H modules predicts that participants are more likely to repeat a previous error (e.g. selecting action A 1 for the triangle) than more likely to avoid it.</p><formula xml:id="formula_0">A 1 A 2 A 3 A 3 A 2 A 1 A 1 A 2 … A 2 A 3</formula><p>were updated with a subjective outcome r 0 for negative outcomes of r = 0. Surprisingly, the best fitting model across 6 data sets (see Fig. <ref type="figure">2</ref> left) was a model with fixed r 0 = 1, such that receiving incorrect feedback led to the same positive prediction error as correct feedback would. Negative learning rates still included a bias term shared across both modules. Note that this slow module cannot be interpreted as an RL module anymore, as the association weights track a relative frequency of stimulus-action choice, irrespective of outcomes, rather than an estimated value. This module can be thought of as an associative "Hebbian", or "habit-like", thus we label it H-agent, with the mixture model WMH. While it is similar to a choice perseveration kernelToyama, Katahira, and Kunisato ( <ref type="formula">2023</ref>), note that it is not purely motor, but stimulus-dependent -indeed, all models also include a motor choice perseveration mechanism capturing participants tendency to repeat actions across trials.</p><p>The WMH model fit quantitatively better than models with RL. It was also successful at producing the qualitative pattern of errors observed in real participants, such that errors in high set size appeared to fully neglect negative outcomes in a way RLWM models could not (Fig. <ref type="figure">2C</ref> bottom, supplementary figures 9 for full validation of all models in panel A in lal data sets). We further verified that this pattern of error changed dynamically over the course of learning in participants in a way that the model could capture (Fig. <ref type="figure">2C</ref> bottom).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>WMH also explains behavior in probabilistic tasks</head><p>While using the RLWM task was useful to adequately factor out WM contributions to reward-based learning, it has the downside that the task does not necessitate integration of reward in the same way probabilistic tasks do <ref type="bibr" target="#b16">(Frank et al., 2004)</ref>. We thus sought to confirm whether our finding would hold in a probabilistic version of the task RLWMP; to that effect, we re-analyzed a previously published data-set (see <ref type="bibr">(McDougle &amp; Collins, 2021)</ref>, experiment 3). As previously reported, behavior in this task was sensitive to set size (F (1, 33) = 55.99, p &lt; 0.001), indicating that WM contributes to learning even in probabilistic environments thought to be more suited to eliciting RL-like computations. Similar to the deterministic task, we modeled behavior with a mixture of a fast, forgetful learning process (related to WM), and a slower, non-forgetful one, with the constraint that the first process contributed relatively more to mixture behavior in low than high set size (see methods). We compared models where the slow process was either RL like (i.e., integrating negative outcomes differently from positive ones; RLWM) or association like (i.e., integrating negative outcomes similarly to positive outcomes). Supporting previous results, the best model was a WMH model including a fast, WM-like process that integrated negative outcomes, but an outcome insensitive slower learning component (Fig. <ref type="figure" target="#fig_3">4</ref> right, supplementary figure <ref type="figure">13</ref>). This WMH model also fit better than the best single process model, and captured the qualitative pattern of learning curves (Fig. <ref type="figure" target="#fig_3">4B</ref>), bottom left).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RL-like policy with a simpler H algorithm</head><p>Our results show that behavior that is typically modeled with RL algorithms appears to instead be generated with non-RL processes, including a fast, forgetful, and capacitylimited process that integrates outcome valence, and a slow and resource-unlimited "H" process that encodes association strengths between stimuli and actions, irrespective of out-  <ref type="table">2 4 6 8</ref>   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dev; pxp(best)=1</head><formula xml:id="formula_1">W M R L 0 W M = R L W M 1 R L 0 W M 1 R L 1 W M = H W M 1 R L 1 r 0 C W M R L 0 0 0.2 0.4 0.6 exp r GL; pxp(best)=0.935 0 0.2 0.4 0.6 W M R L 0 W M = R L W M 1 R L 0 W M 1 R L 1 W M = H W M 1 R L 1 r 0 C W M R L 0</formula><formula xml:id="formula_2">F u ll r 0 = 0 r 0 = 1 R L r 0 = 1 W M r 0 = 1 R L r 0 = 0 ; W M r 0 = 1 R L r 0 = 1 ; W M r 0 = 0 W M f 0 0.1 0.2 0.3 0.4 0.5 0.6 exp r A) B)</formula><p>Figure <ref type="figure">3</ref> A) Model comparison. Family of models manipulating subjective outcome value of outcome 0 r 0 for RL, WM or both -with r 0 a free parameter unless labeled to its fixed value. r 0 = 0 corresponds to standard RL or WM computations; r 0 = 1 corresponds to an H agent that handles both outcomes similarly. The winning model RLr 0 = 1; W M r 0 = 1 assumes RL r 0 = 1, WM r 0 = 0, and is thus a WMH agent, replicating findings in the deterministic version of the task. We further verified that the winning model was better than the best single process model WMf (see methods). B): A set size effect is also observed in a probabilistic version of the task; the winning model (bottom left) captures the learning curve pattern better than the competing models.</p><p>come valences. This leaves two questions open: A) What is the computational function of this slow process, and B) why is it mistaken for value-based RL, for example in previous RLWM modeling <ref type="bibr" target="#b8">Collins and Frank (2012)</ref>; <ref type="bibr" target="#b46">Zou et al. (2022)</ref>? Indeed, on its own, the slow "H" process cannot learn a good policy, but only tends to repeat previous actions, and thus seems functionally maladaptive. To investigate this question, we simulated both RLWM and WMH models in a standard probabilistic two-armed bandit task, varying the probability p of a reward for the correct choice (see Fig. <ref type="figure" target="#fig_3">4</ref> left, methods). RL policies track this value, and thus convert to a graded policy where the agent is more likely to select the correct bandit the higher p (green curve in fig. <ref type="figure" target="#fig_3">4</ref> right). By contrast, an H agent on its own performs at chance, no matter p (blue curve in fig. <ref type="figure" target="#fig_3">4</ref> right, ρ W M = 0). However, when the agents' choices invoke a mixture of policies, including a WM policy that tracks outcomes, the policy learned by the H-agent does resemble a standard RL policy (dark blue curves). Indeed, even with low WM weights (e.g., ρ W M = 0.5), WM's contribution is enough to bootstrap choice selection of the good option, which leads the H agent to select this action more often and thus develop a good policy. This simulation shows that in the absence of specific task features decorrelating contributions of rewards from contributions of errors to behavior (such as the ability to consider multiple errors, something not feasible in most binary choice tasks), contributions of an H agent might be mistaken for an RL policy. Furthermore, in this mixture context, which likely corresponds to most human learning, we observe that the H agent does implement an adaptive policy with a simpler learning rule than the RL process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>We analyzed 6 previously published data sets and one novel data set to investigate how different processes contribute to reward-based learning in humans. Such learning had previously been explained with model-free RL algorithms, which use a cached value estimate integrated past reward outcomes for given stimuli and actions to guide decisions. Behavioral analyses gave strong evidence across 6 datasets that integration of outcomes to guide future decisions is dependent on load, and becomes weak or absent in higher set sizes. Computational modeling revealed that this pattern could only be explained by a mixture model, with two very distinct processes. The first, a working-memory like process that learns fast but is limited both in the amount of information and duration it can be held, appeared to successfully integrate reward outcomes into its policy. By contrast, a second, slower but less limited process, appeared to fully neglect outcomes, updating in the same direction for wins and losses, and thus only tracked association strengths, in what could be likened to a hebbian or habit-like process (H-agent).</p><p>Notably, although reward-based learning is, at first glance, well approximated by RL algorithms, neither of these processes correspond to what is typically thought of as an RL cognitive process. The fast (WM) process integrates outcome values into a policy as an RL algorithm should, but has properties not typically associated with RL, such as capacity limitations and rapid forgetting. By contrast, the slow, unlimited H-process is more in line with what is typically thought of as RL along those dimensions, but does not rely on reward-prediction errors -and indeed does not approximate values -as is typically expected from model-free RL algorithms in the context of cognitive neuroscience <ref type="bibr" target="#b25">(Niv, 2019;</ref><ref type="bibr" target="#b36">Sutton &amp; Barto, 2018)</ref>.</p><p>We showed with simulations that the H-agent, despite its learning rule that is on its own unsuited to learning from rewards, is nonetheless able to develop appropriate policies within a mixture model context. Indeed, using WM to bootstrap adaptive choice selection leads the agent to more frequently select actions avoiding bad outcomes, which further enables it to select good actions and reinforce them. This agent, which is mathematically equivalent to a stimulus-dependent choice perseveration kernel <ref type="bibr" target="#b39">(Toyama et al., 2023)</ref>, is reminiscent of the "habits without value" model <ref type="bibr" target="#b21">(Miller, Shenhav, &amp; Ludvig, 2019)</ref>, which showed similar properties of developing good policies without value tracking. Here, our model extends the same theoretical approach to a stimulus-dependent learning context, and we validated experimentally the usefulness of this approach across 7 datasets. The H-agent uses a simpler learning rule to learn a similar policy to an R-agent in a mixture context, which might be a more resource-rational way to lead to adaptive behavior.</p><p>An important question concerns the generalizability of this finding to other learning tasks. Is it possible that the RLWM task, with deterministic feedback, incites participants to de-activate RL-like processes? While it is a possible explanation, we think it is unlikely. First, RL is not typically thought to be under explicit meta-control, but rather to occur implicitly in the background <ref type="bibr" target="#b10">(Cortese, Lau, &amp; Kawato, 2020;</ref><ref type="bibr" target="#b30">Pessiglione et al., 2008)</ref>, thus it is unclear why this would not be the case here. Second, computational modeling supports similar conclusions in the probabilistic version of RLWM-P, where integrating reward outcomes over multiple trials is useful. We limit our investigation here to the RLWM experimental framework because it offers a solid grounding for factoring out explicit working-memory processes, and analyzing what remains. It remains an important future research direction to find experimental and modeling approaches that will better allow us to parse out different processes, including WM, from learning behavior, and to probe the generalizability of this finding to other tasks typically modeled with RL.</p><p>Another important question concerns the brain mechanisms underlying the processes identified here through modeling. A reason for the success of RL frameworks is their ability to map on to brain mechanisms in striato-cortical loops with dopaminergic signaling, including for example RL reward-prediction errors in striatal bold signal <ref type="bibr" target="#b11">(Daniel and Pollmann (2014)</ref>, fig. <ref type="figure" target="#fig_4">5</ref>). If learning from reward in humans appears RL-like at a first approximation, but actually reflects two non-RL processes, how can we reconcile this with a wealth of RL model-based neuroscience findings? One possibility is that most of human reward-based learning tasks tap on WM processes that are at first an approximation well described by RL (as here in the RLWM-P dataset), such that the striatal circuits support a more cognitive, explicit version of RL than typically assumed; in parallel, the H-agent might reflect hebbian cortico-cortical associations <ref type="bibr" target="#b16">(Frank et al., 2004)</ref>. Another possibility is that value learning in striatal-based networks does occur, but does not strongly con- tribute to behavior in many human experiments. Further research will necessitate careful task design, modeling, and concurrent imaging to unconfound possible RL processes from other learning processes such as WM and H, and further our understanding of their neural correlates. Patient studies in the RLWM domain, including with lesion patients or patients with dopaminergic medications targeting striatum should help shed light on these questions.</p><p>Our findings have important implications. First, they strengthen mounting evidence that RL modeling in reward-based learning tasks is useful but fraught <ref type="bibr" target="#b14">(Eckstein et al., 2022</ref><ref type="bibr" target="#b15">(Eckstein et al., , 2021))</ref>. While RL models capture much variance of learning behavior, our findings hint that it does so often without actually capturing the dynamical cognitive processes that support behavior. In addition to blurring our theoretical understanding, this may in practice lead to misinterpretations when RL models are used for model-based analysis of neural signals <ref type="bibr" target="#b1">(Cohen et al., 2017;</ref><ref type="bibr" target="#b6">Collins, Ciullo, et al., 2017;</ref><ref type="bibr" target="#b30">Rac-Lubashevsky, Cremer, Collins, Frank, &amp; Schwabe, 2023)</ref>, or when fit RL parameters are used as mechanistically interpretable proxys for individual differences, for example in developmental and aging research <ref type="bibr" target="#b14">(Eckstein et al., 2022;</ref><ref type="bibr" target="#b27">Nussenbaum &amp; Hartley, 2019;</ref><ref type="bibr" target="#b32">Rmus et al., 2023)</ref> or computational psychiatry <ref type="bibr" target="#b4">(Collins, Albrecht, et al., 2017;</ref><ref type="bibr" target="#b5">Collins et al., 2014;</ref><ref type="bibr" target="#b23">Montague, Dolan, Friston, &amp; Dayan, 2012;</ref><ref type="bibr" target="#b46">Zou et al., 2022)</ref>.</p><p>Second, our findings further highlight the fact that, beyond elegant parsimonious single process accounts of behavior or broad dual process ones, cognitive research has established a vast knowledge of multiple separable processes that support decision making, including explicit memory processes such as working memory. Even simple tasks designed to elicit a target process (such as bandit tasks for RL) recruit multiple other processes, but those processes may be unidentifiable in such tasks. Disentangling multiple processes requires considering more complex tasks to elicit differentiable behavior. Future research in learning and behavior should consider the parsimony/complexity trade-off carefully within the context of our knowledge of the complexity of human behavior.</p><p>In conclusion, our findings reveal that when learning from rewards, humans use effortful active maintenance of information to guide good choices in the short term, and rely on iteration of choices over time to build a good policy, bootstrapped by limited memory. We find no evidence here of standard value-based RL contribution to learning, and falsify the predictions of models that do includ RL. These findings call for care in interpreting any RL-based findings with important implications for behavioral, clinical, developmental, and neuro-cognitive scientists.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental design</head><p>All datasets were previously published <ref type="bibr">(Collins, 2018a;</ref><ref type="bibr" target="#b5">Collins et al., 2014;</ref><ref type="bibr" target="#b6">Collins, Ciullo, et al., 2017;</ref><ref type="bibr" target="#b8">Collins &amp; Frank, 2012;</ref><ref type="bibr" target="#b19">Master et al., 2020)</ref>, except data-set #6 GL. All experiments relied on the RLWM protocol developed in <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref>, with minor variations to the protocol across data-sets. We first describe the shared components of the RLWM task, then describe specific details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Shared</head><p>In all experiments participants' goal was to learn stimulus-action associations using truthful, binary feedback (correct/incorrect or +1/0). Actions corresponded to one of three adjacent key presses (or play console button presses). Each experiment included multiple independent blocks requiring learning for a novel set of easily identifiable stimuli.</p><p>Within each block, stimuli were presented for 10-15 iterations depending on the specific experiment, in an interleaved fashion. The number of stimuli (or set-size ns) was manipulated across blocks, and varied between 2 and 6; this key manipulation enabled us to affect load and thus identify working memory contributions. The stimulus presentation order was pseudo-randomized to control for the delay between two successive iterations of the same stimuli, with a close to uniform distribution between 1 and 2 * ns -1. This was important to identify the forgetting component of WM. The number of blocks ranged from 10 to 22 depending on the experiment.</p><p>Stimuli were presented for a short period (typically 1.5s, depending on the specific experiment), during which the participant made a key press; this was followed by a short feedback (.5-1s), then a short ITI (typically .5s, but see details of each published dataset). Stimuli within one block consisted of highly discriminable and familiar exemplars of a category (e.g., a cat, a cow, an elephant and a tiger in the animal category).</p><p>Participants' instructions fully described the structure of the task, including the fact that feedback was truthful and correct stimulus-action associations did not change within a block.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Published data-sets 1-5</head><p>• Dataset CF12 <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref> included N = 79 participants who performed the RLWM task in person. Set sizes ranged 2-6, for a total of 18 blocks.</p><p>• Dataset SZ <ref type="bibr" target="#b5">(Collins et al., 2014)</ref> included N = 85 participants who performed the RLWM task in person, including patients with schizophrenia and matched controls.</p><p>To accommodate patients, trial dynamics were slower; to keep the task within a shorter duration, the number of blocks was decreased to 13. See published methods for details.</p><p>• Dataset EEG <ref type="bibr" target="#b9">(Collins &amp; Frank, 2018)</ref> included N = 40 participants who performed the RLWM task in person while wearing an EEG measurement cap. There were 22 blocks.</p><p>• Dataset fMRI <ref type="bibr" target="#b8">(Collins &amp; Frank, 2012)</ref> included N = 26 participants who performed the task in the scanner. To accommodate fMRI timing constraints, the ITI durations were jittered, resulting in fewer blocks (18).</p><p>• dataset DEV <ref type="bibr" target="#b19">(Master et al., 2020)</ref> included N = 300 participants age 8 -30 who performed the task in person. To accommodate younger participants, the maximum set size was ns = 5, and the number of blocks was reduced to 10. Participants used a game console with three buttons instead of a keyboard.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data-set 6 GL</head><p>In this unpublished data-set, N = 30 participants performed a variant of the experiment where half of the blocks were "gain" blocks and half were "loss" blocks. In G blocks, participants tried to gain points, using feedback "+1 vs. 0". In L blocks, participants tried to avoid losing points, using feedback "0" vs. "-1" respectively for the correct choice vs. the two incorrect ones for each stimulus. There were 18 blocks, and 15 iterations per stimuli. We observed no difference in behavior between the G and L blocks, and computational modeling did not uncover any differences either (i.e., making any parameter from the winning model dependent on block condition did not improve fit). For the purpose of behavioral and modeling analyses in this paper, outcomes 0/ -1 in the loss blocks were treated as correct/incorrect in the same way as outcomes 1/0 in gain blocks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RLWMP experiment</head><p>The RLWM-P experiment was a variant of the RLWM experiment with probabilistic feedback. Previous analysis confirmed a set size effect, showing WM involvement even when learning in a probabilistic context (experiment 3 in <ref type="bibr">(McDougle &amp; Collins, 2021)</ref>). In this experiment, selecting the correct action led to positive feedback with probability p = 0.92 or p = 0.77 across blocks, while selecting the incorrect action led to negative feedback with the same probability. Participants (N = 34) were informed of the probabilistic nature of the task. Participants only experienced two set sizes across 14 blocks (8 vs. 6 for ns = 3 and ns = 6) with 12 iterations per stimuli.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>All procedures were approved by institutional review boards where data was collected (including the Committee for the Protection of Human subjects at the University of California, Berkeley, for unpublished dataset #6 GL). Participants provided informed consent and were free to stop participation at any time of their choosing. Please refer to corresponding publications for further participant and procedures details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Behavioral analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Set size effects on accuracy</head><p>We visualize data for each dataset using the same learning curve as in previously published analyzes, where the average choice accuracy is plotted as a function of specific stimulus iteration number, separately for each set size.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Error analysis</head><p>To investigate the effect of negative outcomes on behavior, we designed a novel error trial analysis. We reasoned that if participants integrated negative feedback into their policy, they should be less likely to repeat a previous error. There were two possible errors for each stimulus (e.g., A2 is correct for the triangle stimulus in fig. <ref type="figure">1 A</ref>), then A1 or A3 are possible errors; the A3 error should be more likely after A1 is tried and receives incorrect feedback). Thus, if participants performed an error E t for stimulus S t , we counted how many times the participant had made the same error for stimulus S t up to trial t -1 ("chosen error"), and how many times they had made the other possible error ("unchosen error"); this corresponds to the blue and purple curves in figures 1 and 2. To measure success at avoiding error, we also compute the average error avoidance success by substracting the number of previous unchosen errors from the number of previous chosen errors (black and grey curves in figures 2).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational modeling</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model fitting</head><p>We used Matlab 2020B with fmincon optimization to fit all computational models, with 10 random starting points per participant and capacity (for discrete capacity models). We sought parameters that optimized the log-likelihood of the data under the model assumptions <ref type="bibr" target="#b41">(Wilson &amp; Collins, 2019)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model comparison</head><p>Exceedance probability. For model comparison, we computed the protected exceedance probability using the spm_bmf function <ref type="bibr" target="#b31">(Rigoux, Stephan, Friston, &amp; Daunizeau, 2014)</ref>, separately within each dataset, and also report model responsibility exp_r. Where comparable (datests 1-6), we observed highly convergent best results (see Fig. <ref type="figure" target="#fig_5">6</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model space exploration.</head><p>Because of the breadths of potential model space, we limited model space exploration to sequential families as described below. We performed model comparison within a model family; selected the best model out of each family; then performed model comparison again between winning models.</p><p>Model validation. To validate the winning model vs. competing models, we simulated winning models with fit parameters, with 20 simulated agents per participant. Summary statistics of interest (e.g., learning curves, error analysis) were averaged over agents within participants first, to average out stochasticity in simulations. We then plotted the resulting synthetic data-set behavior across participants in the same way we plotted participants' behavior (including mean and SEM across synthetic participants).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Checks</head><p>Model identifiability. We performed model identifiability analyses within the key models of interests that represent theoretically interesting contrast <ref type="bibr" target="#b41">(Wilson &amp; Collins, 2019)</ref>. We ensured that competing models were identifiable with confusion matrices (see supplementary fig. <ref type="figure">7</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational models -RLWM</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mixture model</head><p>Previous work <ref type="bibr">(Collins, 2018a</ref><ref type="bibr" target="#b3">(Collins, , 2018b;;</ref><ref type="bibr" target="#b5">Collins et al., 2014;</ref><ref type="bibr" target="#b6">Collins, Ciullo, et al., 2017;</ref><ref type="bibr" target="#b8">Collins &amp; Frank, 2012</ref><ref type="bibr">, 2018;</ref><ref type="bibr" target="#b19">Master et al., 2020;</ref><ref type="bibr" target="#b30">Rac-Lubashevsky et al., 2023)</ref> showed that behavior in the RLWM task cannot be adequately captured with a single process model. We used the RLWM modeling framework as a baseline, which assumes that policy is the mixture of a working memory policy, designed to capture fast but forgetful information integration, and a non-forgetful integrative process, typically RL.</p><formula xml:id="formula_3">π mixture (a|s) = ρ W M π W M (a|s) + ρ W M π other (a|s)</formula><p>where "other" is typically RL. The mixture weight ρ W M (ns) is set-size dependent and serves to capture resource or capacity limitations of the WM process. In the context where set size is ∈ {2, ..., 6}, the mixture weight is set to ρ W M = ρ min(1, ns/K) where K ∈ {2, ..., 5} is a capacity parameter, and ρ ∈ [0, 1] regulates the overall balance of WM vs. non WM in the policy. If there are only two set sizes, the mixture weight is parameterized per set size (ρ W M = ρ 3 , ρ 6 ).</p><p>This full policy is typically mixed with a uniform random policy to capture random lapses in choices to produce the final full policy, with noise parameter ϵ ∈ [0, 1]:</p><formula xml:id="formula_4">π(a|s) = (1 -ϵ)π mixture + ϵ 1 n A</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>WM module</head><p>The WM module tracks information in an association weight matrix initialized at the beginning of each block at W 0 = 1/n A reflecting the initial expectation that one out of n A = 3 actions leads to reward 1 (vs. 0). After observing stimuli, actions and rewards (S t , a t , r t ) at trial t, the update is</p><formula xml:id="formula_5">W t+1 (S t , a t ) = W t (S t , a t ) + α W M (r t )(r t -W t (S t , a t ))</formula><p>To capture one-shot encoding of information, we set α W M (1) = 1. To capture potential neglect of negative outcomes, we set α W M (0) = bias W M as a parameter, which is either free (bias W M ∈ [0, 1]) or fixed depending on the model considered. To capture short-term maintenance in WM, WM weights are decayed at each trial toward initial values for all (s, a) not observed at t:</p><formula xml:id="formula_6">∀(s, a), W t+1 (s, a) = W t (s, a) + ϕ W M (W 0 -W t (S, a))</formula><p>The working memory policy transforms the WM weights through a standard softmax:</p><formula xml:id="formula_7">π W M (a|s) = exp βW (s, a)</formula><p>i exp βW (s, a i ) the temperature parameter β is typically fixed to a high value (here β = 25) for theoretical reasons (this ensures that WM policy of a repeated trial is perfect) and identifiability reasons (this ensures that the RL learning rate is identifiable and RL an WM modules are separable).</p><p>In the absence of a free β parameter, noise in the choice policy is instead parameterized as lapses in the overall policy via parameter ϵ, which is highly recoverable (see supplementary figure <ref type="figure">8</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RL module</head><p>The RL module is a standard delta-rule agent which tracks Q-values for each stimulus and action pair. Q is initialized at Q 0 = 1/n A , reflecting the initial expectation that one out of n A = 3 actions leads to reward 1 (vs. 0). The delta-rule update is:</p><formula xml:id="formula_8">Q t+1 (s t , a t ) = Q t (s t , a t ) + α RL (r t )(r t -Q t (S t , a t ))</formula><p>The positive learning rate parameter α RL (1) ∈ [0, 1] is free, and then negative learning rate α RL (0) = bias RL × α RL (1) is also parameterized by a bias parameter (bias RL ∈ [0, 1]) which is free or fixed depending on the specific model.</p><p>The RL policy transforms the Q-values through a standard softmax:</p><formula xml:id="formula_9">π RL (a|s) = exp βQ(s, a) i exp βQ(s, a i )</formula><p>The temperature parameter β is fixed and shared with the WM module (see above).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RL-like module extension (H-agent)</head><p>We extend the RL module to novel versions of the algorithm to capture the novel observed error effects which standard RLWM models cannot capture.</p><p>Specifically, the H module tracks association weights in a way very similar to an RL module, and is initialized also at H 0 = 1/nA. The update is:</p><formula xml:id="formula_10">H t+1 (s t , a t ) = H t (s t , a t ) + α H (r t )(SR(r t ) -H t (S t , a t ))</formula><p>The only difference is the subjective outcome SR, which is fixed at SR(1) = 1 for correct outcomes, and parameterized at SR(0) = r 0 for incorrect outcomes, with parameter r 0 ∈ [0, 1], free or fixed depending on the model. With r 0 = 0, the H agent reduces to an RL agent. With r 0 = 1, the H-agent treats correct and incorrect outcomes exactly identically and increases weights of the selected action no matter the outcome, thus only tracking a function of stimulus-action associations. The learning rate α H is parameterized in the same way as α RL . The H policy transforms the H-values through a standard softmax:</p><formula xml:id="formula_11">π H (a|s) = exp βH(s, a) i exp βH(s, a i )</formula><p>The temperature parameter β is fixed and shared with the WM module. H-agents replace RL agents in the standard RLWM mixture policy to form WMH mixtures:</p><formula xml:id="formula_12">π mixture (a|s) = ρ W M π W M (a|s) + ρ W M π H (a|s)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Choice kernels</head><p>We explore including different choice kernels in the policy to A) investigate whether it improves model fit B) ensure that such choice kernels cannot account for observed effects. We incorporate the choice kernels in both policies in the mixture.</p><p>Sticky choice. This captures stimulus-independent choice perseveration, i.e. the tendency to repeat the same key-press in consecutive trials. Specifically, we implement it within the softmax policy as:</p><formula xml:id="formula_13">π W M (a|s) = exp (βW (s, a) + κI(a, a t-1 )) i exp (βW (s, a i )κI(a, a t-1 ))</formula><p>where I(a i , a j ) = 1 if i = j and 0 otherwise, and κ ∈ [-1, 1] captures a tendency to repeat or switch away from the previous key press. We apply the same approach to Q-and Hagents, with shared parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Regularization.</head><p>Policy compression adds a choice kernel that favors default actions, e.g. actions that are valid across more stimuli than others <ref type="bibr" target="#b18">(Lai &amp; Gershman, 2021)</ref>. Specifically, we implement it within the softmax policy as</p><formula xml:id="formula_14">π RL (a|s) = exp (βQ(s, a) + τ Q(a)) i exp (βQ(s, a i )τ Q(a i ))</formula><p>where Q(a) = mean i (Q(s i , a)). We apply the same approach to W M -and H-agents with shared parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model space</head><p>The model space resulting from the factorial combination of all considered mechanisms is too large too explore. We first considered mechanisms that may absorb variance of no current theoretical interest, and asked whether adding them to the starting, best-so-far RLWM model (based on <ref type="bibr" target="#b19">(Master et al., 2020)</ref>) could improve fit. Specifically, we validated that sticky-choice and ϵ-noise in the policy systematically improved fit across data sets, but policy compression didn't (and could not capture qualitative patterns of behavior, see fig. <ref type="figure">2</ref>).</p><p>We thus explored two families of models systematically:</p><p>• we first systematically explored the RLWM model (including free κ and ϵ parameters) with bias parameters bias RL and bias W M either free, fixed to 0, fixed to 1, or shared, for a total of 10 models (see supplementary figure <ref type="figure" target="#fig_5">6</ref> for model comparison). The best two models of this family (WM RL0 and WM1 RL0) both have fixed bias RL = 0 (thus no update in RL after negative outcomes) and bias W M either free or fixed to 1, thus limited learning bias in WM. In particular, they outperform the published baseline RL=WM model where a single bias parameter is shared <ref type="bibr" target="#b19">(Master et al., 2020</ref>).</p><p>• we then systematically explored the WMH model with r 0 free or fixed to 0 (same as RL) or 1, and free or fixed bias parameters. The winning model has fixed r 0 = 1 (pure H-agent with subjective outcome SR(0) = SR( <ref type="formula">1</ref>)), and shared free parameter bias W M = bias H .</p><p>• we additionally explored adding a policy compression mechanism to all models; the winning model from the corresponding family is labeled with "C". This did not improve fit and could not explain error patterns.</p><p>Models included in the model comparison figure 2 are listed below. All include at least 6 free parameters for WM capacity K, WM weight ρ, WM decay ϕ, noise ϵ, sticky choice κ, H or RL learning rates α H or α R L:</p><p>1. WM RL0: RLWM model with free bias W M , fixed bias RL = 0. Total 7 free parameters.</p><p>2. WM=RL: RLWM model with free bias W M = bias RL . Total 7 free parameters. This model corresponds to <ref type="bibr" target="#b19">(Master et al., 2020)</ref> with an additional sticky choice mechanism which improved fit.</p><p>3. WM1 RL0: RLWM model with fixed bias W M = 1, bias RL = 0. Total 6 free parameters.</p><p>4. WM1 RL1: RLWM model with fixed bias W M = 1, bias RL = 1. Total 6 free parameters. This model is the "no bias" model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">WM=H:</head><p>Overall winnning WMH model with free bias W M = bias H . Total 7 free parameters.</p><p>WM1 RL1 r0 : RLWM model with fixed bias W M = bias RL = 1, free RL SR(0) = r 0 . Total 7 free parameters. This model captures qualitative behavior similarly to the WM=H model, because the r 0 parameter is fit to a high value, similar to an H agent CWMRL0 : best model in the policy compression RLWM family, with 7 parameters including free bias W M and τ parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational models -RLWM-P</head><p>The computational model for the RLWM-P model was also a mixture model, with a slightly different WM module, and identical RL/H module. In the deterministic experiment, the WM module approximates encoding of the trial information in WM by maintaining relative state-action association weights. In a probabilistic context, by contrast, it is possible that participants hold in mind a hypothesis about the best action, rather than specifically the last trial information. We seek to incorporate this into an extended version of the WM module.</p><p>To approximate WM and contrast it to either an RL agent or an H agent, we include the following assumptions:</p><p>• we constrain ρ W M (ns = 6) &lt; ρ W M (ns = 3), as a theoretical interpretability constraint ensuring that the WM-labeled module is more expressed under lower load.</p><p>• we include forgetting only in the WM module, to associate variance captured with rapid forgetting to the WM-labeled process. This is not a theoretical commitment to RL/H agents not potentially also experiencing decay, but rather that any decay should be stronger in WM, and thus a pragmatic choice to enable identification of the modules.</p><p>With these constraints, we use the same formulation as above for WM weights, but we let α W M be a free parameter, such that the WM module might remember only the last trial for a given stim-action-reward (if α W M = 1), but might integrate over a few trials otherwise, capturing hypothesis maintenance. In this sense, the WM module is approximated by an RL-like computation with decay, and is forced to contribute more to ns = 3 than ns = 6.</p><p>The full model includes 11 parameters: one per module each of positive and negative learning rates α(r) (4); 2 mixture weight parameters (ρ), one decay parameter ϕ, one noise parameter ϵ, one perseveration parameter κ, and one SR(0) = r 0 parameter each (similar to the H module above).</p><p>To explore the model space, we first fit the full model, then fixed the r 0 parameter to 0 (standard) or 1 (H-agent) in either the WM or the RL module, or both. The winning model had fixed r 0 (RL) = 1 (pure H agent) and r 0 (W M ) = 0 (standard WM agent). We next verified that fixing any other parameter (including ρ, κ,ϕ or ϵ or biases) to fixed values did not improve fit over the winning model. Last, we verified that the winning model fit better than a single module model that included all mechanisms and differential noise per set sizes (WMf, fig. <ref type="figure">3</ref>). We performed model recovery and parameter recovery checks as previously described for RLWM, see supplementary figures 13,12.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulations</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Environment</head><p>To investigate the computational role of an H-like agent, we ran simulations of two mixture agents representing RLWM (mixture of WM and standard RL), and WMH (mixture of WM and no-outcome associative H agent) on a simple probabilistic 2-arm bandit task. Agents chose between two options (A, B) for T trials, and received reward r = 0/1 with P (r = 1|A) = p and P (r = 1|B) = 1-p. We varied p ∈ [0 : .05 : 1] and T ∈ <ref type="bibr">[20,</ref><ref type="bibr">50]</ref>. Results were similar for the two learning durations, so we only plotted T = 50. We investigated three values of the exploration softmax parameter β ∈ {2, 5, 8}.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>The agents made choices based on the mixture model policy π = ρ W M π W M + (1ρ W M π H/RL ). However, we are interested in the policy learned by the non-WM model in the presence of WM to guide choices, and thus plot π RL and π H , rather than π.</p><p>We approximated a WM process with a simplistic 1-back memory process, such that after each choice C t ∈ {A, B} and outcome r t , we updated a working memory associations buffer with W t+1 (C t ) = r t . This captures the last reward obtained for each choice, and crudely captures a no-integration, resource limited, short term memory process. WM policy was derived through a softmax transform: π W M (C) ∝ exp(βW (C)).</p><p>The standard RL agent tracked the value Q(C) of each choice by updating with a standard delta rule Q t+1</p><formula xml:id="formula_15">(C) = Q t (C) + α(r t -Q t (C)).</formula><p>Learning rate parameter was fixed to α = 0.1. RL policy was derived through a softmax transform: π RL (C) ∝ exp(βQ(C)).</p><p>The associative H agent tracked the association strenght H(C) of each choice by updating with an outcome neglect learning rule H t+1 (C t ) = H t (C t ) + α(1 -H t (C t )). Learning rate parameter was fixed to α = 0.1; results were similar with other α values. H policy was derived through a softmax transform: π H (C) ∝ exp(βQH(C)).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Open science</head><p>All code and data will be made available on OSF at the time of publication. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model comparison</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model identifiability</head><p>Figure <ref type="figure">7</ref> Winning WMH model is identifiable vs. best RLWM model. We simulated artificial datasets using both models and parameters fit on individual participants. For each participants, we simulated enough times to ensure we included at least 100 simulations (e.g., twice per participant in CF12, once in Dev, 4 times in fMRI). We then fit artificial datasets with both models using the same procedure as for real participants. For each dataset, we assign a winning model as the model with the lowest AIC. We verified that BIC overpenalized complexity and lead to worse confusion matrices. WMH is highly recoverable, with the lowest recoverability in the Dev data set where the number of blocks and lack of set-size 6 decreases the difference between H and RL agents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 8</head><p>Parameter recovery analysis. Parameters in the winning WMH model are highly recoverable. We simulated and fit the same number of agents as in Supplementary Fig. <ref type="figure">7</ref>, and compared true generating parameters with fit recovered parameters, obtaining a high correlation for all parameters in all datasets. Dashed black line is unity line; blue line is least squared regression line. Note that this figure also provides the distribution of best fit parameters across the group in all datasets. For visualization purposes, the discrete capacity parameter was slightly jittered with .05*normal noise. All Spearman rho &gt; .56, p &lt; 10 -8 , uncorrected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model validation figures</head><p>Following figures include model validation figures for all 6 data sets with the same models as in 2. Validation figures for all 6 RLWM data sets. See legend for fig. <ref type="figure">2</ref>. Model WM1RL1r0 captured behavior as well as WM=H, but was quantitativley penalized for the extra parameter (see fig. <ref type="figure">2A</ref>). Figure <ref type="figure">10</ref> shows that the r 0 parameter was typically fitted at a high value that would lead to positive reinforcement of negative outcomes, making this model similar to WMH.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 10</head><p>WM1 RL1 r0 model's fit r 0 parameter distribution across data sets shows that a majority of participants are fit with a value higher than the initialization of Q 0 = 1/3, such that this model falls into the H family of the spectrum (making an error makes the error more likely to be repeated).  We use the same procedure as above to confirm model identifiability between the best model and competing ones.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 13</head><p>Parameters for the winning model in RLWM-P data set are identifiable, as shown by a generate and recover procedure.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Figure 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>Figure 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4</head><label>4</label><figDesc>Figure 4</figDesc><graphic coords="9,90.00,94.05,432.00,172.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 A</head><label>5</label><figDesc>Figure 5</figDesc><graphic coords="11,90.00,94.05,432.00,204.06" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6</head><label>6</label><figDesc>Figure 6</figDesc><graphic coords="27,90.00,94.05,432.01,216.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>Figure 9</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc>Figure 11</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 12</head><label>12</label><figDesc>Figure 12</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="29,90.00,175.98,432.00,288.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="43,144.00,205.40,324.01,324.01" type="bitmap" /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0"><p>4 6 8 10</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Information</head><p>Behavior statistics Table <ref type="table">1</ref> Effect of number of previous chosen vs. <ref type="bibr">unchosen</ref>  </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reinstated episodic context guides sampling-based decisions for reward</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Bornstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Norman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="997" to="1003" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Computational approaches to fmri analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Daw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Engelhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Hasson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="304" to="313" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Learning structures through reinforcement</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Goal-directed decision making</title>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<biblScope unit="page" from="105" to="123" />
+		</imprint>
+	</monogr>
+	<note>(2018a)</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The tortoise and the hare: Interactions between reinforcement learning and working memory</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1422" to="1432" />
+			<date type="published" when="2018">2018b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Interactions among working memory, reinforcement learning, and effort in value-based choice: A new paradigm and selective deficits in schizophrenia</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Albrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Waltz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biological psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="431" to="439" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Working memory contributions to reinforcement learning impairments in schizophrenia</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Waltz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">41</biblScope>
+			<biblScope unit="page" from="13747" to="13756" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Working memory load strengthens reward prediction errors</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ciullo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Badre</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">16</biblScope>
+			<biblScope unit="page" from="4332" to="4342" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Beyond dichotomies in reinforcement learning</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cockburn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Reviews Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="576" to="586" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">How much of reinforcement learning is working memory, not reinforcement learning? a behavioral, computational, and neurogenetic analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1024" to="1035" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Within-and across-trial dynamics of human eeg reveal cooperative interplay between reinforcement learning and working memory</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="2502" to="2507" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Unconscious reinforcement learning of hidden brain states supported by confidence</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cortese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kawato</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature communications</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">4429</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A universal role of the ventral striatum in reward-based learning: evidence from human studies</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pollmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurobiology of learning and memory</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page" from="90" to="100" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Model-based influences on humans&apos; choices and striatal prediction errors</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Daw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Gershman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Seymour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1204" to="1215" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Value learning through reinforcement: the basics of dopamine and reinforcement learning</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Daw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Tobler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Neuroeconomics</title>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="283" to="298" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Eckstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Master</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Dahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wilbrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note>The interpretation of computational model parameters depends on the context. Elife, 11 , e75474</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">What do reinforcement learning models measure? interpreting model parameters in cognition and neuroscience. Current opinion in behavioral sciences</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Eckstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wilbrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="128" to="137" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">By carrot or by stick: cognitive reinforcement learning in parkinsonism</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Seeberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>O'reilly</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">306</biblScope>
+			<biblScope unit="issue">5703</biblScope>
+			<biblScope unit="page" from="1940" to="1943" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning and episodic memory in humans and animals: an integrative framework</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Gershman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Daw</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual review of psychology</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="page" from="101" to="128" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Policy compression: An information bottleneck in action selection</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Gershman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychology of learning and motivation</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="page" from="195" to="232" />
+			<date type="published" when="2021">2021</date>
+			<publisher>Elsevier</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Disentangling the systems contributing to changes in learning during adolescence</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Master</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Eckstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Gotlieb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wilbrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Developmental cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page">100732</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Modeling the influence of working memory, reinforcement, and action uncertainty on reaction time and choice during instrumental learning</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Mcdougle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic bulletin &amp; review</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="20" to="39" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Habits without values</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shenhav</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Ludvig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological review</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">292</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A framework for mesencephalic dopamine systems based on predictive hebbian learning</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Montague</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Sejnowski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1936" to="1947" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Computational psychiatry</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Montague</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends in cognitive sciences</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="72" to="80" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning in the brain</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="139" to="154" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Learning task-state representations</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1544" to="1553" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Reinforcement learning with marr. Current opinion in behavioral sciences</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Langdon</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="67" to="73" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning across development: What insights can we draw from a decade of research?</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Nussenbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Hartley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Developmental cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page">100733</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The computational roots of positivity and confirmation biases in reinforcement learning</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Palminteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lebreton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends in cognitive sciences</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="607" to="621" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">The importance of falsification in computational cognitive modeling</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Palminteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Wyart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Koechlin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends in cognitive sciences</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="425" to="433" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Neural index of reinforcement learning predicts improved stimulus-response retention under high working memory load</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pessiglione</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Petrovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Daunizeau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Palminteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Frith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rac-Lubashevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cremer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Schwabe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="3131" to="3143" />
+			<date type="published" when="2008">2008. 2023</date>
+		</imprint>
+	</monogr>
+	<note>Neuron</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Bayesian model selection for group studies-revisited</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rigoux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Daunizeau</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuroimage</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="page" from="971" to="985" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Age-related differences in prefrontal glutamate are associated with increased working memory decay that gives the appearance of learning deficits</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rmus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Baribault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Walsh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Festa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Nassar</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>Elife</publisher>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">85243</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">The role of executive function in shaping reinforcement learning</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rmus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Mcdougle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current Opinion in Behavioral Sciences</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="66" to="73" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">A neural substrate of prediction and reward</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Schultz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Montague</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">275</biblScope>
+			<biblScope unit="issue">5306</biblScope>
+			<biblScope unit="page" from="1593" to="1599" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Dissociation between asymmetric value updating and perseverance in human reinforcement learning</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sugawara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Katahira</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific reports</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">3574</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Reinforcement learning: An introduction</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Barto</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Transient stimulation of distinct subpopulations of striatal neurons mimics changes in action value</title>
+		<author>
+			<persName><forename type="first">L.-H</forename><surname>Tai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Benavidez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bonci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wilbrecht</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1281" to="1289" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Cognitive maps in rats and men</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Tolman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological review</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">189</biblScope>
+			<date type="published" when="1948">1948</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Examinations of biases by model misspecification and parameter reliability of reinforcement learning models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Toyama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Katahira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kunisato</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Brain &amp; Behavior</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="651" to="670" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Inhibition in pavlovian conditioning: Application of a theory. Inhibition and learning</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Wagner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Rescorla</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1972">1972</date>
+			<biblScope unit="page" from="301" to="336" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Ten simple rules for the computational modeling of behavioral data</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<publisher>Elife</publisher>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">49547</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Lesions of dorsolateral striatum preserve outcome expectancy but disrupt habit formation in instrumental learning</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">H</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Knowlton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Balleine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European journal of neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="181" to="189" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">The role of the dorsomedial striatum in instrumental conditioning</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">H</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Ostlund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Knowlton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Balleine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="513" to="523" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">How working memory and reinforcement learning are intertwined: A cognitive, neural, and computational perspective</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Yoo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="551" to="568" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Lowered inter-stimulus discriminability hurts incremental contributions to learning</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Yoo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Keglovits</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive, Affective, &amp; Behavioral Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1346" to="1364" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Impulsivity relates to multi-trial choice strategy in probabilistic reversal learning</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Muñoz Lopez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page">800290</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
