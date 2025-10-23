@@ -1,0 +1,2448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">High Accuracy with Low Costs: The Pretrain-Finetune Paradigm for Classification with Transformer-based Language Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Cecilia</forename><surname>Sui</surname></persName>
+							<email>c.sui@wustl.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">PhD Candidate in Political Science</orgName>
+								<orgName type="institution">Washington University in St. Louis</orgName>
+								<address>
+									<addrLine>One Brookings Drive</addrLine>
+									<postCode>63130</postCode>
+									<settlement>St. Louis</settlement>
+									<region>MO</region>
+									<country key="US">United States</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">High Accuracy with Low Costs: The Pretrain-Finetune Paradigm for Classification with Transformer-based Language Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">CCCE6BDFC99BEF65856694D4BC52B2FA</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:38+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>text analysis</term>
+					<term>text classification</term>
+					<term>language models</term>
+					<term>transfer learning 9</term>
+					<term>853 (exclude title</term>
+					<term>abstract</term>
+					<term>and reference section)</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Political science research increasingly relies on text classification to gauge subtle concepts like toxicity or anger. However, common methods treat words and phrases in isolation, ignoring the relational dynamics where meaning is embedded in the interaction between phrases and their textual environment. Recent transformerbased language models overcome such limitations, but are rarely used in published political science articles, possibly due to misconceptions about their data and computational requirements. To bridge this gap, this article explains the pretrainfinetune paradigm for transformer-based language models and its potential to improve text analysis in political science by harnessing robust models trained on extensive datasets while requiring relatively small amounts of labeled data and computational resources from researchers. To demonstrate its effectiveness, I employ the approach to identify toxic language in conversation threads following U.S. Senators' tweets.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Text classification is now a standard tool for measurement tasks in political science across substantive domains <ref type="bibr" target="#b9">(Bestvater and Monroe, 2022;</ref><ref type="bibr" target="#b10">Bosley et al., 2022;</ref><ref type="bibr" target="#b28">Goet, 2019;</ref><ref type="bibr" target="#b30">Grimmer and Stewart, 2013;</ref><ref type="bibr" target="#b45">Lucas et al., 2015;</ref><ref type="bibr" target="#b68">Roberts, 2016)</ref>. However, a common problem with current models is that they struggle to effectively capture context-dependent concepts such as toxicity, sentiment, and emotion <ref type="bibr" target="#b60">(Parekh, 2012;</ref><ref type="bibr" target="#b75">Sellars, 2016)</ref>. Such limitations arise from their inability to selectively focus on the most relevant words and the inattention to word order. This is particularly true for bag-of-words and dictionary-based methods <ref type="bibr" target="#b37">(Jacobs et al., 2021;</ref><ref type="bibr" target="#b58">Osmundsen et al., 2021;</ref><ref type="bibr" target="#b59">Osnabrügge, Hobolt and Rodon, 2021;</ref><ref type="bibr" target="#b78">Siegel and Badaan, 2020;</ref><ref type="bibr" target="#b89">Wasow, 2020)</ref>. Even somewhat more sophisticated models, such as text embeddings,<ref type="foot" target="#foot_0">foot_0</ref> face challenges when dealing with multiple meanings of words in different settings <ref type="bibr" target="#b2">(Alrababa'h et al., 2021;</ref><ref type="bibr" target="#b9">Bestvater and Monroe, 2022)</ref>. This is because they rely on static representations and may not capture the nuances of how a word's meaning shifts in different contexts. For instance, consider the word "left" in the two sentences below: the context gives "left" different meanings, something missed by all models using static representations.</p><p>Sentence 1: The left advocates for more government intervention in the economy to ensure equity and social welfare.</p><p>Sentence 2: After the debate, he left the stage.</p><p>Recent advancements in transformer-based language models offer a promising solution to this issue. Transformers excel at capturing long-range dependencies and relationships given their ability to weigh the importance of different words in a sequence based on their context, i.e., the attention mechanism <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>. Such architecture provides both enhanced language representation and model interpretability. Despite the potential of transformer-based language models, the adoption of them in political science remains limited. This is, in part, because the overall methodology may still appear inaccessible for applied scholars due to a lack of clear explanation and misconceptions about the amount of labeled data and computational resources required.</p><p>To address this issue, in this article, I provide a conceptual overview of the pretrainfinetune paradigm (PFP), focusing on offering an approachable explication of the methods, their potential applications, and inherent limitations. The PFP comprises two stages: pre-training, where a language model learns general linguistic patterns from diverse, unlabeled text corpora, and fine-tuning, where the model is further trained on task-specific labeled data. The fine-tuning stage allows for efficient adaptation of pre-trained models to targeted tasks, leveraging the previously acquired linguistic knowledge. The increasing availability of open-source pre-trained models enables scholars to achieve data efficiency, training efficiency, and performance enhancement via the process of fine-tuning without developing classifiers from scratch.</p><p>In the next section, I explain the measurement task of text classification and provide a brief overview of current methods used in the field of political science. I show that while there are a few papers that use the PFP approach <ref type="bibr" target="#b9">(Bestvater and Monroe, 2022;</ref><ref type="bibr">Wang, 2023a,b)</ref>, the vast majority of published works do not. To motivate the PFP, I then outline the limitations of the most widely used methods for political science domain-specific text analysis. The following section is dedicated to a comprehensive overview of the PFP emphasizing the attention mechanism, while the subsequent section walks through the process of using the PFP in details with an application to identify toxic language in Twitter conversation threads. The article concludes with a discussion on the limitations inherent in the PFP and suggests potential avenues for future research in this domain.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Current Text Classification Approaches</head><p>To contextualize the discussion, imagine we are interested in measuring toxicity from some text corpus that contains the two example sentences below. <ref type="foot" target="#foot_2">2</ref>Example 1 (E1 ): Stop the evil yellow invasion from the Chinese.</p><p>Example 2 (E2 ): The flowers are yellow.</p><p>The simplest approach for identifying toxic language is to use a standard dictionary method. The procedure entails examining the input text for the presence of specific derogatory terms that have been pre-defined by scholars <ref type="bibr" target="#b37">(Jacobs et al., 2021;</ref><ref type="bibr" target="#b58">Osmundsen et al., 2021;</ref><ref type="bibr" target="#b59">Osnabrügge, Hobolt and Rodon, 2021;</ref><ref type="bibr" target="#b78">Siegel and Badaan, 2020;</ref><ref type="bibr" target="#b89">Wasow, 2020)</ref>. Should these specific terms be detected within the input text, it is classified as toxic. For instance, <ref type="bibr" target="#b78">Siegel and Badaan (2020)</ref> used a dictionary containing anti-Shia slurs to measure sectarian hate speech on Twitter. I use a similar application to detect toxic language on Twitter to demonstrate the effectiveness of the PFP in the application section.</p><p>However, there are several limitations of using dictionaries for classifying toxic language.</p><p>First, dictionaries rely solely on explicitly pre-defined terms, which may overlook more sophisticated forms of toxicity, such as coded language, or manipulative speech. Second, due to the over-reliance on explicit terms, dictionaries are inadequate in addressing the complexity of context-dependent terms, which might be deemed toxic or non-toxic based on their usage within a given context, such as the word "yellow" in E1 and E2. Consequently, the inclusion or exclusion of "yellow" in the dictionary leads to misclassification of one of the two sentences.</p><p>Beyond dictionaries, a popular approach in the field is to use bag-of-words (BOW), which generates numerical vectors (i.e., text embeddings) by counting the occurrences of words or tokens from the input text, regardless of the token order <ref type="bibr" target="#b4">(Barberá et al., 2019;</ref><ref type="bibr" target="#b7">Beltran et al., 2021;</ref><ref type="bibr" target="#b17">Cocco and Monechi, 2022;</ref><ref type="bibr" target="#b30">Grimmer and Stewart, 2013;</ref><ref type="bibr" target="#b85">Vries, Schoonvelde and Schumacher, 2018)</ref>. For example, <ref type="bibr" target="#b17">Cocco and Monechi (2022)</ref> used BOW along with a random forest classifier to measure populist content in party manifestos. <ref type="bibr" target="#b7">Beltran et al. (2021)</ref> transformed Spanish tweets using BOW with logistic regression to examine the differences in how male and female politicians communicate with the public on social media. Similar to dictionaries, BOW is unable to capture multiple meanings of words due to its lack of context sensitivity. The word "yellow" from E1 and E2 would again be treated as the same using a BOW model. Moreover, word order is not factored in when generating numerical vectors, which makes BOW struggle to capture negative meanings.</p><p>E3 would be numerically equivalent to E4 when using uni-grams in BOW. Such inability becomes particularly problematic in applications like toxicity detection.</p><p>Example 3 (E3 ): I do like Kamala and not Trump.</p><p>Example 4 (E4 ): I do not like Kamala and Trump.</p><p>A more advanced method of text representation is to use static word embeddings <ref type="bibr" target="#b2">(Alrababa'h et al., 2021;</ref><ref type="bibr" target="#b23">D'Sa, Illina and Fohr, 2020;</ref><ref type="bibr" target="#b24">Esberg and Siegel, 2023)</ref>. To generate numerical representations in a continuous vector space and take advantage of the surrounding words, word2vec is introduced with the intuition that a word is defined by its neighboring words <ref type="bibr" target="#b53">(Mikolov et al., 2013)</ref>. For example, <ref type="bibr" target="#b24">Esberg and Siegel (2023)</ref> converted tweets into numerical vectors using word2vec to identify words that are semantically similar to their seed words in the data. Using word2vec with a naive Bayes classifier, <ref type="bibr" target="#b2">Alrababa'h et al. (2021)</ref> identified anti-Muslim content in 15 millions tweets from British soccer fans.</p><p>The key limitation of word2vec and related models is that they generate static numerical representations. In other words, the numerical vector representing a word is fixed during training. Therefore, it is unable to handle the complexity of context-dependent words like "yellow" in E1 and E2 when their context is different from training. The context provided by neighboring words is also limited by a window of words or tokens on the left or right, making it inadequate to connect two words that are further away from each other. 3   In response to the constraints observed in prior models for text representation, transformer-based language models are introduced to effectively manage the intricacies inherent in linguistic nuances <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>. First, multiple meanings of words are handled with dynamic embeddings, which ensure the numerical representation of a word is contextually enriched by the presence of all other words within the same sequence. For instance, the word "yellow" in E2 may adopt meanings influenced by words such as "flowers". Similarly, the connotation of "yellow" can also be shaped by its association with words such as "Chinese", "evil", and "invasion" in E1.</p><p>Second, transformers incorporate word order into their numerical vectors through the inclusion of position embeddings. Position embeddings are numerical vectors that are added to the word embeddings to encode the position of each word in the input sequence.</p><p>By combining word embeddings and position embeddings, transformers are able to capture both the semantic meaning of the words and their sequential order, which is crucial for language understanding tasks such as text classification as shown in E3 and E4.</p><p>Third, compared to static word embedding approaches like word2vec, transformers allow us to consider a much broader context window that is theoretically unlimited. <ref type="foot" target="#foot_3">4</ref> The fixed-size content window of traditional word embedding approaches can limit the model's 3 Researchers can increase the context window to capture all tokens in an input sequence. Recurrent neural networks addresses this, but still face the vanishing gradient problem.</p><p>ability to capture broader semantic relationship between words. In contrast, transformers use an attention-based mechanism that allows the model to dynamically attend to and consider the entire input sequence when computing the representation of a given word.</p><p>Fourth, given the large context window of transformers, the attention mechanism facilitates a more refined and context-rich representation of words (or tokens), thereby enabling the model to produce more expressive token embeddings at the sentence level.<ref type="foot" target="#foot_5">foot_5</ref> </p><p>This capacity extends to addressing irregularities such as typographical errors in the input text, commonly seen in social media data <ref type="bibr" target="#b76">(Shawky, ElKaffas and Guirguis, 2024)</ref>,</p><p>showcasing the model's adaptability and sophistication in handling linguistic variability.</p><p>Despite the exceptional efficacy of transformer-based language models in text analysis <ref type="bibr" target="#b39">(Karl and Scherp, 2023;</ref><ref type="bibr" target="#b62">Park, Vyas and Shah, 2022)</ref>, their adoption within the field of political science remains rare. From a dataset collected by <ref type="bibr" target="#b63">Park and Montgomery (2023)</ref>, where they searched the 2020-2022 volumes of the American Political Science Review (APSR), the American Journal of Political Science (AJPS), and the Journal of Politics (JoP) for all articles that used machine learning of texts to create measures of latent concepts, 10 papers used topic modeling <ref type="bibr" target="#b8">(Berliner et al., 2021;</ref><ref type="bibr" target="#b25">Feierherd, 2022;</ref><ref type="bibr" target="#b48">Magaloni and Rodriguez, 2020;</ref><ref type="bibr" target="#b49">Manekin and Mitts, 2022;</ref><ref type="bibr" target="#b54">Motolinia, 2021;</ref><ref type="bibr" target="#b57">Nielsen, 2020;</ref><ref type="bibr" target="#b69">Roberts, Stewart and Nielsen, 2020;</ref><ref type="bibr" target="#b71">Rossiter, 2022;</ref><ref type="bibr" target="#b73">Saraceno, 2020;</ref><ref type="bibr" target="#b92">Yoder, 2020)</ref>, 12 papers used dictionary-based methods <ref type="bibr" target="#b11">(Bridgman et al., 2021;</ref><ref type="bibr" target="#b19">Crabtree et al., 2020;</ref><ref type="bibr" target="#b21">Djourelova and Durante, 2022;</ref><ref type="bibr" target="#b37">Jacobs et al., 2021;</ref><ref type="bibr" target="#b38">Jung, 2020;</ref><ref type="bibr" target="#b40">Lajevardi, 2021;</ref><ref type="bibr" target="#b47">Magaloni, Franco-Vivanco and Melo, 2020;</ref><ref type="bibr" target="#b58">Osmundsen et al., 2021;</ref><ref type="bibr" target="#b59">Osnabrügge, Hobolt and Rodon, 2021;</ref><ref type="bibr" target="#b83">Todd et al., 2021;</ref><ref type="bibr" target="#b89">Wasow, 2020)</ref>, and 18 papers used some type of supervised learning for text analysis <ref type="bibr" target="#b2">(Alrababa'h et al., 2021;</ref><ref type="bibr" target="#b3">Anastasopoulos and Bertelli, 2020;</ref><ref type="bibr" target="#b12">Casas, Denny and Wilkerson, 2020;</ref><ref type="bibr" target="#b27">Fowler et al., 2021;</ref><ref type="bibr" target="#b29">Gohdes, 2020;</ref><ref type="bibr" target="#b31">Guess, 2021;</ref><ref type="bibr" target="#b32">Hager and Hilbig, 2020;</ref><ref type="bibr" target="#b61">Park, Greene and Colaresi, 2020;</ref><ref type="bibr" target="#b74">Schub, 2022;</ref><ref type="bibr" target="#b79">Stier et al., 2022;</ref><ref type="bibr" target="#b86">Wahman, Frantzeskakis and Yildirim, 2021;</ref><ref type="bibr" target="#b94">Zubek, Dasgupta and Doyle, 2021)</ref>. Among the 18 papers that used supervised learning, only one paper leveraged a transformer-based language model to measure issue areas of parliamentary speeches <ref type="bibr" target="#b86">(Wahman, Frantzeskakis and Yildirim, 2021)</ref>. This scarcity may partly be attributed to a lack of explication of the models and misconceptions about the amount of labeled data and computational resources these methods require. In the following section, I offer a comprehensive elucidation of the PFP.</p><p>For reproducibility, all computation in this article was conducted on Google Colab on an A100 GPU. All PFP models used in this article can be found on HuggingFace Hub. 6   Python code are provided in the replication archive.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Pretrain-Finetune Paradigm</head><p>In this section, I first offer a detailed overview of the transformer encoder 7 with an emphasis on the attention mechanism. Then, I discuss the pre-training stage and the fine-tuning stage of the PFP. Finally, I provide guidelines for scholars to use the PFP with different levels of computational resources or available data at hand.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Transformer Encoder</head><p>A transformer encoder, as shown in Figure <ref type="figure" target="#fig_0">1</ref>, takes text embeddings as the input and outputs contextualized embeddings of the same length as the input sequence. Unlike 6 <ref type="url" target="https://huggingface.co/AnonymousCS">https://huggingface.co/AnonymousCS</ref> 7 There are three types of transformer models: encoder-only models (i.e. auto-encoding models), like BERT, process input data and generate a meaningful numerical representation of the input data; decoderonly models (i.e. auto-regressive models), like GPT-3 and GPT-4, specialize in language generation and are often used with prompt engineering, though they can be fine-tuned for classification; and encoder-decoder models, such as BART and T5, are designed for sequence-to-sequence tasks, where one text string is converted into another, like machine translation. the input embeddings, each output embedding contains not only information about the individual token, but also its relationship with every other token in the same sequence.</p><p>The following subsections examine each part in Figure <ref type="figure" target="#fig_0">1</ref> in details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Transformer Encoder Input Embedding Generation</head><p>Consider E1 again. As shown in Figure <ref type="figure" target="#fig_0">1</ref> and Figure <ref type="figure" target="#fig_1">2</ref>, 8 I first tokenize the input sequence into individual tokens. Then I map the tokens into input IDs according to their position in the vocabulary 9 containing all possible words in the training corpus. At this stage, both "the"s have the same input ID because they occupy the same position in the vocabulary.</p><p>Then, I take the input IDs and map them into vectors of size 512 10 through an embedding layer which acts as a look-up table to get the initialized input embeddings <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>. These corresponding embeddings can be loaded from some pre-trained models or initialized randomly, 11 and the embedding layer is often the first trainable layer in a 8 Tokenization can be at word level or sub-word level. Different tokenizers have different design choices.</p><p>Most transformer-based language models use sub-word level tokenization in practice. In this example, I use a word-level tokenizer for illustration purposes. 9 In practice, the vocabulary size of language models range from 30K to 50K.</p><p>10 512 is the dimensionality of the input and output vectors in each encoder layer. It determines the size of the input embeddings, the size of the feed forward neural networks, and the size of the output embeddings. Common values are 512 and 1024 or higher.</p><p>11 Embeddings can be randomly initialized or from a trained corpus, a design choice for different models.</p><p>The embedding layer's main function is to convert tokens into numerical vectors of desired dimensions, transformer-based language model. Notice that at this stage, the same word is always mapped to the same embedding without any contextual information from surrounding words, similar to static word embedding models.</p><p>The next part of the embedding layer is the calculation of position embeddings, which are also of length 512 for each token and used by the model to keep track of their positions in the sequence and how distant they are from each other. 12 The token embeddings shown clustering similar tokens together. Its weights are trainable parameters, updated along with other model parameters discussed in the next section.</p><p>12 Position embeddings are usually only computed once and reused for every sentence during training and inference based on <ref type="bibr" target="#b84">Vaswani et al. (2017)</ref>, but they can also be learnable parameters as a design on the top in Figure <ref type="figure" target="#fig_1">2</ref> and position embeddings shown at the bottom are summed together to construct the input embeddings to a transformer encoder illustrated in Figure <ref type="figure" target="#fig_0">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Self-Attention Mechanism</head><p>The core of the transformer encoder is the multi-head self-attention layer. Before covering multi-head self-attention, I first discuss the (single-head scaled dot-product) self-attention mechanism.</p><p>Consider E1 and E2 again. The mere syntactic arrangement fails to capture the polysemous nature of the word "yellow". For a nuanced and context-rich representation of the word in E1, it is necessary to establish a semantic linkage between "yellow" and contextual markers such as "evil" or "Chinese". In the parlance of transformers, the word "yellow" should pay attention to other surrounding words, creating connections that vary in strength based on context. The key advantage of transformers is their ability to not only estimate word positions in a semantic space, but also the relative importance of a given word in shaping the meaning of other words <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>. This is achieved through the incorporation of the scaled dot-product self-attention mechanism.</p><p>To disentangle the self-attention mechanism mathematically, imagine I want to calculate choice.</p><p>the contextualized embeddings incorporating self-attention scores for E1, as illustrated in Figure <ref type="figure" target="#fig_2">3</ref>. The self-attention mechanism takes in an input embedding matrix X (i.e., the encoder input embedding matrix shown in Figure <ref type="figure" target="#fig_1">2</ref> and in the middle of Figure <ref type="figure" target="#fig_0">1</ref>) and outputs a contextualized embedding matrix X * . X * is generated using the self-attention 13 score matrix A through:</p><formula xml:id="formula_0">X * = Self-Attention Score(X) • X = A • X = sof tmax( X • X T √ d ) • X<label>(1)</label></formula><p>where:</p><p>X = the encoder input embedding matrix, d = dimensionality of the model (see footnote 10.)</p><p>For E1, the input sequence length is 8 and the dimension d of the model and input embedding is 512,<ref type="foot" target="#foot_6">foot_6</ref> which is the dimension of the encoder in the original paper that introduced transformers <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>. As shown in Figure <ref type="figure" target="#fig_2">3</ref>  the relationships between one token and another. If a particular token is not relevant to the understanding of the target token, the self-attention mechanism may assign a very low or zero score to that position, effectively ignoring its contribution. Higher self-attention scores correspond to stronger relationships between two tokens. Intuitively, I can think of the word "yellow" consisting of 0.01 Stop + 0.03 the + 0.15 evil + 0.33 yellow + 0.25 invasion + 0.04 from + 0.02 the + 0.17 Chinese, which sums to 1. Different from the input embedding generation, the same token "the" can have different self-attention scores when they appear multiple times in the input sequence.</p><p>To obtain the contextualized embedding matrix X * (i.e., the yellow matrix in Figure <ref type="figure" target="#fig_2">3</ref>) from the self-attention mechanism, I conduct another dot product matrix multiplication of A and X. Each row in the resulting matrix X * contains the contextualized embedding of the initial input sequence, where the self-attention scores and position embeddings have been incorporated into the resulting embeddings.<ref type="foot" target="#foot_8">foot_8</ref> </p><p>At this stage, the calculation of self-attention requires no trainable parameters. Up to now the interaction between tokens has been driven by their own embeddings. To add trainable parameters to the model, I can add updatable weight matrices. Although in the calculation of self-attention based on Equation 1 I use the same input embedding matrix X three times, I can multiply each X by different weight matrices. I conduct the same mathematical operation with the trainable matrices W Q , W K , and W V , as illustrated in Figure <ref type="figure" target="#fig_4">4</ref>. This operation yields the contextualized embedding matrix X * as the output. 17</p><p>The Multi-Head Self-Attention Layer</p><p>The entire process described so far is everything that happens within a module called an attention head. When using only one set of weight matrices W Q , W K , and W V , it is called single-head attention. Often times, single-head attention is not enough to capture complex relationships among tokens in the same sequence. Therefore, multi-head attention is used to make the model attentive to different aspects of the tokens.</p><p>The only change for multi-head attention is that I have one set of weights for each head, and concatenate the results from all heads afterwards. I continue to use E1 for illustration, where the encoder input embedding matrix is of size 8 × 512. To better illustrate multi-head attention, consider a transformer encoder with two attention heads.<ref type="foot" target="#foot_9">foot_9</ref> </p><p>Figure <ref type="figure" target="#fig_5">5</ref> shows an overview of multi-head self-attention with two attention heads.</p><p>As illustrated in Figure <ref type="figure" target="#fig_5">5</ref>, notice that the encoder input embedding matrix is split into two smaller matrices X 1 and X 2 to use as the input embedding matrix for each attention head. The input embedding is typically split across the embedding dimension (columns) instead of the sequence length dimension (rows).<ref type="foot" target="#foot_10">foot_10</ref> Such approach allows separate sections 17 The notations used in this article are slightly different from <ref type="bibr" target="#b84">Vaswani et al. (2017)</ref> and the computations are simplified to omit unnecessary details for illustration purposes only. of the input embedding to learn different aspects of the meanings of each token as it relates to other tokens in the sequence, which allows the transformer encoder to capture richer interpretations of the sequence. 20 With the smaller matrices, I conduct the same calculation of self-attention within each attention head in the same way as the single-head self-attention as shown in Figure 3. Then I concatenate the output matrices, i.e., the contextualized embedding matrices, from each attention head to obtain X 1&amp;2 * . To learn the optimal way to combine different output matrices from all attention heads, I add another trainable weight matrix W O before obtaining the final multi-head embedding matrix X * which contains the contextualized embedding of the input text after the multihead self-attention mechanism. Once training is completed, the model saves all the weight matrices (i.e., trained parameters) for later use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feed-forward Neural Network Layer</head><p>The multi-head self-attention mechanism is the core innovation of the transformer encoder.</p><p>Following Figure <ref type="figure" target="#fig_0">1</ref>, the next component 21 in the transformer encoder is a feed-forward neural network (FNN) <ref type="bibr" target="#b42">(Lin and Lucas, 2024)</ref>. 22 The FNN 23 receives the output from the multi-head self-attention layer, denoted as X * in Figure <ref type="figure" target="#fig_5">5</ref>, and processes it through 20 For instance, one section might capture the "gender-ness" of a noun while another might capture the "cardinality" of a noun. This example may not be realistic, but it could help to build intuition.</p><p>21 There are also other components in the transformer encoder that assist the model, such as the residual connections and layer normalization, that will not be covered in detail in this paper. Please refer to the original paper for a more detailed discussion <ref type="bibr" target="#b84">(Vaswani et al., 2017)</ref>.</p><p>22 For a comprehensive introduction to FNNs, <ref type="bibr" target="#b42">Lin and Lucas (2024)</ref> provide an accessible guide for social scientists, explaining neural networks by building on concepts of logistic regression.</p><p>23 FNNs in the transformer encoder often consist of two fully-connected layers with a non-linear activation function, such as ReLU, applied in between them. The number of layers in the FNN is configurable and typically repeated across multiple encoders stacked together.</p><p>dimensionality expansion and reduction to produce the encoder's final output <ref type="bibr" target="#b42">(Lin and Lucas, 2024)</ref>.</p><p>While the multi-head self-attention mechanism enables the model to handle long-range dependencies within the data, the FNN enhances the model's capacity to learn complex and non-linear relationships.<ref type="foot" target="#foot_11">foot_11</ref> This capacity is crucial for classification tasks requiring language comprehension, where the meaning of a word often relies on its context within a sentence or even across a paragraph.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pre-training and Fine-tuning</head><p>In the following section, I will examine the PFP of encoder-only language models,<ref type="foot" target="#foot_12">foot_12</ref> </p><p>which typically comprise multiple transformer encoders, resulting in millions or billions of trainable parameters. Such large-scale models require extensive datasets to ensure diverse</p><p>and ample examples for effective learning. However, these expansive datasets are often not accessible to applied scholars. Transfer learning offers a solution to this challenge, allowing models pre-trained on large datasets by research institutions and corporations to be fine-tuned on task-specific datasets with minimal resources.</p><p>During the pre-training phase, the parameters of the transformer encoders are learned using self-supervised learning on a vast corpus of unlabeled text, such as the Common Crawl.</p><p>The objective of pre-training is to enable the model to acquire a general understanding of linguistic, semantic, and syntactic patterns in the language. This phase effectively initializes the model's parameters in a contextually informed manner, as opposed to random initialization, which lacks relevance to specific downstream tasks <ref type="bibr" target="#b72">(Ruder et al., 2019)</ref>.</p><p>In the fine-tuning stage, the pre-trained model is further adapted to address a specialized task, such as toxic language classification, by training on a smaller, labeled dataset (e.g., a corpus of annotated tweets). Unlike pre-training, fine-tuning is generally not resource-intensive, and can yield substantial performance improvements for tasks with limited annotated data. In this article, I propose the PFP approach due to its potential to deliver high performance in text classification tasks, while giving researchers greater control over the data that the model learns from.</p><p>The PFP has gained widespread adoption in natural language processing due to its effectiveness <ref type="bibr" target="#b6">(Beltagy, Lo and Cohan, 2019;</ref><ref type="bibr" target="#b13">Caselli et al., 2021;</ref><ref type="bibr" target="#b20">Devlin et al., 2019;</ref><ref type="bibr" target="#b56">Nguyen, Vu and Nguyen, 2020;</ref><ref type="bibr" target="#b65">Qu et al., 2019;</ref><ref type="bibr" target="#b91">Yang et al., 2020)</ref>. Two recent papers have also fine-tuned a pre-trained language model on political science-related downstream tasks.</p><p>The first paper by Bestvater and Monroe (2022) uses a fine-tuned BERT model to study stance detection for political text analysis and demonstrated that it outperformed the standard dictionary-based approach. ELECTRA, an extended version of the classic BERT, has also been used to measure emotional appeals in German political discourse <ref type="bibr" target="#b90">(Widmann and Wich, 2022)</ref>. However, these papers lack detailed justification for the adoption of transformer-based language models and provide limited explanation of the PFP. Before turning to my own application, I will further explore the processes involved in pre-training and fine-tuning, and explain the necessity of both stages within the PFP.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pre-training Stage</head><p>To contextualize the following discussion, I use the classic BERT 26 as an example of encoder-only models <ref type="bibr" target="#b20">(Devlin et al., 2019)</ref>. Encoder-only models exploit transfer learning</p><p>26 BERT is an encoder-only model that uses a vocabulary of 30,522 tokens. Input tokens are converted to 768-dimensional word embeddings and passed through 12 transformer encoders. Each contains a self-attention mechanism with 12 attention heads. The W Q i, W K i, and W V i weight matrices are of dimension 768 × 64 for each head i. The total number of parameters is approximately 110 million. When BERT was introduced, it was considered large, but it is far smaller than the state-of-the-art models. I use BERT to refer to the BERT-base model. For BERT-large, input tokens are converted to 1024-dimensional word embeddings and passed through 24 transformer encoders, where each contains a self-attention 28 BERT also uses a secondary task that predicts whether two sentences were originally adjacent in the text or not, but this only marginally improves performance <ref type="bibr" target="#b44">(Liu et al., 2019)</ref>. token from the associated output embedding. 30 We then calculate the loss 31 from each of the model's predictions to update the weights for all learnable layers as highlighted in shaded boxes in Figure <ref type="figure" target="#fig_7">6</ref> through back-propagation by calculating the gradients or derivatives of the loss with respect to the weights <ref type="bibr" target="#b20">(Devlin et al., 2019)</ref>.</p><p>In the PFP, researchers can optionally refine a pre-trained model to improve classifisequence are sampled for learning. Among them, 80% are replaced with &lt;mask&gt;, 10% are replaced with randomly selected tokens, and the remaining 10% are left unchanged. Note that all of the input tokens play a role in the self-attention process, but only the sampled tokens are used for learning.</p><p>30 This task has the advantage that it uses both the left and right context to predict the missing word to assist language understanding, comparing to decoder-only models like GPT that only rely on single-sided context.</p><p>31 Cross-entropy loss is used for most encoder-only models to measure the error between two probability distributions. For instance, for a binary classification task with two classes 0 and 1, the cross-entropy loss</p><formula xml:id="formula_1">is L = -1 N N i=1 [t i log(p i ) + (1 -t i )log(1 -p i )]</formula><p>for N data points where t i is the truth value taking a value 0 or 1 and p i is the softmax probability for the i th data point.</p><p>cation performance by repeating the pre-training process, such as training with masked language modeling on domain-specific data, to update trainable parameters in both Part 1 and Part 2 shown in Figure <ref type="figure" target="#fig_7">6</ref>. Part 1 is then saved as the refined model to use later for finetuning tasks with Part 3. However, for researchers with limited computational resources, fine-tuning on a good quality labeled dataset could also achieve similar performance as discussed in the following subsection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fine-tuning Stage</head><p>Considering the substantial parameterization inherent to language models, 32 pre-training or refining a pre-trained model can incur significant computational expenses and necessitate extensive datasets. Rather than conducting the pre-training ourselves, political science researchers can leverage pre-trained models previously developed and made available by companies or research institutions worldwide, 33 thereby providing a viable starting point for ourselves.</p><p>Transformer-based pre-trained language models like BERT perform well on generalpurpose language tasks but may struggle with domain-specific tasks like toxic language classification. Subsequently, scholars can fine-tune the pre-trained models to accommodate diverse downstream tasks using task-specific data, thereby capitalizing on the general linguistic knowledge established during the pre-training stage <ref type="bibr" target="#b5">(Barbieri et al., 2020;</ref><ref type="bibr" target="#b13">Caselli et al., 2021;</ref><ref type="bibr" target="#b14">Chalkidis et al., 2020;</ref><ref type="bibr" target="#b41">Lee et al., 2020)</ref>. In the fine-tuning stage, the model parameters are updated to specialize the model to a particular task.  If researchers have no annotated data, the simplest way to adopt the PFP is to download publicly available classifiers already trained using the PFP and apply them directly datasets at hand. This approach offers the key advantage of minimal computational cost, as the model has already undergone the resource-intensive pre-training and fine-tuning stages.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>As illustrated in</head><p>However, a potential drawback of this direct application of models is the difficulty in finding an existing model that aligns perfectly with the specific needs of the task at hand.</p><p>When deciding whether to bypass steps outlined in Figure <ref type="figure" target="#fig_9">7</ref>, researchers may initially employ off-the-shelf models and validate their performance using labeled data. In the following section, I show that while off-the-shelf models can be valuable in certain scenarios, they may also prove ineffective in others. Consequently, rigorous validation is essential when utilizing models with lower levels of customization.</p><p>For researchers with some annotated data and limited compute resources, they can download a pre-trained model and use the generated embeddings to train a classifier on top of the model, where only Part 3 in Figure <ref type="figure" target="#fig_7">6</ref> is updated.</p><p>For researchers with more compute resources, a more tailored approach is to start with a pre-trained model that has been trained on a relevant corpus, and then fine-tune it using a small annotated dataset, such as a few hundreds labeled tweets, where both Part 1 and Part 3 in Figure <ref type="figure" target="#fig_7">6</ref> are updated accordingly. This hybrid strategy of leveraging transfer learning combined with targeted fine-tuning is the most recommended approach for applied scholars in the PFP, as it balances the computational and data efficiency of using a pre-existing model with the ability to customize the model to their specific research requirements.</p><p>For scholars with access to more computational resources, another option is to engage in the entire pre-training and fine-tuning process from steps 1 through 6, allowing for maximum customization of the language model to their preferences and the task at hand. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application to Toxic Language Classification</head><p>This section provides a step-by-step walk-through of the guidelines illustrated in Figure <ref type="figure" target="#fig_9">7</ref>, with an application to toxic language classification. The objective is to systematically compare the performance of various PFP models against each other and against baseline models to assess their effectiveness. Table <ref type="table" target="#tab_1">1</ref> provides a complete list of all models used, which will be discussed in greater detail in the subsequent sections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Preparation</head><p>The proliferation of toxic language has intensified with the widespread use of social media <ref type="bibr" target="#b1">(Agarwal et al., 2021;</ref><ref type="bibr" target="#b15">Chandrasekharan et al., 2017;</ref><ref type="bibr" target="#b50">Massaro and Stryker, 2012;</ref><ref type="bibr" target="#b51">Matamoros-Fernández and Farkas, 2021;</ref><ref type="bibr" target="#b67">Rheault, Rayment and Musulan, 2019;</ref><ref type="bibr" target="#b81">Tamara et al., N.d.)</ref>. Accurately measuring toxicity within large datasets remains challenging due to the absence of an unambiguous and universally accepted definition. Appendix B (p. 2) offers a more detailed discussion of the definitional debate on toxicity. While resolving the definitional debate goes beyond the scope of this article, to demonstrate the effectiveness of the PFP, I adopted a comprehensive and operationalizable definition of toxicity offered by <ref type="bibr" target="#b64">Poletto et al. (2021)</ref>, where toxicity is defined as "any impolite, rude or hurtful language that can show a debasement of someone or something, or show intense emotion, including hate speech, derogatory language and also profanity" <ref type="bibr" target="#b64">(Poletto et al., 2021)</ref>.</p><p>To apply this framework, I collected a dataset comprising 20,072 tweets 34 posted by U.S. Senators from the 116 th U.S. Congress between October 1 and November 30, 2020, using the Twitter Academic API. Additionally, conversation threads 35 generated in response to each of these tweets over the following year were gathered, yielding a total of 1,652,973 tweets. From this corpus, I randomly sampled 3,000 tweets to be labeled by human annotators recruited via Amazon Mechanical Turk. All annotators were required to complete a training module and pass a qualification test to ensure consistency and accuracy in annotation. Each tweet was annotated by two independent coders, achieving an inter-coder reliability rate of 93%. Detailed information on the data annotation process is available in Appendix C (p. 3-11).</p><p>For consistency in evaluation, a common test set (consisting of a random 10% sample from the annotated dataset) was used to assess all models listed in Table <ref type="table" target="#tab_1">1</ref>. Examples of tweets from the dataset are presented in Table <ref type="table" target="#tab_4">2</ref>. I assess the balanced accuracy scores of each model alongside their computational costs in terms of training time. Results</p><p>indicate that all fine-tuned PFP models outperform the baseline models for this text classification task, regardless of refining. Notably, even selected off-the-shelf PFP models yield significantly improved performance compared to the baseline models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Four Approaches to Apply the PFP</head><p>The first approach I explore is using off-the-shelf models trained for toxicity detection by other researchers. In this approach, I simply downloaded Models 1-6 36 shown in Table <ref type="table" target="#tab_1">1</ref> 34 Entire tweet histories were collected, including retweets and quote tweets. 35 The threads include publicly available direct replies to the parent tweets and replies of replies to these tweets.</p><p>36 Models 1-3 were pre-trained using the RAL-E dataset that contains English Reddit comments from banned communities and then fine-tuned <ref type="bibr" target="#b13">(Caselli et al., 2021)</ref>. Models 4-6 were fine-tuned based on the and applied them directly to classify the test set without any further customization.<ref type="foot" target="#foot_14">foot_14</ref> This approach offers the distinct advantage of convenience and efficiency, as it eliminates the need for extensive computational resources and time required for additional pre-training and fine-tuning. However, a significant limitation of using off-the-shelf models is the lack of task-specific customization. Since these models were not explicitly designed for the toxicity detection task in tweets, their performance may be suboptimal compared to models that are further fine-tuned. Additionally, reliance on models developed by BERT-base-uncased model. The fine-tuning datasets used by <ref type="bibr" target="#b13">Caselli et al. (2021)</ref> were three annotated and publicly available toxic language benchmark datasets: AbusEval, OffensEval, and HatEval.</p><p>other researchers can introduce unknown biases embedded within the training data of the original researchers, potentially impacting the validity of toxicity detection in political contexts. Thus, while off-the-shelf models provide a practical starting point, they may lack the precision and adaptability achieved through fine-tuning tailored to the specific needs of the current study.</p><p>The second approach is to fine-tune a pre-trained language model with a toxic language classification task using my annotated dataset described above, where both Parts 1 and 3 are updated in Figure <ref type="figure" target="#fig_7">6</ref>. This method offers the advantage of enhanced model adaptability, as fine-tuning enables the model to learn features and patterns that are more directly relevant to the specific task and dataset, potentially leading to improved classification accuracy. However, a drawback is the increased computational cost and time associated with the fine-tuning process, particularly for large models with numerous parameters.</p><p>In this study, I fine-tuned four versions of widely used pre-trained BERT models (i.e., bert-base-uncased, bert-base-cased, bert-large-uncased, and bert-large-cased ) as well as a BERT model refined on toxicity-related dataset (i.e., HateBERT ) to generate Models 7-11 <ref type="bibr" target="#b13">(Caselli et al., 2021)</ref>.</p><p>To reduce computational cost, a third option is to create a model where only the task-specific layer (shown as Part 3 in Figure <ref type="figure" target="#fig_7">6</ref>) is updated, while keeping the parameters of the encoders (shown as Part 1 in Figure <ref type="figure" target="#fig_7">6</ref>) fixed. This is implemented in Model 12, where I updated only the classification layer with BERT-base-uncased using the labeled dataset, leaving the parameters of the encoder layers unchanged. The primary advantage of this approach is its efficiency: by not adjusting the large number of parameters in the encoders, the computational requirements and time necessary for fine-tuning are significantly reduced. However, a notable disadvantage is the potential reduction in model performance, as the fixed encoder parameters may limit the model's ability to learn nuances specific to the task and dataset. Consequently, while this approach can provide a cost-effective solution, it may fail to achieve the same level of accuracy as models that undergo full fine-tuning, particularly in cases where task-specific adaptation is critical for optimal performance.</p><p>The final approach involves re-training the entire model, as illustrated in Figure <ref type="figure" target="#fig_7">6</ref>, using both labeled and unlabeled data. This comprehensive re-training procedure first uses unlabeled data to refine the pre-trained language model (shown as Part 1 in Figure <ref type="figure" target="#fig_7">6</ref>) via training with a masked token prediction task (shown as Part 2 in Figure <ref type="figure" target="#fig_7">6</ref>). Then using the labeled data to fine-tune the refined model for a classification task to further update Part 1 alongside Part 3 shown in Figure <ref type="figure" target="#fig_7">6</ref>. The principal advantage of this method is that it enables the model to develop a more nuanced understanding of both general language patterns and the unique characteristics of the specific task, potentially enhancing performance on complex tasks that require deep contextual understanding. However, this approach also has a significant disadvantage: it is computationally intensive, requiring considerable time and processing resources, which may not be feasible for resource-limited scholars.</p><p>In Table 1. The training process, executed on Google Colab with an A100 GPU, required approximately 46 hours to complete. Additionally, four baseline models (listed as Models 14-17 in Table 1) using traditional classification methods discussed in the Current Text Classification Approaches section are included for comparison. Detailed descriptions of these baseline models are available in Appendix E (p. 15-17).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Performance Comparison</head><p>In this section, I first compare the out-of-sample performance of various PFP models listed in</p><p>Table 1 against baseline models, focusing on balanced accuracy scores. Second, I assess the face validity of the measure of toxicity for the best-performing PFP model against the 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 Model Number as Listed in Table 1 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 Balanced Accuracy off-the-shelf PFP fine-tuned PFP (except 12) baseline Figure 8: Balanced Accuracy Scores of All Models.</p><p>baseline models. This involves examining example classifications produced by the models to verify that identified toxic content aligns with both theoretical definitions and human intuition. Finally, I apply the validated measure to detect toxicity in a real-world dataset.</p><p>Specifically, I analyze responses to tweets from U.S. Senators to explore the exacerbation of toxicity in public discourse online. Through these stages, I aim to establish both the robustness and applicability of the PFP in analyzing politically relevant data.</p><p>Figure <ref type="figure">8</ref> illustrates the balanced accuracy scores on the out-of-sample test dataset for all models listed in Table <ref type="table" target="#tab_1">1</ref>. Detailed evaluation results for each model category (i.e., off-the-shelf models, fine-tuned PFP models, and baseline models) are presented in Tables <ref type="table" target="#tab_1">1</ref>, <ref type="table" target="#tab_4">2</ref>, and 3 in Appendix E (p. 15-17). Across all metrics, the fine-tuned PFP models exhibited significantly improved performance relative to the baseline models consistently. Among these, Model 10 achieved the highest balanced accuracy score of 0.8860, highlighting its effectiveness for toxic language classification.</p><p>As shown in Table <ref type="table" target="#tab_1">1</ref>, fine-tuning times for the models varied, with most models requiring only a few minutes. The longest fine-tuning duration was recorded by Model 11, taking 3 minutes and 46 seconds. In contrast, Model 12, which involved updating only the task-specific layer rather than performing full fine-tuning, required just 32 seconds for training, but displayed a notable reduction in performance. This underscores the importance of updating the parameters of the encoders during fine-tuning to maximize model performance for a given task. Even without additional training, certain off-the-shelf models (Models 1, 2, 4, and 5) achieved balanced accuracy scores exceeding that of the best-performing baseline model (Model 16). The high performance among off-the-shelf models may, in part, be due to the alignment between toxicity definitions in the annotated OffensEval and AbusEval dataset, which were used to fine-tune these models, and the definition applied within my annotated Twitter dataset. This highlights the importance of validating off-the-shelf models to ensure they align well with the specific requirements of the target dataset. Interestingly, the process of refining the pre-trained model prior to fine-tuning, which required a substantial 46 hours of computational time, did not produce any measurable improvement in classification accuracy compared to models that were simply fine-tuned. The result suggests that the fine-tuning approach is sufficient to achieve optimal results in this specific application. Consequently, these findings underscore that while refining can sometimes enhance model performance, the gains may be marginal considering the high computational cost.</p><p>To enhance interpretability of the models' classification decisions, I employed the integrated gradients algorithm to calculate attribution scores for each token when classifying the input tweet as toxic or not <ref type="bibr" target="#b80">(Sundararajan, Taly and Yan, 2017)</ref>. Figure <ref type="figure" target="#fig_2">3</ref> in  shows example tweets where the attribution scores for each token are visualized. This interpretability approach allows for an intuitive understanding of the models' decision-making process by quantifying each token's influence on the predicted toxicity score. More comprehensive details regarding the implementation and interpretive value of integrated gradients in this context are provided in Appendix F (p. 18-19). "@SteveDaines @JohnCornyn You Republicans have done enough 1 1 (0.9958) 0 1 1 1 damage-not one of you had the guts to say to tell Trump this needed to be dealt with at the National level. Pathetic a d Disgusting." "@SenTomCotton @nytimes Racist white boy!" 1 1 (0.9944) 1 0 0 1 "@KamalaHarris Thanks for the reminder .... I went and voted to keep your skanky body out of the White House ....... LOL" 1 1 (0.9942) 1 1 0 0 "@ChrisVanHollen @WesMoore @MarysCenter Boo Hoo your 1 1 (0.9907) 0 0 0 0 whining and crying again VanHollen" "@marcorubio Titus 1:16 They profess to know God, but they deny 1 1 (0.9827) 0 1 0 0 him by their works. They are detestable, disobedient, unfit for any good work. #evilrubio"</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Assessment of Face Validity</head><p>Beyond evaluating classification metrics, I also assess the face validity of PFP models in comparison to the baseline models. To this end, I examine instances where Model 10, the highest-performing PFP model, classified tweets as toxic with highest probabilities, while baseline models yielded divergent classifications. Table <ref type="table" target="#tab_4">2</ref> highlights examples of such classifications. <ref type="foot" target="#foot_15">38</ref> In many cases, the baseline models failed to detect toxicity in tweets where neutral words, such as "crying" were used with negative or derogatory intent. This finding suggests that the baseline models struggle with subtle contextual cues that indicate toxicity, while Model 10's more nuanced understanding of context allows for improved identification.</p><p>I further investigate the aggregate classification outcomes, focusing on the total number of tweets labeled as toxic by Model 10 compared to baseline models. Despite aligning closely in ranking Senators based on the volume of toxic tweets in their conversation threads, substantial discrepancies arise in the actual counts. Specifically, Model 15 identifies a considerably higher number of toxic tweets, exceeding Model 10's total count by an average of 55.9% across all Senators, whereas Models 14 and 16 report fewer toxic tweets, with reductions of 20.9% and 4.5% respectively. This discrepancy remains consistent when disaggregating results by gender and party 0 200 000 400 000 600 000 800 000 Republican Senators Democratic Senators Total Numnber of Toxic Tweets Models Model 10 (PFP) Model 14 (Dictionary-based) Model 15 (BOW) Model 16 (fastText) Figure 10: Bar-plots of Total Number of Toxic Tweets Labeled by Different Models by Party</p><p>affiliation. For female Senators, as shown in Figure <ref type="figure">9</ref>, Model 15 registers a 58.3% increase in toxic tweet counts compared to Model 10, while Models 14 and 16 show reductions of 19.2% and 2.9% respectively. Among male Senators, Model 15 reports 55.0% more toxic tweets than Model 10, with Models 14 and 16 reporting reductions of 21.5% and 5.0%</p><p>respectively.</p><p>The trend is also evident when comparing toxic tweet counts across political party lines as illustrated in Figure <ref type="figure" target="#fig_0">10</ref>. For Republican Senators, Model 15 classifies 50.7% more toxic tweets than Model 10, whereas Models 14 and 16 show reductions of 24.5% and 5.5%. For Democratic Senators, Model 15 registers a 61.4% increase in toxic tweet counts relative to Model 10, while Models 14 and 16 report decreases of 17.1% and 3.4% respectively.</p><p>Among the baseline models, Model 16 exhibits the closest alignment with Model 10 in terms of aggregate classification counts. In contrast, other baseline models exhibit considerable misalignment, often skewing their distributions significantly toward either over-or under-counting of toxic content relative to Model 10. This analysis highlights Model 10's superior performance in maintaining both contextual sensitivity and reliability in toxicity detection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application to Twitter Conversation Threads</head><p>I demonstrate the potential usefulness of the PFP through an empirical application of toxicity detection using the dataset described in the Data Preparation section. Specifically, I empirically analyze how Twitter user-base responded to tweets from Senators of the 116 th U.S. Congress and explore whether escalates within conversation threads and identify factors that may contribute to this phenomenon.</p><p>In recent years, the U.S. political landscape has become increasingly polarized, leading to a heightened level of incivility in political discourse, especially in online spaces <ref type="bibr" target="#b0">(Abramowitz and Webster, 2018;</ref><ref type="bibr" target="#b22">Druckman, Peterson and Slothuus, 2013;</ref><ref type="bibr" target="#b36">Iyengar et al., 2019;</ref><ref type="bibr" target="#b35">Iyengar and Westwood, 2015;</ref><ref type="bibr" target="#b70">Rogowski and Sutherland, 2016)</ref>. Research on partisan polarization suggests that political divisions between Republicans and Democrats have intensified, with individuals becoming more entrenched in their ideological camps <ref type="bibr" target="#b35">(Iyengar and Westwood, 2015)</ref>. Negative partisanship has fueled hostile rhetoric, particularly against high-profile political figures <ref type="bibr" target="#b0">(Abramowitz and Webster, 2018)</ref>. When politicians post toxic content, it can provoke out-partisan responses that mirror or escalate such toxicity. Social media platforms further amplify negative content through engagement-driven algorithms, where posts expressing toxicity or hostility are often more widely circulated <ref type="bibr" target="#b34">(Huszár et al., 2022;</ref><ref type="bibr" target="#b66">Rathje, Van Bavel and van der Linden, 2021)</ref>. As a result, some scholars have argued that toxic tweets by politicians are more likely to generate toxic responses and be displayed widely, creating a self-reinforcing cycle where toxicity is both rewarded and amplified <ref type="bibr" target="#b34">(Huszár et al., 2022;</ref><ref type="bibr" target="#b55">Munger, 2017;</ref><ref type="bibr" target="#b66">Rathje, Van Bavel and van der Linden, 2021)</ref>. Therefore, I propose the following hypothesis:</p><p>Toxic parent tweets are associated with higher levels of toxicity in the following conversation threads.</p><p>To test this theory, each tweet is classified as either containing toxic content (= 1) or not (= 0). Using these classification results, I calculate a Toxicity score for each parent tweet, representing the proportion of toxic tweets within the conversation threads following that tweet. The Toxicity score ranges from 0 to 1, where 0 indicates the absence of toxic tweets in the threads and 1 indicates that all tweets in the threads are toxic. The main explanatory variable ParentToxicity measures whether the parent tweet is toxic or not, where 1 indicates toxicity and 0 otherwise. To test this hypothesis, I additionally control for whether the parent tweet mentions the two presidential candidates (Donald Trump or Joe Biden), specific policy issues: (economy, COVID, abortion, crime or climate), and whether the parent tweet references other Senators from either the same or opposing party.</p><p>I also control for Senator-specific fixed effects.</p><p>To assess the effect of toxic parent tweets on toxicity levels in subsequent conversation threads, I implement a fixed effects model. For each Senator i: with Senator-specific intercept α i and error term ϵ i . The regression analysis was implemented in R using the plm package.</p><formula xml:id="formula_2">T oxicity i = α i + β 1 P arentT oxicity i + β 2 M entionT rump i + β 3 M entionBiden i + β 4 M entionEconomy i + β 5 M entionCovid i + β 6 M entionAbortion i + β 7 M entionCrime i + β 8 M entionClimate i + β 9 M entionCopartisan i + β 10 M entionOutpartisan i + ϵ i (2)</formula><p>The results from Model 10, summarized in Table <ref type="table" target="#tab_5">3</ref>, show a positive and statistically significant coefficient for the main explanatory variable ParentToxicity at 0.0767, suggesting that, for a given Senator, posting toxic tweets correlates with increased probability of toxic content for each subsequent tweet in the conversation threads. Importantly, while the direction of this relationship is consistent across models, the magnitude varies substantially.</p><p>Model 15, for instance, reports a considerably higher coefficient of 0.3002, leading to massive differences in interpretation using BOW. Such high coefficient could be attributed to its systematic over-count of toxicity, as evidenced in the previous section. Conversely, classification results from Model 14 produced a lower coefficient, which may reflect its observed tendency to under-count toxicity levels.</p><p>Despite the closest alignment of Model 16 to Model 10 on an aggregate level, Model 16 fails to capture a significant relationship between ParentToxicity and toxicity in subsequent threads. Collectively, these findings underscore the robustness and reliability of PFP models in measuring toxicity and capturing meaningful relationships in downstream analysis, particularly for nuanced patterns in toxic language within political discourse.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>This article makes an important contribution to political science by introducing and elucidating the PFP as a robust, accessible approach for text classification. Addressing a gap in the field, I explain the PFP in detail, demystifying how transformer-based language models can be effectively adapted for political science research. With step-by-step practical guidelines, I clarify the processes involved in pre-training and fine-tuning, making these models accessible to scholars who may not have extensive computational resources or technical expertise. By walking through each component of the transformer encoder architecture and detailing how it overcomes the limitations of traditional models, such as BOW or dictionary-based approaches, I provide scholars with a comprehensive yet approachable framework to adopt the PFP for nuanced textual measurement tasks.</p><p>I also demonstrate the PFP's impressive effectiveness through an empirical application focused on toxic language classification, which showcases its power in capturing complex, context-dependent meanings often missed by traditional methods. This application highlights how the PFP can accurately interpret subtle cues and dynamic language patterns in social media data. By fine-tuning pre-trained models on a relatively small, annotated dataset, the PFP allows researchers to harness the models' rich linguistic understanding, enhancing accuracy in detecting politically relevant language, such as toxicity in online conversation threads following Senators' tweets. I find that Senators who post toxic content on Twitter encounter higher levels of toxicity in the subsequent conversation threads. This empirical demonstration establishes the PFP as a highly efficient and effective approach for creating context-sensitive text classifiers that respond to real-world research needs in political science.</p><p>Looking ahead, there are several promising future directions for the PFP. Firstly, as multilingual models evolve, the PFP approach could be expanded to accommodate political science research in non-English languages or low-resource languages, thereby broadening the scope of comparative studies and cross-cultural research. For instance, ten points on the test to be able to qualify for the later classification tasks. The purpose of the implemented training module prior to the actual annotation task is to reduce the human error rate in the labeled dataset. Manual data annotations may inevitably contain human errors to some extent, which in the end would propagate to the training process of the classifier during the fine-tuning stage.</p><p>Completing this training module qualifies you to complete later HITs WARNING: This task may contain offensive and abusive content.</p><p>Introduction:</p><p>If you finish this training module with a passing score, you will be qualified to complete HITs posted with the title Toxic Language Detection in Tweets.</p><p>We are researching toxic content on Twitter. Your job will be to look at a tweet and determine whether it contains toxic content as we define it below. To do this accurately, you will need to carefully read the definition of toxicity we provide. We will also provide you with some examples to help you understand how to apply this definition accurately.</p><p>Each task will be structured the same. You will read a tweet and indicate it toxic or not toxic.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Instructions:</head><p>You should code a tweet as toxic if the tweet is: 1. strongly impolite, 2. rude, or 3. contains hurtful language.</p><p>Toxic langauge will often include attacking the character, dignity, or importance of someone, something, or some groups of people (e.g., "you are a liar" or "Democrats are all sleazy"). It is also common to see it associated with intense (usually negative) emotions (e.g. "I fucking hate these people!").</p><p>Toxic language includes a wide spectrum of speech ranging from derogatory languguage and profanity (e.g., "what an idiot") to hate speach (e.g., "Serve your country, burn down a mosque"). Examples include racism, misogny, and homophobia but toxic speech can also be personal, or attacks based on political affiliation, religion, and more. Even tweets without any of these traits can be toxic if the message is conveyed in a strongly impolite, rude, or hurtful manner.</p><p>You will encounter some cases where the coding decision will not be clear.</p><p>In those cases, use your best judgment. When in doubt, consider whether the tweet would seem impolite, rude, or hurtful if it was directed at you. If you think a tweet is just slightly rude or impolite, code it as toxic. If you think a tweet would be rude in-person during a conversation with someone you just met, code it as toxic. If you cannot confidently code a tweet as not toxic, it is usually toxic. When in doubt, code it toxic. For long tweets with multiple sentences, if one sentence is toxic and the rest are supporting it, the tweet is toxic.</p><p>Additional Tips:</p><p>1. The tweets we are studying are real tweets collected from the conversation threads following tweets from U.S. Senators. Politically relevant toxic language is often present in these tweets. Specific examples include asking someone to get out of office, claiming someone has done no work, advocating for someone to lose in elections, calling someone a liar, claiming someone is ignorant of their job, saying someone has failed the nation, etc.</p><p>2. When toxic hashtags are present, and the tweet is supporting the hashtag or using the hashtag as a reference, the tweet is considered as toxic. Examples include #CrookedJoeBiden, #RadicalLeft, #SuperSpreader Trump, etc.</p><p>3. When emojis are used in a toxic way or as a toxic reference, the tweet is considered as toxic. For example, the middle-finger emoji, the vomiting face, can be toxic in certain contexts.</p><p>4. When the @USER appears in the tweet, it means the tweet is either replying to, commenting on, or mentioning the user. Toxicity can often be directed towards the @USER.</p><p>5. URLs might appear in the tweets, you can simply ignore them for this coding task.</p><p>6. Typos may appear in tweets. If you encounter them, try your best to infer the meaning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Attention:</head><p>For each HIT, your task is to read each tweet and classify whether it is toxic or not toxic. Be aware that these are all replies to tweets, and sometimes the context is missing.</p><p>Please try your best to infer the context then do the classification. Skimming or reading quickly will result in low-quality evaluations, and you may not be invited to participate in our future HITS.</p><p>This training module has two parts. In Part 1, we will provide 10 practice HITs followed by instructions about how the tweet should be coded. In Part 2, we will give you 12 test HITs to complete. To receive the qualification for future HITs, you must complete 10 out of 12 of these test HITs correctly.</p><p>In the module below, we have overemphasized toxic tweets for training purposes. In the real HITs that you will be coding, toxic tweets are much rarer.</p><p>Part 1:</p><p>The followings are practice HITs. Your answer will not be scored or count for or against your qualification. We will provide you with the correct answers. Answer: Toxic. The tweet contains profanity and rude language directed at "Rob."</p><p>Keywords include "Fuck you" and "rich prick."</p><p>Example 4: @hova 1066 @amyklobuchar @deanbphillips What in the world does this have to do with the fact that you are a woman?</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic</p><p>Answer: Not Toxic. The tweet does not contain strongly impolite, rude, or hurtful language.</p><p>Example 5:</p><p>@SenWarren Talk about a scam!!! Look in the mirror Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. Althought the tweet does not contain explicitly rude language, the implied meaning is that @USER is a scam. The meaning conveyed is strongly impolite, rude, and hurtful, so the tweet is toxic.</p><p>Example 6: @misiaszek42 @ashlynoriginal @SenWarren Half of all fertilized eggs don't implant and are lost. By your logic, since life begins at conception, then almost everyone who has had regular unprotected sex is a murderer (including most married couples).</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic</p><p>Answer: Not Toxic. The tweet is simply presenting an argument and does not contain strongly impolite, rude, or hurtful language.</p><p>Example 7:</p><p>@lisamurkowski Vote Out @lisamurkowski in two years. She's destroying Alaska for Trump! Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. The tweet contains rude language directed at @USER. Keywords include "Vote Out," "destroying Alaska for Trump."</p><p>Example 8: @JohnCornyn Looks like you have only two speeds: enabler and obstructionist.</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. Although the tweet does not contain explicitly rude language, the words "obstructionis" and "enabler" are used with a derogatory connotation. The meaning conveyed is strongly impolite, rude, and hurtful, so the tweet is toxic.</p><p>Example 9:</p><p>@KamalaHarris @JoeBiden Promises as empty as you and Joe.</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. The tweet contains rude and hurtful language directed at @USERs.</p><p>Keywords include "promises as empty as you and Joe."</p><p>Example 10:</p><p>@drewwilder 1@thealmightymeh@LegendaryScoop @SenWarren It's an embryo. It can't feel, it has no awareness, it does not suffer. The pendant person does. Stop applying your emotions about babies to embryos.</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic</p><p>Answer: Not Toxic. The tweet does not contain strongly impolite, rude, or hurtful language.</p><p>Part 2:</p><p>The next 12 questions are your test HITs. Please read the tweet carefully and label whether it contains toxicity. Your answers will be scored. You must answer at least 10 of the test HITs correctly to receive the qualification. @drewwilder 1@thealmightymeh @LegendaryScoop @SenWarren So go ahead.</p><p>Tell me I should have left my two small children without a mother. Tell me I should have suffered tion. Don't be naive... Enough is enough dude. U lose. Period. Priority save American life not your seat. Republican.. All your integrity on table. Don't disgrace your family name and your children will be shameful in future. Wake up. Jesus christ Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. Before you submit your answers:</p><p>You will only have 1 chance to take this test. Make sure that you are satisfied with all of your answers above before submitting.</p><p>If you become qualified to participate in the HITs, please continue to fully read each future HIT and provide your best guess of the correct answer. Your performance will be monitored as you complete more HITs. If you provide poor quality answers, you may be blocked from continued participation in this study (and future studies).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.3. Fine-tuning with Task-specific Supervised Training</head><p>Below is a code example for fine-tuning language models using bert-base-uncased as an example. 40 The full executable python script is provided in the replication archive.</p><p>model = AutoModelForSequenceClassification.from_pretrained( "bert-base-uncased", num_labels = 2) # increase for multi-class tasks training_args = TrainingArguments( output_dir="toxicity_Twitter", learning_rate=2e-5, per_device_train_batch_size=32, per_device_eval_batch_size=32, num_train_epochs=4, weight_decay=0.01, logging_steps=100, eval_strategy="epoch", save_strategy="epoch", load_best_model_at_end=True, push_to_hub=True, ) trainer = Trainer( model=model, args=training_args, train_dataset=tokenized_data["train"], eval_dataset=tokenized_data["val"],</p><p>40 I used the same set of hyperparameters for all models trained in this article for demonstration purposes. For more experienced scholars, hyperparameter tuning is highly encouraged to achieve optimal performance of models. Table 1: Out-of-Sample Evaluation Results on Twitter Politician Threads Test Data for Off-the-shelf Models are calculated as:</p><formula xml:id="formula_3">A i (x, x ′ ) = (x i -x ′ i ) 1 0 δF (x ′ + α(x -x ′ )) δx i dα (3)</formula><p>where the integral is taken along a straight path from the baseline x ′ to the instance x parameterized by the parameter α.</p><p>The integrated gradients algorithm has three important axioms:</p><p>• Sensitivity axiom: if we consider a baseline x ′ which differs from the input instance</p><p>x only for the value of one feature x i and yields different predictions, the attribution given to the feature x i must be non-zero.</p><p>• Implementation invariance axiom: an attribution method should be such that the attributions do not depend on the particular implementation of the model.</p><p>• Completeness axiom: the sum over all features attributions should be equal to the difference between the model output at the instance x and the model output at the baseline x ′ .</p><p>i</p><formula xml:id="formula_4">A i (x, x ′ ) = F (x) -F (x ′ )<label>(4)</label></formula><p>The proofs are provided in the original paper by <ref type="bibr" target="#b80">Sundararajan, Taly and Yan (2017)</ref>.</p><p>To offer some interpretability of the classification process of the toxicity detection model, I use the integrated gradients algorithm to generate attribution scores for each token when classifying the input tweet as toxic or not <ref type="bibr" target="#b80">(Sundararajan, Taly and Yan, 2017)</ref>. Each token is considered an input feature to the model. The baseline used in this article is a numerical vector with all values set to zero. First, I interpolate the baseline input by adding the text tokens to resemble the actual text input token-by-token. Then I calculate the gradients with each additional token, measuring the change in the model's output (i.e., predicted label) with respect to the change in the input tokens. After all that, I accumulate the gradients using Riemann sums as the approximation method, which basically sums the gradients and divides them by the total number of steps. Figure <ref type="figure" target="#fig_2">3</ref> here shows example tweets where the attribution scores for each token are visualized. Red indicates toxicity, and green indicates no toxicity. ParentToxicity 0.0767 * * * 0.0338 * * * 0.3002 * * * 0.0058 (0.0121) (0.0032) (0.0419) (0.0052) MentionTrump 0.0729 * * * 0.0199 * * * 0.0761 * * * 0.0585 * * * (0.0067) (0.0034) (0.0111) (0.0062) MentionBiden -0.0122 -0.0145 -0.0672 -0.0073 (0.0239) (0.0138) (0.0612) (0.0247) MentionEconomy 0.0238 * * 0.0194 * * * 0.0785 * * * 0.0434 * * * (0.0100) (0.0070) (0.0187) (0.0100) MentionCovid 0.0318 * * * 0.0204 * * * 0.0611 * * * 0.0376 * * * (0.0051) (0.0034) (0.0125) (0.0047) MentionAbortion -0.0221 0.0233 -0.0882 -0.0211 (0.0447) (0.0328) (0.0815) (0.0364) MentionCrime 0.0001 0.0347 -0.0427 -0.0038 (0.0386) (0.0270) (0.0837) (0.0357) MentionClimate 0.0081 0.0005 0.0089 0.0257 * (0.0149) (0.0101) (0.0266) (0.0136) MentionCopartisan -0.1667 * * * -0.0860 * * * -0.3713 * * * -0.1496 * * * (0.0102) (0.0065) (0.0270) (0.0088) MentionOutpartisan -0.0153 -0.0114 0.0282 0.0119 (0.0166) (0.0077) (0.0313) (0.0240) Observations 20,072 20,072 20,072 20,072 R 2 0.0763 0.0531 0.1149 0.0636 Adjusted R 2 0.0713 0.0479 0.1101 0.0586 F Statistic (df = 10; 19963) 164.9973 * * * 111.8771 * * * 259.1146 * * * 135.6425 * * * Note: * p&lt;0.1; * * p&lt;0.05; * * * p&lt;0.01</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Transformer Encoder Architecture.</figDesc><graphic coords="10,72.00,72.00,451.28,70.51" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Input Embedding Generation to the Transformer Encoder. Numbers are for illustration purposes only.</figDesc><graphic coords="11,72.00,72.00,451.28,353.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Calculation of the Self-attention Mechanism. Numbers are for illustration purposes only.</figDesc><graphic coords="12,72.00,72.00,451.29,165.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><figDesc>, I first conduct dot product matrix multiplication of X and the transpose of X, and divide it by a scaling factor, usually the square root of the input embedding dimension. The resulting matrix is then passed through a softmax function 15 for normalization, resulting in an 8 by 8 matrix where all the rows sum up to 1. The values in this resulting matrix, as shown in the blue matrix A in Figure3, are the self-attention scores, where they represent the strengths of 13 There are different types of attention mechanisms, such as self-attention, cross-attention, and causalattention. Each is a slight variation of the original attention mechanism. For self-attention, the Query, Key and Value matrices are replications of the same input embedding matrix, i.e. Q = K = V = the input embedding matrixX.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Self-attention with Trainable Weight Matrices W Q , W K , and W V .</figDesc><graphic coords="14,72.00,72.00,451.27,169.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Calculation of the Multi-head Self-attention with Two Attention Heads.</figDesc><graphic coords="16,139.69,72.00,315.89,646.34" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>(</head><figDesc><ref type="bibr" target="#b93">Zhuang et al., 2021)</ref>.27 In the context of classification tasks, such as toxic language detection, researchers usually start to train neural networks by randomly initializing the weights from a specified random seed. Intuitively, as the training process begins, these weights are continually updated to perform the task with fewer errors, a process often referred to as optimization. During the pre-training stage, the model is trained using self-supervised learning, which allows the use of enormous amounts of data without the need for manual labels. For example, for BERT, the self-supervised pre-training task consists of predicting missing words from sentences (i.e., Masked Language Modeling) from a large internet corpus of unlabelled text including the entire Wikipedia and Book Corpus.28   The pre-training process of a BERT-like encoder-only model is shown in Part 1 and Part 2 in Figure6. The input tokens (along with a special &lt;CLS&gt; token denoting the start of the sequence specific for BERT-like models) are converted to token embeddings through the embedding layer as described in the previous subsection on Transformer Encoder Input Embedding Generation and Figure2. These embeddings are passed through a series of transformer encoders to create a set of output embeddings as illustrated in the subsection on the Multi-head Self-attention Layer and Figure5. The first encoder receives the output from the embedding layer as the input, while the subsequent encoders receive the output from the previous encoder as their input. A small fraction of the input tokens is randomly replaced with a generic &lt;mask&gt; token.29 In pre-training, the goal is to predict the missing mechanism with 16 heads. The total number of parameters is approximately 340 million. 27 Transfer learning refers to the method of acquiring knowledge from one task or domain and then applying it or transferring it to solve a new task. Pre-training refers to training a neural network on some dataset in advance of any downstream tasks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Pre-training and Fine-tuning for BERT-like Encoder-only Models. Shaded boxes contain trainable parameters.</figDesc><graphic coords="21,72.00,72.00,451.28,225.78" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><figDesc>Part 1 and Part 3 in Figure6, to fine-tune a pre-trained model like BERT, scholars can append a task specific neural network on top of the encoder-only 32 Models often have millions or billions of parameters. It is usually not advised to perform pre-training on a regular laptop.33 Platforms like the HuggingFace Hub has over 350K open-sourced models that are publicly available for anyone to use. https://huggingface.co/models model and train the entire model with the a small annotated dataset. Instead of comparing the predicted token with the original masked token in pre-training, during fine-tuning for classification, the model compares the predicted label with the true label to compute the loss and update the weights through back-propagation as shown in Part 3 in Figure6. Learned linguistic features such as syntactic and semantic roles from the pre-trained model are largely preserved in the fine-tuned models<ref type="bibr" target="#b52">(Merchant et al., 2020)</ref>.Compared to pre-training, fine-tuning is a computationally inexpensive approach that requires considerably smaller volumes of data while affording adaptability to specific tasks. In the section on Application to Toxic Language Classification, I use the PFP approach on a toxic language classification task to demonstrate its data efficiency, training efficiency, and performance enhancement capabilities. I show that models trained with PFP outperform the traditional text classification methods reviewed in the section on Current Text Classification Approaches using an annotated sample Twitter dataset of conversation threads following tweets from US Senators one month before and after the 2020 Presidential Election.Guidelines of the PFPThere are several ways for scholars to use the PFP with different levels of data and compute availability. The entire text classification workflow is shown in Figure7.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Text Classification Workflow Following the Pretrain-Finetune Paradigm. Intermediate steps can be skipped when working with limited computational resources and data.</figDesc><graphic coords="23,94.57,536.88,406.14,117.22" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><figDesc>They can download a pre-trained model and refine the model by re-doing the pre-training tasks to update Part 1 and Part 2 in Figure 6 and save Part 1 as the refined model.Then conduct fine-tuning to update the Part 1 and Part 3 accordingly to obtain the final classification model. This approach, while more computationally intensive, provides the greatest flexibility in tailoring the model to the unique needs of scholars.In the next section, I demonstrate the power of the PFP through a real-world application on toxic language classification. To illustrate the potential of the PFP in non-English content, I also replicate a paper by<ref type="bibr" target="#b16">Chang and Masterson (2020)</ref> where they applied Long Short-term Memory (i.e., LSTM) along with word2vec to classify over ten thousand Chinese Weibo posts into political versus non-political categories. More details are discussed in Appendix A (p. 1).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><figDesc>this study, I refined the BERT-base-uncased model by re-training it on a corpus of over 1.65 million unlabeled tweets using a masked token prediction task. Following re-training, I incorporated the annotated tweets to further fine-tune the model on the toxic language classification task in a manner consistent with Models 7-11. This refinedand-finetuned model is denoted as Model 13 in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 9 :Figure 10 :</head><label>910</label><figDesc>Figure 9: Bar-plots of Total Number of Toxic Tweets Labeled by Different Models by Gender</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><figDesc>Video proof of Donald trump comdeming white supremacy and racism from 2016 on... Proof that Biden and harris LIED to your faces right on that stage so what else can they lie about!! But you leftist snowflakes dont care because your brainwashed, no brain, non thinkers https://t.co/ztZnNgbTtl Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. The tweet contains strongly impolite and rude language directed at Biden, Harris and people supporting left-leaning political ideologies. Keywords include "LIED," "leftist snowflakes," "brainwahed, no brain, non thinkers".Example 2: @Sen ThomTillis @senjudiciary I look forward to you being voted out of office and then try to obtain healthcare. #Disgraceful #notforamericans Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. The tweet contains strongly impolite, rude and hurtful language directed towards the @USERs. It also uses toxic hashtags. Keywords include "voted out of office," "#Disgraceful," "#notforamericans." Example 3: @senrobportman Fuck you, Rob. Approve the goddamned plan you've had since May, you rich prick. #3MillionDollarsFromNRAtoPortman Is the tweet Toxic or Not? □ Toxic □ Not Toxic</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><figDesc>usual, you made a fool out of yourself at the hearings yesterday, that question should have been addressed to Biden... Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. (Answers of test tweets are not shown in real training module.) Test 2: @scottnr0331 @CatPoacher @SenWarren You do realize you are not the only person in this conversation who served this country, don't you? I gave 32 years to its service and I have more than earned the right to hold both you and Trump in the contempt you have richly earned. I used to be a Republican too. No more. Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. Test 3: @sendavidperdue I'm a Jew! Know why 87% of Jews vote Dem? Because we've seen it before. Hitler did what Trump and Perdue are doing. Suppress the media. Suppress science. Lock up opposition. Call elections rigged. Is this the man to help minorities??!! Vote DEMOCRAT ACROSS THE BOARD Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic. Test 4: @SenatorCollins Yippee, we get 6 more years of you being McConnell's lapdog. Your lack of integrity and political courage are a burden on Maine. Is the tweet Toxic or Not? □ Toxic □ Not Toxic</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><figDesc>are an inspiration to millions of Americans who thank you for your service and sacrifice. Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Not Toxic. Test 12: @SenJeffMerkley I thought you told us the current administration didn't have a vaccine distribution plan? Do you ever recant your hyper-political BS? It's not helpful. Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Toxic.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>-</head><figDesc>() # to push fine-tuned model to HuggingFace Hub D.4. Unsupervised Refining and Fine-tuning with Task-specific Supervised Training In this application, I refined the BERT-base-uncased model by re-training the model with my Twitter dataset of over 1.65 million tweets with a masked token prediction task. The training process took 46 hours on Google Colab on an A100 GPU. The refined model was then fine-tuned following the same steps as other models in Section 4.4. Below is a code example to execute run mlm.py in Google Colab, which contains the code for refining bert-base-uncased model with a masked token prediction task. run mlm.py is provided in the replication archive. !python run_mlm.py \ --model_name_or_path google-bert/bert-base-uncased \</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="51,72.00,255.52,451.27,180.51" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="68,94.57,109.44,406.15,320.18" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>List of All Models Used in the Section on Application to Toxic Language Classification</figDesc><table><row><cell cols="2">Model Number Model Name</cell><cell>Category</cell><cell>Training Time (min:sec)</cell></row><row><cell>1</cell><cell>HateBERT-abuseval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>2</cell><cell>HateBERT-offenseval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>3</cell><cell>HateBERT-hateval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>4</cell><cell>BERT-abuseval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>5</cell><cell>BERT-offenseval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>6</cell><cell>BERT-hateval</cell><cell>off-the-shelf PFP</cell><cell>00:00</cell></row><row><cell>7</cell><cell>HateBERT-Twitter</cell><cell>fine-tuned PFP</cell><cell>01:14</cell></row><row><cell>8</cell><cell>BERT-base-uncased-Twitter</cell><cell>fine-tuned PFP</cell><cell>01:14</cell></row><row><cell>9</cell><cell>BERT-base-cased-Twitter</cell><cell>fine-tuned PFP</cell><cell>01:21</cell></row><row><cell>10</cell><cell>BERT-large-uncased-Twitter</cell><cell>fine-tuned PFP</cell><cell>03:30</cell></row><row><cell>11</cell><cell>BERT-large-cased-Twitter</cell><cell>fine-tuned PFP</cell><cell>03:46</cell></row><row><cell>12</cell><cell cols="3">freeze-BERT-base-uncased-Twitter only trained classifier PFP 00:32</cell></row><row><cell>13</cell><cell cols="3">refined-BERT-base-uncased-Twitter refined and fine-tuned PFP 46 hrs + 01:19</cell></row><row><cell>14</cell><cell>Dictionary-based</cell><cell>baseline</cell><cell>00:00</cell></row><row><cell>15</cell><cell>BOW + Naive Bayes</cell><cell>baseline</cell><cell>00:19</cell></row><row><cell>16</cell><cell>fastText + linear classifier</cell><cell>baseline</cell><cell>00:22</cell></row><row><cell>17</cell><cell>Google's Perspective API</cell><cell>baseline</cell><cell>00:00</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 2 :</head><label>2</label><figDesc>Example of Disagreed Tweets in the Test Set.</figDesc><table><row><cell>PFP</cell><cell>Baseline</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 3 :</head><label>3</label><figDesc>Results from Fixed Effects Model with Senator-clustered Standard Errors.Full regression table including other control variables is provided in Appendix G (p. 20). Additionally, parent tweets that mention Trump, the economy, and COVID are associated with increased toxicity in conversation threads, whereas tweets mentioning co-partisan Senators correspond with lower toxicity levels in the conversation threads.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell>Dependent variable:</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>Toxicity</cell><cell></cell></row><row><cell></cell><cell>Model 10</cell><cell>Model 14</cell><cell>Model 15</cell><cell>Model 16</cell></row><row><cell></cell><cell cols="3">BERT-large-uncased-Twitter Dictionary-based BOW + Naive Bayes</cell><cell>fastText + linear classifier</cell></row><row><cell></cell><cell>(1)</cell><cell>(2)</cell><cell>(3)</cell><cell>(4)</cell></row><row><cell>ParentToxicity</cell><cell>0.0767  *  *  *</cell><cell>0.0338  *  *  *</cell><cell>0.3002  *  *  *</cell><cell>0.0058</cell></row><row><cell></cell><cell>(0.0121)</cell><cell>(0.0032)</cell><cell>(0.0419)</cell><cell>(0.0052)</cell></row><row><cell>Observations</cell><cell>20,072</cell><cell>20,072</cell><cell>20,072</cell><cell>20,072</cell></row><row><cell>R 2</cell><cell>0.0763</cell><cell>0.0531</cell><cell>0.1149</cell><cell>0.0636</cell></row><row><cell>Adjusted R 2</cell><cell>0.0713</cell><cell>0.0479</cell><cell>0.1101</cell><cell>0.0586</cell></row><row><cell cols="2">F Statistic (df = 10; 19963) 164.9973  *  *  *</cell><cell>111.8771  *  *  *</cell><cell>259.1146  *  *  *</cell><cell>135.6425  *  *  *</cell></row><row><cell>Note:</cell><cell></cell><cell></cell><cell>*  p&lt;0.1;  *  *  p&lt;0.05;  *  *  *  p&lt;0.01</cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>A text embedding is a numerical vector that represents text, with tokens of similar meanings having similar representations, typically in a low-dimensional vector space(Collobert and Weston,  </p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>2008).</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_2"><p>In the application section, I measured toxicity in conversation threads from tweets by U.S. Senators, comparing PFP models with traditional approaches discussed in this section, and demonstrated the superior performance of PFP models.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>In practice, a transformer's context window is limited by computational and memory constraints, with the actual size depending on the model's token limit. For example, Bidirectional Encoder Representations from Transformers (BERT) has a</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_4"><p>512-token limit, GPT4-Turbo allows 128K tokens, and Gemini-1.5-Pro supports up to 1 million tokens.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_5"><p>Models like BERT average all token embeddings for sentence embeddings, while others like GPT use contrastive learning for more semantically meaningful sentence-level embeddings.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="14" xml:id="foot_6"><p>In this example, I use d = d model = d k = 512. The specific number can change with different transformer architectures.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="15" xml:id="foot_7"><p>The softmax function, or multi-nomial logistic regression, is a generalization of logistic regression to the case where we want to handle multiple classes.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="16" xml:id="foot_8"><p>Values along the diagonal of the self-attention matrix are expected to be highest due to the dot-product calculation, so each token pays the most attention to itself.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="18" xml:id="foot_9"><p>In practice, most language models have more than two attention heads. For example, BERT has 12 attention heads per encoder layer, and GPT models have over hundreds of attention heads per layer.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="19" xml:id="foot_10"><p>Note that this is a logical split only. The W Q , W K , and W V matrices are not physically split into separate matrices in implementation. A single matrix is used for W Q , W K , and W V respectively with logically separate sections of them for each attention head.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="24" xml:id="foot_11"><p>The non-linearity is introduced in the FNN through the usage of non-linear activation functions.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="25" xml:id="foot_12"><p>Types of language models are discussed in footnote 7.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="29" xml:id="foot_13"><p>The implementation is a little more complicated. In BERT, 15% of the input tokens in a training</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="37" xml:id="foot_14"><p>Simple code examples are provided in Appendix D (p. 12-14) for all four approaches mentioned in this section. For reproducibility, all computation in this article is conducted on Google Colab on an A100 GPU. All PFP models used in this article can be found on HuggingFace Hub https://huggingface.co/AnonymousCS. Full Python code are provided in the replication archive.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="38" xml:id="foot_15"><p>I also examined tweets where Model 10 labeled as non-toxic, but one or more baseline models classified as toxic. In several cases, the true label was incorrect and missed certain toxic content.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Appendix A (p. 1) shows an application to classify Chinese Weibo posts. Additionally, the PFP framework's flexibility could be extended to address multi-modal data, applying transformer-based models to images, audio, and text in combination, which could yield new insights into multi-modal political messages or campaigns. Finally, as large language models continue to improve, future research could focus on refining the interpretability of these models within the PFP framework. Techniques such as integrated gradients described in details in Appendix <ref type="bibr">F (p. 18-19)</ref>, which I use to highlight model decisionmaking, could become more sophisticated, allowing researchers to gain deeper insights into how and why these models interpret complex political language as they do.</p><p>Ultimately, by breaking down the complexity of transformer-based models and demonstrating their superior performance in text classification, this paper establishes the PFP as a valuable tool for political scientists for its superior performance, data efficiency, and computational accessibility. As scholars face increasingly large and complex datasets, the PFP offers an efficient and effective way to enhance measurement accuracy and analytical rigor. This article not only lays the foundation for adopting the PFP but also encourages innovative applications that will advance empirical research across diverse domains in political science. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendices</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A: Application to Chinese Weibo Posts</head><p>To illustrate the potential of the PFP in non-English contexts, I replicated a study by <ref type="bibr" target="#b16">Chang and Masterson (2020)</ref>, who used an Long Short-term Memory along with word2vec embeddings to classify over 10,000 Chinese Weibo posts as political versus non-political categories. I employed BERT-base-Chinese as the pre-trained language model and finetuned it for the binary classification task using the original annotated dataset released by the authors, where each post was labeled as political or non-political. In Figure <ref type="figure">1</ref>, the confidence intervals show the maximum and minimum balanced accuracy scores of five independent experiments. The dots represent the average balanced accuracy scores of the five experiments. The X -axis represents the percentage of data randomly sampled from the training and validation datasets. The gray dashed horizontal line marks the performance of the model proposed by the original paper using 100% of the dataset. To make the comparison fair, the size of the test dataset is maintained to be 10% of the entire dataset for all experiments following the approach of the original paper. Using only 50% of the data, the PFP model achieves higher balanced accuracy on average compared to the original approach. Remarkably, with just 5% of the training and validation data, the average balanced accuracy score of the fine-tuned model is already over 0.8, indicating the data efficiency of the fine-tuning process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix B: Definitions of Toxicity</head><p>Measuring toxicity in large datasets remains challenging due to a lack of an unambiguous and agreed-upon definition. Scholars often do not clearly distinguish toxicity from incivility, hate speech, offensive speech, or abusive speech. There are two primary tendencies in the literature when defining toxicity. At one end of the spectrum are narrow and applicationspecific definitions, which often restrict toxicity to explicitly violence-inducing speech or derogatory language specifically targeting a group with common characteristics <ref type="bibr" target="#b55">(Munger, 2017;</ref><ref type="bibr" target="#b77">Siegel et al., 2021)</ref>. At the other end of the spectrum are broad and comprehensive definitions designed to identify all types of abusive content <ref type="bibr" target="#b33">(Hartvigsen et al., 2022;</ref><ref type="bibr" target="#b82">Theocharis et al., 2020)</ref>. To make the concept more feasible for human annotation, I followed the later approach and adopted a comprehensive and operationalizable definition of toxicity offered by <ref type="bibr" target="#b64">Poletto et al. (2021)</ref>, where toxicity is defined as "any impolite, rude or hurtful language that can show a debasement of someone or something, or show intense emotion, including hate speech, derogatory language and also profanity" <ref type="bibr" target="#b64">(Poletto et al., 2021)</ref>. Based on this definition, hate speech, incivility, and hostile language are all proper subsets of toxic language, as shown in the Venn diagram in Figure <ref type="figure">2</ref>. Appendix C: Data Annotation I randomly selected 3000 tweets (approximately 0.2%) from the entire dataset of around 1.65 million tweets to be annotated by human coders hired through Amazon Mechanical Turk. The tweets were split into 30 batches of 100 tweets each. Within each batch, there were five gold-standard unambiguous tweets that were implemented as attention checks to filter bots and irresponsible annotators. The annotators must go through a training module where I provided definitions and examples of toxic and non-toxic tweets. The annotators must correctly code at least 10 out of 12 test tweets to be qualified for the actual annotation tasks. Each tweet is cross-coded by two coders. After the first round of annotation, I filtered the batches with cross-coder agreement levels lower than 85% and re-published them with the same instructions to get them re-coded. After the second round of annotation, the overall agreement level across batches increased to 93%, which resulted in 2790 cross-coded and agreed tweets to be used for the fine-tuning process.</p><p>I split them randomly into training (80%), validation (10%), and test (10%) datasets.</p><p>The training dataset is used to fine-tune the language model for classification, and the validation dataset is used to evaluate the model during the training process. The test dataset is then used to evaluate the model performance after the training process is fully complete. Although the fine-tuning process of the pre-trained language models typically requires a relatively smaller dataset than pre-training to achieve good performance, more annotated data is still desired in the future for validation purposes. Each tweet is coded as either containing toxic language or not containing any toxic language (i.e., 1 or 0). The annotated dataset with 2790 crosscoded and agreed tweets has 1641 (58.8%) nontoxic tweets and 1149 (41.2%) toxic tweets. Since toxic tweets may not have slurs and toxic keywords do not necessarily make the tweets toxic, the annotation codebook considers both the context and target of a tweet.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Below is a condensed version of the training module used for Amazon Mechanical</head><p>Turk. The human annotators must go through the training program and score at least and died for the sake of an embryo that was never in any pain. Tell me that choosing not to risk my life is a choice I shouldn't get to make for myself.</p><p>Is the tweet Toxic or Not? □ Toxic □ Not Toxic Answer: Not Toxic. The variable predicted labels contains the predicted labels for all text inputs along with the probabilities. For reproducibility, all computation in this article is conducted on Google Colab on an A100 GPU. All PFP models used in this article can be found on HuggingFace Hub. 39 Python code are provided in the replication archive.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.2. Task-specific Supervised Training</head><p>Below is a code example to freeze the bert encoders and only update the task-specific classification layer as shown in Figure <ref type="figure">6</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix E: Model Evaluation Results</head><p>To compare PFP models with traditional models, I used Google's Perspective API, fastText, BOW, and a dictionary-based approach 41 as the baseline models. Google's Perspective API is a close-sourced API that detects toxicity online, where the model was also fine-tuned using a crowd-sourced labeled dataset <ref type="bibr" target="#b26">(Fortuna, Soler and Wanner, 2020)</ref>. The exact training process is not transparent from its online documentation. I also performed text classification using the open-source library fastText, which allows researchers to train their own static embeddings using custom dataset and then fastText uses a linear classifier to obtain the final classification results. I also use a BOW text representation model with a naive Bayes classifier. For classification with the dictionary, I use a naive approach: if an input contains any words or phrases from the dictionary, it is considered toxic. Table <ref type="table">1</ref>, <ref type="table">Table 2</ref>, and <ref type="table">Table 3</ref> show the out-of-sample performance metrics for the baseline models, off-the-shelf models, and PFP fine-tuned models respectively.</p><p>41 I adopted a dictionary of abusive words from Luis von Ahn's Research Group (Luis von Ahn's, 2022).    </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Negative Partisanship: Why Americans Dislike Parties But Behave Like Rabid Partisans</title>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">I</forename><surname>Abramowitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><forename type="middle">W</forename><surname>Webster</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Psychology</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="119" to="135" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Hate Speech in Political Discourse: A Case Study of UK MPs on Twitter</title>
+		<author>
+			<persName><forename type="first">Pushkal</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margarita</forename><surname>Amaxopoulou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noel</forename><surname>Dempsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nishanth</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edward</forename><surname>Wood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32nd ACM Conference on Hypertext and Social Media</title>
+		<meeting>the 32nd ACM Conference on Hypertext and Social Media</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="5" to="16" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Can Exposure to Celebrities Reduce Prejudice? The Effect of Mohamed Salah on Islamophobic Behaviors and Attitudes</title>
+		<author>
+			<persName><forename type="first">'</forename><surname>Alrababa'h, Ala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Marble</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salma</forename><surname>Mousa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexandra</forename><forename type="middle">A</forename><surname>Siegel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1111" to="1128" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Understanding Delegation Through Machine Learning: A Method and Application to the European Union</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Anastasopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><forename type="middle">M</forename><surname>Jason</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bertelli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="291" to="301" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Who Leads? Who Follows? Measuring Issue Attention and Agenda Setting by Legislators and the Mass Public Using Social Media Data</title>
+		<author>
+			<persName><forename type="first">Pablo</forename><surname>Barberá</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreu</forename><surname>Casas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Nagler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><forename type="middle">J</forename><surname>Egan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Bonneau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">T</forename><surname>Jost</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">A</forename><surname>Tucker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="883" to="901" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">TweetEval: Unified Benchmark and Comparative Evaluation for Tweet Classification</title>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Barbieri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jose</forename><surname>Camacho-Collados</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonardo</forename><surname>Neves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luis</forename><surname>Espinosa-Anke</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">SciBERT: A Pretrained Language Model for Scientific Text</title>
+		<author>
+			<persName><forename type="first">Iz</forename><surname>Beltagy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><surname>Lo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arman</forename><surname>Cohan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Male and Female Politicians on Twitter: A Machine Learning Approach</title>
+		<author>
+			<persName><forename type="first">Javier</forename><surname>Beltran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aina</forename><surname>Gallego</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alba</forename><surname>Huidobro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enrique</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lluís</forename><surname>Padró</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Political Research</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="239" to="251" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The Political Logic of Government Disclosure: Evidence from Information Requests in Mexico</title>
+		<author>
+			<persName><surname>Berliner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><forename type="middle">E</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Bagozzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Palmer-Rubin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Erlich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="229" to="245" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Sentiment is Not Stance: Target-Aware Opinion Classification for Political Text Analysis</title>
+		<author>
+			<persName><forename type="first">Samuel</forename><forename type="middle">E</forename><surname>Bestvater</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Burt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Monroe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Improving Probabilistic Models in Text Classification via Active Learning</title>
+		<author>
+			<persName><forename type="first">Mitchell</forename><surname>Bosley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saki</forename><surname>Kuzushima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ted</forename><surname>Enamorado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuki</forename><surname>Shiraito</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Unveiling: An Unexpected Mid-campaign Court Ruling&apos;s Consequences and the Limits of Following the Leader</title>
+		<author>
+			<persName><forename type="first">Aengus</forename><surname>Bridgman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Costin</forename><surname>Ciobanu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Erlich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Danielle</forename><surname>Bohonos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Ross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1024" to="1029" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">More Effective Than We Thought: Accounting for Legislative Hitchhikers Reveals a More Inclusive and Productive Lawmaking Process</title>
+		<author>
+			<persName><forename type="first">Andreu</forename><surname>Casas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><forename type="middle">J</forename><surname>Denny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Wilkerson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="18" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Hate-BERT: Retraining BERT for Abusive Language Detection in English</title>
+		<author>
+			<persName><forename type="first">Tommaso</forename><surname>Caselli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valerio</forename><surname>Basile</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jelena</forename><surname>Mitrović</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Granitzer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">LEGAL-BERT: The Muppets Straight Out of Law School</title>
+		<author>
+			<persName><forename type="first">Ilias</forename><surname>Chalkidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Manos</forename><surname>Fergadiotis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prodromos</forename><surname>Malakasiotis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolaos</forename><surname>Aletras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ion</forename><surname>Androutsopoulos</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">You Can&apos;t Stay Here: The Efficacy of Reddit&apos;s 2015 Ban Examined Through Hate Speech</title>
+		<author>
+			<persName><forename type="first">Eshwar</forename><surname>Chandrasekharan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Umashanthi</forename><surname>Pavalanathan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anirudh</forename><surname>Srinivasan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Glynn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Eisenstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Gilbert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the ACM on Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1" to="31" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>CSCW)</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Using Word Order in Political Text Classification with Long Short-term Memory Models</title>
+		<author>
+			<persName><forename type="first">Charles</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Masterson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="395" to="411" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">How Populist are Parties? Measuring Degrees of Populism in Party Manifestos Using Supervised Machine Learning</title>
+		<author>
+			<persName><forename type="first">Jessica</forename><surname>Cocco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernardo</forename><surname>Di</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Monechi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="311" to="327" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A Unified Architecture for Natural Language Processing: Deep Neural Networks with Multitask Learning</title>
+		<author>
+			<persName><forename type="first">Ronan</forename><surname>Collobert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Weston</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 25th international conference on Machine learning. ICML &apos;08</title>
+		<meeting>the 25th international conference on Machine learning. ICML &apos;08</meeting>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="160" to="167" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">It Is Not Only What You Say, It Is Also How You Say It: The Strategic Use of Campaign Sentiment</title>
+		<author>
+			<persName><forename type="first">Charles</forename><surname>Crabtree</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matt</forename><surname>Golder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Gschwend</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Indrii</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Indriason</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1044" to="1060" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Media Attention and Strategic Timing in Politics: Evidence from U.S. Presidential Executive Orders</title>
+		<author>
+			<persName><forename type="first">Milena</forename><surname>Djourelova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruben</forename><surname>Durante</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="813" to="834" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">How Elite Partisan Polarization Affects Public Opinion Formation</title>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">N</forename><surname>Druckman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erik</forename><surname>Peterson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rune</forename><surname>Slothuus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="57" to="79" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">BERT and fastText Embeddings for Automatic Detection of Toxic Speech</title>
+		<author>
+			<persName><forename type="first">Ashwin</forename><surname>D'sa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Irina</forename><surname>Geet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominique</forename><surname>Illina</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fohr</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2020 International Multi-Conference on: &quot;Organization of Knowledge and Advanced Technologies</title>
+		<imprint>
+			<publisher>OCTA</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">How Exile Shapes Online Opposition: Evidence from Venezuela</title>
+		<author>
+			<persName><forename type="first">Jane</forename><surname>Esberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexandra</forename><forename type="middle">A</forename><surname>Siegel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1361" to="1378" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Courting Informal Workers: Exclusion, Forbearance, and the Left</title>
+		<author>
+			<persName><forename type="first">Germán</forename><surname>Feierherd</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="418" to="433" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Toxic, Hateful, Offensive or Abusive? What Are We Really Classifying? An Empirical Analysis of Hate Speech Datasets</title>
+		<author>
+			<persName><forename type="first">Paula</forename><surname>Fortuna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juan</forename><surname>Soler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leo</forename><surname>Wanner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twelfth Language Resources and Evaluation Conference</title>
+		<meeting>the Twelfth Language Resources and Evaluation Conference<address><addrLine>Marseille, France</addrLine></address></meeting>
+		<imprint>
+			<publisher>European Language Resources Association</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="6786" to="6794" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Political Advertising Online and Offline</title>
+		<author>
+			<persName><forename type="first">Erika</forename><surname>Fowler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">M</forename><surname>Franklin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gregory</forename><forename type="middle">J</forename><surname>Franz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Travis</forename><forename type="middle">N</forename><surname>Peskowitz</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ridout</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="130" to="149" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Measuring Polarization with Text Analysis: Evidence from the UK House of Commons, 1811-2015</title>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">D</forename><surname>Goet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="518" to="539" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Repression Technology: Internet Accessibility and State Violence</title>
+		<author>
+			<persName><forename type="first">Anita</forename><forename type="middle">R</forename><surname>Gohdes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="488" to="503" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Text as Data: The Promise and Pitfalls of Automatic Content Analysis Methods for Political Texts</title>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Grimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><forename type="middle">M</forename><surname>Stewart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="267" to="297" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Almost) Everything in Moderation: New Evidence on Americans&apos; Online Media Diets</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">M</forename><surname>Guess</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1007" to="1022" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Does Public Opinion Affect Political Speech?</title>
+		<author>
+			<persName><forename type="first">Anselm</forename><surname>Hager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanno</forename><surname>Hilbig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="921" to="937" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">ToxiGen: A Large-Scale Machine-Generated Dataset for Adversarial and Implicit Hate Speech Detection</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Hartvigsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saadia</forename><surname>Gabriel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hamid</forename><surname>Palangi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><surname>Sap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dipankar</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ece</forename><surname>Kamar</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Algorithmic amplification of politics on Twitter</title>
+		<author>
+			<persName><forename type="first">Ferenc</forename><surname>Huszár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sofia</forename><forename type="middle">Ira</forename><surname>Ktena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O'</forename><surname>Conor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luca</forename><surname>Brien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Belli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moritz</forename><surname>Schlaikjer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hardt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">2025334119</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Fear and Loathing across Party Lines: New Evidence on Group Polarization</title>
+		<author>
+			<persName><forename type="first">Shanto</forename><surname>Iyengar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sean</forename><forename type="middle">J</forename><surname>Westwood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="690" to="707" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The Origins and Consequences of Affective Polarization in the United States</title>
+		<author>
+			<persName><forename type="first">Shanto</forename><surname>Iyengar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yphtach</forename><surname>Lelkes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Levendusky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Malhotra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sean</forename><forename type="middle">J</forename><surname>Westwood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="129" to="146" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Whose News? Class-Biased Economic Reporting in the United States</title>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">M</forename><surname>Jacobs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Scott</forename><surname>Matthews</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothy</forename><surname>Hicks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Merkley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1016" to="1033" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">The Mobilizing Effect of Parties&apos; Moral Rhetoric</title>
+		<author>
+			<persName><forename type="first">Jae-Hee</forename><surname>Jung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="341" to="355" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Transformers are Short Text Classifiers: A Study of Inductive Short Text Classifiers on Benchmarks and Real-world Datasets</title>
+		<author>
+			<persName><forename type="first">Fabian</forename><surname>Karl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ansgar</forename><surname>Scherp</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.16878</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">The Media Matters: Muslim American Portrayals and the Effects on Mass Attitudes</title>
+		<author>
+			<persName><forename type="first">Nazita</forename><surname>Lajevardi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1060" to="1079" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">BioBERT: a Pre-trained Biomedical Language Representation Model for Biomedical Text Mining</title>
+		<author>
+			<persName><forename type="first">Jinhyuk</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wonjin</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sungdong</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donghyeon</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sunkyu</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">So</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaewoo</forename><surname>Kang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1234" to="1240" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">An Introduction to Neural Networks for the Social Sciences</title>
+		<author>
+			<persName><forename type="first">Gechun</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Lucas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Oxford Handbook of Engaged Methodological Pluralism in Political Science</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Janet</forename><forename type="middle">M</forename><surname>Box-Steffensmeier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dino</forename><forename type="middle">P</forename><surname>Christenson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valeria</forename><surname>Sinclair-Chapman</surname></persName>
+		</author>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">RoBERTa: A Robustly Optimized BERT Pretraining Approach</title>
+		<author>
+			<persName><forename type="first">Yinhan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Myle</forename><surname>Ott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingfei</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mandar</forename><surname>Joshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Danqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omer</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Zettlemoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Veselin</forename><surname>Stoyanov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.11692</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Computer-Assisted Text Analysis for Comparative Politics</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Lucas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">A</forename><surname>Nielsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><forename type="middle">M</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Storer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dustin</forename><surname>Tingley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="254" to="277" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<author>
+			<persName><surname>Luis Von Ahn's</surname></persName>
+		</author>
+		<ptr target="https://www.cs.cmu.edu/biglou/resources/bad-words.txt" />
+		<title level="m">Useful Resources: Offensive/Profane Word List</title>
+		<imprint>
+			<publisher>Research Group</publisher>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Killing in the Slums: Social Order, Criminal Governance, and Police Violence in Rio de Janeiro</title>
+		<author>
+			<persName><forename type="first">Beatriz</forename><surname>Magaloni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edgar</forename><surname>Franco-Vivanco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vanessa</forename><surname>Melo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="552" to="572" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Institutionalized Police Brutality: Torture, the Militarization of Security, and the Reform of Inquisitorial Criminal Justice in Mexico</title>
+		<author>
+			<persName><forename type="first">Beatriz</forename><surname>Magaloni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luis</forename><surname>Rodriguez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1013" to="1034" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Effective for Whom? Ethnic Identity and Nonviolent Resistance</title>
+		<author>
+			<persName><forename type="first">Devorah</forename><surname>Manekin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tamar</forename><surname>Mitts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="161" to="180" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Freedom of Speech, Liberal Democracy, and Emerging Evidence on Civility and Effective Democratic Engagement Symposium: Political Discourse, Civility, and Harm</title>
+		<author>
+			<persName><forename type="first">Toni</forename><forename type="middle">M</forename><surname>Massaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Stryker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Arizona Law Review</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="375" to="442" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Racism, Hate Speech, and Social Media: A Systematic Review and Critique</title>
+		<author>
+			<persName><forename type="first">Ariadna</forename><surname>Matamoros-Fernández</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johan</forename><surname>Farkas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Television &amp; New Media</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="205" to="224" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">Amil</forename><surname>Merchant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elahe</forename><surname>Rahimtoroghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ellie</forename><surname>Pavlick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Tenney</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2004.14448</idno>
+		<title level="m">What Happens To BERT Embeddings During Fine-tuning?</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Efficient Estimation of Word Representations in Vector Space</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1301.3781</idno>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Electoral Accountability and Particularistic Legislation: Evidence from an Electoral Reform in Mexico</title>
+		<author>
+			<persName><forename type="first">Lucia</forename><surname>Motolinia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="97" to="113" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Tweetment Effects on the Tweeted: Experimentally Reducing Racist Harassment</title>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Munger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Behavior</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="629" to="649" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">BERTweet: A Pre-trained Language Model for English Tweets</title>
+		<author>
+			<persName><forename type="first">Dat</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thanh</forename><surname>Quoc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anh</forename><forename type="middle">Tuan</forename><surname>Vu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nguyen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2005.10200</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Women&apos;s Authority in Patriarchal Social Movements: The Case of Female Salafi Preachers</title>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">A</forename><surname>Nielsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="52" to="66" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Partisan Polarization Is the Primary Psychological Motivation behind Political Fake News Sharing on Twitter</title>
+		<author>
+			<persName><forename type="first">Mathias</forename><surname>Osmundsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Bor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Bjerregaard Vahlstrup</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anja</forename><surname>Bechmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Bang Petersen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="999" to="1015" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Playing to the Gallery: Emotive Rhetoric in Parliaments</title>
+		<author>
+			<persName><surname>Osnabrügge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><forename type="middle">B</forename><surname>Moritz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Toni</forename><surname>Hobolt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rodon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="885" to="899" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<title level="m" type="main">Is There a Case for Banning Hate Speech? In The Content and Context of Hate Speech: Rethinking Regulation and Responses</title>
+		<author>
+			<persName><forename type="first">Bhikhu</forename><surname>Parekh</surname></persName>
+		</author>
+		<editor>Michael Herz and Peter Molnar</editor>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Cambridge University Press</publisher>
+			<biblScope unit="page" from="37" to="56" />
+			<pubPlace>Cambridge</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Human Rights are (Increasingly) Plural: Learning the Changing Taxonomy of Human Rights from Large-scale Text Reveals Information Effects</title>
+		<author>
+			<persName><forename type="first">Baekkwan</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Greene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Colaresi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="888" to="910" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">Efficient Classification of Long Documents Using Transformers</title>
+		<author>
+			<persName><forename type="first">Hyunji</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yogarshi</forename><surname>Hayley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kashif</forename><surname>Vyas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shah</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.11258</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">From Text to Measure: Creating Trustworthy Measures Using Supervised Machine Learning</title>
+		<author>
+			<persName><forename type="first">Ju</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Yeon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Montgomery</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>Unpublished manuscript</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Resources and Benchmark Corpora for Hate Speech Detection: A Systematic Review</title>
+		<author>
+			<persName><forename type="first">Fabio</forename><surname>Poletto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valerio</forename><surname>Basile</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Manuela</forename><surname>Sanguinetti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cristina</forename><surname>Bosco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Viviana</forename><surname>Patti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Language Resources and Evaluation</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="477" to="523" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">BERT with History Answer Embedding for Conversational Question Answering</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liu</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minghui</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">Bruce</forename><surname>Croft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohit</forename><surname>Iyyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 42nd international ACM SIGIR conference on research and development in information retrieval</title>
+		<meeting>the 42nd international ACM SIGIR conference on research and development in information retrieval</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1133" to="1136" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Out-group Animosity Drives Engagement on Social Media</title>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Rathje</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jay</forename><forename type="middle">J</forename><surname>Van Bavel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sander</forename><surname>Van Der Linden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="issue">26</biblScope>
+			<biblScope unit="page">e2024292118</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Politicians in the Line of Fire: Incivility and the Treatment of Women on Social Media</title>
+		<author>
+			<persName><forename type="first">Ludovic</forename><surname>Rheault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erica</forename><surname>Rayment</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreea</forename><surname>Musulan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Research &amp; Politics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Introduction to the Virtual Issue: Recent Innovations in Text Analysis for Social Science</title>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Adjusting for Confounding with Text Matching</title>
+		<author>
+			<persName><forename type="first">Margaret</forename><forename type="middle">E</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Brandon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">A</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nielsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="887" to="903" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">How Ideology Fuels Affective Polarization</title>
+		<author>
+			<persName><forename type="first">Jon</forename><forename type="middle">C</forename><surname>Rogowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><forename type="middle">L</forename><surname>Sutherland</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Behavior</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="485" to="508" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Measuring Agenda Setting in Interactive Political Communication</title>
+		<author>
+			<persName><forename type="first">Erin</forename><forename type="middle">L</forename><surname>Rossiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="337" to="351" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Transfer Learning in Natural Language Processing</title>
+		<author>
+			<persName><surname>Ruder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><forename type="middle">E</forename><surname>Sebastian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Swabha</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Swayamdipta</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wolf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Tutorials</title>
+		<meeting>the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Tutorials</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="15" to="18" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Disparities in a Flagship Political Science Journal? Analyzing Publication Patterns in the Journal of Politics, 1939-2019</title>
+		<author>
+			<persName><forename type="first">Joseph</forename><surname>Saraceno</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="45" to="e55" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Informing the Leader: Bureaucracies and International Crises</title>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Schub</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1460" to="1476" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Defining Hate Speech</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Sellars</surname></persName>
+		</author>
+		<idno>- tion No. 2016-20</idno>
+	</analytic>
+	<monogr>
+		<title level="s">Berkman Klein Center Research Publica</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Effect of Typos on Text Classification Accuracy in Word and Character Tokenization</title>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">E</forename><surname>Shawky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mesbah</forename><surname>Saleh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shawkat</forename><forename type="middle">K</forename><surname>Elkaffas</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Guirguis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Advanced Research in Applied Sciences and Engineering Technology</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="152" to="162" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Trumping Hate on Twitter? Online Hate Speech in the 2016 U.S. Election Campaign and its Aftermath</title>
+		<author>
+			<persName><forename type="first">Alexandra</forename><forename type="middle">A</forename><surname>Siegel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pablo</forename><surname>Evgenii Nikitin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joanna</forename><surname>Barberá</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bethany</forename><surname>Sterling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Pullen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Bonneau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">A</forename><surname>Nagler</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tucker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Political Science</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="71" to="104" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">#No2Sectarianism: Experimental Approaches to Reducing Sectarian Hate Speech Online</title>
+		<author>
+			<persName><forename type="first">Alexandra</forename><forename type="middle">A</forename><surname>Siegel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vivienne</forename><surname>Badaan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="837" to="855" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Post Post-Broadcast Democracy? News Exposure in the Age of Online Intermediaries</title>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Stier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Mangold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Scharkow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johannes</forename><surname>Breuer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="768" to="774" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<monogr>
+		<title level="m" type="main">Axiomatic Attribution for Deep Networks</title>
+		<author>
+			<persName><forename type="first">Mukund</forename><surname>Sundararajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ankur</forename><surname>Taly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiqi</forename><surname>Yan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1703.01365</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<author>
+			<persName><forename type="first">Shepherd</forename><surname>Tamara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alison</forename><surname>Harvey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Jordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Srauy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kate</forename><forename type="middle">N D</forename><surname>Miltner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alison</forename><surname>Harvey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Srauy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kate</forename><surname>Miltner</surname></persName>
+		</author>
+		<title level="m">Histories of Hating -Tamara Shepherd</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">The Dynamics of Political Incivility on Twitter</title>
+		<author>
+			<persName><forename type="first">Yannis</forename><surname>Theocharis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pablo</forename><surname>Barberá</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zoltán</forename><surname>Fazekas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adrian</forename><surname>Popa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SAGE Open</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">2158244020919447</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">Testing Legislator Responsiveness to Citizens and Firms in Single-Party Regimes: A Field Experiment in the Vietnamese National Assembly</title>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Todd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edmund</forename><forename type="middle">J</forename><surname>Douglas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anh</forename><surname>Malesky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quoc</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Anh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Politics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1573" to="1588" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Attention is All you Need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">No Longer Lost in Translation: Evidence that Google Translate Works for Comparative Bag-of-Words Text Applications</title>
+		<author>
+			<persName><surname>Curran Associates</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Inc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erik</forename><forename type="middle">De</forename><surname>Vries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martijn</forename><surname>Schoonvelde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gijs</forename><surname>Schumacher</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="417" to="430" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">From Thin to Thick Representation: How a Female President Shapes Female Parliamentary Behavior</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Wahman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolaos</forename><surname>Frantzeskakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tevfik</forename><surname>Murat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yildirim</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="360" to="378" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<analytic>
+		<title level="a" type="main">On Finetuning Large Language Models</title>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Topic Classification for Political Texts with Pretrained Language Models</title>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="662" to="668" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Agenda Seeding: How 1960s Black Protests Moved Elites, Public Opinion and Voting</title>
+		<author>
+			<persName><forename type="first">Omar</forename><surname>Wasow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="638" to="659" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<analytic>
+		<title level="a" type="main">Creating and Comparing Dictionary, Word Embedding, and Transformer-Based Models to Measure Discrete Emotions in German Political Text</title>
+		<author>
+			<persName><forename type="first">Tobias</forename><surname>Widmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maximilian</forename><surname>Wich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Political Analysis</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<analytic>
+		<title level="a" type="main">Towards Making the Most of BERT in Neural Machine Translation</title>
+		<author>
+			<persName><forename type="first">Jiacheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengqi</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weinan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">34</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">Does Property Ownership Lead to Participation in Local Politics? Evidence from Property Records and Meeting Minutes</title>
+		<author>
+			<persName><forename type="first">Jesse</forename><surname>Yoder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1213" to="1229" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">A Comprehensive Survey on Transfer Learning</title>
+		<author>
+			<persName><forename type="first">Fuzhen</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keyu</forename><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongbo</forename><surname>Xi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongchun</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hengshu</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE</title>
+		<meeting>the IEEE</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page" from="43" to="76" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Measuring the Significance of Policy Outputs with Positive Unlabeled Learning</title>
+		<author>
+			<persName><forename type="first">Radoslaw</forename><surname>Zubek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Dasgupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Doyle</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Political Science Review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="339" to="346" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

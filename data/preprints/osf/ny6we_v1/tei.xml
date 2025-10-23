@@ -1,0 +1,1486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Mixed-Effects Frequency-Adjusted Borders Ordinal Forest: A Tree Ensemble Method for Ordinal Prediction with Hierarchical Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-10-08">Oct 8th, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Philip</forename><surname>Buczak</surname></persName>
+							<email>buczak@statistik.tu-dortmund.de</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">TU Dortmund University</orgName>
+								<address>
+									<postCode>44227</postCode>
+									<settlement>Dortmund</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Research Center Trustworthy Data Science and Security</orgName>
+								<orgName type="institution">UA Ruhr</orgName>
+								<address>
+									<postCode>44227</postCode>
+									<settlement>Dortmund</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">TU Dortmund University</orgName>
+								<address>
+									<addrLine>Vogelpothsweg 87</addrLine>
+									<postCode>44227</postCode>
+									<settlement>Dortmund</settlement>
+									<country>Germany;</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Mixed-Effects Frequency-Adjusted Borders Ordinal Forest: A Tree Ensemble Method for Ordinal Prediction with Hierarchical Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-10-08">Oct 8th, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D4B5F460E154D474A38BC62D261AC430</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:48+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Ordinal Prediction</term>
+					<term>Hierarchical Data</term>
+					<term>Random Forest</term>
+					<term>Machine Learning Mixed-Effects Frequency-Adjusted Borders Ordinal Forest: A Tree Ensemble Method</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Predicting ordinal responses such as school grades or rating scale data is a common task in the social and life sciences. Currently, two major streams of methodology exist for ordinal prediction: parametric models such as the proportional odds model and machine learning (ML) methods such as random forest (RF) adapted to ordinal prediction. While methods from the latter stream have displayed high predictive performance, particularly for data characterized by non-linear effects, most of these methods do not support hierarchical data.</p><p>As such data structures frequently occur in the social and life sciences, e.g., students nested in classes or individual measurements nested within the same person, accounting for hierarchical data is of importance for prediction in these fields. A recently proposed ML method for ordinal prediction displaying promising results for non-hierarchical data is Frequency-Adjusted Borders Ordinal Forest (fabOF). Building on an iterative expectation-maximization-type estimation procedure, I extend fabOF to hierarchical data settings in this work by proposing Mixed-Effects Frequency-Adjusted Borders Ordinal Forest (mixfabOF). Through simulation and a real data example on math achievement, I demonstrate that mixfabOF can improve upon fabOF and other RF-based ordinal prediction methods for (non-)hierarchical data in the presence of random effects.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Ordinal responses are commonly encountered in the social and life sciences.</p><p>Students receive ordinal grades for their performance, participants in assessment studies voice their preferences or agreement towards given statements on ordinal rating scales, judges evaluate the performance, e.g., in creativity tasks, using ordinal scores. Historically, there are two major streams of methodology developed for modeling and predicting ordinal responses. First, the more traditional stream of parametric models, e.g., cumulative models which assume that the observed ordinal responses are generated by an underlying latent (numeric) variable that can only be observed through certain thresholds <ref type="bibr" target="#b34">(McCullagh, 1980)</ref>. A particularly popular special case of the cumulative model is the proportional odds model <ref type="bibr" target="#b34">(McCullagh, 1980)</ref> which intuitively can be thought of as a series of logistic models holding simultaneously <ref type="bibr" target="#b51">(Tutz, 2021)</ref>. For a general overview of parametric models for ordinal responses, see <ref type="bibr" target="#b52">Tutz (2022)</ref>. The second methodological stream has developed more recently and involves using machine learning (ML) methods such as random forest (RF; <ref type="bibr" target="#b4">Breiman, 2001)</ref> for ordinal prediction <ref type="bibr" target="#b5">(Buczak, 2024;</ref><ref type="bibr" target="#b6">Buczak et al., 2024;</ref><ref type="bibr" target="#b22">Hornung, 2019;</ref><ref type="bibr" target="#b26">Janitza et al., 2016;</ref><ref type="bibr" target="#b51">Tutz, 2021)</ref>. ML methods offer the prospect of high predictive performance for large datasets as are becoming increasingly available in the social and life sciences, e.g., through click-stream data (e.g., <ref type="bibr" target="#b54">Ulitzsch et al., 2022)</ref>, ecological momentary assessment data (e.g., <ref type="bibr" target="#b28">Kathan et al., 2022)</ref> or other types of digital phenotyping and mobile sensing data (for an overview, see <ref type="bibr">Montag &amp; Baumeister, 2023)</ref>. Another common source of large datasets in these fields are large-scale assessment studies such as PISA, PIRLS or TIMSS. A ML method that was recently proposed for ordinal prediction is Frequency-Adjusted Borders Ordinal Forest (fabOF; <ref type="bibr" target="#b5">Buczak, 2024)</ref>. Similar to Ordinal Forest (OF; <ref type="bibr" target="#b22">Hornung, 2019)</ref> (and cumulative models), fabOF assumes the ordinal response to originate from an underlying latent numeric variable. To approximate the latent variable, fabOF represents each ordinal response category as a numeric interval and assigns a representative numeric score to each category, respectively. Based on the numeric scores and category interval borders, fabOF trains a regression RF and transforms the resulting numeric predictions back into ordinal categories via the category borders. Whereas OF relies on a computationally extensive optimization procedure to arrive at suitable values for the scores and category borders, fabOF employs a heuristic based on the frequencies of the ordinal response categories. Apart from the notable advantage in computational runtime, <ref type="bibr" target="#b5">Buczak (2024)</ref> has also demonstrated promising results regarding the predictive performance of fabOF. However, as indicated by the author, the lacking support for hierarchical data is a current limitation of fabOF. Hierarchical data structures occur when individual observations can be grouped into clusters, e.g., students nested within school classes or individual assessments nested within the same person in longitudinal study designs. Such structures can induce cluster-specific effects into the data which, e.g., in the case of (generalized) linear mixed models are accounted for by including cluster-specific random effects <ref type="bibr" target="#b35">(Molenberghs &amp; Verbeke, 2000)</ref>. In the context of ordinal regression, extensions to hierarchical data have been proposed, e.g., in <ref type="bibr" target="#b21">Hedeker and Gibbons (1994)</ref> and <ref type="bibr" target="#b53">Tutz and Hennevogl (1996)</ref>. While several extensions of ML algorithms to hierarchical data have been proposed for numeric outcomes <ref type="bibr" target="#b7">(Capitaine et al., 2020;</ref><ref type="bibr" target="#b18">Hajjem et al., 2011</ref><ref type="bibr" target="#b19">Hajjem et al., , 2012;;</ref><ref type="bibr" target="#b39">Pellagatti et al., 2021;</ref><ref type="bibr" target="#b44">Salditt et al., 2023;</ref><ref type="bibr" target="#b46">Sela &amp; Simonoff, 2012)</ref>, corresponding extensions for ordinal responses have long been lacking. Only recently, <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref> proposed Ordinal Mixed-Effect Random Forest (OMERF) building on the framework of the Generalized Mixed-Effect Random Forest (GMERF; <ref type="bibr" target="#b39">Pellagatti et al., 2021)</ref>. Developed independently in parallel and following a different approach, this work extends fabOF to hierarchical data by proposing Mixed-Effects Frequency-Adjusted Borders Ordinal Forest (mixfabOF). The newly proposed mixfabOF method follows the logic of fabOF and combines it with the iterative estimation procedure of Mixed-Effects Random Forest (MERF; <ref type="bibr" target="#b19">Hajjem et al., 2012)</ref>. Through simulation and an illustrative data example on math ability of fourth grade students, I will demonstrate that mixfabOF achieves higher predictive performance than fabOF and other non-hierarchical RF-approaches for ordinal prediction in the presence of moderate and large random effects. Furthermore, mixfabOF can improve upon OMERF in both, predictive performance and computational runtime. These promising findings underline the usefulness of the proposed mixfabOF method for ordinal prediction in hierarchical data scenarios as is common, e.g., in the context of educational achievement. To this end, improving predictive capabilities can help in better informing the development of educational policies and student support systems <ref type="bibr" target="#b11">(Costa-Mendes et al., 2020;</ref><ref type="bibr" target="#b55">van der Scheer &amp; Visscher, 2017)</ref>.</p><p>The remainder of this work is structured as follows. In the next section, I will provide an overview of previous research including RF-based methods for ordinal prediction as well as extensions of classic ML methods to hierarchical data for various outcome types.</p><p>Following this, I will introduce the newly proposed mixfabOF method and compare it with other ordinal prediction methods in a simulation study and an illustrative data example. This work will close with a discussion and potential avenues of further research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Previous Research</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ordinal Prediction with RF</head><p>While enjoying popularity for classification and regression tasks, RF is lacking inherent support for ordinal response data. As a remedy, several workarounds and extensions to RF have been proposed. A commonly used approach is assigning numeric scores to the ordinal response categories. In the context of decision trees, <ref type="bibr" target="#b30">Kramer et al. (2000)</ref> predicted ordinal responses using regression trees with numeric scores, while <ref type="bibr" target="#b40">Piccarreta (2007)</ref>, <ref type="bibr" target="#b0">Archer (2010)</ref> and <ref type="bibr" target="#b17">Galimberti et al. (2012)</ref> built on numeric scores to extend split criteria of classification trees to ordinal prediction tasks. Similarly, the Conditional Inference Tree framework <ref type="bibr" target="#b24">(Hothorn et al., 2006</ref>) also relies on numeric scores for accommodating ordinal responses. The use of Conditional Inference Forests for ordinal prediction has been studied in <ref type="bibr" target="#b26">Janitza et al. (2016)</ref>. While these approaches all either implicitly assume a concrete set of scores (e.g., 1, 2, . . . , k for k categories) or otherwise expect a user-specified input of scores, Ordinal Forest (OF; <ref type="bibr" target="#b22">Hornung, 2019)</ref> first employs an optimization procedure to determine an optimal set of numeric scores to be used within a regression RF context. An entirely score-free approach was proposed by <ref type="bibr" target="#b51">Tutz (2021)</ref> who introduced Split-Based Random Forest (RFSp). Instead of relying on regression RF, RFSp transforms the ordinal prediction task into a series of binary prediction tasks for which classification RFs are trained. The individual RF models are then used to obtain combined predictions for the original ordinal prediction task in the spirit of cumulative models <ref type="bibr" target="#b51">(Tutz, 2021)</ref>. <ref type="bibr" target="#b51">Tutz (2021)</ref> as well as <ref type="bibr" target="#b6">Buczak et al. (2024)</ref> compared the different tree ensemble methods with parametric models. Both studies found that the tree ensemble methods performed mostly similarly, while the most pronounced differences occurred in relation to the parametric model(s) depending on the data generating processes (e.g., non-linearity of effects). As a compromise between parametric and ML models, <ref type="bibr" target="#b51">Tutz (2021)</ref> proposed therefore combining both types in a joint prediction ensemble consisting of multiple individual prediction models. Regarding the optimization of the numeric scores assigned to the ordinal response categories, <ref type="bibr" target="#b6">Buczak et al. (2024)</ref> found that the optimization procedures in OF and the authors' own Ordinal Score Optimization Algorithm (OSOA) yielded only situational benefits. Based on these findings, <ref type="bibr" target="#b5">Buczak (2024)</ref> proposed Frequency-Adjusted Borders Ordinal Forest (fabOF). Following OF, fabOF assumes the ordinal response to be a coarser version of a latent numeric variable (similar to the cumulative model) and expresses the ordinal categories as numeric intervals that partition the assumed latent variable's domain. Each category interval is represented by a numeric score which is mapped to the ordinal response category and used to fit a regression RF. For new observations, the numeric predictions from the internal regression RF model are transformed into ordinal response categories through the category borders that define the category intervals. Where OF and fabOF differ is in their choice of category borders and scores. While OF uses an extensive optimization step to determine optimal settings, fabOF avoids the optimization step and relies on a category frequency-based heuristic to derive its category borders using arbitrary category scores <ref type="bibr" target="#b5">(Buczak, 2024)</ref>. After assigning numeric scores (e.g., 1, 2, . . . , k) to the ordinal response categories, a regression RF is trained using the numeric scores as the target variable. From the RF model, numeric out-of-bag (OOB) predictions for the training data are obtained, i.e., for a given observation, only trees for which the observation was not used for training are used for prediction, respectively. To determine the the category borders, fabOF uses the OOB predictions for computing quantiles for probabilities matching the cumulative relative frequencies of the ordinal response categories up to (but not including) category k. <ref type="bibr" target="#b5">Buczak (2024)</ref> reported promising findings regarding the predictive performance of fabOF and notably reduced computational runtime compared to OF. However, the author also identified a lacking support for hierarchical data structures as a current limitation of fabOF. This limitation is currently also shared with OF, RFSp and OSOA, as these all rely on RF internally. While RF as well as other classic ML methods were initially affected by this limitation, several extensions to hierarchical data have been proposed as a remedy which will be presented in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Extending Tree-based Methods to Hierarchical Data</head><p>Some of the earliest extensions of tree-based ML methods to hierarchical data were proposed by <ref type="bibr" target="#b45">Segal (1992)</ref> and <ref type="bibr" target="#b12">De'ath (2002)</ref>. Both authors accommodated hierarchical data structures by extending univariate regression trees to multivariate regression trees where all (univariate) observations of a cluster were treated as a combined multivariate cluster observation vector. As such, only splits at the cluster-level could be performed which, e.g., in a longitudinal setting would imply that all covariates need to be fixed in time <ref type="bibr" target="#b44">(Salditt et al., 2023)</ref>. This limitation (also present in subsequent approaches, such as <ref type="bibr" target="#b33">Loh &amp; Zheng, 2013)</ref> was addressed by the Mixed Effects Regression Tree (MERT; <ref type="bibr" target="#b18">Hajjem et al., 2011)</ref> and Random Effects Expectation Maximization (RE-EM) tree <ref type="bibr" target="#b46">(Sela &amp; Simonoff, 2012)</ref> which allow for splitting at the observation-and cluster-level alike. Both approaches operate within the linear mixed model (LMM) framework where the n observations adhere to a hierarchical structure and are grouped into m clusters of sizes</p><formula xml:id="formula_0">n 1 , . . . , n m (with n 1 + • • • + n m = n).</formula><p>It is assumed that the individual outcomes result from a linear combination of (global) fixed effects and cluster-specific random effects. The classic LMM (cf. <ref type="bibr" target="#b35">Molenberghs &amp; Verbeke, 2000)</ref> models the outcome vector y j of cluster j as</p><formula xml:id="formula_1">y j = X j β + Z j b j + ε j , j = 1, . . . , m,<label>(1)</label></formula><p>where β ∈ R p is the fixed effects vector and for cluster j, respectively, X j ∈ R n j ×p is the matrix of fixed effect covariate values, Z j ∈ R n j ×q is the matrix of random effect covariate values, b j ∈ R q is the vector of random effects, and ε j ∈ R n j is the vector of error terms,</p><formula xml:id="formula_2">j = 1, . . . , m. It is assumed that b j ∼ N (0, D) with D ∈ R q×q as well as ε j ∼ N (0, R j ).</formula><p>For R j , it is often assumed that R j = σ 2 I n j ×n j <ref type="bibr" target="#b14">(Fahrmeir et al., 2021)</ref>. It is further assumed that the random effects b 1 , . . . , b m and error terms ε 1 , . . . , ε m are independent <ref type="bibr" target="#b35">(Molenberghs &amp; Verbeke, 2000)</ref>. <ref type="bibr" target="#b18">Hajjem et al. (2011)</ref> and <ref type="bibr" target="#b46">Sela and Simonoff (2012)</ref> both approach their extension of regression trees to hierarchical data by modifying the model in Equation 1 and replacing the linear fixed effects structure through a (non-linear) function f (X j ). This results in the modified model</p><formula xml:id="formula_3">y j = f (X j ) + Z j b j + ε j , j = 1, . . . , m.<label>(2)</label></formula><p>For estimation, both approaches use the Expectation Maximization (EM) Algorithm <ref type="bibr" target="#b13">(Dempster et al., 1977)</ref> as can be used for the estimation of mixed models (see e.g., <ref type="bibr" target="#b31">Laird &amp; Ware, 1982)</ref>. To this end, the estimation procedure iterates between estimating the fixed (i.e., f (X j )) and random effect components. However, MERT and RE-EM trees differ in their specification and estimation of the fixed effects component. In MERT, f (X j ) is estimated by fitting a regression tree to the modified outcome</p><formula xml:id="formula_4">ỹj = y j -Z j b j , j = 1, . . . , m,<label>(3)</label></formula><p>i.e., the outcome from which the random effect structure has been removed <ref type="bibr" target="#b18">(Hajjem et al., 2011)</ref>. RE-EM trees, on the other hand, fit a regression tree to the modified outcome only to use the resulting partition to fit a LMM in which fixed effects are modeled locally (as determined by the partition specified by the regression tree model) and random effects globally <ref type="bibr" target="#b46">(Sela &amp; Simonoff, 2012)</ref>. Both MERT and RE-EM trees have been extended for use with RF through Mixed-Effects Random Forest (MERF; <ref type="bibr" target="#b19">Hajjem et al., 2012)</ref> and</p><p>REEMforest <ref type="bibr" target="#b7">(Capitaine et al., 2020)</ref>. <ref type="bibr" target="#b7">Capitaine et al. (2020)</ref> further proposed the inclusion of a stochastic model component, resulting in further extensions, namely SMERT, SMERF, SREEMtree and SREEMforest. For adapting MERT/MERF to response types from the exponential family, Generalized Mixed Effects Regression Trees (GMERT; Hajjem et al., 2017), Generalized Mixed-Effects Trees (GMET; Fontana et al., 2021) and Generalized Mixed-Effects Random Forest (GMERF; Pellagatti et al., 2021) have been proposed. Using a Bayesian approach for binary responses, Speiser et al. (2018) introduced Binary Mixed Model (BiMM) trees which were extended to BiMM forests <ref type="bibr" target="#b48">(Speiser et al., 2019)</ref>.</p><p>Extensions of other ML methods to hierarchical data in the spirit of MERT and RE-EM trees have also been proposed for logistic regression <ref type="bibr" target="#b32">(Lin &amp; Luo, 2019)</ref> and gradient tree boosting <ref type="bibr" target="#b44">(Salditt et al., 2023)</ref>. For an overview of most of the above methods, see <ref type="bibr" target="#b25">Hu and Szymczak (2023)</ref>.</p><p>In the context of ordinal prediction for hierarchical data, <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref> have recently proposed Ordinal Mixed-Effects Random Forest (OMERF) which builds on the GMERF framework. OMERF initializes by fitting an OF model to the data, and then iterates between fitting a RF and a CLMM. The Mixed-Effects Frequency-Adjusted Borders Ordinal Forest (mixfabOF) method proposed in this work was developed independently of OMERF, and instead combines the approaches of MERF and fabOF. I will present mixfabOF in detail in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mixed-Effects Frequency-Adjusted Borders Ordinal Forest</head><p>The general idea of mixfabOF is assigning numeric scores to the ordinal response categories, performing the iterative estimation of fixed and random effects components known from MERF and deriving suitable category borders using the heuristic from fabOF.</p><p>The procedure is described in more detail with pseudocode in Algorithm 1. After assigning numeric scores (e.g., default scores 1, . . . , k for k categories) to the ordinal response categories, the score-based numeric outcome values y num j , j = 1, . . . , m, are used to iterate between estimating the fixed and random effects components. To this end, mixfabOF follows the procedure proposed in MERF (cf. lines 7-14 of Algorithm 1 with pseudocode in <ref type="bibr" target="#b18">Hajjem et al., 2011)</ref>. For the current fixed effects component, a regression RF is trained on the current modified responses from which the random effects have been removed (cf.</p><p>Equation 3). Having updated the fixed effect component, the estimates for the random effects, random effect variance and the residual variance are updated. The alternating estimation procedure continues until convergence or a maximum number of iterations is achieved. For assessing convergence, mixfabOF uses the generalized log-likelihood (GLL) criterion employed in MERF (cf. <ref type="bibr" target="#b19">Hajjem et al., 2012)</ref>, i.e.,</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GLL(f, b i |y</head><formula xml:id="formula_5">num ) = m j=1 y num j -f (X j ) -Z j b j T R -1 j y num j -f (X j ) -Z j b j + b T j D -1 b j + log |D| + log |R i | . (<label>4</label></formula><formula xml:id="formula_6">)</formula><p>For a given iteration, the criterion is computed using the current estimates. When the relative change in the GLL compared to the previous iteration is smaller than a threshold value δ, the iterative procedure is stopped. Following <ref type="bibr" target="#b44">Salditt et al. (2023)</ref>, mixfabOF uses δ = 0.001. After the iterative estimation procedure, the frequency-adjusted borders heuristic of fabOF is applied. To this end, numeric OOB-based predictions ŷnum j for the training data are computed using the final RF model's numeric OOB predictions f (X j ) OOB and the final random effect estimates, i.e., ŷnum j = f (X j ) OOB + Z j bj , j = 1, . . . , m. For readability, the subscript indicating the final iteration has been omitted. Based on the cumulative relative frequencies π 1 , . . . , π k-1 of the ordinal response categories up to (but not including) category k, the respective quantiles q π 1 (ŷ num ), . . . , q π k-1 (ŷ</p><p>num ) of the OOB-based predictions are determined. These quantiles are in turn assigned to the inner set of category borders whereas the lower and upper bound are set to -∞ and ∞, respectively. Note that fabOF's use of the lowest and highest numeric scores as bounds are not possible here anymore since due to the inclusion of the random effects, values smaller or larger than s 1 and s k can occur. Lastly, the final RF fit, the final random effect estimates and the category borders are returned. New observations from known clusters are predicted by first obtaining numeric predictions based on the fixed effects component RF model and the random effect estimates. For observations from unknown clusters, only the fixed effects component is used while the random effects component is set to zero (similar, e.g., to the lme4 package; Bates et al., 2015). In both cases, the numeric predictions are transformed into ordinal response category predictions using the category borders. An implementation of mixfabOF is available in the fabOF package which can be obtained from GitHub (<ref type="url" target="https://github.com/phibuc/fabOF">https://github.com/phibuc/fabOF</ref>). The implementation further includes the possibility of computing variable importance values for the covariates associated with the fixed effects. The custom permutation variable importance measure (VIM) is based on the VIM introduced in Buczak (2024) and was adapted for use with mixfabOF such that the hierarchical data context is accounted for. To this end, it additionally allows for permuting in a clusterwise fashion, i.e., permutations are only performed within the same cluster, respectively. Variable importance values can aid with interpreting RF-based models as RF inherently suffers from a lack of interpretability <ref type="bibr" target="#b36">(Molnar, 2022)</ref>. Permutation VIMs <ref type="bibr" target="#b4">(Breiman, 2001)</ref> assess the impact of individual covariates on the model's predictive performance by randomly shuffling the values of a given covariate, thus, voiding the information it contains. The importance of the covariate is then determined by comparing the predictive performance achieved when using the original data and the permuted data. The underlying logic is that a comparatively large decrease in predictive performance indicates that the given covariate is important for the model's predictions <ref type="bibr" target="#b36">(Molnar, 2022)</ref>.</p><p>Algorithm 1 Mixed-Effects Frequency-Adjusted Borders Ordinal Forest (mixfabOF)</p><formula xml:id="formula_7">1: procedure mixfabOF 2:</formula><p>Unless specified otherwise, assign scores (s 1 , s 2 , . . . , s k ) ← (1, 2, . . . , k).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3:</head><p>Create y num j , j = 1, . . . , m, by assigning scores to ordinal response categories.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4:</head><p>Set r = 0, D(0) = I n j ×n j , bj,(0) = 0 n j , j = 1, . . . , m.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5:</head><p>while r ≤ max.iter and not converged do 6:</p><formula xml:id="formula_8">r = r + 1 7:</formula><p>Update ỹnum j,(r) , f(r) (X j ) and bj,(r) :</p><formula xml:id="formula_9">8:</formula><p>ỹnum j,(r) = y num j -Z j bj,(r-1) , j = 1, . . . , m.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>9:</head><p>Obtain f(r) (X j ) by fitting a regression RF to response ỹnum (r) and covariates X.</p><formula xml:id="formula_10">10: bj,(r) = D(r-1) Z T j V -1 j,(r-1) y num j -f(r) (X j ) , j = 1, . . . , m, 11:</formula><p>where V -1 j,(r-1) = Z j D(r-1) Z T j + σ2 (r-1) I n j ×n j .</p><p>12:</p><p>Update σ2 (r) and D(r) :</p><p>σ2 (r) = 1 n m j=1 εT j,(r) εj,(r) + σ2 (r-1) n j -σ2 (r-1) trace V j,(r-1) , D(r) = 1 m m j=1 bj,(r) bT j,(r) + D(r-1) -D(r-1) Z T j V -1 j,(r-1) Z j D(r-1) , 13:</p><p>where εj,(r) = y num j -f(r) (X j ) -Z j bj,(r) .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>14:</head><p>Check convergence using GLL criterion.</p><p>15:</p><p>end while 16:</p><p>Compute numeric OOB predictions f (X j ) OOB with final RF model, j = 1, . . . , m.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>17:</head><p>Compute OOB-based predictions ŷnum j = f (X j ) OOB + Z j bj , j = 1, . . . , m.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>18:</head><p>For categories up to category k, compute cumulative relative frequencies π 1 , . . . , π k-1 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>19:</head><p>Obtain prediction quantiles q π 1 (ŷ num ), . . . , q π k-1 (ŷ num ) for probabilities π 1 , . . . , π k-1 .</p><p>20:</p><formula xml:id="formula_11">Assign category borders (b 1 , b 2 , . . . , b k , b k+1 ) ← -∞, q π 1 (ŷ num ), . . . , q π k-1 (ŷ num ), ∞ .</formula><p>21:</p><p>return RF model, random effect estimates and category borders 22: end procedure</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Setup</head><p>To evaluate mixfabOF, I performed a simulation study whose setup was largely inspired by the simulation studies in <ref type="bibr" target="#b18">Hajjem et al. (2011)</ref> and <ref type="bibr" target="#b44">Salditt et al. (2023)</ref>. I used the same random intercept population model (cf. <ref type="bibr" target="#b44">Salditt et al., 2023)</ref>, i.e. the (numeric) outcome y ij for observation i in cluster j was modeled was</p><formula xml:id="formula_12">y ij = f (x ij ) + b j + ε ij ,</formula><p>where f (x ij ) is the fixed effects linear predictor, b j the random intercept effect of cluster j and ε ij the respective error term. As covariates, I simulated nine standard normally distributed random variables X 1 , . . . X 9 with all variables correlated to each other with a correlation of ρ = 0.4. As in <ref type="bibr" target="#b18">Hajjem et al. (2011)</ref>, the fixed effects linear predictor was simulated as</p><formula xml:id="formula_13">f (x ij ) = 2x 1ij + x 2 2ij + 4 • 1 x 3ij &gt;0 + 2 log (|x 1ij |) x 3ij .</formula><p>The random intercept effects were generated from a normal distribution with expected mean µ b = 0 and variance</p><formula xml:id="formula_14">σ 2 b = ICC 1 -ICC ,</formula><p>where ICC (intraclass correlation) was varied between 0.05, 0.25, 0.50 as in <ref type="bibr" target="#b44">Salditt et al. (2023)</ref> to cover different magnitudes of random effect variance. The error terms were simulated as standard normally distributed. To transform the numeric outcomes into ordinal response categories, I assigned five categories based on specifically selected threshold values. Using a similar approach as in Hornung (2019) and Buczak et al. (2024), the threshold values were chosen such that in a simulated population of size 100 000 a specific response category distribution pattern emerged. Analogously to Buczak (2024), I considered a response pattern with equally distributed categories as well as a pattern with prominent middle categories (denoted as wide middle pattern). For equally distributed response categories, relative category frequencies of 0.20, 0.20, 0.20, 0.20, 0.20 were targeted, while for the wide middle pattern relative category frequencies of 0.11, 0.22, 0.33, 0.22, 0.11 were targeted, respectively. The threshold values derived from this are displayed in Table A1 (see Appendix A). The number of clusters was varied between 100 and 250. I further followed Salditt et al. (2023) regarding cluster sizes. For simulation conditions with 100 clusters, the number of observations from each cluster in the training data was randomly drawn from a discrete uniform distribution with bounds 10 and 15, while each cluster contained 10 observations in the test data. For simulation conditions with 250 clusters, the number of observations from each cluster was randomly drawn from a discrete uniform distribution with bounds 25 and 35, while each cluster contained 25 test observations, respectively.</p><p>I compared mixfabOF to the following (ordinal) prediction methods: fabOF <ref type="bibr" target="#b5">(Buczak, 2024)</ref> as implemented in the fabOF package available from GitHub (<ref type="url" target="https://github.com/phibuc/fabOF">https://github.com/phibuc/fabOF</ref>), OF <ref type="bibr" target="#b22">(Hornung, 2019)</ref> using the ordinalForest package <ref type="bibr" target="#b23">(Hornung, 2022)</ref>, multi-label classification RF <ref type="bibr" target="#b4">(Breiman, 2001)</ref> as implemented in the ranger package <ref type="bibr" target="#b56">(Wright &amp; Ziegler, 2017)</ref>, OMERF <ref type="bibr" target="#b3">(Bergonzoli et al., 2024)</ref> using the implementation provided by the authors on GitHub (<ref type="url" target="https://github.com/giuliabergonzoli/OMERF">https://github.com/giuliabergonzoli/OMERF</ref>) as well as a Cumulative Logit Mixed Model (CLMM; see e.g., <ref type="bibr" target="#b53">Tutz &amp; Hennevogl, 1996)</ref> as implemented in the ordinal package <ref type="bibr" target="#b8">(Christensen, 2022)</ref>. The CLMM was specified such that it included all linear main effects as well as a random intercept. Since fabOF, OF and RF do not support hierarchical data structures, I included the grouping variable as an additional covariate such that these methods can make use of the grouping information. All computations were run using R version 4.2.1 (R Core Team, 2023). For all RF-based methods, I used 500 trees as is a common default value, e.g., in the ranger package. As the maximum number of iterations for OMERF, I have selected 100 as is the suggested default setting by <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref>. I used the same maximum number of iterations for mixfabOF. For the remaining parameters of the individual methods, I used the respective default values. I did not perform a hyperparameter tuning as RFs have been shown to be relatively robust regarding their parameter settings <ref type="bibr" target="#b42">(Probst et al., 2019)</ref>. This design decision is in line with previous works from the field of RF-based ordinal prediction <ref type="bibr" target="#b6">(Buczak et al., 2024;</ref><ref type="bibr" target="#b22">Hornung, 2019;</ref><ref type="bibr" target="#b51">Tutz, 2021)</ref>. To assess the predictive performance of the different prediction methods, I have used Cohen's weighted Kappa <ref type="bibr" target="#b10">(Cohen, 1968)</ref> with linear and quadratic weights as well as Kendall's rank correlation <ref type="bibr" target="#b29">(Kendall, 1948)</ref> as performance measures. These measures are commonly used in the context of ordinal prediction (e.g., <ref type="bibr" target="#b2">Ben-David, 2008;</ref><ref type="bibr" target="#b6">Buczak et al., 2024;</ref><ref type="bibr" target="#b22">Hornung, 2019)</ref>. Similar to Cohen's Kappa <ref type="bibr" target="#b9">(Cohen, 1960)</ref>, weighted Kappa is a measure of agreement, in this case between the predicted and true response categories.</p><p>Through the weights, the ordinal nature of the response is reflected as the "distance" between true and predicted categories is taken into account. Different weighting schemes allow for accentuating deviations from the true categories differently <ref type="bibr" target="#b22">(Hornung, 2019)</ref>.</p><p>Linear and quadratic weights are among the most common choices for ordinal prediction <ref type="bibr" target="#b2">(Ben-David, 2008;</ref><ref type="bibr" target="#b22">Hornung, 2019)</ref>. All simulation conditions were run with 1 000 replications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Results</head><p>In the following, the results from the simulation study will be presented. As the choice of response category distribution pattern only had little impact on the results, I will only be displaying results for the wide middle pattern here. For the remaining results, I refer to the Supplement. In all conditions, OMERF suffered from high rates of non-convergence. For small cluster sizes, OMERF converged in less than 1% of the runs, while for large cluster sizes OMERF only converged in about 11% of the runs. As such, this must be kept in mind when interpreting OMERF's results. In contrast to OMERF, mixfabOF converged in all simulation runs.</p><p>Figure <ref type="figure" target="#fig_1">1</ref> shows the results for data generated with ICC = 0.05, i.e., with small random effect variability. For all performance measures, similar result patterns emerged. It can be seen that the CLMM and OMERF fell notably behind the other methods. For the CLMM, this can be explained by the highly non-linear effect structure. Whereas for mostly linear effects, parametric models tend to outperform RF-based approaches for ordinal prediction, RF-based methods tend to perform better under non-linear effects <ref type="bibr" target="#b6">(Buczak et al., 2024)</ref>. Regarding the remaining methods, RF slightly trailed mixfabOF, fabOF and OF which performed mostly similarly. For settings with 100 clusters, however, fabOF and mixfabOF tended to slightly outperform OF. As the random effect variability was low, the similar performance of fabOF and mixfabOF was to be expected. Generally, increasing the number of clusters and the size of the clusters led to reduced variability of the results for all methods and to improved predictive performance for mixfabOF, fabOF, OF and RF.</p><p>For the CLMM and OMERF, predictive performance remained mostly unaffected by the number of clusters and cluster sizes. Figure <ref type="figure" target="#fig_2">2</ref> shows the results for settings with moderate random effect variability (ICC = 0.25). Whereas for the low random effect variability conditions, mixfabOF, fabOF and OF performed similarly, the increased random effect variability resulted in mixfabOF pulling slightly ahead of fabOF and OF. This was most pronounced for settings with 250 clusters or large cluster sizes. Apart from this, the remaining findings from the low random effect variability settings mostly carried over. RF slightly trailed behind mixfabOF, fabOF and OF, while the CLMM and OMERF achieved notably lower predictive performance. As before, increasing the number of clusters and the cluster sizes, resulted in a reduction of variability and an improvement in predictive performance for mixfabOF, fabOF, OF and RF.</p><p># Clusters: 100 Cluster size: large # Clusters: 100 Cluster size: small # Clusters: 250 Cluster size: large # Clusters: 250 Cluster size: small CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF 0.3 0.4 0.5 0.6 0.7 0.8 Linearly weighted Kappa # Clusters: 100 Cluster size: large # Clusters: 100 Cluster size: small # Clusters: 250 Cluster size: large # Clusters: 250 Cluster size: small CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF 0.5 0.6 0.7 0.8 0.9 Quadratically weighted Kappa # Clusters: 100 Cluster size: large # Clusters: 100 Cluster size: small # Clusters: 250 Cluster size: large # Clusters: 250 Cluster size: small CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF CLMM fabOF mixfabOF OF OMERF RF 0.5 0.6 0.7 0.8 Kendall rank correlation Figure <ref type="figure" target="#fig_3">3</ref> displays the results for the simulation conditions with high random effect variability. It can be seen that mixfabOF achieved the highest predictive performance in all scenarios. The further increase in random effect variability has resulted in a wider performance gap between mixfabOF and the two most competitive methods, fabOF and OF. As for the other two random effect variability settings, RF slightly lagged behind these three predictions methods, while the CLMM and OMERF fell further behind. Similarly, an increase in number of clusters and cluster sizes led to lower variability for all methods and higher predictive performance for mixfabOF, fabOF, OF and RF. Overall, the findings from this simulation study are promising as mixfabOF displayed similar predictive performance as fabOF for low random effect variability and improved upon the latter for medium and high random effect variability for which it achieved the highest predictive performance of all methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Runtime Analysis</head><p>Apart from the predictive performance of the different ordinal prediction methods, their computational runtime is another factor warranting consideration. <ref type="bibr" target="#b6">Buczak et al. (2024)</ref> have demonstrated that the computational runtimes of ordinal prediction methods can vary notably. Therefore, I also performed a runtime analysis of the prediction methods compared in this work similar to the one in <ref type="bibr" target="#b6">Buczak et al. (2024)</ref>. Because all computations were performed on a compute cluster, the individual runs may not be perfectly comparable regarding the CPU nodes assigned by the cluster's workload manager or the current overall workload of the cluster at any given time. Additionally, all computations were restricted to using only a single CPU core which could have negatively impacted methods relying on parallelization. However, many prediction methods considered here are based on the same RF implementation from the ranger package <ref type="bibr" target="#b56">(Wright &amp; Ziegler, 2017)</ref>, thus, benefiting comparability. Overall, the following results should not be interpreted as precise runtime comparisons, but rather as indications of the potential magnitudes of runtime differences between the prediction methods. For the runtime analysis, I have selected the simulation condition where data is generated using ICC = 0.25 and a wide middle response category distribution pattern for 250 clusters of large size (i.e, leading to the largest datasets).</p><p>Figure <ref type="figure" target="#fig_5">4</ref> shows the computational runtimes of the individual methods relative to the runtime of fabOF. Relative runtimes offer the benefit of being less dependent on the machine used for running the experiments. As fabOF was the fastest method overall, I have selected it as the reference method. For better visibility, I have logarithmized the relative runtimes using base 10. Consequently, a value of 0 indicates a runtime equal to fabOF while a value of 1 indicates a runtime larger than fabOF by a factor of 10. Since fabOF internally fits a single regression RF, it was to be expected that RF came closest to fabOF in runtime. For the data considered here, CLMM and mixfabOF required similar runtimes with mixfabOF's relative runtimes being slightly smaller on average and varying less. The relative runtimes of OF and OMERF were notably larger. As OMERF internally fits an OF model during its initialization, it can be seen that this step makes up a bulk of its runtime. It should be noted that OF's runtime is directly linked to the resources allotted to its optimization process. While the default values were used here, reducing the number of score/category border sets generated during the optimization step, can reduce OF's runtime. Furthermore, as noted above, OMERF was affected by high non-convergence rates in this simulation. Increasing OMERF's maximum number of iterations may potentially remedy these issues, but would in turn increase OMERF's runtime even further.</p><p>-1 0 1 2 3 4 CLMM mixfabOF OF OMERF RF Method Log. Relative Time </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Illustrative Data Example</head><p>In addition to the simulation study, I have also evaluated mixfabOF on an illustrative data example stemming from the Trends in International Mathematics and Science Study (TIMSS) 2019 data <ref type="bibr" target="#b15">(Fishbein et al., 2021)</ref>. TIMSS surveys the achievement of international fourth and eighth grade students in mathematics and science. For this analysis, I focused on a subset of the original data including only German students. As in Germany only data from fourth grade students is collected, the subset of the data accordingly only contained fourth graders. The goal of the prediction task constructed for this analysis was to predict the mathematical ability of students based on the students' sex, age, number of home study supports as well as their values on scales on disorderly behavior during math lessons, instructional clarity in math lessons, sense of school belonging, bullying experiences, liking of learning math, confidence in math, and self-efficacy in computer use. Only complete observations from schools with at least five observations were considered, resulting in a sample size of 2773 students from 191 different schools. When fitting a random intercept LMM without any covariates to the numeric outcome, an estimated ICC of 0.23 resulted, indicating the presence of moderate random effect variability. For creating the ordinal response, I binned the original numeric mean ability score (ranging from 0-1000) into five ordinal categories: [0, 450), <ref type="bibr">[450, 500), [500, 550)</ref>, <ref type="bibr">[550, 600) and [600, 1000)</ref> with n 1 = 354, n 2 = 598, n 3 = 778, n 4 = 681 and n 5 = 362. I compared mixfabOF with the same methods as in the simulation study using the same settings. For the CLMM, all linear main effects and a random intercept were included. For RF, fabOF and OF, the grouping factor was included as an additional covariate. Predictive performance was assessed with a five-fold cross-validation (CV) using weighted Kappa with linear and quadratic weights as well as Kendall's rank correlation as performance measures.</p><p>The sampling of the CV folds was performed at the cluster-level such that observations from each school were included in the training and the test data, respectively.</p><p>Figure <ref type="figure" target="#fig_6">5</ref> shows the predictive performance achieved by the different prediction methods in 100 replications. It can be seen that mixfabOF generally reached the best performance for all three performance measures. Comparing mixfabOF to the non-hierarchical prediction methods (particularly to its direct counterpart fabOF), the results demonstrate the usefulness of accounting for hierarchical structures for the present data. While performing better than the non-hierarchical OF and RF for weighted Kappa with quadratic weights and Kendall's rank correlation, OMERF falls behind mixfabOF, fabOF and the CLMM for all performance measures. Similar to the simulation study, OMERF was affected by convergence issues where for each run the maximum number of iterations was reached at least once during the CV loop. The differences between mixfabOF and the CLMM can likely be attributed to the nature of the underlying effects (linear vs. non-linear). It is to be expected that the relation between the predictive</p><p>0.350 0.375 0.400 0.425 0.450 0.475 CLMM fabOF mixfabOF OF OMERF RF Linearly weighted Kappa 0.52 0.56 0.60 0.64 CLMM fabOF mixfabOF OF OMERF RF Quadratically weighted Kappa 0.44 0.48 0.52 0.56 CLMM fabOF mixfabOF OF OMERF RF Method Kendall rank correlation Predictive performance achieved by prediction methods on TIMSS data. performance of mixfabOF and the CLMM is modulated by the effect nature <ref type="bibr" target="#b6">(Buczak et al., 2024)</ref> and will likely vary across different datasets.</p><p>To examine the impact of the individual covariates on the predictive performance of mixfabOF, I computed the permutation variable importance values obtained when fitting a mixfabOF model to the entire dataset with clusterwise permutations. When allowing for permutations across all clusters, the results were affected only slightly. Figure <ref type="figure">6</ref> shows that the confidence in math scale is the most important covariate for the model's predictive performance. This is in line with results from the educational research literature which identified math confidence and the related concept of math self-efficacy as important predictors for math achievement <ref type="bibr" target="#b27">(Jiang et al., 2013;</ref><ref type="bibr" target="#b41">Pitsia et al., 2017;</ref><ref type="bibr" target="#b49">Stankov et al., 2012)</ref>. While the other covariates achieved notably lower importance values, some caution is advised when interpreting these results as some covariates displayed moderate to high degrees of correlation. For example, the Pearson correlation between "confidence in math" and "like learning math" was 0.66. Unconditional VIMs as the one used here, are known to be affected by highly correlated covariates (see, e.g., <ref type="bibr" target="#b36">Molnar, 2022;</ref><ref type="bibr" target="#b38">Nicodemus et al., 2010;</ref><ref type="bibr" target="#b50">Strobl et al., 2008)</ref>. For assessing the reliability of the results, a comparison with results for a conditional VIM (e.g., in the vein of <ref type="bibr" target="#b50">Strobl et al., 2008)</ref> would be desirable. In contrast to unconditional permutation VIMs, conditional permutation VIMs place restrictions on the permutation process such that the original correlation structure between covariates is better preserved <ref type="bibr" target="#b50">(Strobl et al., 2008)</ref>. Currently, there is no conditional VIM available for mixfabOF. Since conditional VIMs as proposed by <ref type="bibr" target="#b50">Strobl et al. (2008)</ref> operate on the tree-level to determine permitted permutations and to compute the variable importance, an analogous implementation for mixfabOF would require further adjustments. This is due to the fact that mixfabOF does not transform its internal numeric scores used for representing the ordinal categories back into ordinal category predictions until they have been aggregated at the forest-level. As such, the variable importance cannot be evaluated at the tree-level (see also <ref type="bibr" target="#b5">Buczak, 2024</ref>, for a more detailed discussion). As a consequence, implementing a conditional VIM for mixfabOF in future work would likely require a different approach than the one proposed <ref type="bibr" target="#b50">Strobl et al. (2008)</ref>. Permutation variable importance values for mixfabOF model on TIMSS data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>In this work, I proposed Mixed-Effects Frequency-Adjusted Borders Ordinal Forest (mixfabOF), an ordinal prediction method specifically tailored towards ordinal prediction tasks with hierarchical data structures. The proposed methods extends Frequency-Adjusted Borders Ordinal Forest (fabOF; <ref type="bibr" target="#b5">Buczak, 2024)</ref> for use with hierarchical data by adapting the iterative fixed and random effects estimation procedure employed in Mixed-Effects Random Forest (MERF; <ref type="bibr" target="#b19">Hajjem et al., 2012)</ref>. To this end, mixfabOF assigns numeric scores to the ordinal response categories and uses these scores to iterate between fitting a regression random forest (RF; <ref type="bibr" target="#b4">Breiman, 2001)</ref> to estimate the fixed effects component and fitting a linear mixed model (LMM; see e.g., <ref type="bibr" target="#b35">Molenberghs &amp; Verbeke, 2000)</ref> to estimate the random effects component. Having arrived at the final estimates for the fixed and random effect components, mixfabOF follows fabOF in determining the numeric category borders that are used for predicting new observations based on the cumulative relative frequencies of the ordinal response categories in the data.</p><p>Through simulation and an illustrative example from the Trends in International</p><p>Mathematics and Science Study (TIMSS) 2019 study <ref type="bibr" target="#b15">(Fishbein et al., 2021)</ref>, I demonstrated that mixfabOF can achieve higher predictive performance under medium and high random effect variability than existing (ordinal) prediction methods such as fabOF, Ordinal Forest (OF; Hornung, 2019) and multi-label classification RF.</p><p>Furthermore, mixfabOF achieved notably higher predictive performance for the simulated and real data considered in this work than Ordinal Mixed-Effect Random Forest (OMERF; <ref type="bibr" target="#b3">Bergonzoli et al., 2024)</ref>, which at the time of writing this work is (to my knowledge) the only method for ordinal prediction of hierarchical data proposed so far.</p><p>Since OMERF relies on fitting an OF model internally, it is also affected by the computational runtime of OF's optimization procedure. As such, the runtime analysis performed in this work also revealed significant runtime advantages of mixfabOF over OMERF. However, some part of this disparity may be explained by the high rates of non-convergence from which OMERF suffered in the simulation and real data experiments.</p><p>This may have potentially affected OMERF's predictive performance as well.</p><p>Experimenting with higher maximum numbers of iterations did not alleviate the convergence issues. As such, I was not able to obtain an explanation for OMERF's behavior. Since OMERF is a very recent method, available references and recommendations for OMERF are scarce. Therefore, an incorrect use of the implementation in this work cannot be ruled out with complete certainty. To obtain an additional comparison and to check for potential misuse of the method, I additionally performed a benchmark study on the random intercept model used for simulation in <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref>. Figure <ref type="figure" target="#fig_1">B1</ref> shows that mixfabOF achieved the highest predictive performance for all performance measures overall followed by OMERF and fabOF. For this data generating model, OMERF converged in all 100 replications. As <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref> only used data where the ordinal response consisted of three categories, perhaps the number of ordinal categories affects the convergence rates of OMERF. Figure <ref type="figure" target="#fig_2">B2</ref> indicates that despite OMERF's improved convergence rates, mixfabOF still required notably less runtime than OMERF due to the computational runtime associated with fitting an OF model.</p><p>Apart from the RF-based approaches, I have also compared mixfabOF with a Cumulative Logit Mixed Model (CLMM; see e.g., <ref type="bibr" target="#b21">Hedeker &amp; Gibbons, 1994;</ref><ref type="bibr" target="#b53">Tutz &amp; Hennevogl, 1996)</ref> in this work. While mixfabOF achieved higher predictive performance for the simulated and real data, it should be noted that this is likely caused by the effect structure of the data considered in this work. The data generating process in the simulation was characterized by mostly non-linear effects. In their comparison of RF-based ordinal prediction methods and a parametric model, <ref type="bibr" target="#b6">Buczak et al. (2024)</ref> found that for predominantly linear effects, RF-based methods fell behind the parametric model, while for predominantly non-linear effects, the RF-based methods outperformed the parametric model. As such, it is plausible to expect that for data adhering to a mostly linear effect structure, the CLMM may outperform mixfabOF (and other RF-based prediction</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1</head><label>1</label><figDesc>Figure 1Predictive performance of prediction methods based on number of clusters and cluster sizes for ICC = 0.05.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2</head><label>2</label><figDesc>Figure 2Predictive performance of prediction methods based on number of clusters and cluster sizes for ICC = 0.25.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3</head><label>3</label><figDesc>Figure 3Predictive performance of prediction methods based on number of clusters and cluster sizes for ICC = 0.50.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4</head><label>4</label><figDesc>Figure 4Computational runtime relative to fabOF for data with 250 clusters of large size. Values have been logarithmized using base 10.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5</head><label>5</label><figDesc>Figure 5</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><figDesc>Figure 6</figDesc></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Note</head><p>The author would like to thank Dr. Marie Beisemann for providing helpful discussion and valuable feedback. This work has been partly supported by the Research Center Trustworthy Data Science and Security (<ref type="url" target="https://rc-trust.ai">https://rc-trust.ai</ref>), one of the Research Alliance centers within the UA Ruhr (<ref type="url" target="https://uaruhr.de">https://uaruhr.de</ref>). Additionally, the author gratefully acknowledges the computing time provided on the Linux HPC cluster at TU Dortmund University Dortmund (LiDO3), partially funded in the course of the Large-Scale Equipment Initiative by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) as project 271512359. The R code for this work can be obtained from the corresponding OSF repository <ref type="url" target="https://osf.io/npem6/">https://osf.io/npem6/</ref>. A development version of the accompanying R package can be obtained from <ref type="url" target="https://github.com/phibuc/fabOF">https://github.com/phibuc/fabOF</ref>. methods). Therefore, the choice between a CLMM and mixfabOF should be guided either by prior knowledge or by benchmarking both methods on a subset of the data at hand.</p><p>While the simulation and illustrative data example only featured random intercept models, mixfabOF can in principle also account for random slopes or other random effect structures specifiable in an LMM. Future work could explore the use of mixfabOF for random effect structures beyond the random intercept model. In the context of ordinal regression models, e.g., the cumulative model <ref type="bibr" target="#b34">(McCullagh, 1980)</ref>, another type of random effects that can occur are random thresholds, i.e., cluster-specific category thresholds <ref type="bibr" target="#b53">(Tutz &amp; Hennevogl, 1996)</ref>. As this type of random effect cannot be accounted for currently by mixfabOF, future work could study how such effects can be translated to the framework used by (mix)fabOF. One possibility could be to compute cluster-specific category borders instead of computing global category borders based on all observations. Overall, this work has demonstrated the usefulness of accounting for hierarchical data structures in ordinal prediction tasks when using RF-based prediction methods. The newly proposed mixfabOF method extends fabOF in a meaningful way and could improve upon fabOF and other RF-based prediction methods for the data studied in this work. In light of the growing quantities of data in the social and life sciences sparking a rising interest in ML methods, these are promising findings that motivate further investigation and methodological refinement. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A Thresholds for Simulation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure B1</head><p>Predictive performance achieved by prediction methods on random intercept model simulation data from <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure B2</head><p>Computational runtime relative to fabOF for random intercept model simulation data from <ref type="bibr" target="#b3">Bergonzoli et al. (2024)</ref>. Values have been logarithmized using base 10.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">rpartOrdinal: An R package for deriving a classification tree for predicting an ordinal response</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Archer</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v034.i07</idno>
+		<ptr target="https://doi.org/10.18637/jss.v034.i07" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Fitting linear mixed-effects models using lme4</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mächler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v067.i01</idno>
+		<ptr target="https://doi.org/10.18637/jss.v067.i01" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="48" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Comparison of classification accuracy using Cohen&apos;s weighted kappa</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ben-David</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.eswa.2006.10.022</idno>
+		<ptr target="https://doi.org/10.1016/j.eswa.2006.10.022" />
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="825" to="832" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Ordinal mixed-effects random forest</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Bergonzoli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rossi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Masci</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/ARXIV.2406.03130</idno>
+		<ptr target="https://doi.org/10.48550/ARXIV.2406.03130" />
+	</analytic>
+	<monogr>
+		<title level="j">Pre-print version</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Random forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1010933404324</idno>
+		<ptr target="https://doi.org/10.1023/A:1010933404324" />
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="123" to="140" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">fabOF: A novel tree ensemble method for ordinal prediction</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Buczak</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/h8t4p</idno>
+		<ptr target="https://doi.org/10.31219/osf.io/h8t4p" />
+	</analytic>
+	<monogr>
+		<title level="j">Pre-print version</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Old but gold or new and shiny? Comparing tree ensembles for ordinal prediction with a classic parametric approach</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Buczak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Horn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pauly</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/v7bcf</idno>
+		<ptr target="https://doi.org/10.31219/osf.io/v7bcf" />
+	</analytic>
+	<monogr>
+		<title level="j">Pre-print version</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Random forests for high-dimensional longitudinal data</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Capitaine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Genuer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Thiébaut</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0962280220946080</idno>
+		<ptr target="https://doi.org/10.1177/0962280220946080" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Methods in Medical Research</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="166" to="184" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Ordinal-regression models for ordinal data [R package version</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H B</forename><surname>Christensen</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=ordinal" />
+		<imprint>
+			<date type="published" when="2022">2022. 2022</date>
+			<biblScope unit="page" from="11" to="16" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A coefficient of agreement for nominal scales</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001316446002000104</idno>
+		<ptr target="https://doi.org/10.1177/001316446002000104" />
+	</analytic>
+	<monogr>
+		<title level="j">Educational and Psychological Measurement</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="37" to="46" />
+			<date type="published" when="1960">1960</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Weighted kappa: Nominal scale agreement provision for scaled disagreement or partial credit</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0026256</idno>
+		<ptr target="https://doi.org/10.1037/h0026256" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="213" to="220" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A machine learning approximation of the 2015 Portuguese high school student grades: A hybrid approach</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Costa-Mendes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Oliveira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Castelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Cruz-Jesus</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10639-020-10316-y</idno>
+		<ptr target="https://doi.org/10.1007/s10639-020-10316-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Education and Information Technologies</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="1527" to="1547" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Multivariate regression trees: A new technique for modeling species-environment relationships</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>De'ath</surname></persName>
+		</author>
+		<idno type="DOI">10.1890/0012-9658(2002)083[1105:mrtant]2.0.co;2</idno>
+		<ptr target="https://doi.org/10.1890/0012-9658(2002)083[1105:mrtant]2.0.co" />
+	</analytic>
+	<monogr>
+		<title level="j">Ecology</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1105" to="1117" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Maximum likelihood from incomplete data via the EM algorithm</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Dempster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Laird</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="38" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Regression: Models, methods and applications</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fahrmeir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kneib</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">D</forename><surname>Marx</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-662-63882-8</idno>
+		<ptr target="https://doi.org/10.1007/978-3-662-63882-8" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Fishbein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Foy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yin</surname></persName>
+		</author>
+		<ptr target="https://timssandpirls.bc.edu/timss2019/international-database/" />
+		<title level="m">TIMSS 2019 user guide for the international database</title>
+		<imprint>
+			<publisher>TIMSS &amp; PIRLS International Study Center website</publisher>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note>Retrieved from Boston College</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Performing learning analytics via generalised mixed-effects trees</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fontana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Masci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ieva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Paganoni</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/data6070074</idno>
+		<ptr target="https://doi.org/10.3390/data6070074" />
+	</analytic>
+	<monogr>
+		<title level="j">Data</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">74</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Classification trees for ordinal responses in R: The rpartScore package</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Galimberti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Soffritti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Maso</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v047.i10</idno>
+		<ptr target="https://doi.org/10.18637/jss.v047.i10" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1" to="25" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Mixed effects regression trees for clustered data</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hajjem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bellavance</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larocque</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics &amp; Probability Letters</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="451" to="459" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Mixed-effects random forest for clustered data</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hajjem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bellavance</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larocque</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00949655.2012.741599</idno>
+		<ptr target="https://doi.org/10.1080/00949655.2012.741599" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Computation and Simulation</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1313" to="1328" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Generalized mixed effects regression trees</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hajjem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larocque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bellavance</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.spl.2017.02.033</idno>
+		<ptr target="https://doi.org/10.1016/j.spl.2017.02.033" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistics amp; Probability Letters</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page" from="114" to="118" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">A random-effects ordinal regression model for multilevel analysis</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hedeker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Gibbons</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2533433</idno>
+		<ptr target="https://doi.org/10.2307/2533433" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">933</biblScope>
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Ordinal forests</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hornung</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00357-018-9302-x</idno>
+		<ptr target="https://doi.org/10.1007/s00357-018-9302-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Classification</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="4" to="17" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">ordinalForest: Ordinal forests: Prediction and variable ranking with ordinal target variables</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hornung</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=ordinalForest" />
+	</analytic>
+	<monogr>
+		<title level="m">R package version 2.4-3</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Unbiased recursive partitioning: A conditional inference framework</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hothorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hornik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zeileis</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/106186006X133933</idno>
+		<ptr target="https://doi.org/10.1198/106186006X133933" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="651" to="674" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A review on longitudinal data analysis with random forest</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Szymczak</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bib/bbad002</idno>
+		<ptr target="https://doi.org/10.1093/bib/bbad002" />
+	</analytic>
+	<monogr>
+		<title level="j">Briefings in Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Random forest for ordinal responses: Prediction and variable selection</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Janitza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-L</forename><surname>Boulesteix</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.csda.2015.10.005</idno>
+		<ptr target="https://doi.org/10.1016/j.csda.2015.10.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics &amp; Data Analysis</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="page" from="57" to="73" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Self-efficacy and achievement goals as motivational links between perceived contexts and achievement</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bong</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01443410.2013.863831</idno>
+		<ptr target="https://doi.org/10.1080/01443410.2013.863831" />
+	</analytic>
+	<monogr>
+		<title level="j">Educational Psychology</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="92" to="117" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Personalised depression forecasting using mobile sensor data and ecological momentary assessment</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kathan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Harrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Küster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Triantafyllopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Milling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gerczuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Rajamani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Heber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Grossmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">D</forename><surname>Ebert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Schuller</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fdgth.2022.964582</idno>
+		<ptr target="https://doi.org/10.3389/fdgth.2022.964582" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Digital Health</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Rank correlation methods</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Kendall</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1948">1948</date>
+			<publisher>Griffin</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Prediction of ordinal classes using regression trees</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Widmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Pfahringer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>De Groeve</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Lecture notes in computer science</title>
+		<imprint>
+			<biblScope unit="page" from="426" to="434" />
+			<date type="published" when="2000">2000</date>
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Random-effects models for longitudinal data</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Laird</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Ware</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2529876</idno>
+		<ptr target="https://doi.org/10.2307/2529876" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">963</biblScope>
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">A new multilevel cart algorithm for multilevel data with binary outcomes</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Luo</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00273171.2018.1552555</idno>
+		<ptr target="https://doi.org/10.1080/00273171.2018.1552555" />
+	</analytic>
+	<monogr>
+		<title level="j">Multivariate Behavioral Research</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="578" to="592" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Regression trees for longitudinal and multiresponse data</title>
+		<author>
+			<persName><forename type="first">W.-Y</forename><surname>Loh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zheng</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/12-aoas596</idno>
+		<ptr target="https://doi.org/10.1214/12-aoas596" />
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Applied Statistics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Regression models for ordinal data</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mccullagh</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1980.tb01109.x</idno>
+		<ptr target="https://doi.org/10.1111/j.2517-6161.1980.tb01109.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="109" to="127" />
+			<date type="published" when="1980">1980</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Linear mixed models for longitudinal data</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Molenberghs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Verbeke</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-4419-0300-6</idno>
+		<ptr target="https://doi.org/10.1007/978-1-4419-0300-6" />
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>Springer</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Interpretable machine learning: A guide for making black box models explainable</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Molnar</surname></persName>
+		</author>
+		<ptr target="https://christophm.github.io/interpretable-ml-book" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Digital phenotyping and mobile sensing: New developments in psychoinformatics</title>
+		<idno type="DOI">10.1007/978-3-030-98546-2</idno>
+		<ptr target="https://doi.org/10.1007/978-3-030-98546-2" />
+		<editor>Montag, C., &amp; Baumeister, H.</editor>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>Springer International Publishing</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">The behaviour of random forest permutation-based variable importance measures under predictor correlation</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Nicodemus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Malley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Strobl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ziegler</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-11-110</idno>
+		<ptr target="https://doi.org/10.1186/1471-2105-11-110" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Generalized mixed-effects random forest: A flexible approach to predict university student dropout</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pellagatti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Masci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ieva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Paganoni</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/sam.11505</idno>
+		<ptr target="https://doi.org/10.1002/sam.11505" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Analysis and Data Mining: The ASA Data Science Journal</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="241" to="257" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Classification trees for ordinal variables</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Piccarreta</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00180-007-0077-5</idno>
+		<ptr target="https://doi.org/10.1007/s00180-007-0077-5" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="407" to="427" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">The role of students&apos; self-beliefs, motivation and attitudes in predicting mathematics achievement: A multilevel analysis of the programme for international student assessment data</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Pitsia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Biggart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Karakolidis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.lindif.2017.03.014</idno>
+		<ptr target="https://doi.org/10.1016/j.lindif.2017.03.014" />
+	</analytic>
+	<monogr>
+		<title level="j">Learning and Individual Differences</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="163" to="173" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Hyperparameters and tuning strategies for random forest</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Probst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-L</forename><surname>Boulesteix</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/widm.1301</idno>
+		<ptr target="https://doi.org/10.1002/widm.1301" />
+	</analytic>
+	<monogr>
+		<title level="j">WIREs Data Mining and Knowledge Discovery</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1" to="15" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">R: A language and environment for statistical computing</title>
+		<author>
+			<persName><forename type="first">Team</forename><surname>Core</surname></persName>
+		</author>
+		<ptr target="https://www.R-project.org/" />
+	</analytic>
+	<monogr>
+		<title level="m">R Foundation for Statistical Computing</title>
+		<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Gradient tree boosting for hierarchical data</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Salditt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Humberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nestler</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00273171.2022.2146638</idno>
+		<ptr target="https://doi.org/10.1080/00273171.2022.2146638" />
+	</analytic>
+	<monogr>
+		<title level="j">Multivariate Behavioral Research</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="911" to="937" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Tree-structured methods for longitudinal data</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Segal</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1992.10475220</idno>
+		<ptr target="https://doi.org/10.1080/01621459.1992.10475220" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">418</biblScope>
+			<biblScope unit="page" from="407" to="418" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">RE-EM trees: A data mining approach for longitudinal and clustered data</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Sela</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Simonoff</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="169" to="207" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Bimm tree: A decision tree method for modeling clustered and longitudinal binary outcomes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Speiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Karvellas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Koch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">L</forename><surname>Durkalski</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/03610918.2018.1490429</idno>
+		<ptr target="https://doi.org/10.1080/03610918.2018.1490429" />
+	</analytic>
+	<monogr>
+		<title level="j">Communications in Statistics -Simulation and Computation</title>
+		<imprint>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1004" to="1023" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Bimm forest: A random forest method for modeling clustered and longitudinal binary outcomes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Speiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Karvellas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Koch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">L</forename><surname>Durkalski</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chemolab.2019.01.002</idno>
+		<ptr target="https://doi.org/10.1016/j.chemolab.2019.01.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Chemometrics and Intelligent Laboratory Systems</title>
+		<imprint>
+			<biblScope unit="volume">185</biblScope>
+			<biblScope unit="page" from="122" to="134" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Confidence: A better predictor of academic achievement than self-efficacy, self-concept and anxiety?</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Stankov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Hogan</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.lindif.2012.05.013</idno>
+		<ptr target="https://doi.org/10.1016/j.lindif.2012.05.013" />
+	</analytic>
+	<monogr>
+		<title level="j">Learning and Individual Differences</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="747" to="758" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Conditional variable importance for random forests</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Strobl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-L</forename><surname>Boulesteix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kneib</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Augustin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zeileis</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-9-307</idno>
+		<ptr target="https://doi.org/10.1186/1471-2105-9-307" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Ordinal trees and random forests: Score-free recursive partitioning and improved ensembles</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tutz</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00357-021-09406-4</idno>
+		<ptr target="https://doi.org/10.1007/s00357-021-09406-4" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Classification</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="241" to="263" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Ordinal regression: A review and a taxonomy of models</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tutz</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/wics.1545</idno>
+		<ptr target="https://doi.org/10.1002/wics.1545" />
+	</analytic>
+	<monogr>
+		<title level="j">WIREs Computational Statistics</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">1545</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Random effects in ordinal regression models</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hennevogl</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0167-9473(96)00004-7</idno>
+		<ptr target="https://doi.org/10.1016/0167-9473(96)00004-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics &amp; Data Analysis</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="537" to="557" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">A machine learning-based procedure for leveraging clickstream data to investigate early predictability of failure on interactive tasks</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ulitzsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ulitzsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Lüdtke</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-022-01844-1</idno>
+		<ptr target="https://doi.org/10.3758/s13428-022-01844-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1392" to="1412" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Effects of a data-based decision-making intervention for teachers on students&apos; mathematical achievement</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Van Der Scheer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Visscher</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0022487117704170</idno>
+		<ptr target="https://doi.org/10.1177/0022487117704170" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Teacher Education</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="307" to="320" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">ranger: A fast implementation of random forests for high dimensional data in C++ and R</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ziegler</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v077.i01</idno>
+		<ptr target="https://doi.org/10.18637/jss.v077" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

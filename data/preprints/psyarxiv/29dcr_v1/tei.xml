@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Revisiting Orthographic Effects in Spoken Word Recognition: Insights from Pretrained Language Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Timothy</forename><surname>Liu</surname></persName>
+							<email>tiyliu@ucdavis.edu</email>
+						</author>
+						<author>
+							<persName><forename type="first">David</forename><surname>Corina</surname></persName>
+							<email>dpcorina@ucdavis.edu</email>
+						</author>
+						<author>
+							<persName><forename type="first">Kenji</forename><surname>Sagae</surname></persName>
+							<email>sagae@ucdavis.edu</email>
+						</author>
+						<title level="a" type="main">Revisiting Orthographic Effects in Spoken Word Recognition: Insights from Pretrained Language Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">CC15BE050DBC989F016808215402FDC2</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T14:46+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The paired lexical decision task is a common task used for studying online speech processing. Several key priming effects underlying the composition of the mental lexicon have been found using this priming paradigm, non-exhaustively including orthographic priming effects, semantic priming effects, and phonological priming. This study revisits the effects of orthographic priming in an auditory lexical decision task with English heteronymic pairs, word pairs that share the same orthographic form but have distinct phonological codes. Although heteronymic pairs present an ideal condition for orthographic priming effects to surface, heteronyms are often related to each other semantically, making it difficult to isolate possible orthographic effects from semantic priming effects. To this end, we present a novel methodology for using language models to generate semantically matched prime target controls to compare reaction times against. Using these semantically matched controls, we gather reaction time results from a sample of 29 English speaking university student and conduct Bayesian Regression analysis on 153 heteronymic prime target pairs and 343 control pairs. We find no significant difference in reaction times between heteronymic pairs and semantically matched pairs.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">General Introduction</head><p>There is a large body of evidence that suggests that literacy affects the processing of spoken words <ref type="bibr" target="#b1">(Booth et al., 2004;</ref><ref type="bibr" target="#b18">Morais, Cary, Alegria, &amp; Bertelson, 1979;</ref><ref type="bibr" target="#b20">Pattamadilok, Knierim, Kawabata Duncan, &amp; Devlin, 2010;</ref><ref type="bibr" target="#b22">Petersson, Reis, Askelöf, Castro-Caldas, &amp; Ingvar, 2000)</ref>. There are a growing number of studies that suggest that orthographic effects are robust in on-line spoken word recognition tasks in English <ref type="bibr" target="#b2">(Chéreau, Gaskell, &amp; Dumay, 2007;</ref><ref type="bibr" target="#b12">Jakimik, Cole, &amp; Rudnicky, 1985;</ref><ref type="bibr" target="#b21">Perre, Midgley, &amp; Ziegler, 2009;</ref><ref type="bibr" target="#b25">Seidenberg &amp; Tanenhaus, 1979)</ref>, in French <ref type="bibr" target="#b8">(Furgoni, Martin, &amp; Stoehr, 2025;</ref><ref type="bibr" target="#b10">Grainger, Diependaele, Spinelli, Ferrand, &amp; Farioli, 2003;</ref><ref type="bibr" target="#b31">Ziegler &amp; Ferrand, 1998)</ref>, and in Portuguese <ref type="bibr" target="#b28">(Ventura, Morais, &amp; Kolinsky, 2007;</ref><ref type="bibr" target="#b29">Ventura, Morais, Pattamadilok, &amp; Kolinsky, 2004)</ref>. These investigations generally use a paired lexical decision paradigm, in which a prime word is followed by a target word, to which participants make validity judgments. Robust effects on reaction time have been established for nonce-word targets <ref type="bibr" target="#b15">(Meyer &amp; Schvaneveldt, 1971)</ref>, semantically related targets <ref type="bibr" target="#b19">(Neely, 1976;</ref><ref type="bibr" target="#b24">Schvaneveldt, Meyer, &amp; Becker, 1976)</ref>, and phonologically related targets <ref type="bibr" target="#b26">(Slowiaczek &amp; Hamburger, 1992)</ref>. In this paper, we revisit those effects with the aid of pretrained language models.</p><p>Reaction time data for non-orthographic priming effects in paired lexical decision tasks can generally be understood under one of two models: Spreading Activation Semantic Network Theory (SASN) and the cohort model <ref type="bibr" target="#b3">(Collins &amp; Loftus, 1975;</ref><ref type="bibr" target="#b4">Collins &amp; Quillian, 1969;</ref><ref type="bibr" target="#b13">Marslen-Wilson &amp; Welsh, 1978)</ref>. SASN is a model of cognitive processing that presents the mental lexicon as a collection of semantically interconnected nodes, such that every word is associated with a node. Nodes can activate other nodes through associative connections, such as semantic relatedness, phonological relatedness, or potentially orthographic relatedness. The cohort model, is a model of phonological word processing that proposes a "cohort" of related words is activated as bottom up acoustic phonetic and top down , semantic, pragmatic, and syntactic information becomes available to the listener, and unsuitable candidates are subsequently pruned until one remains. The mechanism for priming in the cohort model stems from a perseveration of the pruned candidates after the target word is recognized. Orthographic effects in spoken word processing are not well specified or well studied under either of these models; the bulk of research has been done with visual word priming, which is suited to SASN, due to the immediate nature of visual word processing. Meanwhile, results from auditory experiments are better understood through the cohort model, which accounts for the temporal spatiality of spoken words. <ref type="bibr" target="#b27">Türk and Domahs (2022)</ref> use an adaptation of another model from the domain of visual word processing, the Bimodal interactive Activation Model (BIAM; <ref type="bibr" target="#b11">Grainger and Holcomb 2009)</ref>, in order to explicitly explain orthographic effects across a variety of languages. The BIAM is one that allows for interactivity between the orthographic and phonological representations of language during recognition, which helps to explain the differences in orthographic effects depending on the depth of the target language's orthography. Of particular note, however, is the difficulty in disentangling effects due to bottom up phonetic processing and effects due to top down semantic, orthographic, and syntactic processing. In examining the effects of orthographic overlap in spoken word processing, <ref type="bibr" target="#b2">Chéreau et al. (2007)</ref> compare "brat" and "spat" as the orthographically related condition, and "brat" and "plait" as the orthographically unrelated condition. It is not entirely clear to what extent the semantic similarity between brat and spat (e.g. the brat spat) played a role in priming (see 6.7 for a selection of potentially confounding prime target pairs).</p><p>As an attempt to disentangle the effects of semantic priming between primes and targets in an auditory paired lexical decision task, we present a heteronymic priming paradigm with semantic controls generating with computational language models. Heteronyms are word pairs that are orthographically identical, but are phonologically distinct, e.g. "object" as a verb, and "object" as a noun. Previous attempts have examined identical rimes <ref type="bibr" target="#b25">(Seidenberg &amp; Tanenhaus, 1979)</ref>, but as far as we are aware, no study investigating orthographic priming effects has attempted to use heteronym pairs, which ostensibly represent best case pairs for demonstrating effects due orthographic relatedness. Using heteronyms as stimuli presents an ideal environment for orthographic effects to surface. However, finding suitable heteronymic pairs in English is often a challenge due inherent semantic similarity, e.g. between "reject" the verb and "reject" the noun. Such heteronym pairs are called weak heteronyms, and introduce semantic priming confounds <ref type="bibr" target="#b14">(Martin, Jones, Nelson, &amp; Nelson, 1981)</ref>. In addition to controlling for implicit semantic priming between the target words, our generated controls serve to account for any additional semantic priming risk that heteronymic pairs may present.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Prior Work</head><p>Orthographic effects are well established in speech perception; the orthographic consistency effect manifests as a tendency for listeners to more quickly identify spoken words with more consistent spellings than words with inconsistent spellings <ref type="bibr" target="#b31">(Ziegler &amp; Ferrand, 1998)</ref>. In the current literature on priming, there is a strong consensus that orthographic priming effects are present in on-line speech processing, particularly in conjunction with phonological effects. <ref type="bibr" target="#b12">Jakimik et al. (1985)</ref>, <ref type="bibr" target="#b2">Chéreau et al. (2007)</ref>, <ref type="bibr" target="#b17">Miller and Swick (2003)</ref> all conduct auditory paired lexical decision task experiments and find significant effects of overlapping orthography in environments where there was also phonological overlap. However, the effects of orthographic overlap alone are not significant; <ref type="bibr" target="#b17">Miller and Swick (2003)</ref> found no interference or facilitation in a purely orthographically overlapping condition (e.g. deaf -leaf). With respect to other languages, there appears to be an interaction between the depth of a language's orthography and the extent to which underlying orthographic processes impact online spoken word processing; <ref type="bibr" target="#b27">Türk and Domahs (2022)</ref> present evidence from German and English that in a spoken word recognition task, orthographic overlap in languages with shallow orthographies may induce inhibitory effects, while orthographic overlap in languages with deep orthographies may induce facilitatory effects. However, to our knowledge, there has yet to be a study that examines orthographic priming effects in homographic environments. 3 Methods</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Materials</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Experimental Condition ∥ homograph pair</head><p>Semantically unrelated strong heteronyms are selected from <ref type="bibr" target="#b14">Martin et al. (1981)</ref>. Monosyllabic homophonous heteronyms (e.g. do/do homophonous with dew/dough) and heteronyms with a proper noun variant (e.g. natal/Natal) are dropped from consideration to avoid word confusion confounds and word frequency or proper noun word confounds respectively. Several word pairs contain a heteronymic variant not common in American English (e.g. tarry/tarry). We use the Corpus of Contemporary American English (COCA; Davies 2008) as a reference for establishing whether a heteronymic variant should be considered as ubiquitous. COCA is a text corpus, and returns data for particular orthographic strings, along with frequency counts, common word contexts, and parts of speech. In the case of heteronym pairs that have distinct parts of speech, the heteronym pair is considered ubiquitous if COCA contains a separate entry for both parts of speech (e.g., COCA returns entries for object noun and object verb separately). For these pairs, COCA is sufficient for obtaining frequency values for both heteronym variants. For heteronym pairs that do share a part of speech, we turn to the Wikipedia homograph dataset <ref type="bibr" target="#b9">(Gorman, Mazovetskiy, &amp; Nikolaev, 2018)</ref>. The Wikipedia homograph dataset is a dataset of homographs scraped from Wikipedia; if a heteronym pair does have an entry in this dataset, it is dropped from consideration (e.g. row verb/row quarrel).</p><p>The final resulting heteronym list consists of 13 strong and distinct heteronyms (Appendix 6.7)<ref type="foot" target="#foot_0">foot_0</ref> .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">Control Condition ∥ semantic control</head><p>Now that we have a robust list of heteronymic pairs for our experimental condition, we turn to BERT <ref type="bibr" target="#b7">(Devlin, Chang, Lee, &amp; Toutanova, 2019)</ref> and return to the Wikipedia homograph dataset <ref type="bibr" target="#b9">(Gorman et al., 2018)</ref> to establish our semantic control condition. As previously stated, a reliable control condition is necessary to disentangle non-semantic priming effects from semantic priming effects. BERT is a pretrained language model that learns semantic relations between words, a property of embedding spaces within language models <ref type="bibr" target="#b16">(Mikolov, Chen, Corrado, &amp; Dean, 2013</ref>). An embedding space is a higher dimensional space in which words are mapped to unique vectors tuned during the pretrained language model training process to implicitly capture semantic information as measured by cosine similarity; words with a cosine similarity near 1 are more closely related. A pre-trained BERT model has its own frozen weights; to "train" the model to distinguish between heteronym pairs, we take a naive but effective approach of averaging embeddings across various contexts. We use 10 sentences for each heteronymic variant from <ref type="bibr" target="#b9">Gorman et al. (2018)</ref> and calculate average embeddings for each word 2 . To find semantically related prime target pairs to use as semantic controls, contextual embeddings are generated for all words 3 in the Leipzig 2018 English 1 Million Word Corpus <ref type="bibr" target="#b23">(Quasthoff, Goldhahn, &amp; Eckart, 2015)</ref> and indexed by cosine similarity to the averaged heteronymic word embeddings in a k-d tree, following the methodology set by <ref type="bibr" target="#b5">Dale (2020)</ref>. Each heteronym pair is matched to a similar pair of words measured by cosine similarity, controlling for syllabic counts within the generated control words (e.g. bass fish/ bass music was matched to salmon/guitar). The final list of control pairs is listed in Appendix 6.7.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.3">Unrelated Condition ∥ unrelated pair</head><p>To account for possible lexical decision effects specific to a target heteronymic variant, we include an unrelated prime word condition, where heteronymic targets are preceded by a prime selected at random from the semantic control conditions controlling for syllable counts between the new prime and target, and ensuring that the randomly selected prime was not a control for the selected heteronym. Participant groups C and D are created by replacing homograph pair similarity measures for slough verb resulted in incomprehensible token matches, likely due to infrequency of slough in its verb form in the original training dataset. BERT uses tokens generated by the WordPiece algorithm <ref type="bibr" target="#b30">Wu et al. (2016)</ref>. WordPiece is a statistical algorithm that relies on training from a tokenization corpus.</p><p>2 For heteronym pairs not represented in the Wikipedia homograph dataset but already established to be ubiquitous through COCA, 10 sentences were generated with ChatGPT (OpenAI, 2023) using the prompt: "Provide 10 sentences using the [disambiguator] [HV] without inflecting the morphology.", where [disambiguator] was replaced with the part of speech of the target Heteronymic variant (HV) or some disambiguator in the case that the HV pair shared part of speech, and [HV] was replaced by the target HV.</p><p>3 Technically, contextual embeddings are generated for each token in the Leipzig dataset, and those token embeddings are compared to the contextual word embeddings generated by BERT for the heteronym variants (which we call words on the basis of establishing that each heteronymic variant is stored as a whole word token).</p><p>conditions from the A and B participant groups with unrelated pair conditions (see Counterbalancing).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.4">Filler Condition ∥ f iller</head><p>To obfuscate the intention of the experiment, we include filler trials selected at random from <ref type="bibr" target="#b2">(Chéreau et al., 2007)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.5">Nonce-word conditions ∥ nonce-word pair, nonce-word f iller</head><p>For the homograph pair and filler condition, we generate nonce-words conditions nonce-word pair and nonce-word filler. We generate nonce-words by replacing the final consonant with a random consonant such that the resulting string is not an English word<ref type="foot" target="#foot_1">foot_1</ref> .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Counterbalancing</head><p>To address prime-target order confounding attributable to frequency effects, we establish A and B groups. A participant assigned to group A would respond to heteronym variant one (e.g. object noun) preceded by prime heteronym variant two (e.g. object verb). A participant assigned to group B would respond to the same trial, but with the order of the heteronyms swapped (e.g. object noun followed by object verb). To address any possible long-term repetition priming effects caused by heteronymic primes in the nonce-word pair impacting targets in the homograph pair condition, we partition X and Y groups within each of the A, B, C and D participant groups. Participants in the Y condition have the order of the homograph pair and nonce-word pair trials with matching heteronym pairs swapped. Participants were randomly assigned to positively respond to the target word with either their left or right hand to account for any difference in reaction time due to handedness. 17 participants were asked to respond positively to target words with their right hand, and 12 participants were asked to respond positively with their left hand. In total, a participant from Group A or Group B would be exposed to 13 semantic control trials, 13 homograph pair trials, 13 nonce-word pair trials, 13 filler trials, and 26 nonce-word filler trials. A participant from Group C or Group D would be exposed to 13 semantic control trials, 2 or 1 homograph pair trials, 13 nonce-word pair trials, 13 filler trials, 26 nonce-word filler trials, and 12 or 11 unrelated pair trials.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Recording</head><p>Auditory experimental stimuli was produced by a college-aged Caucasian male who was born and raised in the Bay Area. All recorded stimuli were delivered in a carrier phrase. All stimuli recordings were recorded in sessions of 50 words. Each session was normalized with the Normalize function in Praat, and Praat was used to extract the stimuli by hand <ref type="bibr" target="#b0">(Boersma &amp; Weenink, 2001)</ref>. After all stimuli were extracted, all stimuli were collectively normalized to 75 db in Praat.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Procedure</head><p>The experiment was performed on a Dell Latitude 7480 laptop running Windows 10 using Presentation® software <ref type="bibr">(Version 24.1,</ref><ref type="bibr">Neurobehavioral Systems,</ref><ref type="bibr">Inc.,</ref><ref type="bibr">Berkeley,</ref><ref type="bibr">CA,</ref><ref type="bibr">www.neurobs.com)</ref>. Participants wore a set of beyerdynamic DT 770 headphones to receive language stimuli and used the keyboard to record their responses. Participants were tested individually in a quiet room at a comfortable distance from the laptop and wore a pair of headphones for 1 session of 15 minutes, under the supervision of a proctor in the same room. After consenting, participants were instructed to use the Windows 10 built-in sliding volume adjustment to set the volume level to a setting between 0 and 100 that was comfortable for them (mean=55.17). Participants were then shown an instruction screen, and played a practice block of 9 words (Appendix 6.7), during which time they were informed that they could adjust the volume. Participants were asked to use the A and L keys to respond either positively or negatively to the target word (see Counterbalancing). Participants were asked to keep their hands on the keyboard for the duration of the experiment. During the experiment, primes were followed by targets after a delay. An interstimulus interval of 500ms was selected within the range of established interstimulus intervals within the literature of auditory priming ranging from 20ms <ref type="bibr" target="#b2">(Chéreau et al., 2007)</ref> to &gt;800ms <ref type="bibr" target="#b17">(Miller &amp; Swick, 2003)</ref>. Immediately after the playing of the target word, an image response prompt was shown to participants to indicate that they should respond. Reaction times were measured from the start of the target stimulus. Participants were given a maximum window of 3 seconds to respond; if they timed out, the trial was considered incorrect and the experiment moved on.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Participants</head><p>29 participants are included in the final study. Participant demographics consist of 28 university undergraduate students and 1 university graduate student, representing a strongly literate population. 8 male and 6 female participants were recruited through word of mouth, and participated without compensation. An additional 3 male and 12 female participants were recruited through SONA, and participated for course credit. All participants were at least 18 years old, and gave informed consent to participate in the experiment through overview of possible risks and benefits before beginning the experiment. 5 participants were left-handed and 24 participants were right-handed. All participants had normal hearing and were native English speakers. Participant distributions across counterbalancing groups are shown in Table <ref type="table">2</ref>.</p><formula xml:id="formula_0">Group X Y A 5 4 B 5 5 C 3 2 D 3 2</formula><p>Table <ref type="table">2</ref>: Distribution of participants in each of the participant groups (N=29). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Participant Task Accuracy</head><p>Participants generally did well on all tasks in terms of accuracy (Fig. <ref type="figure" target="#fig_0">1</ref>). Mean accuracy in the homograph pair condition was 92.99%. Mean accuracy in the semantic control condition was 98.14%. Overall accuracy in the unrelated pair condition was 94.85%. Mean accuracy in the nonce-word pair condition was 92.68%. Mean accuracy in the filler condition was 94.92%. Mean accuracy in the nonce-word filler condition was 92.99%<ref type="foot" target="#foot_2">foot_2</ref> . Trials where participants timed out and did not respond were not included in the final analysis. Boxplot distributions for each condition are shown in Figure <ref type="figure" target="#fig_0">1</ref>. Table <ref type="table" target="#tab_2">4</ref>.1 shows the exact number of missed trials for each condition. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Nonce-Word Sanity Check</head><p>To verify the integrity of our data, we first conducted an analysis comparing the nonce-word conditions against the real-word conditions. Our goal was to replicate the well-established effect of delayed reaction times to nonce-word targets.</p><p>Reaction time (RT) data were log-transformed to approximate a normal distribution. We then fit a multilevel Bayesian regression model to data from the homograph pair and nonce-word pair conditions. The model included fixed effects of experimental condition (Code) and trial index (N ), random participant-level effects of Code and N , and random intercepts for the target word. The full model specification is given in Equation <ref type="formula" target="#formula_1">1</ref>:</p><formula xml:id="formula_1">RT ∼ 1 + Code × N + (Code × N | P ) + (1 | target)<label>(1)</label></formula><p>Reaction times were measured from the onset of the auditory stimulus. Responses faster than 300 milliseconds were excluded as implausibly fast.</p><p>We specified a Student-t prior on the intercept with a mean of 6.9<ref type="foot" target="#foot_3">foot_3</ref> , standard deviation of 1.7, and 3 degrees of freedom. For all other effects (fixed and random), we used Student-t priors with mean 0, standard deviation 1.7, and 3 degrees of freedom.  Table 5: Summary of participant group level effects for the real word/nonceword comparison model; standard deviation of participant-dependent values for Level, respectively. Results remain log-transformed. As expected, we see a very small main effect of the unrelated target word prime (mean=0.02, C.I.=[-0.12, 0.14]). The potential main effect overlaps with 0, giving us strong confidence that there was no significant effect of heteronymic primes when compared to non-heteronymic primes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2">homograph pair and semantic control Comparison</head><p>Finally, we analyze the reaction times between the homograph pair and semantic control conditions. We use the same model <ref type="bibr" target="#b24">( 1)</ref> to examine the effects. in the investigation of orthographic priming effects, there are limitations. We did not conduct an analysis investigating the extent to which pretrained model semantic spaces accurately predict reaction times accounted for by semantic priming. Although the control pairs pass an intuitive check of semantic similarity to the experimental pairs, the exact semantic priming effects that they mitigate might vary between words. Pretrained language models have also improved significantly in recent years; the results may vary with a newer model. We acknowledge the potential for phonological priming effects to confound the results, due to the phonological similarities between heteronymic pairs. Newer language models that utilize ipa tokenization might be useful for investigating the impact of phonological priming with phonologically generated controls.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Level</head><p>6 Declarations</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Funding</head><p>This work did not receive external funding.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Conflicts of Interest/Competing Interests</head><p>We are not aware of any conflicts of interest in the production of this work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Ethics approval</head><p>All work was conducted with approval from the Institutional Review Board at the University of California, Davis, protocol 433927.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Consent to Participate</head><p>All participants gave informed consent to participate in the experiment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Consent for publication</head><p>. All participants gave informed consent for their data to be anonymized and published.</p><p>Appendix Table 13: Word pairs selected as potentially confounding due to phonological or semantic similarity.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Hit rates for each participant across conditions. Each subplot represents a different condition: (A) homograph pair, (B) semantic control, (C) unrelated pair, (D) nonce-word pair, (E) filler, and (F) nonce-word filler. The red dotted line indicates the mean hit rate for each condition.</figDesc><graphic coords="8,176.73,218.65,257.79,171.86" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: homograph pair (N=153) and nonce-word pair (N=343) reaction time (ms) comparisons.</figDesc><graphic coords="10,133.77,124.80,343.72,229.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: homograph pair (N=153) and unrelated pair (N=110) reaction time (ms) comparisons.</figDesc><graphic coords="12,133.77,124.80,343.72,229.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Reference table for each condition, along with example prime-target pairs.</figDesc><table><row><cell>Condition Name</cell><cell>Summary</cell><cell></cell><cell>Example Prime -Target</cell></row><row><cell>homograph pair</cell><cell>heteronymic pairs</cell><cell></cell><cell>bass fish -bass music</cell></row><row><cell>semantic control</cell><cell>non-heteronymic</cell><cell>pairs</cell><cell>salmon -guitar</cell></row><row><cell></cell><cell cols="2">semantically matched to</cell><cell></cell></row><row><cell></cell><cell>homograph pair</cell><cell></cell><cell></cell></row><row><cell>unrelated pair</cell><cell cols="2">unrelated prime with</cell><cell>history -bass music</cell></row><row><cell></cell><cell>heteronymic target</cell><cell></cell><cell></cell></row><row><cell>filler</cell><cell>filler rhyming pairs</cell><cell></cell><cell>brat -spat</cell></row><row><cell>nonce-word pair</cell><cell cols="2">nonce-word pairs derived</cell><cell>bass music -basp</cell></row><row><cell></cell><cell cols="2">from homograph pair</cell><cell></cell></row><row><cell cols="3">nonce-word filler nonce-word pairs derived</cell><cell>yawn -dopsh</cell></row><row><cell></cell><cell>from filler pairs</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 3 :</head><label>3</label><figDesc>Total number of trials per condition included in the final analysis. Trials were excluded if participants responded faster than 300 ms. A "miss" indicates no response within three seconds of stimulus onset.</figDesc><table><row><cell>Condition</cell><cell cols="5">Analyzed Trials Correct Trials Incorrect Trials Miss Trials Total Trials</cell></row><row><cell>homograph pair</cell><cell>134</cell><cell>153</cell><cell>10</cell><cell>0</cell><cell>163</cell></row><row><cell>semantic control</cell><cell>347</cell><cell>369</cell><cell>7</cell><cell>1</cell><cell>377</cell></row><row><cell>unrelated pair</cell><cell>101</cell><cell>110</cell><cell>4</cell><cell>0</cell><cell>114</cell></row><row><cell>filler</cell><cell>305</cell><cell>357</cell><cell>19</cell><cell>1</cell><cell>377</cell></row><row><cell>nonce-word pair</cell><cell>339</cell><cell>343</cell><cell>27</cell><cell>7</cell><cell>377</cell></row><row><cell>nonce-word filler</cell><cell>690</cell><cell>695</cell><cell>52</cell><cell>7</cell><cell>754</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 4 :</head><label>4</label><figDesc>Summary of regression coefficients for the model comparing real word and nonce-word reaction times. Re-exponentiated effects are displayed in milliseconds 8 .</figDesc><table><row><cell>Level</cell><cell>Estimated</cell><cell>Estimated</cell><cell>Estimation</cell><cell>95% CI</cell></row><row><cell></cell><cell>Effect</cell><cell>Effect Re-</cell><cell>Error</cell><cell></cell></row><row><cell></cell><cell></cell><cell>exponentiated</cell><cell></cell><cell></cell></row><row><cell>Intercept</cell><cell>6.57</cell><cell>713.37</cell><cell>0.07</cell><cell>6.43 -6.72</cell></row><row><cell>Nonce-word</cell><cell>0.18</cell><cell>140.79</cell><cell>0.05</cell><cell>0.08 -0.28</cell></row><row><cell>Level</cell><cell>Estimated</cell><cell cols="2">Estimation</cell><cell>95% CI</cell></row><row><cell></cell><cell>Effect</cell><cell cols="2">Error</cell><cell></cell></row><row><cell>Intercept</cell><cell>0.30</cell><cell cols="2">0.05</cell><cell>0.21 -0.42</cell></row><row><cell>Nonce-word</cell><cell>0.10</cell><cell cols="2">0.04</cell><cell>0.01 -0.19</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 8 :</head><label>8</label><figDesc>Summary of regression coefficients for the model comparing the homograph pair and semantic control conditions. Re-exponentiated effects are displayed in milliseconds.</figDesc><table><row><cell></cell><cell>Estimated</cell><cell>Estimated</cell><cell>Estimation</cell><cell>95% CI</cell></row><row><cell></cell><cell>Effect</cell><cell>Effect Re-</cell><cell>Error</cell><cell></cell></row><row><cell></cell><cell></cell><cell cols="2">exponentiated</cell><cell></cell></row><row><cell>Intercept</cell><cell>6.36</cell><cell>578.25</cell><cell>0.06</cell><cell>6.25 -6.47</cell></row><row><cell>semantic control</cell><cell>0.01</cell><cell>5.811</cell><cell>0.04</cell><cell>-0.07 -0.04</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 11 :</head><label>11</label><figDesc>B. All Possible Pairs in the homograph pair ConditionAll possible word pairs in the homograph pair condition (heteronym primes).</figDesc><table><row><cell>Prime</cell><cell>Target</cell></row><row><cell>bass music</cell><cell>bass fish</cell></row><row><cell>bass fish</cell><cell>bass music</cell></row><row><cell>bow verb</cell><cell>bow noun</cell></row><row><cell>bow noun</cell><cell>bow verb</cell></row><row><cell>buffet noun</cell><cell>buffet verb</cell></row><row><cell>buffet verb</cell><cell>buffet noun</cell></row><row><cell>dove verb</cell><cell>dove noun</cell></row><row><cell>dove noun</cell><cell>dove verb</cell></row><row><cell>entrance verb</cell><cell>entrance noun</cell></row><row><cell>entrance noun</cell><cell>entrance verb</cell></row><row><cell>invalid noun</cell><cell>invalid adj</cell></row><row><cell>invalid adj</cell><cell>invalid noun</cell></row><row><cell>minute noun</cell><cell>minute adj</cell></row><row><cell>minute adj</cell><cell>minute noun</cell></row><row><cell>polish noun</cell><cell>polish verb</cell></row><row><cell>polish verb</cell><cell>polish noun</cell></row><row><cell>resume noun</cell><cell>resume verb</cell></row><row><cell>resume verb</cell><cell>resume noun</cell></row><row><cell>wind verb</cell><cell>wind noun</cell></row><row><cell>wind noun</cell><cell>wind verb</cell></row><row><cell>wound noun</cell><cell>wound verb</cell></row><row><cell>wound verb</cell><cell>wound noun</cell></row><row><cell>object verb</cell><cell>object noun</cell></row><row><cell>object noun</cell><cell>object verb</cell></row><row><cell>present verb</cell><cell>present noun</cell></row><row><cell>present noun</cell><cell>present verb</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Strong heteronymic pair slough/slough was dropped from consideration at the control condition generation stage; BERT does not tokenize slough as a whole word, and cosine</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_1"><p>In the case of re.su.me, we replaced the final vowel and appended a random consonant.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_2"><p>One participant in the C condition was only exposed to two homograph pair trials, and answered one incorrectly. This results in an apparent outlier with 50% accuracy, but their data was included because their performance on the remaining tasks was normal.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_3"><p>6.9 = log(1000). We assume a baseline reaction time of 1000ms.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8" xml:id="foot_4"><p>Since we use log transformed data to conduct analysis, re-exponentiated values are calculated by taking the sum of log transformed values and re-exponentiating the difference of those values. We follow this convention in all following analyses.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_5"><p>DiscussionIn this paper, we investigate orthographic priming effects in heteronymic word pairs, which arguably provide the strongest test of orthographic effects during auditory word processing. A key attribute of this experimental design was to provide appropriate semantic controls for our experimental pairs. We used pretrained language models in order to generate these semantic controls, utilizing their ability to generate semantic space to search for suitable control pairs. We find that reaction times to audially presented heteronymic pairs are not significantly different to reaction times to these control pairs. These findings provide support for a model of on-line speech processing that does not necessarily invoke orthographic representations in literate adults, similar to the model of orthographic processing in languages with shallow orthographies proposed by<ref type="bibr" target="#b27">Türk and Domahs (2022)</ref>. Although this methodology addresses a potential confound</p></note>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">Availability of Data and Materials</head><p>Anonymized data is available at <ref type="url" target="https://github">https :// github</ref> .com / timo -liu / RevisitingOrthographicEffectsWithLLMs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.7">Code Availability</head><p>Code associated with this project is available at <ref type="url" target="https://github.com/timo">https://github.com/timo</ref> -liu/RevisitingOrthographicEffectsWithLLMs.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Trial index effects are not included in Table <ref type="table">5</ref>; there was no significant effect of trial index, and will henceforth no longer be included in the results. We find a main effect of the nonce-word condition on reaction time; on average, participant reaction time increased by 140.79 milliseconds when encountering a nonce-word condition (C.I. = [0.01, 0.19]). This result validates the integrity of the experiment by replicating the well-established increased reaction time to nonce-word targets (Fig. <ref type="figure">2</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1">homograph pair and unrelated pair Comparison</head><p>We examine if there is any significant difference in reaction times between the homograph pair and unrelated pair conditions. We fit a multilevel Bayesian regression model with the same model function in Equation 1 on log transformed reaction times for the homograph pair and unrelated pair condition. Our null hypothesis assumes no orthographic effects on priming.  We find no significant effect of heteronymic priming when compared against semantically controlled non-heteronym prime target pairs (mean=0.01, C.I.=[-0.07, 0.04]). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Level</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A. Practice Block of Word Pairs Given to All Participants</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">PRAAT, a system for doing phonetics by computer</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Boersma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weenink</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Glot international</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="341" to="345" />
+			<date type="published" when="2001-01">2001, January</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Development of Brain Mechanisms for Processing Orthographic and Phonologic Representations</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Booth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">D</forename><surname>Burman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Gitelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">B</forename><surname>Parrish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Mesulam</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/0898929041920496</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1234" to="1249" />
+			<date type="published" when="2004-09">2004. September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Reading spoken words: Orthographic effects in auditory priming</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chéreau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Gaskell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dumay</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2006.01.001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="341" to="360" />
+			<date type="published" when="2007-03">2007, March</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A spreading-activation theory of semantic processing</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">F</forename><surname>Loftus</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.82.6.407</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="407" to="428" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Retrieval time from semantic memory</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Quillian</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0022-5371(69)80069-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Verbal Learning and Verbal Behavior</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="240" to="247" />
+			<date type="published" when="1969-04">1969. April</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Learn to extract embeddings from BERT</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dale</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">The corpus of contemporary american english (COCA)</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Davies</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">BERT: Pretraining of Deep Bidirectional Transformers for Language Understanding</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M.-W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.1810.04805</idno>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2019-05">2019, May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A cross linguistic study on orthographic influence during auditory word recognition</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Furgoni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Stoehr</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-025-92885-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">8374</biblScope>
+			<date type="published" when="2025-03">2025. March</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Improving homograph disambiguation with supervised machine learning</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Gorman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mazovetskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Nikolaev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)</title>
+		<editor>
+			<persName><forename type="first">N</forename><surname>Calzolari</surname></persName>
+		</editor>
+		<meeting>the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)<address><addrLine>Miyazaki, Japan</addrLine></address></meeting>
+		<imprint>
+			<publisher>European Language Resources Association (ELRA</publisher>
+			<date type="published" when="2018-05">2018, May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Masked repetition and phonological priming within and across modalities</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Grainger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Diependaele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Spinelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ferrand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Farioli</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.29.6.1256</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology. Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1256" to="1269" />
+			<date type="published" when="2003-11">2003, November</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Watching the word go by: On the time-course of component processes in visual word recognition</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Grainger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Holcomb</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1749-818X.2008.00121.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Language and Linguistics Compass</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="128" to="156" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Sound and spelling in spoken word recognition</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jakimik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Cole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Rudnicky</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0749-596X(85)90022-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Memory and Language</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="165" to="178" />
+			<date type="published" when="1985-04">1985. April</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Processing interactions and lexical access during word recognition in continuous speech</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Marslen-Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Welsh</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0010-0285(78)90018-X</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="63" />
+			<date type="published" when="1978-01">1978, January</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Heteronyms and polyphones: Categories of words with multiple phonemic representations</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">V</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Nelson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Nelson</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03202018</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods &amp; Instrumentation</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="299" to="307" />
+			<date type="published" when="1981-05">1981, May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Facilitation in recognizing pairs of words: Evidence of a dependence between retrieval operations</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Schvaneveldt</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0031564</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="227" to="234" />
+			<date type="published" when="1971">1971</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Efficient Estimation of Word Representations in Vector Space</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.1301.3781</idno>
+		<idno type="arXiv">arXiv:1301.3781</idno>
+		<imprint>
+			<date type="published" when="2013-09">2013, September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Orthography Influences the Perception of Speech in Alexic Patients</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Swick</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/089892903770007371</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognitive Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="981" to="990" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Does awareness of speech as a sequence of phones arise spontaneously</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Cary</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Alegria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bertelson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0010-0277(79)90020-9</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="323" to="331" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Semantic priming and retrieval from lexical memory: Evidence for facilitatory and inhibitory processes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Neely</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03213230</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="648" to="654" />
+			<date type="published" when="1976-09">1976, September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">How does learning to read affect speech perception?</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Pattamadilok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">N</forename><surname>Knierim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Kawabata Duncan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Devlin</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/JNEUROSCI.5791-09.2010</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Neuroscience: The Official Journal of the Society for Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">25</biblScope>
+			<biblScope unit="page" from="8435" to="8444" />
+			<date type="published" when="2010-06">2010. June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">When beef primes reef more than leaf: Orthographic information affects phonological priming in spoken word recognition</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Perre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Midgley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Ziegler</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1469-8986.2009.00813.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychophysiology</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="739" to="746" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Language processing modulated by literacy: A network analysis of verbal repetition in literate and illiterate subjects</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Petersson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Reis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Askelöf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Castro-Caldas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ingvar</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/089892900562147</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognitive Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="364" to="382" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Building large resources for text mining: The leipzig corpora collection</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Quasthoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Goldhahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Eckart</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-319-12655-5</idno>
+		<imprint>
+			<date type="published" when="2015-01">2015, January</date>
+			<biblScope unit="page" from="3" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Lexical ambiguity, semantic context, and visual word recognition</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Schvaneveldt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Becker</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0096-1523.2.2.243</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Human Perception and Performance</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="243" to="256" />
+			<date type="published" when="1976">1976</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Orthographic effects on rhyme monitoring</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Seidenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Tanenhaus</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.5.6.546</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Human Learning and Memory</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="546" to="554" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Prelexical facilitation and lexical interference in auditory word recognition</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Slowiaczek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hamburger</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.18.6.1239</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1239" to="1250" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Orthographic influences on spoken word recognition in bilinguals are dependent on the orthographic depth of the target language not the native language</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Türk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Domahs</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bandl.2022.105186</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Brain and Language</title>
+		<imprint>
+			<biblScope unit="volume">235</biblScope>
+			<biblScope unit="page">105186</biblScope>
+			<date type="published" when="2022-12">2022, December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The development of the orthographic consistency effect in speech recognition: From sublexical to lexical involvement</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ventura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kolinsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2006.12.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="547" to="576" />
+			<date type="published" when="2007-12">2007, December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">The locus of the orthographic consistency effect in auditory word recognition</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ventura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Pattamadilok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kolinsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01690960344000134</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Language and Cognitive Processes</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="57" to="95" />
+			<date type="published" when="2004-02">2004, February</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Google&apos;s Neural Machine Translation System: Bridging the Gap between Human and Machine Translation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schuster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Macherey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.1609.08144</idno>
+		<idno type="arXiv">arXiv:1609.08144</idno>
+		<imprint>
+			<date type="published" when="2016-10">2016, October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Orthography shapes the perception of speech: The consistency effect in auditory word recognition</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Ziegler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ferrand</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03208845</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="683" to="689" />
+			<date type="published" when="1998-12">1998, December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

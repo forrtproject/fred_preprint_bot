@@ -1,0 +1,1368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-09-26">Sep 26, 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Youmi</forename><surname>Suk</surname></persName>
+							<email>ysuk@tc.columbia.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Human Development</orgName>
+								<orgName type="institution">Teachers College Columbia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Chan</forename><surname>Park</surname></persName>
+							<email>parkchan@illinois.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Chenguang</forename><surname>Pan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Human Development</orgName>
+								<orgName type="institution">Teachers College Columbia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Kwangho</forename><surname>Kim</surname></persName>
+							<email>kwanghk@korea.ac.kr</email>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Department of Statistics</orgName>
+								<orgName type="department" key="dep2">Department of Education</orgName>
+								<orgName type="institution" key="instit1">Korea University</orgName>
+								<orgName type="institution" key="instit2">National Center for Education Statistics</orgName>
+								<orgName type="institution" key="instit3">High School Longitudi- nal Study</orgName>
+								<address>
+									<postCode>2009</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-09-26">Sep 26, 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">7E03B73700B31F4ED879FEDEDB81BD36</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:45+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Heterogeneous treatment effects</term>
+					<term>Conditional average treatment effects</term>
+					<term>Fairness</term>
+					<term>Intersectionality</term>
+					<term>Fair algorithms</term>
+					<term>Optimal treatment regimes</term>
+					<term>Multilevel observational data</term>
+					<term>Math course-taking public</term>
+					<term>private</term>
+					<term>or Catholic. School</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Recently, there have been growing efforts in developing fair algorithms for treatment effect estimation and optimal treatment recommendations to mitigate discriminatory biases against disadvantaged groups. While most of this work has primarily focused on addressing discrimination due to individual-level attributes (e.g., race/ethnicity), it overlooks the broader impact of societal structures and cultural norms (e.g., structural racism) beyond the individual level. In this paper, we formalize the concept of multilevel fairness for estimating heterogeneous treatment effects to improve fairness in optimal policies. Specifically, we propose a general framework for the estimation of conditional average treatment effects under multilevel fairness constraints that incorporate individual-level sensitive variables, cluster-level sensitive variables, and their combinations. Using this framework, we analyze the trade-off between fairness and the maximum achievable utility by the optimal policy. We evaluate the effectiveness of our framework through a simulation study and a real data study on advanced math courses using data from the High School Longitudinal Study of 2009.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Motivation: Multilevel Fairness</head><p>In recent decades, shifting from the average treatment effect (ATE), researchers have increasingly turned to heterogeneous treatment effects or conditional average treatment effects (CATEs), especially using machine learning methods (e.g., <ref type="bibr" target="#b19">Hill, 2011;</ref><ref type="bibr" target="#b22">Kennedy, 2023;</ref><ref type="bibr" target="#b24">Künzel et al., 2019;</ref><ref type="bibr" target="#b50">Wager &amp; Athey, 2018)</ref>. The CATE is defined as the ATE among subgroups determined by pretreatment covariates, and allows for more individualized treatment effects. These estimates are often used to inform optimal treatment recommendations. For example, a data-driven recommendation model constructs an optimal rule or policy, where a treatment is recommended if the CATE estimate exceeds a certain threshold, and otherwise, it is not (e.g., <ref type="bibr" target="#b0">Ballarini et al., 2018;</ref><ref type="bibr" target="#b27">Lipkovich et al., 2017;</ref><ref type="bibr" target="#b47">Tsiatis et al., 2019)</ref>. However, this type of model may be susceptible to potential discriminatory biases against individuals' characteristics, particularly those identified by race, gender, or other historically discriminated attributes. These characteristics are often called sensitive or protected variables. To mitigate discriminatory biases in CATEs or policies, a few technical solutions have been proposed, such as <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref>, <ref type="bibr">Nabi et al. (2019)</ref>, and <ref type="bibr" target="#b36">Rateike et al. (2024)</ref>. However, none have explicitly addressed the importance of considering discrimination arising from individual-level and cluster-level sensitive variables in fairness investigations. The overarching goal of this paper is to propose a framework for estimating CATEs with fairness considerations to develop fair and optimal polices in multilevel studies, where individuals (e.g., students) are nested within clusters (e.g., schools).</p><p>Ensuring algorithmic fairness has emerged as a critical issue across various research communities. The relevant literature offers formal, measurable metrics of fairness to detect discriminatory biases and provides both technical and non-technical solutions to resolve these biases (e.g., <ref type="bibr" target="#b1">Barocas et al., 2023;</ref><ref type="bibr" target="#b35">Pessach &amp; Shmueli, 2022)</ref>. However, most work has primarily focused on individual-level sensitive variables without addressing the broader impact of societal structures and cultural norms. For example, recent studies have highlighted the issues with framing race analytically as an individual-level attribute, but this view overlooks systemic racism and other broader factors related to race <ref type="bibr" target="#b6">(Boyd et al., 2020;</ref><ref type="bibr" target="#b17">Hanna et al., 2020;</ref><ref type="bibr" target="#b48">VanderWeele &amp; Robinson, 2014)</ref>. To more accurately represent discrimination and unfairness, therefore, it is essential to use a multilevel approach: one that includes individual experiences and characteristics, and another that includes cluster-level phenomena.</p><p>As a concrete example, consider estimating the CATE of taking an advanced math course on math scores in 9th grade to develop a math-course recommendation model. In historical educational data, participation in advanced math has been skewed towards white students rather than black students at the student level (given their prior achievement scores) <ref type="bibr" target="#b7">(Byun et al., 2014;</ref><ref type="bibr" target="#b13">Dalton et al., 2007)</ref>. Additionally, at the school level, participation in advanced math has varied based on school racial composition, such as the proportions of black or Hispanic groups that make up a school's student population. Such structural disparities in advanced math courses are undesirable, as they have contributed to an increase in the achievement gap and a lack of diversity in STEM fields <ref type="bibr" target="#b7">(Byun et al., 2014;</ref><ref type="bibr" target="#b41">Sadler et al., 2014)</ref>. Without fairness considerations, these disparities or biases in data are likely to be passed on to recommendation systems and potentially reinforce unfair dependencies between (multilevel) sensitive variables, decisions, and outcomes.</p><p>The main goal of this paper is to propose a framework for estimating the CATE under multilevel fairness constraints and to apply this framework to mitigate unfairness in optimal policies in multilevel studies. This paper accommodates sensitive variables from both the individual and cluster levels and seamlessly addresses intersectionality across multiple sensitive variables. Intersectionality is a theoretical framework that examines how overlapping categories like gender and race interact to create unique inequalities and challenges for disadvantaged or marginalized groups <ref type="bibr" target="#b12">(Crenshaw, 1989;</ref><ref type="bibr" target="#b15">Foulds et al., 2020)</ref>. Specifically, we extend the approach by <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref> to multilevel contexts by characterizing multilevel fairness functions to define desirable fairness criteria and by accounting for clustering effects in propensity score and outcome models. We then evaluate the performance of our proposed approach by measuring the accuracy of the estimated CATE, the utility and fairness of the policy, and the trade-off efficiency between utility and fairness. Finally, we demonstrate the proposed approach by estimating a CATE-based, math-course recommendation model for 9th graders using data from the High School Longitudinal Study of 2009 (HSLS:09).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Prior Work and Our Contributions</head><p>Many prior studies on algorithmic fairness in machine learning provide formal, measurable metrics for group fairness. Group fairness aims to ensure that different groups determined by a sensitive variable should be treated similarly by an algorithm <ref type="bibr" target="#b1">(Barocas et al., 2023)</ref>.<ref type="foot" target="#foot_0">foot_0</ref> Example metrics include statistical parity, separation, and sufficiency. Statistical parity requires that an algorithm's prediction (or decision) be marginally independent of the sensitive variable. Separation (or equalized odds) requires that the prediction be independent of the sensitive variable conditional on the outcome. Sufficiency requires that the outcome be independent of the sensitive variable conditional on the prediction; see Chapter 3 of <ref type="bibr" target="#b1">Barocas et al. (2023)</ref> for a review on fairness notions.</p><p>Additionally, the group fairness metrics above can be modified by conditioning on additional variables (e.g., <ref type="bibr" target="#b10">Corbett-Davies et al., 2017;</ref><ref type="bibr" target="#b44">Suk &amp; Han, 2023)</ref> or relaxed by allowing for a certain amount of disparities between the subgroups (e.g., <ref type="bibr" target="#b14">Feldman et al., 2015)</ref>. Furthermore, these metrics can be converted to counterfactual versions by replacing the observed outcome with the potential control outcome (i.e., the outcome if individuals were untreated) <ref type="bibr" target="#b11">(Coston et al., 2020;</ref><ref type="bibr" target="#b31">Mishler et al., 2021)</ref>.<ref type="foot" target="#foot_1">foot_1</ref> They can also be expanded to address intersectionality, for example by ensuring statistical parity among intersectional subgroups defined by gender and race <ref type="bibr" target="#b15">(Foulds et al., 2020;</ref><ref type="bibr" target="#b45">Suk &amp; Han, 2024)</ref>. Except for highly unrealistic conditions, several of the fairness metrics cannot be simultaneously satisfied on the same data, and thus, researchers should choose which criterion to target based on their domain knowledge <ref type="bibr" target="#b3">(Berk et al., 2021)</ref>.</p><p>Beyond fairness metrics, recent discussions on causal fairness have sought to provide more intuitive explanations of unfairness in algorithms. Many of relevant studies advocate for fairness by blocking unfair pathways of the sensitive variable on the decision or prediction <ref type="bibr" target="#b9">(Chiappa, 2019;</ref><ref type="bibr" target="#b25">Kusner et al., 2017;</ref><ref type="bibr" target="#b29">Mhasawade &amp; Chunara, 2021;</ref><ref type="bibr">Nabi et al., 2019;</ref><ref type="bibr" target="#b51">Yang et al., 2021</ref>). An interesting point in these works is that counterfactuals are defined with respect to the sensitive variable (e.g., black versus white) rather than with respect to a decision variable (e.g., advanced math versus standard math). That is, they focus on questions like "What would the recommended math course be if a student had been of a different race their whole life?" rather than "What would the math score be if this student took an advanced math course?" This approach often faces controversy over whether it is meaningful to discuss counterfactuals of individuals' demographics since these are not typically manipulated <ref type="bibr" target="#b16">(Glymour &amp; Glymour, 2014;</ref><ref type="bibr" target="#b20">Holland, 1986)</ref>. On the other hand, other causal fairness approaches, including <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref> and <ref type="bibr" target="#b30">Mishler and Kennedy (2022)</ref>, define counterfactuals with respect to a decision variable and use them inside an algorithm's risk function under fairness constraints; our proposal also adopts this definition of counterfactuals. Regardless of the approaches, understanding fairness-utility trade-offs is crucial when designing fair algorithms because the most accurate models do not satisfy desired fairness criteria and the fairest models do not yield the maximum utility (e.g., <ref type="bibr" target="#b8">Chan et al., 2024;</ref><ref type="bibr" target="#b31">Mishler et al., 2021)</ref>. Therefore, it is essential to inspect the tension between fairness and utility, as a fair but ineffective algorithm is of little use in practice.</p><p>To the best of our knowledge, there is no work on the intersection of algorithmic fairness and the estimation of heterogeneous treatment effects in multilevel studies that incorporates the multidimensionality of sensitive variables from both the individual and cluster levels. Some studies have integrated aspects of algorithmic fairness and policy learning <ref type="bibr" target="#b23">(Kim &amp; Zubizarreta, 2023;</ref><ref type="bibr">Nabi et al., 2019;</ref><ref type="bibr" target="#b49">Viviano &amp; Bradic, 2023)</ref>, but all have focused on data where the study units are assumed to be independent and identically distributed <ref type="bibr">(i.i.d.)</ref>. One notable exception is by <ref type="bibr" target="#b29">Mhasawade and Chunara (2021)</ref> on multilevel fairness, but it focuses on the ATE where the counterfactuals depend on a sensitive variable. Therefore, it remains unclear how to extend existing methods in algorithmic fairness to design fair algorithms with different aspects of fairness issues in multilevel data.</p><p>Our contribution is to propose a general framework for estimating the CATE under multilevel fairness constraints and to apply the proposed framework to improve the fairness of optimal policies in multilevel studies. To achieve this, we integrate literature from algorithmic fairness, causal inference, multilevel modeling, and stochastic optimization. In this paper, we detail how to characterize multilevel fairness functions that accommodate individual-level sensitive variables, cluster-level sensitive variables, and their combinations. Following <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref>, we formulate our estimator with these multilevel fairness constraints as a convex optimization problem, which can be readily solved using off-the-shelf solvers. The resulting estimator is doubly robust under certain regularity conditions. We also demonstrate how the concept of intersectionality can be seamlessly integrated into our fairness functions to conduct more accurate fairness investigations in multilevel studies. Furthermore, we use this framework to analyze the trade-off between utility and fairness in the optimal policy, using visualization inspection and formal trade-off metrics recently developed by <ref type="bibr" target="#b8">Chan et al. (2024)</ref>. Lastly, we emphasize the importance of considering multilevel fairness in a real-world application using multilevel educational data. Our analysis reveals that an algorithm considered fair at the individual level may not be fair from a cluster-level perspective. These findings highlight the necessity and effectiveness of our approach for estimating fair heterogeneous treatment effects to develop fair optimal policies in multilevel settings.</p><p>The remainder of the paper is organized as follows. Section 3 presents the setup, and Section 4 discusses our framework and methods that account for multilevel fairness. Section 5 provides the design and results of our simulation study, and Section 6 demonstrates our framework in empirical data about advanced math courses in high school. Finally, discussion and conclusions are provided in Section 7.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Setting</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Notation and Potential Outcomes</head><p>Let j = 1, . . . , J index J clusters (e.g., schools), and let i = 1, . . . , n j index individuals (i.e., study units), where n j is the number of individuals within cluster j and the total sample size is n = J j=1 n j . Let T ij ∈ T = {0, 1} denote treatment assignment (e.g., advanced math course assignment), where T ij = 1 indicates the treated status of individual i in cluster j and T ij = 0 indicates the untreated/control status. For example, T ij = 1 means that individual i in cluster j (hereafter referred to as individual ij) takes the advanced math course, while T ij = 0 means they take the standard math course. The observed outcome for individual ij is denoted as Y ij , where larger values are assumed to be preferable without loss of generality (e.g., math achievement scores). We denote measured p-dimensional pre-treatment covariates for individual ij as W ij = (S ij , X ij ) ∈ W, which consists of q-dimensional sensitive/protected variables S ij ∈ {0, 1} q and (p -q)-dimensional insensitive/unprotected covariates X ij ∈ X . Here,</p><formula xml:id="formula_0">S ij = (S (1) ij , S (2) j ) consists of q 1 -dimensional individual-level sensi- tive variables S (1) ij = {S (1) 1ij , S</formula><p>(1) 2ij , . . . , S</p><p>(1) q 1 ij } and q 2 -dimensional cluster-level sensitive variables S</p><p>(2)</p><formula xml:id="formula_1">j = {S (2) 1j , S (2) 2j , . . . , S (2) q 2 j }; likewise, X ij = (X (1) ij , X (2) j ) consists of individual-level (insensitive) covariates X (1)</formula><p>ij and cluster-level (insensitive) covariates X</p><p>(2) j . Thus, for each individual, we observe</p><formula xml:id="formula_2">O ij = (Y ij , T ij , W ij ).</formula><p>We also use the potential outcomes notation <ref type="bibr" target="#b33">(Neyman, 1923;</ref><ref type="bibr" target="#b38">Rubin, 1974)</ref> to define causal effects. We denote Y ij (1) as the potential treatment outcome if individual ij were treated (i.e., T ij = 1), and Y ij (0) as the potential control outcome if individual ij were untreated (i.e., T ij = 0). The observed outcome is linked to the potential outcomes as <ref type="bibr" target="#b39">Rubin, 1986)</ref>, which implies that individuals' potential outcomes are independent of others' treatment assignments and that there are no hidden variations of the treatment.</p><formula xml:id="formula_3">Y ij = T ij Y ij (1) + (1 -T ij )Y ij (0) under the Stable Unit Treatment Value Assumption (SUTVA;</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Heterogeneous Treatment Effects and Decision Rule</head><p>Heterogeneous treatment effects are commonly characterized by the CATE. The CATE measures the ATE among a subgroup of individuals defined by pre-treatment covariates W ij . In particular, we are interested in the CATE for the population conditional on the current cluster membership, that is, the CATE of individual treatment effects with equal weights over all the individuals in the population given their observed cluster assignments:</p><formula xml:id="formula_4">τ (w) = E{Y ij (1) -Y ij (0) | W ij = w}.</formula><p>(1)</p><p>In our empirical example, if W ij represents students' math identity, where W ij = 1 means that they see themselves a math person and W ij = 0 means that they do not, τ (1) is the ATE of taking an advanced math course on math scores among those who identify as a math person and τ (0) is the ATE among those who do not. Alternatively, if W ij is defined by prior math scores, τ (60) is the ATE among students who scored 60, and τ (65) is the ATE among students who scored 65. However, unlike the binary case of math identity, when W ij is defined by prior math scores, it requires estimating a function of a continuous variable. To estimate the ATE for students with a prior score of 63, i.e., τ (63), ideally, we need data from students who scored exactly 63. Otherwise, interpolation (or extrapolation) from students with nearby scores, like 60 or 65 is necessary, and the accuracy of the interpolation relies on assumptions about the functional form of τ (w). In this paper, our estimand of interest is the CATE under a series of multilevel fairness constraints, which will be further described in Section 4.1.</p><p>To reduce reliance on the functional assumptions, we instead target the best linear approximation of the CATE, defined by its projection onto the space spanned by linear combinations of covariates, and is formally written as:</p><formula xml:id="formula_5">β ′ = argmin β∈R p E τ (W ij ) -W ⊤ ij β 2 .</formula><p>(2)</p><p>Here, the linear function W ⊤ ij β ′ can be viewed as the best linear approximation of a potentially complex function τ (W ij ). This kind of projection approach is often employed in causal inference (e.g., <ref type="bibr" target="#b23">Kim &amp; Zubizarreta, 2023;</ref><ref type="bibr" target="#b42">Semenova &amp; Chernozhukov, 2020;</ref><ref type="bibr" target="#b46">Suk &amp; Kang, 2022)</ref>. There are several reasons why the above projection approach is preferred in our setting. First, even if the true function τ (W ij ) is non-linear, the coefficients β ′ are still interpretable, especially, as the linear effect of changing W ij on the treatment effect. Second, we can use doubly robust methods to estimate β ′ , even when various constraints are present. Third, we can use off-theshelf optimization algorithms to efficiently perform our estimation procedure. These points will be elaborated in the following section.</p><p>Researchers often use the CATE (or its transformation) to develop a decision rule or policy d ∈ D, where D denotes the set of all possible treatment rules. The decision rule is a function that maps an individual's covariates W ij to a treatment option in T <ref type="bibr" target="#b47">(Tsiatis et al., 2019)</ref></p><formula xml:id="formula_6">, i.e., d : W → T , W ij → d(W ij ).</formula><p>In particular, an optimal treatment regime or optimal policy d * is the "best" decision rule that maximizes the expected utility or value V(d) as:</p><formula xml:id="formula_7">d * (W ij ) = argmax d∈D V(d),<label>(3)</label></formula><p>where the standard value function is</p><formula xml:id="formula_8">V(d) := E[d(W ij )Y ij (1) + {1 -d(W ij )}Y ij (0)].</formula><p>In this case, we can alternately express the optimal policy maximizing the value V(d) as:</p><formula xml:id="formula_9">d * (W ij ) = 1{τ(W ij ) &gt; 0}.</formula><p>(4)</p><p>Here, 1 represents an indicator function. This optimal rule recommends the treatment if the CATE is positive and otherwise, recommends the control.</p><p>In practice, researchers may need to restrict decision rules in order to make the rules more interpretable and easier to implement. We denote a restricted subset of D as D β where β is a finite-dimensional parameter that defines the subset of decision rules considered by researchers. For example, we can restrict the form of CATE using the linear projection approach in Equation ( <ref type="formula">2</ref>). With this restricted rule, we estimate the policy that maximizes the achievable value as:</p><formula xml:id="formula_10">d * (W ij ; β ′ ) = 1(W ⊤ ij β ′ &gt; 0).</formula><p>(5)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Causal Assumptions</head><p>The usual set of the working assumptions to identify the CATE in multilevel studies is <ref type="bibr" target="#b21">(Imbens &amp; Rubin, 2015)</ref>:</p><formula xml:id="formula_11">(A1) Conditional Ignorability: Y ij (1), Y ij (0) ⊥ T ij | W ij (A2) Positivity: 0 &lt; P (T ij = 1 | W ij ) &lt; 1.</formula><p>Assumption (A1) states that within every value of the pre-treatment covariates W ij , the treatment assignment T ij is randomly assigned to individuals and thus, is independent of Y ij (1) and Y ij (0). Assumption (A2) states that for every value of the covariates, the probability of receiving treatment (i.e., the propensity score) is between zero and one. Therefore, (A2) ensures that the probability of having clusters containing only treated or only control units is zero. However, (A2) may not be empirically supported by the observed data, as there may be some clusters where all units receive either treatment or control. (A1) and (A2) are jointly referred to as strong ignorability <ref type="bibr" target="#b37">(Rosenbaum &amp; Rubin, 1983)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Our Proposal: Fair and Robust CATE in Multilevel Studies</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Estimand</head><p>In this section, we provide a framework for estimating the CATE that maximizes the utility (i.e., value) while satisfying the desirable fairness criteria in multilevel studies. Following <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref>, we aim to find the best linear approximation of the CATE, defined by its projection onto a covariate space, but subject to K multilevel fairness constraints as:</p><formula xml:id="formula_12">β * = argmin β∈R p E Y ij (1) -Y ij (0) -W ⊤ ij β 2 subject to E uf k (O ij )W ⊤ ij β ≤ δ k , k = 1, . . . , K. (<label>6</label></formula><formula xml:id="formula_13">)</formula><p>Our estimand is now reformulated as the solution to the constrained stochastic optimization problem (6), where we do not assume anything about the true functional relationship between individual treatment effects (i.e., Y ij (1) -Y ij (0)) and covariates W ij . The (un)fairness function uf k : W → R characterizes a desired fairness criterion specified by users to be incorporated into the CATE estimation <ref type="bibr" target="#b30">(Mishler &amp; Kennedy, 2022)</ref>. Each uf k is defined with sensitive variables from the individual and/or cluster levels, and a larger value indicates an increasing level of unfairness or larger disparity. In our setting, the CATE is fair not only if individuals from different demographic groups have similar CATE but also if individuals from different clusterlevel backgrounds have similar CATE estimates; see the next subsection for more details. The term δ k is a pre-specified tolerance for the maximum acceptable level of unfairness in the k-th fairness criterion, where δ k ≥ 0. Under this objective function, we aim to find the coefficients of the best-fitting function of individual treatment effects on the linear projection, subject to the K fairness constraints.<ref type="foot" target="#foot_2">foot_2</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Multilevel Fairness Functions</head><p>Multilevel fairness functions use sensitive variables from different structural levels, including individual-level variables, cluster-level variables, and their combinations. These functions are specified based on fairness metrics discussed in Section 2 by addressing different aspects of fairness concerns in multilevel data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Individual Level</head><p>Suppose we have one individual-level sensitive variable, S</p><p>(1) 1ij (e.g., black versus white students), without loss of generality. The statistical parity function with S</p><p>(1) 1ij is as follows:</p><formula xml:id="formula_14">uf k (O ij ) = 1 -S (1) 1ij E{1 -S (1) 1ij } - S (1) 1ij E{S (1) 1ij } . (<label>7</label></formula><formula xml:id="formula_15">)</formula><p>This criterion allows our model to be marginally independent of the sensitive variable, and it leads to:</p><formula xml:id="formula_16">|E{W ⊤ ij β|S (1) 1ij = 0} -E{W ⊤ ij β|S (1) 1ij = 1}| ≤ δ k .</formula><p>For example, statistical parity aims to have similar means of CATE between white versus black groups, with a tolerance level δ k . Additionally, we can use the conditional statistical parity as our fairness criterion:</p><formula xml:id="formula_17">uf k (O ij ) = (1 -S (1) 1ij )1(L ij = l) E (1 -S (1) 1ij )1(L ij = l) - S (1) 1ij 1(L ij = l) E S (1) 1ij 1(L ij = l) , (<label>8</label></formula><formula xml:id="formula_18">)</formula><p>where L ij is a legitimate (or fair) factor used to specify the conditional statistical parity. L ij is some function of X ij , and it is categorical or categorized to be used within the fairness function, i.e., L ij ∈ {1, 2, . . . , h}. This criterion achieves our model's conditional independence of the sensitive variable given the legitimate/fair variable, and requires fitting h fairness constraints. Equation ( <ref type="formula" target="#formula_17">8</ref>) leads to:</p><formula xml:id="formula_19">|E{W ⊤ ij β|S (1) 1ij = 0, L ij = l} -E{W ⊤ ij β|S (1) 1ij = 1, L ij = l}| ≤ δ k .</formula><p>Under this criterion, among students who have the same prior achievement levels, black and white groups have similar means of CATEs, with a tolerance level δ k . Furthermore, researchers can use another fairness metric known as separation/equalized odds to allow our model to be independent of the sensitive variable conditional on the outcome. This can be done by replacing</p><formula xml:id="formula_20">L ij with a categorized version of Y ij in Equation (8).</formula><p>Importantly, all the fairness functions with S</p><p>(1) 1ij above try to achieve fairness across clusters rather than within clusters. However, one may hope to protect these fairness criteria within each cluster. More specifically, if we want to achieve within-cluster statistical parity, Equation (7) needs to be changed into a type of conditional statistical parity as:</p><formula xml:id="formula_21">uf k (O ij ) = (1 -S (1) 1ij )1(C j = c) E (1 -S (1) 1ij )1(C j = c) - S (1) 1ij 1(C j = c) E S (1) 1ij 1(C j = c) , (<label>9</label></formula><formula xml:id="formula_22">)</formula><p>where C j ∈ {1, 2, ..., J} represents the cluster membership or identifier. This criterion creates J fairness constraints and aims to achieve marginal independence within each cluster. Other fairness functions, such as Equation ( <ref type="formula" target="#formula_17">8</ref>), can be easily adapted to within-cluster versions by additionally conditioning on the cluster membership.</p><p>We make two remarks about within-cluster fairness. First, while these notions of fairness may be of interest in applied research, they are often not feasible to use in finite samples when (i) some schools contain only one subgroup (e.g., only white students) or (ii) cluster sizes are small. Second, in such cases, researchers can group clusters based on their similarity (e.g., in terms of covariate distributions or treatment prevalence) and use the group membership that consists of similar clusters. This strategy helps to alleviate the two problems while achieving a more accurate representation of fairness in multilevel data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cluster Level</head><p>It is straightforward to characterize multilevel fairness functions with cluster-level sensitive variables (e.g., Hispanic-serving institution versus not). We apply fairness functions across clusters, like statistical parity in Equation ( <ref type="formula" target="#formula_14">7</ref>), conditional statistical parity in Equation ( <ref type="formula" target="#formula_17">8</ref>), or separation with a categorized outcome, to define fairness functions for cluster-level sensitive variables. Specifically, we replace S</p><p>(1) 1ij with a cluster-level sensitive variable, say S</p><p>(2) 1j , in chosen across-cluster fairness functions to define desirable fairness criteria.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Intersectionality</head><p>Intersectionality is often addressed by forming intersectional groups based on multiple protected variables <ref type="bibr" target="#b15">(Foulds et al., 2020;</ref><ref type="bibr" target="#b40">Russell &amp; Kaplan, 2021;</ref><ref type="bibr" target="#b45">Suk &amp; Han, 2024)</ref>. Given this, we also form intersectional subgroups defined by multiple sensitive variables to achieve intersectional fairness. In multilevel data settings, these intersectional groups can be defined using individuallevel sensitive variables (e.g., S</p><p>(1) 1ij , S</p><p>(1) 2ij ), cluster-level sensitive variables (e.g., S</p><p>(2) 1j , S</p><p>(2) 2j ), or a combination of both (e.g., S</p><p>(1) 1ij , S</p><p>(2) 1j ). To characterize intersectional fairness, suppose that intersectional subgroups are defined by one individual-level sensitive variable S</p><p>(1) 1ij and one cluster-level sensitive variable S</p><p>(2) 1j , and the target fairness criterion is statistical parity. We denote intersectional subgroups as</p><formula xml:id="formula_23">S * ij = (S (1) 1ij , S</formula><p>(2) 1j ) ∈ {(0, 0), (0, 1), (1, 0), (1, 1)}, where the first group is a reference group and the last three groups are focal groups. The statistical parity function for intersectionality is as:</p><formula xml:id="formula_24">uf k (O ij ) = 1 -1(S * ij = s) E 1 -1(S * ij = s) - 1(S * ij = s) E 1(S * ij = s) , (<label>10</label></formula><formula xml:id="formula_25">)</formula><p>where 1(S * ij = s) is the indicator for intersectional group membership representing the focal group s. This criterion aims to achieve marginal independence across all intersectional subgroups simultaneously. Similarly, we can apply other fairness functions to these intersectional subgroups, for example, by conditioning on a legitimate/fair variable, using a categorical version of Y , or considering cluster membership. It is important to note that Equation (10) for intersectionality differs from Equation ( <ref type="formula" target="#formula_17">8</ref>), even if we replace L ij with S</p><p>(2) 1j in Equation ( <ref type="formula" target="#formula_17">8</ref>), because Equation (8) does not ensure similar means of CATEs with respect to S</p><p>(2) 1j . Therefore, researchers must carefully define the appropriate forms of fairness criteria in their real-world contexts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Estimation</head><p>Once multilevel fairness functions are chosen by users, we can solve the above objective function in Equation ( <ref type="formula" target="#formula_12">6</ref>) using an appropriate approximate program constructed from observed data. Let φ t denote the augmented inverse probability weighted estimator for the potential outcomes as:</p><formula xml:id="formula_26">φ t (O; η) = 1(T = t) {Y -µ t (W )} π t (W ) + µ t (W )<label>(11)</label></formula><p>where η = {π t , µ t } denotes a set of nuisance functions with</p><formula xml:id="formula_27">π t (W ij ) = P (T ij = t|W ij ) and µ t (W ij ) = E(Y ij |W ij , T ij = t).</formula><p>Estimator φ t is doubly robust, which means that it is consistent if either the propensity score model π t or outcome model µ t is consistent, not necessarily both; see Park and Kang (2022) for technical details. To estimate the nuisance functions η, one may use appropriate parametric estimation techniques for multilevel or clustered data, such as generalized linear mixed effects models (GLMMs, McCulloch et al., 2008) or the generalized estimating equations (GEE, <ref type="bibr" target="#b26">Liang &amp; Zeger, 1986)</ref>. We estimate our nuisance functions with the following GLMMs:</p><formula xml:id="formula_28">logit(π 1 (W ij )) = γ 0 + γ ⊤ W W ij + V j , V j ∼ N (0, σ 2 V ),<label>(12)</label></formula><formula xml:id="formula_29">Y ij = β 0 + β T T ij + β ⊤ W W ij + β ⊤ T W T ij W ij + U j + R ij ,<label>(13)</label></formula><p>with</p><formula xml:id="formula_30">U j ∼ N (0, σ 2 U ), R ij ∼ N (0, σ 2 R ).</formula><p>Here, γ (•) s and β (•) s represent the fixed-effects coefficients for the propensity score model ( <ref type="formula" target="#formula_28">12</ref>) and outcome model ( <ref type="formula" target="#formula_29">13</ref>), respectively. V j and U j denote the random effect terms in the propensity score model and outcome model, respectively. After obtaining the estimates of η, we then estimate β * via the following constrained quadratic program:</p><formula xml:id="formula_31">β * = argmin β 1 2 β ⊤ P n (W W ⊤ )β -P n {φ 1 (O; η) -φ 0 (O; η)} W ⊤ β subject to P n uf k (O)W ⊤ β ≤ δ k , k = 1, . . . , K.<label>(14)</label></formula><p>Here, P n denotes the sample average operator adapted to the cluster structure, i.e.,</p><formula xml:id="formula_32">P n {f (O)} = J -1 J j=1 n -1 j n j i=1 f (O ij )</formula><p>, and the estimated fairness functions uf k (O) are computed based on the sample data. The estimator β * can be readily implemented using various efficient off-theshelf solvers, say by using the alternating direction method of multipliers (e.g., <ref type="bibr" target="#b43">Stellato et al., 2020)</ref>, or by converting it into a conic or semidefinite programming problem (e.g., MOSEK ApS, 2019). Furthermore, our proposed estimator ( <ref type="formula" target="#formula_31">14</ref>) is doubly robust, which means that it is consistent even if one of the two nuisance models is misspecified. This property is formally stated in the following proposition, which is a direct consequence of Theorem 3.2 of <ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref> and Theorem 2 of <ref type="bibr" target="#b18">Hansen and Lee (2019)</ref>.</p><p>Proposition 1. Let β * and β * be the optimal solutions to the programs (6) and (14), respectively. Suppose that the nuisance regression functions π t , µ t are parametrically modeled through (12) and (13), respectively. Further assume that each cluster size is uniformly bounded, i.e., there exists M &lt; ∞ such that n j &lt; M, ∀j. Then the proposed estimator is √ n-consistent, i.e., ∥β * -β * ∥ 2 = O P (n -1/2 ), as long as one of the nuisance regression functions, but not necessarily both, is correctly specified.</p><p>For practical implementation, in Algorithm 1, we summarize the steps of our proposed method using multilevel observational data. We provide two functions, named GLMM model and fairCATE multilevel. The GLMM model function is based on R package lme4 <ref type="bibr" target="#b2">(Bates et al., 2015)</ref> and is used to estimates φ t . The fairCATE multilevel function is based on R package Rmosek (MOSEK ApS, 2019) for the MOSEK optimization and is used to estimate the fair and robust CATE (i.e., W ⊤ ij β * ) and the CATE-based treatment decision (i.e., d * (W ij ) = 1(W ⊤ ij β * &gt; 0)). R codes for our proposal are available in the supplementary materials and can also be found at the first author's GitHub repository (<ref type="url" target="https://github.com/youmisuk/FairCATE-Multilevel">https://github.com/youmisuk/FairCATE-Multilevel</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1 Fair and Robust CATE Estimation in Multilevel Studies</head><formula xml:id="formula_33">Input: Outcome Y ij , treatment T ij , pre-treatment covariates W ij = (S ij , X ij )</formula><p>1: Choose multilevel fairness functions, uf k and their tolerance levels δ k . 2: Estimate nuisance models η = {π t , µ t } and use η to compute φ t for t = 0, 1.</p><p>3: Estimate β * by minimizing the following objective function with fairness constraints. </p><formula xml:id="formula_34">β * = argmin β 1 2 β ⊤ P n (W W ⊤ )β -P n {φ 1 (O; η) -φ 0 (O; η)} W ⊤ β subject to P n uf k (O)W ⊤ β ≤ δ k , k = 1, . . . , K.</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Simulation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Designs and Evaluation</head><p>We conduct a simulation study to assess the performance of our proposed method. Throughout the simulations, we estimate the CATE and the optimal decisions using our proposal discussed in Section 4 with varying tolerance levels of δ k . For comparison, we use two popular existing estimators for CATE based on machine learning: Bayesian additive regression trees (BART, <ref type="bibr" target="#b19">Hill, 2011)</ref> and causal forests <ref type="bibr" target="#b50">(Wager &amp; Athey, 2018)</ref>. However, these estimators do not allow for fairness constraints in their CATE estimation. Specifically, our simulation study is divided into two designs. Design 1 introduces unfairness in both individual-level and cluster-level sensitive variables without an intersectionality issue. Design 2 is based on Design 1, but adds unfairness among subgroups defined by individual-level and cluster-level sensitive covariates. For simplicity, our simulation uses one individual-level sensitive variable S</p><p>(1) 1ij , one cluster-level sensitive variable S</p><p>(2) 1j , and fairness metrics based on statistical parity, such as Equation ( <ref type="formula" target="#formula_14">7</ref>). We provide details of the data-generating processes for both designs in Appendix S1. We also demonstrate the application of another fairness metric in Section 6 on real data analysis. For each design, we use a sample size of 300 clusters and 25 individuals per cluster.</p><p>In each replicate, we evaluate the performance of the methods with respect to (i) the mean squared error (MSE) of the CATE estimates (i.e., τ (W ) = W ⊤ β * ), (ii) the relative utility of a target optimal policy ( d * = 1(W ⊤ β * &gt; 0)), and (iii) the mean unfairness of the target policy across fairness functions (k = 1, 2, . . . , K) as:</p><formula xml:id="formula_35">Mean Squared Error (MSE) = P n {τ (W ) -τ (W )} 2 , (<label>15</label></formula><formula xml:id="formula_36">) Relative Utility = V( d * ) -V( drandom ) V( drandom ) , (<label>16</label></formula><formula xml:id="formula_37">) Mean Unfairness = 1 K K k=1 U k ( d * ), U k ( d * ) = P n { uf k (O) d * } . (<label>17</label></formula><formula xml:id="formula_38">)</formula><p>Here, the MSE measures the mean squared deviation between the estimated CATE and the true CATE across all study units. The relative utility measures the increase in value V of the target policy, compared to a random policy drandom (i.e., randomly assigned recommendations). The mean unfairness measures the average differences in the proportions of recommended treatments across the K fairness functions investigated, where K = 2 for Design 1 and K = 3 for Design 2. Additionally, we compute the mean unfairness in CATE estimates, and provide the results with their accuracy and fairness in Appendix S2.</p><p>For our proposed method, we further consider two trade-off metrics: Fairness-Utility Relative Gain (FURG) and Fairness-Utility Trade-off Ratio (FUTR). These metrics are recently proposed in <ref type="bibr" target="#b8">Chan et al. (2024)</ref>, and are written as: Fairness-Utility Relative Gain (FURG) = UG + UD, ( <ref type="formula">18</ref>)</p><formula xml:id="formula_39">Fairness-Utility Trade-off Ratio (FUTR) = - UD UG , (<label>19</label></formula><formula xml:id="formula_40">)</formula><p>where</p><formula xml:id="formula_41">UG = V( d * fair ) -V( d * unfair ) V( d * unfair ) -V( drandom ) , UD = 1 K K k=1 U k ( d * unfair ) -U k ( d * fair ) U k ( d * unfair )</formula><p>.</p><p>Here, d * unfair represents the target unfair policy estimated using our proposed method with a large value of δ, and d * fair represents the target fair policy with a small value of δ. The FURG measures the total combined gain that sums utility gain (UG) and unfairness drop (UD), giving equal importance to both. The FUTR metric is the negative ratio between UD and UG, and computes the reduction in unfairness per unit of utility loss. <ref type="foot" target="#foot_3">4</ref> For both FURG and FUTR, a larger metric value indicates a better fairness-utility trade-off. We repeat our simulation 500 times, and compute the average score for each performance metric across these repetitions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Results</head><p>Table <ref type="table" target="#tab_1">1</ref> presents the MSE (of CATE estimates), relative utility, and mean unfairness for each method under Design 1 with no intersectionality. We use the true CATE τ (W ) as our reference and compare our results with two popular CATE methods, BART and causal forests. For our proposed method, we consider two scenarios: the first only with an individual-level fairness function (i.e., an insufficient representation of fairness) and the second with both an individuallevel and a cluster-level fairness function (i.e., accurate representation of fairness). In both scenarios, we use two tolerance levels: δ = ∞ and δ = 0. Specifically, δ = ∞ indicates no fairness constraints, which we set δ = 4 in our simulations, and results in an unfair policy; δ = 0 indicates zero tolerance for unfairness, which we set δ = 0.0001 for computational efficiency, and results in a fair policy.</p><p>From Table <ref type="table" target="#tab_1">1</ref>, our proposed method without fairness constraints (i.e., both scenarios with δ = ∞) demonstrates performance comparable to BART in terms of relative utility and mean (2) 1j represent individual-level and cluster-level sensitive variables, respectively. MSE represents the mean squared error of the conditional average treatment effect estimates. "Utility" and "Unfairness" represent the relative utility and mean unfairness of the optimal policy, respectively. FURG represents fairness-utility relative gain, and FUTR represents fairness-utility trade-off ratio.</p><p>unfairness, but with a slightly larger MSE of the CATE estimates. While neither BART nor causal forests can accommodate fairness constraints, our proposed method does so by reducing δ to zero. With a zero value of δ, our proposed method effectively reduces unfairness. Specifically, in the second scenario, which incorporates both individual-level and cluster-level fairness constraints, the remaining unfairness decreases to 0.010. In contrast, the first scenario, which includes only the individual-level fairness constraint, still exhibits residual unfairness due to the absence of cluster-level fairness consideration. Additionally, we observe a trade-off between utility and fairness; reducing unfairness comes at a slight cost of sacrificing the maximum achievable value (approximately 1% loss). The second scenario shows a better fairness-utility trade-off compared to the first scenario as indicated by higher FURG and FUTR values. These findings highlight the importance of formalizing a multilevel approach to algorithmic fairness in multilevel studies. We further examine the trade-off between utility and fairness using our proposed method with varying values of δ. Figure <ref type="figure" target="#fig_1">1</ref> visualizes this trade-off. In both scenarios, there are no noticeable changes in utility and fairness when δ is decreased to a certain threshold (from δ = 4 to δ = 0.9 in our case). However, when δ is reduced further from 0.9 to 0.0001, the mean unfairness effectively decreases, albeit with a slight reduction in relative utility. Between the first and second scenarios, the second scenario with multilevel fairness constraints demonstrates a more favorable trade-off, where a greater reduction in unfairness comes with only a small loss in utility. The remaining unfairness in the first scenario emphasizes that an algorithm considered fair at the individual level may still exhibit unfairness from the cluster level.</p><p>Table <ref type="table" target="#tab_2">2</ref> summarizes the results for Design 2 with intersectionality concerns, where we generate unfairness among intersectional groups defined by an individual-level sensitive variable and a cluster-level sensitive variable; see Appendix S1 for more details of the data-generating process. In this design, we examine the performance of our proposed method with three different scenarios: the first with only an individual-level fairness function, the second with individual-level and cluster-level fairness functions, and the third with intersectional fairness functions. The first two scenarios neglect intersectionality, while the third scenario ensures intersectional fairness in our proposed method. From Table <ref type="table" target="#tab_2">2</ref>, we observe a trade-off between utility and unfairness, similar to that in Design 1. As the value of δ is reduced from a large value to zero (specifically, 0.0001), the mean unfairness decreases across all three scenarios, but with a 1% loss in relative utility. We achieve a more favorable trade-off when we specify our fairness functions more accurately, moving from an individual-level perspective (the first scenario) to an intersectional one (the third scenario). The first scenario shows the largest residual unfairness and the lowest FURG and FUTR values. The second scenario still exhibits some residual unfairness due to intersectional disparities. In contrast, the third scenario, which accounts for intersectional fairness, effectively reduces unfairness to 0.012, and shows the highest FURG and FUTR values. (2) 1j represent individual-level and cluster-level sensitive variables, respectively. MSE represents the mean squared error of the conditional average treatment effect estimates. "Utility" and "Unfairness" represent the relative utility and mean unfairness of the optimal policy, respectively. FURG represents fairness-utility relative gain, and FUTR represents fairness-utility trade-off ratio.</p><p>Figure <ref type="figure" target="#fig_2">2</ref> visualizes the trade-off between utility and fairness using our proposed method with different values of δ. For large values of δ, all three scenarios behave similarly in terms of relative utility and mean fairness. However, when the value of δ approaches zero, the mean unfairness decreases, with a slight reduction in relative utility. However, in the first and second scenarios, non-negligible unfairness remains due to disparities arising from either cluster-level sensitive variables or intersectional inequalities. In contrast, in the third scenario, we minimize unfairness as much as possible. Overall, the findings from Designs 1 and 2 highlight the importance of incorporating multilevel fairness considerations beyond the individual level when estimating CATEs and developing optimal policies in multilevel studies. By correctly specifying fairness functions, our method provides a flexible approach to minimizing unfairness while maintaining utility.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Empirical Example: Advanced Math Course in High School</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Data and Variables</head><p>We use the restricted-use version of the HSLS:09 data, a nationally representative longitudinal study of 9th graders in 2009, to estimate the CATEs of taking an advanced math course and to develop fair and optimal math course-taking plans. We also use transcript data collected from the schools in 2013 after most students had completed high school. The transcript data includes detailed information on the math courses taken by each student, credits earned in each math course, GPA in mathematics, and more. In developing our recommendation models, we combine student data, transcript data, and school data from the HSLS:09 study. The analytic sample consists of 9,910 students from 800 schools. Note that numbers are rounded to the nearest tens to comply with IES rules.</p><p>The treatment variable is whether students took an advanced math course in 9-th grade during the academic year of 2009-10; T ij = 1 indicates that they took an advanced math course (i.e., geometry or a higher-level course) and T ij = 0 otherwise. The outcome of interest Y ij is students' weighted GPA in mathematics during 9-th grade, which is adjusted for the difficulty levels of math courses. For pre-treatment (insensitive) covariates, we use 11 student-level covariates, such as their 8-th math proficiency level, participation in math club activities, perceptions of math utility, and math identity, as well as 12 school-level covariates, such as student-tomath-teacher ratio, math courses requirements, and school type. We also consider two sensitive covariates: racial groups (white versus black) at the student level and proportions of black students (high versus low proportions) at the school level. For the school-level sensitive variable, we use a threshold of 20% to determine schools with high versus low proportions of black students. A proportion above 20% indicates a notable shift in student composition <ref type="bibr" target="#b5">(Bohrnstedt et al., 2015)</ref>, and this threshold is the median in our empirical data. For desirable fairness functions, we apply the statistical disparity criterion to the school-level sensitive variable, whereas we use the conditional statistical disparity criterion for the individual-level, race variable where the legitimate/fair variable is whether a student's pre-high school math achievement is above the average level or not. We impute missing values in the covariates with predictive mean matching. For a complete list of variables used in this study, see Appendix S3.</p><p>For the HSLS:09 data analysis, we apply our proposed method with the chosen fairness criteria using two different values of δ: a large value of 20 for an unfair model and a (near-)zero value of 0.0001 for a fair model. For comparison, we also implement our proposed method with only an individual-level fairness constraint to examine the impact of ignoring cluster-level fairness constraints in this real-data application.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Results</head><p>Figure <ref type="figure" target="#fig_4">3</ref> provides the results about distributions of the CATE estimates and proportions of recommended treatments using our proposed method with multilevel fairness functions. We use two different values of δ and summarize each case in Figure <ref type="figure" target="#fig_4">3</ref>-(1) and Figure <ref type="figure" target="#fig_4">3-(</ref>2), respectively. The row categories in this figure represent sensitive variables, one at the student level and the other at the school level. Plot A-1 of Figure <ref type="figure" target="#fig_4">3</ref>-(1) shows notable differences in CATE estimates between black and white students given their prior math achievement using the unfair model. These differences lead to disparities in course recommendations, as shown in Plot A-2 of Figure <ref type="figure" target="#fig_4">3</ref>-(1); Black students are less likely to be recommended for advanced math courses compared to white students. For the school-level sensitive variable, we observe that students from schools with a higher proportion of black students have slightly lower CATE estimates compared to those from schools with a lower proportion, thereby leading to a slight difference in the recommendation rates for advanced math courses; see Plots B-1 and B-2 of Figure <ref type="figure" target="#fig_4">3</ref>-(1). In contrast, when a zero value of δ is used in our proposed method with multilevel fairness functions, Figure <ref type="figure" target="#fig_4">3-(</ref>2) shows no differences in the mean CATE estimates and proportions of recommended treatments for both student-level and school-level sensitive variables. This demonstrates that our proposed method ensures algorithmic fairness from both individual-level and cluster-level perspectives.</p><p>Additionally, we consider the case that includes only a student-level fairness function using a zero value of δ. Figure <ref type="figure" target="#fig_5">4</ref> summarizes the results. We maintain fair distributions in CATE estimates and recommended rates associated with the student-level sensitive variable, but unfairness with the school-level sensitive variable inadvertently increases when cluster-level fairness functions are ignored. Therefore, when developing fair algorithms in multilevel studies, it is essential to characterize multilevel fairness beyond the individual level as an algorithm considered fair at the individual level may not be fair from a cluster-level perspective.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Discussion and Conclusions</head><p>This paper provides a framework for estimating heterogeneous treatment effects under multilevel fairness considerations to develop fair and optimal policies in multilevel studies. Specifically, we propose a constrained optimization approach for CATE estimation with multiple fairness functions based on individual-level and cluster-level sensitive variables, as well as their intersectional groups. Our simulation study reveals that imposing only individual-level fairness constraints is insufficient to eliminate potential structural unfairness observed in multilevel studies. It is important to accurately characterize multilevel fairness functions by incorporating both individual-level and cluster-level sensitive variables and using appropriate fairness metrics. In   the simulations, we also find inevitable trade-offs between utility and fairness, where the best trade-off efficiency is achieved when multilevel fairness functions are correctly specified. Moreover, we demonstrate our proposed method using the HSLS:09 data, and our empirical results suggest that incorporating multilevel fairness considerations is necessary to ensure the fair distributions of CATE estimates and personalized recommendations in multilevel observational data.</p><p>Importantly, our proposed method requires users to choose a tolerance level, δ k . As demonstrated in our simulation and real data studies, researchers may choose a tolerance level of zero if their goal is to achieve equality in fairness criteria. However, we empathize that the value of δ does not necessarily have to be zero; it can be set higher than zero to allow for some acceptable differences in certain or all fairness functions. Researchers should leverage domain knowledge about fairness in specific real-world applications (e.g., teaching, hiring, promotion, training) to determine appropriate tolerance levels. For example, they could use the 80% rule or statistical significance tests, which are commonly used for evaluating adverse impact in employment discrimination contexts <ref type="bibr" target="#b4">(Biddle, 2006)</ref>. Under the 80% rule, also known as the "four-fifths rule," researchers first investigate if the recommendation rate for a disadvantaged group is less than 80% of the rate for the advantaged group under no fairness constraints. If this is the case, they then gradually reduce the value of δ until the 80% rule is satisfied. With a statistical significance test, researchers can use non-zero values of δ such that differences in the mean CATE estimates or proportions of the recommended treatments that are statistically insignificant.</p><p>Based on the findings of this paper, we provide some suggestions for future research. First, the performance of the proposed estimator ( <ref type="formula" target="#formula_31">14</ref>) can be significantly influenced by the choice of nuisance estimators for η. For simplicity, we used linear specification of GLMMs for nuisance estimation, and did not incorporate any basis expansion in approximating τ more accurately. Future research would explore more flexible models for the nuisance functions and consider a much larger model space for projecting τ through basis expansions. Second, while our proposed method requires binary or categorical sensitive variables, it is limited in handling continuous sensitive variables unless they are categorized. Future research would investigate how to accommodate continuous sensitive variables in our constrained optimization method, potentially using Kolmogorov-Smirnov or Wasserstein distances. Third, when considering intersectionality across many sensitive variables, the number of constraints can become excessive. In such cases, making a prior distributional assumption on the differences among these intersectional groups could help reduce the number of parameters, similar to multilevel random-effects models. Future research could further explore intersectional fairness in our proposed framework. Despite these limitations, our proposed method complements the existing literature by introducing multilevel fairness considerations in estimating CATEs and developing optimal policies. We hope that our framework serves as a useful tool for more accurately defining fairness dimensions and promoting more equitable algorithmic decision-making in multilevel observational data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>4:</head><figDesc>Estimate the fair and robust CATE, W ⊤ ij β * for all individuals ij. 5: Make the optimal decision based on the CATE: d * (W ij ) = 1{W ⊤ ij β * &gt; 0}. Output: W ⊤ ij β * and d * (W ij ) for all individuals ij.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Trade-off between utility and unfairness under Design 1 with varying threshold values, from δ = ∞ (i.e., an unfair model with no constraints) to δ = 0.0001 (i.e., a fair model). The blue curve represents the scenario with only an individual-level fairness function. The red curve represents the scenario with multilevel fairness, where both individual-level and cluster-level fairness functions are specified.</figDesc><graphic coords="12,203.76,474.38,204.47,188.90" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Trade-off between utility and unfairness under Design 2 with varying threshold values, from δ = ∞ (i.e., an unfair model with no constraints) to δ = 0.0001 (i.e., a fair model). The blue, red, and black curves represent the scenarios with fairness functions on the individual level only, on both the individual and cluster levels, and on each intersectional group, respectively.</figDesc><graphic coords="14,203.76,103.46,204.47,188.90" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>( 1 )</head><label>1</label><figDesc>Unfair model with a large value of δ(2) Fair model with a zero value of δ</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Distributions of the CATE estimates of taking the advanced math course and personalized recommendations in a student-level sensitive variable (A-1 and A-2) and a cluster-level sensitive variable (B-1 and B-2) using our proposed method with multilevel fairness functions: An unfair model (1) and a fair model (2). SOURCE: Department of Education, National Center for Education Statistics, High School Longitudinal Study of 2009 (HSLS:09).</figDesc><graphic coords="16,116.85,332.01,378.25,262.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Distributions of the CATE estimates of taking the advanced math course and personalized recommendations in a student-level sensitive variable (A-1 and A-2) and a cluster-level sensitive variable (B-1 and B-2) using our proposed method with only an individual-level fairness function and a zero value of δ. SOURCE: Department of Education, National Center for Education Statistics, High School Longitudinal Study of 2009 (HSLS:09).</figDesc><graphic coords="17,116.85,50.40,378.25,262.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>Results of the methods under Design 1: No intersectionality</figDesc><table><row><cell>MSE</cell><cell>Utility</cell><cell>Unfairness</cell><cell>FURG</cell><cell>FUTR</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>Results of the methods under Design 2: Intersectionality</figDesc><table><row><cell>MSE</cell><cell>Utility</cell><cell>Unfairness</cell><cell>FURG</cell><cell>FUTR</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Another category of fairness metrics is individual fairness, which ensures that similar individuals should be treated similarly by an algorithm.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p><ref type="bibr" target="#b11">Coston et al. (2020)</ref> and<ref type="bibr" target="#b31">Mishler et al. (2021)</ref> consider potential outcomes regarding a decision variable.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>To fit a more flexible approximation of the CATE, one may consider its projection onto a much larger finite-dimensional parametric model space spanned by the B distinct basis functions b(W ) = [b 1 (W ), . . . , b B (W )] ∈ R B , including intersection terms or quadratic terms, instead of the linear projection; see Section 2.3 of<ref type="bibr" target="#b23">Kim and Zubizarreta (2023)</ref> for details.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>Following<ref type="bibr" target="#b8">Chan et al. (2024)</ref>, we replace min(UG, -0.01) to maintain the minimum utility loss of 0.01.</p></note>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The transcript dataset is named stu course.sas7bdat in the restricted version of HSLS:09 datasets. Variables beginning with X0 are composite variables constructed for this study, while all others were constructed by HSLS:09. We revised and reconstructed the math pipeline courses since the original coding strategy in the raw transcript dataset was inconsistent across the states.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Materials S1 Data-Generating Processes</head><p>Design 1 introduces the unfairness associated with both individual-level and cluster-level sensitive variables with no intersectionality issue. Design 2 is based on Design 1 but adds intersectional unfairness among the subgroups defined by individual-level and cluster-level sensitive variables. The details of the data simulation processes for Design 1 and Design 2 are provided below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S1.1 Design 1</head><p>1. For multilevel data, create j = 1, . . . , J clusters and i = 1, . . . , n j individuals within cluster j.</p><p>2. For each individual i = 1, . . . , n j in cluster j, generate four individual-level insensitive variables</p><p>4ij and an individual-level sensitive variable S</p><p>(1) 1ij :</p><p>(1) 1ij + 0.25, 1), and generate three cluster-level insensitive variables X</p><p>(2) 1j , X</p><p>(2) 2j , X</p><p>(2) 3j and a cluster-level sensitive variable S</p><p>(2) 1j :</p><p>3. Generate individual treatment status T ij from the following logistic regression with a random effect V j :</p><p>Here, π(W ij ) represents an individual's propensity score, i.e., the probability of receiving the treatment given measured covariates.</p><p>4. Generate the true CATE, τ (W ij ):</p><p>5. Generate the potential outcomes Y ij (1), Y ij (0) and the observed outcome Y ij from the following linear regression model with a random effect U j :</p><p>Here, R ij represents the random error for an individual. In this data-generating process, we achieve the conditional intra-class correlation (ICC) of 0.105 for the outcome model and 0.372 for the treatment model, which aligns with those observed in the HSLS:09 data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S1.2 Design 2</head><p>1. Design 2 builds on Design 1, and introduces unfairness by intersectional groups determined by individual-level sensitive variable S</p><p>(1) 1ij ∼ Bernoulli(0.4) and cluster-level sensitive variable S</p><p>(2) 1j ∼ Bernoulli(0.3). The intersectional subgroups are defined as S * ij = (S</p><p>(1) 1ij , S</p><p>(2) 1j ) ∈ {(0, 0), (1, 0), (0, 1), (1, 1)}, where the first group is a reference group and S * ij,s represents the group indicator, i.e., S * ij,s = 1(S * ij = s). and <ref type="table">X</ref> (1) 4ij (that are correlated with sensitive variables):</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Generate four individual-level insensitive variables</head><p>and generate three cluster-level insensitive variables X</p><p>(2) 1j , X</p><p>(2) 2j , and X</p><p>(2) 3j :</p><p>2j ∼ N (0.5, 1), X</p><p>(2) 3j ∼ N (-1, 1).</p><p>3. Generate individual treatment status T ij . This model is the same as in Design 1.</p><p>4. Generate the true CATE, τ (W ij ):</p><p>.</p><p>5. Generate the potential outcomes Y ij (1), Y ij (0) and the observed outcome Y ij from the following linear regression model with a random effect U j :</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S2 Simulation Results: CATE</head><p>We summarize simulation results by investigating the trade-off between the mean squared error (MSE) and mean unfairness of the CATE estimates. Here, the mean unfairness is defined as the average difference in CATE estimates between subgroups of interest, unlike the unfairness of policy used in Section 5. From Figure <ref type="figure">S1</ref>, we find that as the value of δ moves from a large value (δ = ∞) to δ = 0.0001, the MSE increases but the unfairness effectively decreases.</p><p>Reducing fairness comes at a slight cost of estimation accuracy. Additionally, in cases where the fairness functions are correctly specified, we observe a better trade-off between accuracy and fairness compared to using inaccurate fairness functions (e.g., only an individual-level function or no intersectional fairness functions). Overall, we need a multilevel approach to fairness considerations in order to achieve the high trade-off efficiency between utility and unfairness in multilevel studies.</p><p>(1) Design 1 (2) Design 2 </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S3 Description of Variables</head><p>Table <ref type="table">S1</ref> provides a list of the variables used for this study from the HSLS:09 data. </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Subgroup identification in clinical trials via the predicted individual treatment effect</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Ballarini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">K</forename><surname>Rosenkranz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Jaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Posch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">205971</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Barocas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Narayanan</surname></persName>
+		</author>
+		<ptr target="http://www.fairmlbook.org" />
+		<title level="m">Fairness and machine learning: Limitations and opportunities</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Fitting linear mixed-effects models using lme4</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mächler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v067.i01</idno>
+		<ptr target="https://doi.org/10.18637/jss.v067.i01" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="48" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Fairness in criminal justice risk assessments: The state of the art</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Berk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Heidari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jabbari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kearns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roth</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0049124118782533</idno>
+		<ptr target="https://doi.org/10.1177/0049124118782533" />
+	</analytic>
+	<monogr>
+		<title level="j">Sociological Methods &amp; Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="44" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Adverse impact and test validation: A practitioner&apos;s guide to valid and defensible employment testing</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Biddle</surname></persName>
+		</author>
+		<idno type="DOI">10.4324/9781315263298</idno>
+		<ptr target="https://doi.org/10.4324/9781315263298" />
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<publisher>Routledge</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">School composition and the black-white achievement gap</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Bohrnstedt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kitmitto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ogut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sherman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">nces 2015-018</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+		<respStmt>
+			<orgName>National Center for Education Statistics. U.S. Department of Education</orgName>
+		</respStmt>
+	</monogr>
+	<note>tech. rep.</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Lindo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">D</forename><surname>Weeks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Mclemore</surname></persName>
+		</author>
+		<title level="m">On racism: A new standard for publishing on racial health inequities</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+		<respStmt>
+			<orgName>Health Affairs Forefront</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Advanced math course taking: Effects on math achievement and college enrollment</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Byun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>-Y</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Irvin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Bell</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00220973.2014.919570</idno>
+		<ptr target="https://doi.org/10.1080/00220973.2014.919570" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Experimental Education</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="439" to="468" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Group fairness via group consensus</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maciejewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tong</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3630106.3659006</idno>
+		<ptr target="https://doi.org/10.1145/3630106.3659006" />
+	</analytic>
+	<monogr>
+		<title level="m">The 2024 ACM Conference on Fairness, Accountability, and Transparency</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Path-specific counterfactual fairness</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chiappa</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v33i01.33017801</idno>
+		<ptr target="https://doi.org/10.1609/aaai.v33i01.33017801" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="7801" to="7808" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Algorithmic decision making and the cost of fairness</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Corbett-Davies</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pierson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Feller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Goel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Huq</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3097983.3098095</idno>
+		<ptr target="https://doi.org/10.1145/3097983.3098095" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 23rd ACM SIGKDD international conference on knowledge discovery and data mining</title>
+		<meeting>the 23rd ACM SIGKDD international conference on knowledge discovery and data mining</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="797" to="806" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Counterfactual risk assessments, evaluation, and fairness</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Coston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mishler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Kennedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chouldechova</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3351095.3372851</idno>
+		<ptr target="https://doi.org/10.1145/3351095.3372851" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Fairness, Accountability, and Transparency</title>
+		<meeting>the 2020 Conference on Fairness, Accountability, and Transparency</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Demarginalizing the intersection of race and sex: A black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Crenshaw</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">University of Chicago Legal Forum</title>
+		<imprint>
+			<biblScope unit="page" from="139" to="167" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Advanced mathematics and science coursetaking in the spring high school senior classes of 1982</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Dalton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Ingels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Downing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bozick</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992">2007. 1992. 2004</date>
+		</imprint>
+	</monogr>
+	<note>tech</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Certifying and removing disparate impact</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Feldman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Friedler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moeller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Scheidegger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Venkatasubramanian</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2783258.2783311</idno>
+		<ptr target="https://doi.org/10.1145/2783258.2783311" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<meeting>the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">An intersectional definition of fairness</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Foulds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Keya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pan</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/icde48307.2020.00203</idno>
+		<ptr target="https://doi.org/10.1109/icde48307.2020.00203" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE 36th International Conference on Data Engineering (ICDE)</title>
+		<imprint>
+			<date type="published" when="1918">2020. 2020. 1918-1921</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Commentary: Race and sex are causes</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Glymour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Glymour</surname></persName>
+		</author>
+		<idno type="DOI">10.1097/ede.0000000000000122</idno>
+		<ptr target="https://doi.org/10.1097/ede.0000000000000122" />
+	</analytic>
+	<monogr>
+		<title level="j">Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="488" to="490" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Towards a critical race methodology in algorithmic fairness</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hanna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Smart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Smith-Loud</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3351095.3372826</idno>
+		<ptr target="https://doi.org/10.1145/3351095.3372826" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Fairness, Accountability, and Transparency</title>
+		<meeting>the 2020 Conference on Fairness, Accountability, and Transparency</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Asymptotic theory for clustered samples</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Hansen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of econometrics</title>
+		<imprint>
+			<biblScope unit="volume">210</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="268" to="290" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Bayesian nonparametric modeling for causal inference</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Hill</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/jcgs.2010.08162</idno>
+		<ptr target="https://doi.org/10.1198/jcgs.2010.08162" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="217" to="240" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Statistics and causal inference</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Holland</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2289064</idno>
+		<ptr target="https://doi.org/10.2307/2289064" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">396</biblScope>
+			<biblScope unit="page">945</biblScope>
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Imbens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/cbo9781139025751</idno>
+		<ptr target="https://doi.org/10.1017/cbo9781139025751" />
+		<title level="m">Causal inference in statistics, social, and biomedical sciences</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Towards optimal doubly robust estimation of heterogeneous causal effects</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Kennedy</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/23-EJS2157</idno>
+		<ptr target="https://doi.org/10.1214/23-EJS2157" />
+	</analytic>
+	<monogr>
+		<title level="j">Electronic Journal of Statistics</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="3008" to="3049" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Fair and robust estimation of heterogeneous treatment effects for policy learning</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Zubizarreta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="16997" to="17014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Metalearners for estimating heterogeneous treatment effects using machine learning</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Künzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Sekhon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Bickel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the national academy of sciences</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="4156" to="4165" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Counterfactual fairness</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Kusner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Loftus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Russell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Silva</surname></persName>
+		</author>
+		<ptr target="https://doi.org/30" />
+	</analytic>
+	<monogr>
+		<title level="m">Conference on Neural Information Processing Systems (NIPS)</title>
+		<imprint>
+			<date type="published" when="2017">2017. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Longitudinal data analysis using generalized linear models</title>
+		<author>
+			<persName><forename type="first">K.-Y</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Zeger</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/biomet/73.1.13</idno>
+		<ptr target="https://doi.org/10.1093/biomet/73.1.13" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">73</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="13" to="22" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Tutorial in biostatistics: Datadriven subgroup identification and analysis in clinical trials</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Lipkovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dmitrienko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>&amp; B D'agostino Sr</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics in medicine</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="136" to="196" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Generalized, linear, and mixed models</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Mcculloch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Searle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Neuhaus</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Causal multi-level fairness</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mhasawade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chunara</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3461702.3462587</idno>
+		<ptr target="https://doi.org/10.1145/3461702.3462587" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 AAAI/ACM Conference on AI, Ethics, and Society</title>
+		<meeting>the 2021 AAAI/ACM Conference on AI, Ethics, and Society</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Fade: Fair double ensemble learning for observable and counterfactual outcomes</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mishler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Kennedy</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3531146.3533167</idno>
+		<ptr target="https://doi.org/10.1145/3531146.3533167" />
+	</analytic>
+	<monogr>
+		<title level="m">ACM Conference on Fairness, Accountability, and Transparency</title>
+		<imprint>
+			<date type="published" when="2022">2022. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Fairness in risk assessment instruments: Post-processing to achieve counterfactual equalized odds</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mishler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Kennedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chouldechova</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3442188.3445902</idno>
+		<ptr target="https://doi.org/10.1145/3442188.3445902" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency</title>
+		<meeting>the 2021 ACM Conference on Fairness, Accountability, and Transparency</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Rmosek: The r to mosek optimization interface [R package version 1.3.5</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mosek Aps</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Malinsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Shpitser</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v32i1.11553</idno>
+		<ptr target="https://doi.org/10.1609/aaai.v32i1.11553" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 36th International Conference on Machine Learning</title>
+		<meeting>the 36th International Conference on Machine Learning</meeting>
+		<imprint>
+			<date type="published" when="2019">2019. 2019</date>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="4674" to="4682" />
+		</imprint>
+	</monogr>
+	<note>Learning optimal fair policies</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">On the application of probability theory to agricultural experiments: Essay on principles. Section 9 (with discussion)</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Neyman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Science</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="465" to="480" />
+			<date type="published" when="1923">1923</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">A more efficient, doubly robust, nonparametric estimator of treatment effects in multilevel studies</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">A review on fairness in machine learning</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Pessach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Shmueli</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3494672</idno>
+		<ptr target="https://doi.org/10.1145/3494672" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys (CSUR)</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1" to="44" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Designing long-term group fair policies in dynamical systems</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rateike</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Valera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Forré</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3630106.3658538</idno>
+		<ptr target="https://doi.org/10.1145/3630106.3658538" />
+	</analytic>
+	<monogr>
+		<title level="m">The 2024 ACM Conference on Fairness, Accountability, and Transparency</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">The central role of the propensity score in observational studies for causal effects</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Rosenbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/biomet/70.1.41</idno>
+		<ptr target="https://doi.org/10.1093/biomet/70.1.41" />
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="41" to="55" />
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Estimating causal effects of treatments in randomized and nonrandomized studies</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0037350</idno>
+		<ptr target="https://doi.org/10.1037/h0037350" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Educational Psychology</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="688" to="701" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Comment: Which ifs have causal answers</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2289065</idno>
+		<ptr target="https://doi.org/10.2307/2289065" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">396</biblScope>
+			<biblScope unit="page" from="961" to="962" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">An intersectional approach to differential item functioning: Reflecting configurations of inequality</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Russell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kaplan</surname></persName>
+		</author>
+		<idno type="DOI">10.7275/20614854</idno>
+		<ptr target="https://doi.org/https://doi.org/10.7275/20614854" />
+	</analytic>
+	<monogr>
+		<title level="j">Practical Assessment, Research, and Evaluation</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">21</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">The role of advanced high school coursework in increasing stem career interest</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Sadler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sonnert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Hazari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science Educator</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="13" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Debiased machine learning of conditional average treatment effects and other causal functions</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Semenova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Chernozhukov</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.1702.06240</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.1702.06240" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Osqp: An operator splitting solver for quadratic programs</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Stellato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Banjac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Goulart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bemporad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Boyd</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematical Programming Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="637" to="672" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">A psychometric framework for evaluating fairness in algorithmic decision making: Differential algorithmic functioning</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Suk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">T</forename><surname>Han</surname></persName>
+		</author>
+		<idno type="DOI">10.3102/10769986231171711</idno>
+		<ptr target="https://doi.org/10.3102/10769986231171711" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Educational and Behavioral Statistics</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="151" to="172" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Evaluating intersectional fairness in algorithmic decision making using intersectional differential algorithmic functioning</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Suk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">T</forename><surname>Han</surname></persName>
+		</author>
+		<idno type="DOI">10.3102/10769986241269820</idno>
+		<ptr target="https://doi.org/10.3102/10769986241269820" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Educational and Behavioral Statistics</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Robust machine learning for treatment effects in multilevel observational studies under cluster-level unmeasured confounding</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Suk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kang</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11336-021-09805-x</idno>
+		<ptr target="https://doi.org/10.1007/s11336-021-09805-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="310" to="343" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Dynamic treatment regimes: Statistical methods for precision medicine</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Tsiatis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Davidian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Holloway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">B</forename><surname>Laber</surname></persName>
+		</author>
+		<idno type="DOI">10.1201/9780429192692</idno>
+		<ptr target="https://doi.org/10.1201/9780429192692" />
+	</analytic>
+	<monogr>
+		<title level="m">Chapman; Hall/CRC</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">On the causal interpretation of race in regressions adjusting for confounding and mediating variables</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Vanderweele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">R</forename><surname>Robinson</surname></persName>
+		</author>
+		<idno type="DOI">10.1097/ede.0000000000000105</idno>
+		<ptr target="https://doi.org/10.1097/ede.0000000000000105" />
+	</analytic>
+	<monogr>
+		<title level="j">Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="473" to="484" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Fair policy targeting</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Viviano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bradic</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2022.2142591</idno>
+		<ptr target="https://doi.org/10.1080/01621459.2022.2142591" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="issue">545</biblScope>
+			<biblScope unit="page" from="730" to="743" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Estimation and inference of heterogeneous treatment effects using random forests</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Athey</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2017.1319839</idno>
+		<ptr target="https://doi.org/10.1080/01621459.2017.1319839" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">523</biblScope>
+			<biblScope unit="page" from="1228" to="1242" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Causal intersectionality and fair ranking</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Loftus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Stoyanovich</surname></persName>
+		</author>
+		<idno type="DOI">10.4230/LIPIcs.FORC.2021.7</idno>
+		<ptr target="https://doi.org/10.4230/LIPIcs.FORC.2021" />
+	</analytic>
+	<monogr>
+		<title level="m">Symposium on Foundations of Responsible Computing</title>
+		<imprint>
+			<date type="published" when="2021">2021. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

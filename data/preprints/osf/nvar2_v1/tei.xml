@@ -39,8 +39,10 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</fileDesc>
 		<encodingDesc>
 			<appInfo>
-				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:33+0000">
+				<application version="0.8.2" ident="GROBID" when="2025-10-23T06:22+0000">
 					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
 					<ref target="https://github.com/kermitt2/grobid"/>
 				</application>
 			</appInfo>
@@ -53,54 +55,54 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</teiHeader>
 	<text xml:lang="en">
 		<body>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>With every new invention comes a new wave of possibilities. Humans have been making pictures since before recorded history, so its only natural that there would be interest in computational image generation. Artificially generating photographs that are indistinguishable from real ones has become so easy and effective that there is even concern over "deepfakes" being used for propaganda or illicit purposes <ref type="bibr" target="#b43">(Pawelec, 2022)</ref>. On the other hand, generating images that look like art is a slightly different problem. The exact mathematical properties of what constitutes "quality" art is not as easy to quantify as other tasks, like classification accuracy, prediction error or whether a question was answered correctly. While machines can very easily be trained to mimic a dataset, humans like to be surprised by novelty, without feeling like they are being exposed to total randomness. A breakthrough was the invention of the Creative Adversarial Network <ref type="bibr" target="#b15">(Elgammal et al., 2017)</ref>, which used a style ambiguity loss to train a network to generate images that could not be classified as belonging to a particular style. However, GANs have largely been superseded by diffusion models <ref type="bibr" target="#b35">(Luo, 2022)</ref>, due to their far better results. Additionally, the style ambiguity loss requires a pretrained classifier. Every set of styles or concepts requires training a classifier before even training a model to generate images. Furthermore, training a classifier requires that the dataset be labeled correctly, and manually labeling a dataset is often even more expensive and time-consuming than training a model. To circumvent these issues, we propose using a classifier that does not require any additional training and can be easily applied to any dataset, labeled or unlabeled. Our contributions are as follows:</p><p>• We applied creative style ambiguity loss to diffusion models, which are easier to train and produce higher-quality images than GANs.</p><p>• We developed versatile CLIP-based and K-Means-based creative style ambiguity losses that do not require training a separate GAN-based style classifier.</p><p>• Empirically, we find our new creative style ambiguity loss can be used to tune a diffusion model to generate samples that are higher quality than the generated samples of a diffusion model trained with the pre-existing GAN-based style ambiguity loss 2 Related Work</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Creativity</head><p>Creativity has been hard to define and quantify. Creative work has been formulated as work having novelty, in that it differs from other similar objects, and also utility, in that it still performs a function <ref type="bibr" target="#b8">(Cropley, 2006)</ref>. For example, a Corinthian column has elaborate, interesting, unexpected adornments (novelty) but still holds up a building (utility). A distinction can also be made between "P-creativity", where the work is novel to the creator, and "H-creativity" where the work is novel to everyone <ref type="bibr" target="#b4">(Boden, 1990)</ref>. Computational techniques to be creative include using genetic algorithms <ref type="bibr" target="#b11">(DiPaola &amp; Gabora, 2008)</ref>, reconstructing artifacts from novel collections of attributes <ref type="bibr" target="#b25">(Iqbal et al., 2016)</ref>, and most relevantly to this work, using Generative Adversarial Networks <ref type="bibr" target="#b15">(Elgammal et al., 2017)</ref> with a style ambiguity loss.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Computational Art</head><p>One of the first algorithmic approaches dates back to the 1970s with the now primitive AARON <ref type="bibr">(McCorduck, 1991)</ref>, which was initially only capable of drawing black and white sketches. Generative Adversarial Networks <ref type="bibr" target="#b18">(Goodfellow et al., 2014)</ref>, or GANs, were some of the first models to be able to create complex, photorealistic images and seemed to have potential to be able to make art. Despite many problems with GANs, such as mode collapse and unstable training <ref type="bibr" target="#b52">(Saxena &amp; Cao, 2023)</ref>, GANs and further improvements <ref type="bibr" target="#b0">(Arjovsky et al., 2017;</ref><ref type="bibr" target="#b28">Karras et al., 2019;</ref><ref type="bibr">2018)</ref> were state of the art until the introduction of diffusion <ref type="bibr" target="#b57">Sohl-Dickstein et al. (2015)</ref>. Diffusion models such as IMAGEN <ref type="bibr" target="#b49">(Saharia et al., 2022)</ref> and DALLE-3 <ref type="bibr">(Betker et al.)</ref> have attained widespread commercial success (and controversy) due to their widespread adoption.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Reinforcement Learning</head><p>Reinforcement learning (RL) is a method of training a model by having it take actions that generate a reward signal and change the environment, thus changing the impact and availability of future actions <ref type="bibr" target="#b45">Qiang &amp; Zhongli (2011)</ref>. RL has been used for tasks as diverse as playing board games <ref type="bibr" target="#b56">(Silver et al., 2017)</ref>, protein design <ref type="bibr" target="#b36">(Lutz et al., 2023)</ref>, self-driving vehicles <ref type="bibr" target="#b30">(Kiran et al., 2021)</ref> and quantitative finance <ref type="bibr" target="#b50">(Sahu et al., 2023)</ref>. <ref type="bibr">Policy-gradient RL (Sutton et al., 1999)</ref> optimizes a policy π that chooses which action to take at any given timestep, as opposed to value-based methods that may use a heuristic to determine the optimal choice. Examples of policy gradient methods include Soft Actor Critic <ref type="bibr" target="#b21">(Haarnoja et al., 2018)</ref>, Deep Deterministic Policy Gradient <ref type="bibr" target="#b34">(Lillicrap et al., 2019)</ref> and Trust Region Policy Optimization <ref type="bibr">(Schulman et al., 2017a)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>With every new invention comes a new wave of possibilities. Humans have been making pictures since before recorded history, so its only natural that there would be interest in computational image generation. Artificially generating photographs that are indistinguishable from real ones has become so easy and effective that there is even concern over "deepfakes" being used for propaganda or illicit purposes <ref type="bibr" target="#b42">(Pawelec, 2022)</ref>. On the other hand, generating images that look like art is a slightly different problem. The exact mathematical properties of what constitutes "quality" art is not as easy to quantify as other tasks, like classification accuracy, prediction error or whether a question was answered correctly. While machines can very easily be trained to mimic a dataset, humans like to be surprised by novelty, without feeling like they are being exposed to total randomness. A breakthrough was the invention of the Creative Adversarial Network <ref type="bibr" target="#b14">(Elgammal et al., 2017)</ref>, which used a style ambiguity loss to train a network to generate images that could not be classified as belonging to a particular style. However, GANs have largely been superseded by diffusion models <ref type="bibr" target="#b34">(Luo, 2022)</ref>, due to their far better results. Additionally, the style ambiguity loss requires a pretrained classifier. Every set of styles or concepts requires training a classifier before even training a model to generate images. Furthermore, training a classifier requires that the dataset be labeled correctly, and manually labeling a dataset is often even more expensive and time-consuming than training a model. To circumvent these issues, we propose using a classifier that does not require any additional training and can be easily applied to any dataset, labeled or unlabeled. Our contributions are as follows:</p><p>• We applied creative style ambiguity loss to diffusion models, which are easier to train and produce higher-quality images than GANs.</p><p>• We developed versatile CLIP-based and K-Means-based creative style ambiguity losses that do not require training a separate GAN-based style classifier.</p><p>• Empirically, we find our new creative style ambiguity loss can be used to tune a diffusion model to generate samples that are higher quality than the generated samples of a diffusion model trained with the pre-existing GAN-based style ambiguity loss 2 Related Work</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Creativity</head><p>Creativity has been hard to define and quantify. Creative work has been formulated as work having novelty, in that it differs from other similar objects, and also utility, in that it still performs a function <ref type="bibr" target="#b8">(Cropley, 2006)</ref>. For example, a Corinthian column has elaborate, interesting, unexpected adornments (novelty) but still holds up a building (utility). A distinction can also be made between "P-creativity", where the work is novel to the creator, and "H-creativity" where the work is novel to everyone <ref type="bibr" target="#b4">(Boden, 1990)</ref>. Computational techniques to be creative include using genetic algorithms <ref type="bibr" target="#b10">(DiPaola &amp; Gabora, 2008)</ref>, reconstructing artifacts from novel collections of attributes <ref type="bibr" target="#b24">(Iqbal et al., 2016)</ref>, and most relevantly to this work, using Generative Adversarial Networks <ref type="bibr" target="#b14">(Elgammal et al., 2017)</ref> with a style ambiguity loss.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Computational Art</head><p>One of the first algorithmic approaches dates back to the 1970s with the now primitive AARON <ref type="bibr" target="#b38">(McCorduck, 1991)</ref>, which was initially only capable of drawing black and white sketches. Generative Adversarial Networks <ref type="bibr" target="#b17">(Goodfellow et al., 2014)</ref>, or GANs, were some of the first models to be able to create complex, photorealistic images and seemed to have potential to be able to make art. Despite many problems with GANs, such as mode collapse and unstable training <ref type="bibr" target="#b51">(Saxena &amp; Cao, 2023)</ref>, GANs and further improvements <ref type="bibr" target="#b0">(Arjovsky et al., 2017;</ref><ref type="bibr" target="#b27">Karras et al., 2019;</ref><ref type="bibr">2018)</ref> were state of the art until the introduction of diffusion <ref type="bibr" target="#b56">Sohl-Dickstein et al. (2015)</ref>. Diffusion models such as IMAGEN <ref type="bibr" target="#b48">(Saharia et al., 2022)</ref> and DALLE-3 <ref type="bibr">(Betker et al.)</ref> have attained widespread commercial success (and controversy) due to their widespread adoption.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Reinforcement Learning</head><p>Reinforcement learning (RL) is a method of training a model by having it take actions that generate a reward signal and change the environment, thus changing the impact and availability of future actions <ref type="bibr" target="#b44">Qiang &amp; Zhongli (2011)</ref>. RL has been used for tasks as diverse as playing board games <ref type="bibr" target="#b55">(Silver et al., 2017)</ref>, protein design <ref type="bibr" target="#b35">(Lutz et al., 2023)</ref>, self-driving vehicles <ref type="bibr" target="#b29">(Kiran et al., 2021)</ref> and quantitative finance <ref type="bibr" target="#b49">(Sahu et al., 2023)</ref>. <ref type="bibr">Policy-gradient RL (Sutton et al., 1999)</ref> optimizes a policy π that chooses which action to take at any given timestep, as opposed to value-based methods that may use a heuristic to determine the optimal choice. Examples of policy gradient methods include Soft Actor Critic <ref type="bibr" target="#b20">(Haarnoja et al., 2018)</ref>, Deep Deterministic Policy Gradient <ref type="bibr" target="#b33">(Lillicrap et al., 2019)</ref> and Trust Region Policy Optimization <ref type="bibr">(Schulman et al., 2017a)</ref>.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Method</head></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Model</head></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Creative Adversarial Network</head><p>A Generative Adversarial Network, or GAN <ref type="bibr" target="#b18">(Goodfellow et al., 2014)</ref>, consists of two models, a generator and a discriminator. The generator generates samples from noise, and the discriminator detects if the samples are drawn from the real data or generated. During training, the generator is trained to trick the discriminator into classifying generated images as real, and the discriminator is trained to classify images correctly. Given a generator G : R noise → R h×w×3 , a discriminator D : R h×w×3 → [0, 1] real images x ∈ R h×w×3 , and noise Z ∈ R noise , the objective is:</p><formula xml:id="formula_0">min G max D E x [log(D(x)] + E Z [log(1 -D(G(Z))]</formula><p>At inference time, the generator is used to generate realistic samples. <ref type="bibr" target="#b15">Elgammal et al. (2017)</ref> introduced the Creative Adversarial Network, or CAN, which was a DCGAN <ref type="bibr" target="#b46">(Radford et al., 2016)</ref> where the discriminator was also trained to classify real samples, minimizing the style classification loss. Given N classes of image (such as ukiyo-e, baroque, impressionism, etc.), the classification modules of the Discriminator D C : R h×w×3 → R N that returns a probability distribution over the N s style classes for an image and the real labels ℓ ∈ R N , the style classification loss was:</p><formula xml:id="formula_1">L SL = E x,ℓ [CE(D C (x), ℓ)]</formula><p>Where CE is the cross entropy function.</p><p>The generator was also trained to generate samples that could not be easily classified as belonging to one class. This stylistic ambiguity is a proxy for creativity or novelty. Given a vector U ∈ R N , where each entry u 1 , u 2 , , , u N = 1 N , and some classifier C : R h×w×3 → R N the style ambiguity loss is:</p><formula xml:id="formula_2">L SA = E Z [CE(C(G(Z)), U )]</formula><p>The discriminator was additionally trained to minimize L SL and the generator was additionally trained to minimize L SA . In the original work, the authors set C = D C . For our work, we will be combining the Wasserstein and CAN methods. We used the following loss functions:</p><formula xml:id="formula_3">L disc = E x [log(D(x)] + E Z [log(1 -D(G(Z))] + L SL L gen = -E x [log(D(x)] -E Z [log(1 -D(G(Z))] + L SA</formula></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">Diffusion</head><p>A diffusion model aims to learn to iteratively remove the noise from a corrupted sample to restore the original.</p><p>Starting with x 0 , the forward process q iteratively adds Gaussian noise to produce the noised version x T , using a noise schedule β 1 ...β T , which can be learned or manually set as a hyperparameter:</p><formula xml:id="formula_4">q(x 1:T |x 0 ) = T t=1 q(x t |x t-1 ) q(x t |x t-1 ) = N (x t ; 1 -β t x t-1 , β t I)</formula><p>More importantly, we also want to model the reverse process p, that turns a noisy sample x T back into x 0 , conditioned on some context c. As x T is the fully noised version, p(x T |c) = N (x T ; 0, I)</p><formula xml:id="formula_5">p θ (x 0:T |c) = p(x T |c) T t=1 p θ (x t-1 |x t , c) p θ (x t-1 |x t , c) = N (x t-1 ; µ θ (x t , t, c), Σ θ (x t , t, c))</formula><p>We train Σ θ and µ θ via optimizing the variational lower bound of the negative likelihood of the data:</p><formula xml:id="formula_6">E[-logp θ (x 0 )] ≤ E[-log p θ (x 0:T |c) q(x 1:T |x 0 ) = L</formula><p>As shown by <ref type="bibr" target="#b23">Ho et al. (2020)</ref>, this is equivalent to estimating the noise at each step using a model ϵ θ . So the loss to be optimized is:</p><formula xml:id="formula_7">L = E x,ϵ∼N (0,1),t ||ϵ -ϵ θ (x t , t)|| 2 2</formula><p>Once the model has been trained, the reverse process, aka inference, to generate a sample from noise x T ∼ N (0, 1) can be done iteratively by finding</p><formula xml:id="formula_8">x t -1 given x t , α t = 1 -β t , ᾱt = t s α s , Z ∼ N (0, 1) and σ 2 t = β t or σ 2 t = 1-αt-1 1-αt β t : x t-1 = 1 √ α t (x t - 1 -α t √ 1 -ᾱt ϵ θ (x t , t)) + σ t Z</formula><p>Acording to <ref type="bibr" target="#b23">Ho et al. (2020)</ref>, both versions of σ t had similar results. In our case, we used</p><formula xml:id="formula_9">σ 2 t = 1-αt-1 1-αt β t .</formula><p>A Variational Autoencoder (Kingma &amp; Welling, 2022) consists of an encoder E : R h×w×3 → R hz×wz×cz to map an image into a lower-dimensional latent space, and a decoder D : R hz×wz×cz → R h×w×3 to reverse this process. <ref type="bibr" target="#b48">Rombach et al. (2022)</ref> performs diffusion but uses the latent representation of images z 0 = E(x 0 ):</p><formula xml:id="formula_10">L = E x,ϵ∼N (0,1),t ||ϵ -ϵ θ (z t , t)|| 2 2</formula><p>This method, which we employed in this work, is known as stable diffusion. The encoding and decoding between the image dimensions and the latent dimensions is often implicit, and for the rest of the paper we will use x t not z t , as is common in the literature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Creative Adversarial Network</head><p>A Generative Adversarial Network, or GAN <ref type="bibr" target="#b17">(Goodfellow et al., 2014)</ref>, consists of two models, a generator and a discriminator. The generator generates samples from noise, and the discriminator detects if the samples are drawn from the real data or generated. During training, the generator is trained to trick the discriminator into classifying generated images as real, and the discriminator is trained to classify images correctly. Given a generator G : R noise → R h×w×3 , a discriminator D : R h×w×3 → [0, 1] real images x ∈ R h×w×3 , and noise Z ∈ R noise , the objective is:</p><formula xml:id="formula_0">min G max D E x [log(D(x)] + E Z [log(1 -D(G(Z))]</formula><p>At inference time, the generator is used to generate realistic samples. <ref type="bibr" target="#b14">Elgammal et al. (2017)</ref> introduced the Creative Adversarial Network, or CAN, which was a DCGAN <ref type="bibr" target="#b45">(Radford et al., 2016)</ref> where the discriminator was also trained to classify real samples, minimizing the style classification loss. Given N classes of image (such as ukiyo-e, baroque, impressionism, etc.), the classification modules of the Discriminator D C : R h×w×3 → R N that returns a probability distribution over the N s style classes for an image and the real labels ℓ ∈ R N , the style classification loss was:</p><formula xml:id="formula_1">L SL = E x,ℓ [CE(D C (x), ℓ)]</formula><p>Where CE is the cross entropy function.</p><p>The generator was also trained to generate samples that could not be easily classified as belonging to one class. This stylistic ambiguity is a proxy for creativity or novelty. Given a vector U ∈ R N , where each entry u 1 , u 2 , , , u N = 1 N , and some classifier C : R h×w×3 → R N the style ambiguity loss is:</p><formula xml:id="formula_2">L SA = E Z [CE(C(G(Z)), U )]</formula><p>The discriminator was additionally trained to minimize L SL and the generator was additionally trained to minimize L SA . In the original work, the authors set C = D C . For our work, we will be combining the Wasserstein and CAN methods. We used the following loss functions:</p><formula xml:id="formula_3">L disc = E x [log(D(x)] + E Z [log(1 -D(G(Z))] + L SL L gen = -E x [log(D(x)] -E Z [log(1 -D(G(Z))] + L SA</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">Diffusion</head><p>A diffusion model aims to learn to iteratively remove the noise from a corrupted sample to restore the original.</p><p>Starting with x 0 , the forward process q iteratively adds Gaussian noise to produce the noised version x T , using a noise schedule β 1 ...β T , which can be learned or manually set as a hyperparameter:</p><formula xml:id="formula_4">q(x 1:T |x 0 ) = T t=1 q(x t |x t-1 ) q(x t |x t-1 ) = N (x t ; 1 -β t x t-1 , β t I)</formula><p>More importantly, we also want to model the reverse process p, that turns a noisy sample x T back into x 0 , conditioned on some context c. As x T is the fully noised version, p(x T |c) = N (x T ; 0, I)</p><formula xml:id="formula_5">p θ (x 0:T |c) = p(x T |c) T t=1 p θ (x t-1 |x t , c) p θ (x t-1 |x t , c) = N (x t-1 ; µ θ (x t , t, c), Σ θ (x t , t, c))</formula><p>We train Σ θ and µ θ via optimizing the variational lower bound of the negative likelihood of the data:</p><formula xml:id="formula_6">E[-logp θ (x 0 )] ≤ E[-log p θ (x 0:T |c) q(x 1:T |x 0 ) = L</formula><p>As shown by <ref type="bibr" target="#b22">Ho et al. (2020)</ref>, this is equivalent to estimating the noise at each step using a model ϵ θ . So the loss to be optimized is:</p><formula xml:id="formula_7">L = E x,ϵ∼N (0,1),t ||ϵ -ϵ θ (x t , t)|| 2 2</formula><p>Once the model has been trained, the reverse process, aka inference, to generate a sample from noise x T ∼ N (0, 1) can be done iteratively by finding</p><formula xml:id="formula_8">x t -1 given x t , α t = 1 -β t , ᾱt = t s α s , Z ∼ N (0, 1) and σ 2 t = β t or σ 2 t = 1-αt-1 1-αt β t : x t-1 = 1 √ α t (x t - 1 -α t √ 1 -ᾱt ϵ θ (x t , t)) + σ t Z</formula><p>Acording to <ref type="bibr" target="#b22">Ho et al. (2020)</ref>, both versions of σ t had similar results. In our case, we used</p><formula xml:id="formula_9">σ 2 t = 1-αt-1 1-αt β t .</formula><p>A Variational Autoencoder (Kingma &amp; Welling, 2022) consists of an encoder E : R h×w×3 → R hz×wz×cz to map an image into a lower-dimensional latent space, and a decoder D : R hz×wz×cz → R h×w×3 to reverse this process. <ref type="bibr" target="#b47">Rombach et al. (2022)</ref> performs diffusion but uses the latent representation of images z 0 = E(x 0 ):</p><formula xml:id="formula_10">L = E x,ϵ∼N (0,1),t ||ϵ -ϵ θ (z t , t)|| 2 2</formula><p>This method, which we employed in this work, is known as stable diffusion. The encoding and decoding between the image dimensions and the latent dimensions is often implicit, and for the rest of the paper we will use x t not z t , as is common in the literature.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.3">Markov Decision Processes</head><p>A Markov Decision Process <ref type="bibr" target="#b1">(Bellman, 1957)</ref> is defined as a tuple (S, A, p 0 , P, R) that models the actions of an agent in some environment with discrete time-steps.</p><p>S is the state space, the set of states the environment can be in.</p><p>A is the set of actions that the agent can take.</p><p>p 0 is the initial distributions of states s ∈ S when t = 0. P a (s, s ′ ) is the probability of transitioning from state s at time t to s ′ at t + 1 when the agent has taken action a ∈ A.</p><p>The reward function R(s t , a t ) returns a reward a time t given the action a t the agent takes and the state of the environment s t .</p><p>The agents actions are determined by the policy π(a|s) that maps actions to states. The series of stateaction pairs for each timestep is called a trajectory τ = (s 0 , a 0 ....s T , a T ). Using policy-gradient as opposed to value-based RL, we train π by maximizing the reward R over the trajectories sampled from the policy:</p><formula xml:id="formula_11">J RL (π) = E τ ∼p(τ |π) [ T t=0 R(s t , a t )]</formula></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.4">Denoising Diffusion Proximal Optimisation</head><p>Introduced by <ref type="bibr" target="#b3">Black et al. (2023)</ref>, Denoising Diffusion Proximal Optimisation, or DDPO, represents the Diffusion Process as a Markov Decision Process. A similar method was also pursued by <ref type="bibr" target="#b16">Fan et al. (2023)</ref>.</p><formula xml:id="formula_12">a t ∆ = x t-1 s t ∆ = (c, t, x t ) π(a t |s t ) ∆ = p θ (x t-1 |x t , c) p 0 (s 0 ) ∆ = (p(c), δ T , N (0, I)) P (s t+1 ) ∆ = (δ c , δ t-1 , δ xt-1 ) R(s t , a t ) ∆ = r(x 0 , c) J RL (π) ∆ = J DDRL (θ) = E c∼p(c),x0∼p θ (x0|c) [r(x 0 , c)]</formula><p>Reinforcement learning training was then applied to a pretrained diffusion model, which in our case was Stable Diffusion 2 <ref type="bibr" target="#b48">(Rombach et al., 2022)</ref>. Following <ref type="bibr">Schulman et al. (2017b)</ref>, <ref type="bibr" target="#b3">Black et al. (2023)</ref> also implemented clipping to protect the policy gradient ∇ θ J DDRL from excessively large updates. We largely follow their method but use a different reward function. We fine-tune off of the pre-existing stabilityai/stable-diffusion-2-base checkpoint <ref type="bibr" target="#b48">(Rombach et al., 2022)</ref> downloaded from https://huggingface.co/stabilityai/stable-diffusion-2-base.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Reward Function</head><p>In the original paper, the authors used four different reward functions for four different tasks. For example, they used a scorer trained on the LAION dataset <ref type="bibr" target="#b53">(Schuhmann &amp; Beaumont, 2022)</ref> as the reward function to improve the aesthetic quality of generated outputs. In this paper, we use the reward model based on <ref type="bibr" target="#b15">Elgammal et al. (2017)</ref>, where the model is rewarded for stylistic ambiguity. Given a generated image x 0 ∈ R h×w×3 and a classifier C : R h×w×3 → R N we want to maximize:</p><formula xml:id="formula_13">R(x 0 ) = -CE(C(x 0 ), U )</formula><p>where CE is the cross entropy.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Data</head><p>Starting with the WikiArt dataset <ref type="bibr" target="#b51">(Saleh &amp; Elgammal, 2015)</ref>, we used 1000 images from each class, oversampling when necessary, to balance the distributions between classes, to train the CAN. To train the diffusion model, we prompted the model by concatenating a randomly selected medium prompt from (painting of , picture of , drawing of ) to a randomly selected subject prompt (a man, a woman, a landscape, nature, a building, an animal, shapes, an object). An example prompt would be picture of an animal. With 10% probability we would set the prompt to the null string in order to train the model unconditionally as well.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.4">Denoising Diffusion Proximal Optimisation</head><p>Introduced by <ref type="bibr" target="#b3">Black et al. (2023)</ref>, Denoising Diffusion Proximal Optimisation, or DDPO, represents the Diffusion Process as a Markov Decision Process. A similar method was also pursued by <ref type="bibr" target="#b15">Fan et al. (2023)</ref>.</p><formula xml:id="formula_12">a t ∆ = x t-1 s t ∆ = (c, t, x t ) π(a t |s t ) ∆ = p θ (x t-1 |x t , c) p 0 (s 0 ) ∆ = (p(c), δ T , N (0, I)) P (s t+1 ) ∆ = (δ c , δ t-1 , δ xt-1 ) R(s t , a t ) ∆ = r(x 0 , c) J RL (π) ∆ = J DDRL (θ) = E c∼p(c),x0∼p θ (x0|c) [r(x 0 , c)]</formula><p>Reinforcement learning training was then applied to a pretrained diffusion model, which in our case was Stable Diffusion 2 <ref type="bibr" target="#b47">(Rombach et al., 2022)</ref>. Following <ref type="bibr">Schulman et al. (2017b)</ref>, <ref type="bibr" target="#b3">Black et al. (2023)</ref> also implemented clipping to protect the policy gradient ∇ θ J DDRL from excessively large updates. We largely follow their method but use a different reward function. We fine-tune off of the pre-existing stabilityai/stable-diffusion-2-base checkpoint <ref type="bibr" target="#b47">(Rombach et al., 2022)</ref> downloaded from <ref type="url" target="https://huggingface.co/stabilityai/stable-diffusion-2-base">https://huggingface.co/stabilityai/stable-diffusion-2-base</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Reward Function</head><p>In the original paper, the authors used four different reward functions for four different tasks. For example, they used a scorer trained on the LAION dataset <ref type="bibr" target="#b52">(Schuhmann &amp; Beaumont, 2022)</ref> as the reward function to improve the aesthetic quality of generated outputs. In this paper, we use the reward model based on <ref type="bibr" target="#b14">Elgammal et al. (2017)</ref>, where the model is rewarded for stylistic ambiguity. Given a generated image x 0 ∈ R h×w×3 and a classifier C : R h×w×3 → R N we want to maximize:</p><formula xml:id="formula_13">R(x 0 ) = -CE(C(x 0 ), U )</formula><p>where CE is the cross entropy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Data</head><p>Starting with the WikiArt dataset <ref type="bibr" target="#b50">(Saleh &amp; Elgammal, 2015)</ref>, we used 1000 images from each class, oversampling when necessary, to balance the distributions between classes, to train the CAN. To train the diffusion model, we prompted the model by concatenating a randomly selected medium prompt from (painting of , picture of , drawing of ) to a randomly selected subject prompt (a man, a woman, a landscape, nature, a building, an animal, shapes, an object). An example prompt would be picture of an animal. With 10% probability we would set the prompt to the null string in order to train the model unconditionally as well.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Choice of Classifier</head><p>Style ambiguity loss relies on some classifier C. We are exploring four versions of this classifier.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.1">DCGAN-Based Classifier</head><p>We can use the classification module of the discriminator as the classifier in the reward function, setting C = D C . In the case of the CAN, D C is trained jointly along with the generator. In the case of DDPO, we use a pretrained D C from the CAN discriminator (which we call Diffusion DCGAN Based).</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.2">CLIP-Based Classifier</head><p>Given text ∈ R text and an image ∈ R h×w×3 ,we can use a pretrained CLIP <ref type="bibr" target="#b47">(Radford et al., 2021)</ref> model, that can return a similarity score for each image-text pair: CLIP : R text × R h×w×3 → R. CLIP is a multimodal foundation model trained using contrastive learning <ref type="bibr" target="#b26">(Jaiswal et al., 2021)</ref> on a dataset of approximately 400 million text-image pairs. For each generated image x 0 , for each class name s i , 1 ≤ i ≤ N s , we find CLIP (s i , x 0 ). We can then create a vector (CLIP (s 1 , x 0 ), CLIP (s 2 , x 0 ), , , CLIP (s Ns , x 0 )) and then use softmax to normalize the vector and define the result as C CLIP (x 0 ). Formally:</p><formula xml:id="formula_14">C CLIP (x 0 ) = softmax((CLIP (s 1 , x 0 ), CLIP (s 2 , x 0 ), , , CLIP (s Ns , x 0 ))</formula><p>Then we set C = C CLIP . We discard the results of D C when using a CLIP-Based Classifier with CAN. We used the 27 style classes in the WikArt dataset <ref type="bibr" target="#b51">(Saleh &amp; Elgammal, 2015)</ref> as</p><formula xml:id="formula_15">s i , 1 ≤ i ≤ N s .</formula><p>A list of said classes can be found in Appendix B. We used the clip-vit-large-patch14 CLIP checkpoint downloaded from https://huggingface.co/openai/clip-vit-large-patch14.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.2">CLIP-Based Classifier</head><p>Given text ∈ R text and an image ∈ R h×w×3 ,we can use a pretrained CLIP <ref type="bibr" target="#b46">(Radford et al., 2021)</ref> model, that can return a similarity score for each image-text pair: CLIP : R text × R h×w×3 → R. CLIP is a multimodal foundation model trained using contrastive learning <ref type="bibr" target="#b25">(Jaiswal et al., 2021)</ref> on a dataset of approximately 400 million text-image pairs. For each generated image x 0 , for each class name s i , 1 ≤ i ≤ N s , we find CLIP (s i , x 0 ). We can then create a vector (CLIP (s 1 , x 0 ), CLIP (s 2 , x 0 ), , , CLIP (s Ns , x 0 )) and then use softmax to normalize the vector and define the result as C CLIP (x 0 ). Formally:</p><formula xml:id="formula_14">C CLIP (x 0 ) = softmax((CLIP (s 1 , x 0 ), CLIP (s 2 , x 0 ), , , CLIP (s Ns , x 0 ))</formula><p>Then we set C = C CLIP . We discard the results of D C when using a CLIP-Based Classifier with CAN. We used the 27 style classes in the WikArt dataset <ref type="bibr" target="#b50">(Saleh &amp; Elgammal, 2015)</ref> as</p><formula xml:id="formula_15">s i , 1 ≤ i ≤ N s .</formula><p>A list of said classes can be found in Appendix B. We used the clip-vit-large-patch14 CLIP checkpoint downloaded from <ref type="url" target="https://huggingface.co/openai/clip-vit-large-patch14">https://huggingface.co/openai/clip-vit-large-patch14</ref>.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.3">K-Means Text and Image Based Classifiers</head><p>Alternatively, when we have N s text labels or N I source images, we can embed the labels or images into the CLIP embedding space ∈ R 768 and perform k-means clustering to generate k centers. Given a CLIP Embedder E : R h×w×3 → R 768 mapping images to embeddings, and the k centers c 1 , c 2 , , , c k we can create a vector (</p><formula xml:id="formula_16">1 ||E(x0)-c1|| , 1 ||E(x0)-c2|| , , , , 1 ||E(x0)-c k ||</formula><p>and then use softmax to normalize the vector and define the result as C KM EAN S . Formally:</p><formula xml:id="formula_17">C KM EAN S (x 0 ) = softmax( 1 ||E(x 0 ) -c 1 || , 1 ||E(x 0 ) -c 2 || , , , , 1 ||E(x 0 ) -c k || )</formula><p>Then we set C = C KM EAN S . We used two sets of centers: one set from performing k-means clustering on the WikiArt images, which we called K Means Image Based, and one set from clustering the names of the 27 style classes, which we call K Means Text Based.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head><p>We generated all images with width and height = 512. The authors used width and height = 256 in the original CAN paper. However, given that larger, more detailed images are preferred by most people, we thought it more relevant to focus on larger images. Refer to appendix C for results on smaller images and examples. Table <ref type="table" target="#tab_1">4</ref> shows a few DDPO images with the prompts used to generate them. Appendix A shows more examples generated using different prompts.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Quantitative Evaluation</head><p>We generated 100 images using the same prompts the models were trained on for each model. We used three quantitative metrics to score the models</p><p>• AVA Score: Consisting of CLIP+Multi-Layer Perceptron <ref type="bibr" target="#b22">(Haykin, 2000)</ref>, the AVA model was trained on the AVA dataset <ref type="bibr" target="#b41">(Murray et al., 2016)</ref> of images and average rankings by human subjects, in order to learn to approximate human preferences given an image. We used the CLIP model weights from the clip-vit-large-patch14 checkpoint and the Multi-Layer Perceptron weights downloaded from https://huggingface.co/trl-lib/ddpo-aesthetic-predictor.</p><p>• Image Reward: The image reward model <ref type="bibr" target="#b64">(Xu et al., 2023)</ref> was trained to score images given their text description based on a dataset of images and human rankings. We used the image-reward python library found at https://github.com/THUDM/ImageReward/tree/main.</p><p>• Prompt Similarity: Given the CLIP model's ability to embed images and text into the same space, we can measure the similarity between an image and its source prompt by finding the cosine similarity between the two CLIP embeddings. We used the clip-vit-large-patch14 checkpoint. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Quantitative Evaluation</head><p>We generated 100 images using the same prompts the models were trained on for each model. We used three quantitative metrics to score the models</p><p>• AVA Score: Consisting of CLIP+Multi-Layer Perceptron <ref type="bibr" target="#b21">(Haykin, 2000)</ref>, the AVA model was trained on the AVA dataset <ref type="bibr" target="#b40">(Murray et al., 2016)</ref> of images and average rankings by human subjects, in order to learn to approximate human preferences given an image. We used the CLIP model weights from the clip-vit-large-patch14 checkpoint and the Multi-Layer Perceptron weights downloaded from <ref type="url" target="https://huggingface.co/trl-lib/ddpo-aesthetic-predictor">https://huggingface.co/trl-lib/ddpo-aesthetic-predictor</ref>.</p><p>• Image Reward: The image reward model <ref type="bibr" target="#b63">(Xu et al., 2023)</ref> was trained to score images given their text description based on a dataset of images and human rankings. We used the image-reward python library found at <ref type="url" target="https://github.com/THUDM/ImageReward/tree/main">https://github.com/THUDM/ImageReward/tree/main</ref>.</p><p>• Prompt Similarity: Given the CLIP model's ability to embed images and text into the same space, we can measure the similarity between an image and its source prompt by finding the cosine similarity between the two CLIP embeddings. We used the clip-vit-large-patch14 checkpoint. </p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Comparison with Baseline</head><p>It is worth contrasting our trained DDPO model with the default pretrained stabilityai/stable-diffusion-2-base checkpoint diffusion model we are fine-tuning <ref type="bibr" target="#b48">(Rombach et al., 2022)</ref>. This allows us to better visualize the difference the DDPO training with style ambiguity loss makes. We assumed that the DDPO images might be similar to the baseline model images generated with fewer steps, so we compared DDPO Images to the baseline using 30,15, and 10 inference steps, as seen in figure <ref type="figure">2</ref>. In order to quantitatively compare our models to the baselines, we used the embedding of the [CLS] token from a vision transformer loaded from the dino-vits16 checkpoint <ref type="bibr">(Caron et al., 2021)</ref> from https:// huggingface.co/facebook/dino-vits16, as that encodes stylistic information <ref type="bibr" target="#b59">(Tumanyan et al., 2022;</ref><ref type="bibr" target="#b32">Kwon &amp; Ye, 2023)</ref>. We averaged the cosine similarity between style embeddings of each pair of images (x, y 30 , y 15 , y 10 ), where x was generated by the tuned model and y 30 , y 15 , y 10 was generated by the baseline model using 30,15 and 10 inference steps respectively, using the same prompt and initial random seed. We did this 40 times. Average style cosine similarities between the DDPO-trained models and the baselines are shown in table <ref type="table">3</ref>. A lower style cosine similarity implies that the diffusion model has learned to successfully "deviate" from the baseline. All diffusion models model were more similar to the 30-step baseline, which implies that the diffusion models are not just learning to generate blurrier, less precise samples, but were learning a new "style" of art. </p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>Training models with stylistic ambiguity loss teaches them to be creative. This work introduces new forms of stylistic ambiguity loss that do not require training a classifier or GAN, which can be time-consuming and unstable <ref type="bibr" target="#b52">(Saxena &amp; Cao, 2023)</ref>. These new methods, particularly the K-Means-based approaches, scored higher than the traditional method on quantitative metrics of human judgement. Nonetheless, there are still more directions for this to go. Both the CLIP-based and K-Means Text-based style ambiguity losses require users to heuristically choose a set of styles to "deviate" from. In this work, we only used the 27 categories in the WikiArt dataset to be comparable to the original CAN paper. However, users may instead prefer a different set of styles or words, which may produce better or more interesting results. Additionally, the K-Means Image-based style ambiguity loss does not require a multimodal model like CLIP. We could have used any pretrained model to embed images into a lower-dimensional manifold, or trained a new one. Ergo, the K-means technique could be used for any medium, such as music <ref type="bibr" target="#b14">(Elgammal, 2022;</ref><ref type="bibr">Zhang et al., 2023)</ref>, new proteins <ref type="bibr" target="#b63">(Winnifrith et al., 2023)</ref>, stories <ref type="bibr" target="#b40">(Mori et al., 2022)</ref> and videos <ref type="bibr" target="#b7">(Cho et al., 2024)</ref>.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Broader Impact Statement</head><p>Many are concerned about the impacts of generative AI. By making art, this work infringes upon a domain once exclusive to humans. Companies have faced scrutiny for possibly using AI (Gutierrez, 2024), and many creatives, such as screenwriters and actors, have voiced concerns about whether their jobs are safe (del Barco, 2023). Nonetheless, using AI can help humans by making them more efficient, providing inspiration, and generating ideas <ref type="bibr" target="#b17">(Fortino, 2023;</ref><ref type="bibr" target="#b5">Campitiello, 2023;</ref><ref type="bibr">Darling, 2022)</ref>. It's also not certain how copyright protection will function for AI-generated art <ref type="bibr">(Watiktinnakorn et al., 2023)</ref>, given copyright law is based on the premise that creative works originate solely from human authorship. Clear, consistent policies, both at the government level and by industry and/or academic groups, will be needed to mitigate the harm and maximize the benefits for all members of society.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Comparison with Baseline</head><p>It is worth contrasting our trained DDPO model with the default pretrained stabilityai/stable-diffusion-2-base checkpoint diffusion model we are fine-tuning <ref type="bibr" target="#b47">(Rombach et al., 2022)</ref>. This allows us to better visualize the difference the DDPO training with style ambiguity loss makes. We assumed that the DDPO images might be similar to the baseline model images generated with fewer steps, so we compared DDPO Images to the baseline using 30,15, and 10 inference steps, as seen in figure <ref type="figure">2</ref>.</p><p>Prompt CLIP Based K Means Text K Means Image DCGAN Baseline (30 Steps) Baseline (15 Steps) Baseline (10 Steps) a painting of a landscape a picture of an animal a painting of a man Table 2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>: Example Images</head><p>In order to quantitatively compare our models to the baselines, we used the embedding of the [CLS] token from a vision transformer loaded from the dino-vits16 checkpoint <ref type="bibr" target="#b6">(Caron et al., 2021)</ref> from <ref type="url" target="https://huggingface.co/facebook/dino-vits16">https://  huggingface.co/facebook/dino-vits16</ref>, as that encodes stylistic information <ref type="bibr" target="#b58">(Tumanyan et al., 2022;</ref><ref type="bibr" target="#b31">Kwon &amp; Ye, 2023)</ref>. We averaged the cosine similarity between style embeddings of each pair of images (x, y 30 , y 15 , y 10 ), where x was generated by the tuned model and y 30 , y 15 , y 10 was generated by the baseline model using 30,15 and 10 inference steps respectively, using the same prompt and initial random seed. We did this 40 times. Average style cosine similarities between the DDPO-trained models and the baselines are shown in table <ref type="table">3</ref>. A lower style cosine similarity implies that the diffusion model has learned to successfully "deviate" from the baseline. All diffusion models model were more similar to the 30-step baseline, which implies that the diffusion models are not just learning to generate blurrier, less precise samples, but were learning a new "style" of art. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>Training models with stylistic ambiguity loss teaches them to be creative. This work introduces new forms of stylistic ambiguity loss that do not require training a classifier or GAN, which can be time-consuming and unstable <ref type="bibr" target="#b51">(Saxena &amp; Cao, 2023)</ref>. These new methods, particularly the K-Means-based approaches, scored higher than the traditional method on quantitative metrics of human judgement. Nonetheless, there are still more directions for this to go. Both the CLIP-based and K-Means Text-based style ambiguity losses require users to heuristically choose a set of styles to "deviate" from. In this work, we only used the 27 categories in the WikiArt dataset to be comparable to the original CAN paper. However, users may instead prefer a different set of styles or words, which may produce better or more interesting results. Additionally, the K-Means Image-based style ambiguity loss does not require a multimodal model like CLIP. We could have used any pretrained model to embed images into a lower-dimensional manifold, or trained a new one. Ergo, the K-means technique could be used for any medium, such as music <ref type="bibr" target="#b13">(Elgammal, 2022;</ref><ref type="bibr" target="#b64">Zhang et al., 2023)</ref>, new proteins <ref type="bibr" target="#b62">(Winnifrith et al., 2023)</ref>, stories <ref type="bibr" target="#b39">(Mori et al., 2022)</ref> and videos <ref type="bibr" target="#b7">(Cho et al., 2024)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Broader Impact Statement</head><p>Many are concerned about the impacts of generative AI. By making art, this work infringes upon a domain once exclusive to humans. Companies have faced scrutiny for possibly using AI (Gutierrez, 2024), and many creatives, such as screenwriters and actors, have voiced concerns about whether their jobs are safe (del Barco, 2023). Nonetheless, using AI can help humans by making them more efficient, providing inspiration, and generating ideas <ref type="bibr" target="#b16">(Fortino, 2023;</ref><ref type="bibr" target="#b5">Campitiello, 2023;</ref><ref type="bibr" target="#b9">Darling, 2022)</ref>. It's also not certain how copyright protection will function for AI-generated art <ref type="bibr">(Watiktinnakorn et al., 2023)</ref>, given copyright law is based on the premise that creative works originate solely from human authorship. Clear, consistent policies, both at the government level and by industry and/or academic groups, will be needed to mitigate the harm and maximize the benefits for all members of society.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Assistance Author Contributions</head><p>This work was done without any outside assistance or collaboration.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Images</head><p>Additional text prompts and the corresponding generated images using the DDPO models can be seen in Figures <ref type="figure">5</ref> and<ref type="figure">6</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Images</head><p>Additional text prompts and the corresponding generated images using the DDPO models can be seen in Figures <ref type="figure">5</ref> and <ref type="figure">6</ref>.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>B WikiArt Style Classes</head><p>The 27 WikiArt style classes are listed in table 7</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>C Lower Dimensional Images</head><p>All experiments and images portrayed were done using images of dimension 512. However, we also repeated the experiments using smaller images. We briefly illustrate some example images in tables 8, 9 and 10 as well as quantitative evaluations in tables C, C and C.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Training</head><p>For reproducibility and transparency, the hyperparameters are listed in table 14 and table <ref type="table" target="#tab_2">15</ref>. All experiments were implemented in Python, building the models in pytorch <ref type="bibr" target="#b42">(Paszke et al., 2017)</ref> using accelerate <ref type="bibr" target="#b19">(Gugger et al., 2022)</ref> for efficient training. The diffusion models also relied on the trl <ref type="bibr" target="#b61">(von Werra et al., 2020)</ref>, diffusers <ref type="bibr" target="#b60">(von Platen et al., 2022)</ref> and peft <ref type="bibr" target="#b38">(Mangrulkar et al., 2022)</ref> libraries. The K-Means clustering was done using the k means implementation from scikit-learn <ref type="bibr" target="#b44">(Pedregosa et al., 2011)</ref>. A repository containing all code can be found on github at https://github.com/jamesBaker361/clipcreate/tree/main. Each experiment was run using two NVIDIA A100 GPUs with 40 GB RAM. Training times and estimated carbon emissions <ref type="bibr" target="#b33">(Lacoste et al., 2019)</ref> calculated with https://mlco2.github.io/impact#compute are shown in table <ref type="table" target="#tab_3">16</ref>.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.1 Batch Size</head><p>For all DDPO models, we used an effective batch size of 8. When generating images with height and width 64, 128, and 512, we set the batch size to 8 without using gradient accumulation <ref type="bibr" target="#b31">(Kozodoi, 2021)</ref>. Curiously, for images of height and width 256, using a batch size of 8 caused an error: RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling cublasCreate(handle). Thus, we opted to use a batch size of 4 with 2 gradient accumulation steps, equivalent to an effective batch size of 8, which worked. In order to investigate this error, we tried training a DDPO model with a batch size of 8 on a slower CPU, which was allocated 64 GB of memory. On the CPU, the error disappeared. We conclude that the reason for this error is dependent on how exactly variables are allocated across GPUs, but a more thorough investigation is beyond the scope of this paper.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.2 Architecture</head><p>For diffusion model training, the text encoder, autoencoder and unet were all loaded from https: //huggingface.co/stabilityai/stable-diffusion-2-base. These model components were all frozen, but we added trainable LoRA weights to the cross-attention layers of the Unet. Parameter counts are shown in table <ref type="table" target="#tab_7">17</ref>. The diffusion model components used the same amount of parameters regardless of image size, but the generator and discriminator had more parameters as image size increased.</p><p>We used the convolutional neural network <ref type="bibr" target="#b13">(Dumoulin &amp; Visin, 2018)</ref> architecture described in <ref type="bibr" target="#b15">Elgammal et al. (2017)</ref> for the CAN but had to use more/less layers to produce higher/lower dimension images. The generator takes a 1 × 100 gaussian noise vector ∈ R 100 ∼ N (0, I) and maps it to a 4 × 4 × 2048 latent space, via a convolutional transpose layer with kernel size = 4 and stride =1, followed by 3, 4, 5 or 6 transpose convolutional layers corresponding to image dimensions 64, 128, 256 and 512, each upscaling the height and width dimensions by two, and halving the channel dimension (for example one of these transpose convolutional layers would map R 4×4×2048 → R 8×8×1024 ) followed by batch normalization <ref type="bibr" target="#b24">(Ioffe &amp; Szegedy, 2015)</ref> and For the discriminator, we first applied a convolution layer to downscale the input image height width dimensions by 2 and mapped the 3 input channel dimensions to 32 (R 512×512×3 → R 256×256×32 ) with Leaky ReLU activation. Then we had 2, 3, 4 or 5 convolutional layers corresponding to image dimensions 64, 128, 256 and 512, each downscaling the height and width dimensions by 2 and doubling the channel dimension (for example, one of these convolutional layers would map R 256×256×32 → R 128×128×64 ) with batch normalization and Leaky ReLU activation. Then we had two more convolutional layers, each downscaling the height and width dimensions but keeping the channel dimensions constant (using the prior layer's channel dimensions), with batch normalization and Leaky ReLU activation. The output of the convolutional layers was then flattened. The discriminator had two heads-one for style classification (determining which style a real image belongs to) and one for binary classification (determining whether an image was real or fake).</p><p>The binary classification head consisted of one linear layer with one output neuron. The style classification layer consisted of 2 linear layers with LeakyReLU activation and Dropout, with output 1024 output neurons and 512 output neurons, respectively, followed by a linear layer with 27 output neurons for the 27 artistic style classes. Diagrams of discriminators with image dim 512, 256, 128, and 64 are shown in the figures 5, 6, 7, and 8, respectively.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Leaky ReLU (Maas et al., 2013), and then one final convolutional transpose layer with output channels = 3 and tanh (Dubey et al., 2022) activation function. Diagrams of the generators with image dim 512, 256, 128 and 64 are shown in the figures 1, 2, 3 and 4 respectively.</figDesc></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 :Figure</head><label>1</label><figDesc>Figure 1: Generator Architecture (Image Dim 512)</figDesc><graphic coords="15,171.38,104.53,269.25,578.25" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="16,172.50,142.03,267.00,503.25" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="17,177.75,179.53,256.50,428.25" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="18,177.75,217.03,256.50,353.25" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="20,114.00,123.36,384.00,540.60" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="22,99.63,165.83,412.75,455.65" type="bitmap" /></figure>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Training</head><p>For reproducibility and transparency, the hyperparameters are listed in table 14 and table <ref type="table" target="#tab_2">15</ref>. All experiments were implemented in Python, building the models in pytorch <ref type="bibr" target="#b41">(Paszke et al., 2017)</ref> using accelerate <ref type="bibr" target="#b18">(Gugger et al., 2022)</ref> for efficient training. The diffusion models also relied on the trl <ref type="bibr" target="#b60">(von Werra et al., 2020)</ref>, diffusers <ref type="bibr" target="#b59">(von Platen et al., 2022)</ref> and peft <ref type="bibr" target="#b37">(Mangrulkar et al., 2022)</ref> libraries. The K-Means clustering was done using the k means implementation from scikit-learn <ref type="bibr" target="#b43">(Pedregosa et al., 2011)</ref>. A repository containing all code can be found on github at <ref type="url" target="https://github.com/jamesBaker361/clipcreate/tree/main">https://github.com/jamesBaker361/clipcreate/tree/main</ref>. Each experiment was run using two NVIDIA A100 GPUs with 40 GB RAM. Training times and estimated carbon emissions <ref type="bibr" target="#b32">(Lacoste et al., 2019)</ref> calculated with <ref type="url" target="https://mlco2.github.io/impact#compute">https://mlco2.github.io/impact#compute</ref> are shown in table <ref type="table" target="#tab_3">16</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.1 Batch Size</head><p>For all DDPO models, we used an effective batch size of 8. When generating images with height and width 64, 128, and 512, we set the batch size to 8 without using gradient accumulation <ref type="bibr" target="#b30">(Kozodoi, 2021)</ref>. Curiously, for images of height and width 256, using a batch size of 8 caused an error: RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling cublasCreate(handle). Thus, we opted to use a batch size of 4 with 2 gradient accumulation steps, equivalent to an effective batch size of 8, which worked. In order to investigate this error, we tried training a DDPO model with a batch size of 8 on a slower CPU, which was allocated 64 GB of memory. On the CPU, the error disappeared. We conclude that the reason for this error is dependent on how exactly variables are allocated across GPUs, but a more thorough investigation is beyond the scope of this paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.2 Architecture</head><p>For diffusion model training, the text encoder, autoencoder and unet were all loaded from <ref type="url" target="https://huggingface.co/stabilityai/stable-diffusion-2-base">https:  //huggingface.co/stabilityai/stable-diffusion-2-base</ref>. These model components were all frozen, but we added trainable LoRA weights to the cross-attention layers of the Unet. Parameter counts are shown in table <ref type="table" target="#tab_0">17</ref>. The diffusion model components used the same amount of parameters regardless of image size, but the generator and discriminator had more parameters as image size increased.</p><p>We used the convolutional neural network <ref type="bibr" target="#b12">(Dumoulin &amp; Visin, 2018)</ref> architecture described in <ref type="bibr" target="#b14">Elgammal et al. (2017)</ref> for the CAN but had to use more/less layers to produce higher/lower dimension images. The generator takes a 1 × 100 gaussian noise vector ∈ R 100 ∼ N (0, I) and maps it to a 4 × 4 × 2048 latent space, via a convolutional transpose layer with kernel size = 4 and stride =1, followed by 3, 4, 5 or 6 transpose convolutional layers corresponding to image dimensions 64, 128, 256 and 512, each upscaling the height and width dimensions by two, and halving the channel dimension (for example one of these transpose convolutional layers would map R 4×4×2048 → R 8×8×1024 ) followed by batch normalization <ref type="bibr" target="#b23">(Ioffe &amp; Szegedy, 2015)</ref> and For the discriminator, we first applied a convolution layer to downscale the input image height width dimensions by 2 and mapped the 3 input channel dimensions to 32 (R 512×512×3 → R 256×256×32 ) with Leaky ReLU activation. Then we had 2, 3, 4 or 5 convolutional layers corresponding to image dimensions 64, 128, 256 and 512, each downscaling the height and width dimensions by 2 and doubling the channel dimension (for example, one of these convolutional layers would map R 256×256×32 → R 128×128×64 ) with batch normalization and Leaky ReLU activation. Then we had two more convolutional layers, each downscaling the height and width dimensions but keeping the channel dimensions constant (using the prior layer's channel dimensions), with batch normalization and Leaky ReLU activation. The output of the convolutional layers was then flattened. The discriminator had two heads-one for style classification (determining which style a real image belongs to) and one for binary classification (determining whether an image was real or fake).</p><p>The binary classification head consisted of one linear layer with one output neuron. The style classification layer consisted of 2 linear layers with LeakyReLU activation and Dropout, with output 1024 output neurons and 512 output neurons, respectively, followed by a linear layer with 27 output neurons for the 27 artistic style classes. Diagrams of discriminators with image dim 512, 256, 128, and 64 are shown in the figures 5, 6, 7, and 8, respectively.  Table 17: Parameter Counts</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><figDesc>Leaky ReLU (Maas et al., 2013), and then one final convolutional transpose layer with output channels = 3 and tanh (Dubey et al., 2022) activation function. Diagrams of the generators with image dim 512, 256, 128 and 64 are shown in the figures 1, 2, 3 and 4 respectively.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 :Figure 2 :Figure</head><label>12</label><figDesc>Figure 1: Generator Architecture (Image Dim 512)</figDesc><graphic coords="15,171.38,104.53,269.25,578.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="16,172.50,142.03,267.00,503.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="17,177.75,179.53,256.50,428.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="18,177.75,217.03,256.50,353.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="20,114.00,123.36,384.00,540.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="22,99.63,165.83,412.75,455.65" type="bitmap" /></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Scores (Image Dim 512)Results of our experiments are shown in table 1. The best scores are bolded. There was little variance in prompt similarity. However, both K-Means-based approaches improved upon the DCGAN-based approach in terms of the two metrics for human preferences, showing that our method improves upon the past work aesthetically while also circumventing the costly training time of using a CAN or needing a labeled dataset for training the style classifier component of the CAN.</figDesc><table><row><cell></cell><cell cols="3">AVA Score Image Reward Prompt Similarity</cell></row><row><cell>Diffusion-CLIP Based</cell><cell>4.18</cell><cell>-1.75</cell><cell>0.24</cell></row><row><cell>Diffusion-K-Means Text Based</cell><cell>4.60</cell><cell>-1.21</cell><cell>0.26</cell></row><row><cell>Diffusion-K-Means Image Based</cell><cell>4.38</cell><cell>-0.90</cell><cell>0.26</cell></row><row><cell>Diffusion-DCGAN Based</cell><cell>4.26</cell><cell>-1.58</cell><cell>0.26</cell></row></table></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 4 :</head><label>4</label><figDesc>Example Images</figDesc><table><row><cell></cell><cell cols="3">Baseline 30 Steps Baseline 15 Steps Baseline 10 Steps</cell></row><row><cell>Diffusion-CLIP Based</cell><cell>0.29</cell><cell>0.27</cell><cell>0.23</cell></row><row><cell>Diffusion-K-Means Text Based</cell><cell>0.29</cell><cell>0.28</cell><cell>0.25</cell></row><row><cell>Diffusion-K-Means Image Based</cell><cell>0.30</cell><cell>0.30</cell><cell>0.29</cell></row><row><cell>Diffusion-DCGAN Based</cell><cell>0.26</cell><cell>0.23</cell><cell>0.21</cell></row><row><cell></cell><cell>Table 3: Style Similarities</cell><cell></cell><cell></cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 5 :</head><label>5</label><figDesc>Example Images (512)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 6 :</head><label>6</label><figDesc>Example Images (512)   </figDesc><table><row><cell>contemporary-realism</cell><cell>art-nouveau-modern</cell><cell>abstract-expressionism</cell></row><row><cell cols="2">northern-renaissance mannerism-late-renaissance</cell><cell>early-renaissance</cell></row><row><cell>realism</cell><cell>action-painting</cell><cell>color-field-painting</cell></row><row><cell>pop-art</cell><cell>new-realism</cell><cell>pointillism</cell></row><row><cell>expressionism</cell><cell>analytical-cubism</cell><cell>symbolism</cell></row><row><cell>fauvism</cell><cell>minimalism</cell><cell>cubism</cell></row><row><cell>romanticism</cell><cell>ukiyo-e</cell><cell>high-renaissance</cell></row><row><cell>synthetic-cubism</cell><cell>baroque</cell><cell>post-impressionism</cell></row><row><cell>impressionism</cell><cell>rococo</cell><cell>na-ve-art-primitivism</cell></row><row><cell></cell><cell>Table 7: Styles</cell><cell></cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 8 :</head><label>8</label><figDesc>Example Images (256)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 9 :</head><label>9</label><figDesc>Example Images (128)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 10 :</head><label>10</label><figDesc>Example Images (64)   </figDesc><table><row><cell>Model Component</cell><cell cols="3">Total Parameters Trainable Parameters Percent Trainable</cell></row><row><cell>Text Encoder</cell><cell>34,0387,840</cell><cell>0</cell><cell>0%</cell></row><row><cell>Autoencoder</cell><cell>83,653,863</cell><cell>0</cell><cell>0%</cell></row><row><cell>UNet</cell><cell>866,740,676</cell><cell>829,952</cell><cell>0.1%</cell></row><row><cell>Generator (Image Dim 64)</cell><cell>47,336,960</cell><cell>47,336,960</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 64)</cell><cell>13,691,612</cell><cell>13,691,612</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 128)</cell><cell>47,855,360</cell><cell>47,855,360</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 128)</cell><cell>14,347,228</cell><cell>14,347,228</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 256)</cell><cell>47,983,488</cell><cell>47,983,488</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 256)</cell><cell>15,920,604</cell><cell>15,920,604</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 512)</cell><cell>48,014,784</cell><cell>48,014,784</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 512)</cell><cell>20,115,932</cell><cell>20,115,932</cell><cell>100%</cell></row></table></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 17 :</head><label>17</label><figDesc>Parameter Counts</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 5 :</head><label>5</label><figDesc>ExampleImages (512)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 6 :</head><label>6</label><figDesc>ExampleImages (512)   </figDesc><table><row><cell>contemporary-realism</cell><cell>art-nouveau-modern</cell><cell>abstract-expressionism</cell></row><row><cell cols="2">northern-renaissance mannerism-late-renaissance</cell><cell>early-renaissance</cell></row><row><cell>realism</cell><cell>action-painting</cell><cell>color-field-painting</cell></row><row><cell>pop-art</cell><cell>new-realism</cell><cell>pointillism</cell></row><row><cell>expressionism</cell><cell>analytical-cubism</cell><cell>symbolism</cell></row><row><cell>fauvism</cell><cell>minimalism</cell><cell>cubism</cell></row><row><cell>romanticism</cell><cell>ukiyo-e</cell><cell>high-renaissance</cell></row><row><cell>synthetic-cubism</cell><cell>baroque</cell><cell>post-impressionism</cell></row><row><cell>impressionism</cell><cell>rococo</cell><cell>na-ve-art-primitivism</cell></row><row><cell></cell><cell>Table 7: Styles</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 8 :</head><label>8</label><figDesc>ExampleImages (256)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 9 :</head><label>9</label><figDesc>ExampleImages (128)   </figDesc><table><row><cell>Prompt</cell><cell>CLIP Based</cell><cell>K Means Text</cell><cell>K Means Image</cell><cell>DCGAN</cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a picture of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting of</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>an animal</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a painting</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of nature</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a man</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>a drawing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>of a woman</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(no prompt)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 10 :</head><label>10</label><figDesc>ExampleImages (64)   </figDesc><table><row><cell>Model Component</cell><cell cols="3">Total Parameters Trainable Parameters Percent Trainable</cell></row><row><cell>Text Encoder</cell><cell>34,0387,840</cell><cell>0</cell><cell>0%</cell></row><row><cell>Autoencoder</cell><cell>83,653,863</cell><cell>0</cell><cell>0%</cell></row><row><cell>UNet</cell><cell>866,740,676</cell><cell>829,952</cell><cell>0.1%</cell></row><row><cell>Generator (Image Dim 64)</cell><cell>47,336,960</cell><cell>47,336,960</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 64)</cell><cell>13,691,612</cell><cell>13,691,612</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 128)</cell><cell>47,855,360</cell><cell>47,855,360</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 128)</cell><cell>14,347,228</cell><cell>14,347,228</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 256)</cell><cell>47,983,488</cell><cell>47,983,488</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 256)</cell><cell>15,920,604</cell><cell>15,920,604</cell><cell>100%</cell></row><row><cell>Generator (Image Dim 512)</cell><cell>48,014,784</cell><cell>48,014,784</cell><cell>100%</cell></row><row><cell>Discriminator (Image Dim 512)</cell><cell>20,115,932</cell><cell>20,115,932</cell><cell>100%</cell></row></table></figure>
 		</body>
 		<back>
 
 			<div type="acknowledgement">
-<div><head>Acknowledgements</head><p>Rutgers Office of Advanced Research Computing kindly provided the computing infrastructure to run the experiments. A special thanks goes out to <rs type="person">Dr. Ahmed Elgammal</rs> and <rs type="person">Dr. Eugene White</rs> for their past advice prior to this work.</p></div>
+<div><head>Acknowledgements</head><p><rs type="institution">Rutgers Office of Advanced Research Computing</rs> kindly provided the computing infrastructure to run the experiments. A special thanks goes out to <rs type="person">Dr. Ahmed Elgammal</rs> and <rs type="person">Dr. Eugene White</rs> for their past advice prior to this work.</p></div>
 			</div>			<div type="annex">
 <div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
 			<div type="references">
@@ -108,7 +110,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 				<listBibl>
 
 <biblStruct xml:id="b0">
-	<analytic>
+	<monogr>
 		<title/>
 		<author>
 			<persName><forename type="first">Martin</forename><surname>Arjovsky</surname></persName>
@@ -119,9 +121,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">Léon</forename><surname>Bottou</surname></persName>
 		</author>
-	</analytic>
-	<monogr>
-		<title level="j">Wasserstein gan</title>
+		<author>
+			<persName><surname>Wasserstein Gan</surname></persName>
+		</author>
 		<imprint>
 			<date type="published" when="2017">2017</date>
 		</imprint>
@@ -149,7 +151,6 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b2">
 	<monogr>
-		<title level="m" type="main">Improving image generation with better captions</title>
 		<author>
 			<persName><forename type="first">James</forename><surname>Betker</surname></persName>
 		</author>
@@ -195,10 +196,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
 		</author>
-		<ptr target="https://api.semanticscholar.org/CorpusID" />
-		<imprint>
-			<biblScope unit="page">264403242</biblScope>
-		</imprint>
+		<ptr target="https://api.semanticscholar.org/CorpusID:264403242" />
+		<title level="m">Improving image generation with better captions</title>
+		<imprint/>
 	</monogr>
 </biblStruct>
 
@@ -228,23 +228,24 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b4">
 	<monogr>
+		<title level="m" type="main">The Creative Mind</title>
 		<author>
 			<persName><forename type="first">Margaret</forename><surname>Boden</surname></persName>
 		</author>
-		<title level="m">The Creative Mind. Abacus</title>
 		<imprint>
 			<date type="published" when="1990">1990</date>
+			<publisher>Abacus</publisher>
 		</imprint>
 	</monogr>
 </biblStruct>
 
 <biblStruct xml:id="b5">
 	<monogr>
-		<title level="m" type="main">Ai vs. artist: The future of creativity</title>
 		<author>
 			<persName><forename type="first">Jess</forename><surname>Campitiello</surname></persName>
 		</author>
 		<ptr target="https://tech.cornell.edu/news/ai-vs-artist-the-future-of-creativity/" />
+		<title level="m">Ai vs. artist: The future of creativity</title>
 		<imprint>
 			<date type="published" when="2023">2023</date>
 		</imprint>
@@ -280,7 +281,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<title level="m">Proceedings of the International Conference on Computer Vision (ICCV)</title>
 		<meeting>the International Conference on Computer Vision (ICCV)</meeting>
 		<imprint>
-			<biblScope unit="page">2021</biblScope>
+			<date type="published" when="2021">2021</date>
 		</imprint>
 	</monogr>
 </biblStruct>
@@ -343,32 +344,19 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b9">
 	<monogr>
-		<title level="m" type="main">Ai image generators will help artists, not replace them</title>
-		<ptr target="https://www.sciencefocus.com/news/ai-image-generators-will-help-artists-not-replace-them" />
+		<author>
+			<persName><forename type="first">Kate</forename><surname>Darling</surname></persName>
+		</author>
+		<ptr target="https://www.npr.org/2023/11/30/1216005659/some-sag-aftra-members-are-concerned-about-ai-provisions-in-tentative-deal" />
+		<title level="m">Ai image generators will help artists, not replace them</title>
 		<imprint>
-			<date type="published" when="2022">2022</date>
-			<publisher>Kate Darling</publisher>
+			<date type="published" when="2022">2022. 2023</date>
 		</imprint>
 	</monogr>
+	<note>Barco. Some sag-aftra members are concerned about ai provisions in tentative deal</note>
 </biblStruct>
 
 <biblStruct xml:id="b10">
-	<monogr>
-		<title level="m" type="main">Some sag-aftra members are concerned about ai provisions in tentative deal</title>
-		<author>
-			<persName><forename type="first">Mandalit</forename><surname>Del</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Barco</forename></persName>
-		</author>
-		<ptr target="https://www.npr.org/2023/11/30/1216005659/some-sag-aftra-members-are-concerned-about-ai-provisions-in-tentative-deal" />
-		<imprint>
-			<date type="published" when="2023">2023</date>
-		</imprint>
-	</monogr>
-</biblStruct>
-
-<biblStruct xml:id="b11">
 	<analytic>
 		<title level="a" type="main">Incorporating characteristics of human creativity into an evolutionary art algorithm</title>
 		<author>
@@ -392,7 +380,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b12">
+<biblStruct xml:id="b11">
 	<monogr>
 		<title level="m" type="main">Activation functions in deep learning: A comprehensive survey and benchmark</title>
 		<author>
@@ -413,7 +401,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b13">
+<biblStruct xml:id="b12">
 	<monogr>
 		<title level="m" type="main">A guide to convolution arithmetic for deep learning</title>
 		<author>
@@ -428,7 +416,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b14">
+<biblStruct xml:id="b13">
 	<monogr>
 		<title level="m" type="main">Creative gan generating music deviating from style norms</title>
 		<author>
@@ -440,7 +428,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b15">
+<biblStruct xml:id="b14">
 	<monogr>
 		<title level="m" type="main">CAN: creative adversarial networks, generating &quot;art&quot; by learning about styles and deviating from style norms</title>
 		<author>
@@ -463,7 +451,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b16">
+<biblStruct xml:id="b15">
 	<monogr>
 		<title level="m" type="main">Dpok: Reinforcement learning for fine-tuning text-to-image diffusion models</title>
 		<author>
@@ -502,22 +490,22 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b17">
+<biblStruct xml:id="b16">
 	<monogr>
-		<title level="m" type="main">Embracing creativity: How ai can enhance the creative process</title>
 		<author>
 			<persName><forename type="first">Andres</forename><surname>Fortino</surname></persName>
 		</author>
 		<ptr target="https://www.sps.nyu.edu/homepage/emerging-technologies-collaborative/blog/2023/embracing-creativity-how-ai-can-enhance-the-creative-process.html" />
+		<title level="m">Embracing creativity: How ai can enhance the creative process</title>
 		<imprint>
 			<date type="published" when="2023">2023</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b18">
+<biblStruct xml:id="b17">
 	<monogr>
-		<title/>
+		<title level="m" type="main">Generative adversarial networks</title>
 		<author>
 			<persName><forename type="first">Ian</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
 		</author>
@@ -544,14 +532,12 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</author>
 		<imprint>
 			<date type="published" when="2014">2014</date>
-			<publisher>Generative adversarial networks</publisher>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b19">
+<biblStruct xml:id="b18">
 	<monogr>
-		<title level="m" type="main">Accelerate: Training and inference at scale made simple, efficient and adaptable</title>
 		<author>
 			<persName><forename type="first">Sylvain</forename><surname>Gugger</surname></persName>
 		</author>
@@ -577,15 +563,15 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">Benjamin</forename><surname>Bossan</surname></persName>
 		</author>
 		<ptr target="https://github.com/huggingface/accelerate" />
+		<title level="m">Accelerate: Training and inference at scale made simple, efficient and adaptable</title>
 		<imprint>
 			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b20">
+<biblStruct xml:id="b19">
 	<monogr>
-		<title level="m" type="main">Wizards of the coast repeats anti-ai stance, fights accusation against latest magic the gathering promo</title>
 		<author>
 			<persName><forename type="first">Joshua</forename><surname>Luis</surname></persName>
 		</author>
@@ -593,13 +579,14 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><surname>Gutierrez</surname></persName>
 		</author>
 		<ptr target="https://www.gamespot.com/articles/wizards-of-the-coast-repeats-anti-ai-stance-fights-accusation-against-latest-magic-the-gathering-pro1100-6520153/" />
+		<title level="m">Wizards of the coast repeats anti-ai stance, fights accusation against latest magic the gathering promo</title>
 		<imprint>
 			<date type="published" when="2024">2024</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b21">
+<biblStruct xml:id="b20">
 	<monogr>
 		<title level="m" type="main">Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor</title>
 		<author>
@@ -620,7 +607,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b22">
+<biblStruct xml:id="b21">
 	<monogr>
 		<title level="m" type="main">Neural networks: A guided tour</title>
 		<author>
@@ -632,7 +619,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b23">
+<biblStruct xml:id="b22">
 	<monogr>
 		<title level="m" type="main">Denoising diffusion probabilistic models</title>
 		<author>
@@ -652,7 +639,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b24">
+<biblStruct xml:id="b23">
 	<monogr>
 		<title level="m" type="main">Batch normalization: Accelerating deep network training by reducing internal covariate shift</title>
 		<author>
@@ -667,7 +654,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b25">
+<biblStruct xml:id="b24">
 	<monogr>
 		<title level="m" type="main">The digital synaptic neural substrate: A new approach to computational creativity</title>
 		<author>
@@ -694,7 +681,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b26">
+<biblStruct xml:id="b25">
 	<monogr>
 		<title level="m" type="main">A survey on contrastive self-supervised learning</title>
 		<author>
@@ -721,7 +708,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b27">
+<biblStruct xml:id="b26">
 	<monogr>
 		<title level="m" type="main">Progressive growing of gans for improved quality, stability, and variation</title>
 		<author>
@@ -742,7 +729,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b28">
+<biblStruct xml:id="b27">
 	<monogr>
 		<title level="m" type="main">A style-based generator architecture for generative adversarial networks</title>
 		<author>
@@ -760,7 +747,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b29">
+<biblStruct xml:id="b28">
 	<monogr>
 		<title level="m" type="main">Auto-encoding variational bayes</title>
 		<author>
@@ -778,7 +765,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b30">
+<biblStruct xml:id="b29">
 	<monogr>
 		<title level="m" type="main">Deep reinforcement learning for autonomous driving: A survey</title>
 		<author>
@@ -808,7 +795,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b31">
+<biblStruct xml:id="b30">
 	<monogr>
 		<title level="m" type="main">Gradient accumulation in pytorch</title>
 		<author>
@@ -820,7 +807,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b32">
+<biblStruct xml:id="b31">
 	<monogr>
 		<title level="m" type="main">Diffusion-based image translation using disentangled style and content representation</title>
 		<author>
@@ -838,7 +825,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b33">
+<biblStruct xml:id="b32">
 	<monogr>
 		<title level="m" type="main">Quantifying the carbon emissions of machine learning</title>
 		<author>
@@ -859,8 +846,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b34">
+<biblStruct xml:id="b33">
 	<monogr>
+		<title level="m" type="main">Continuous control with deep reinforcement learning</title>
 		<author>
 			<persName><forename type="first">Timothy</forename><forename type="middle">P</forename><surname>Lillicrap</surname></persName>
 		</author>
@@ -885,14 +873,13 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">Daan</forename><surname>Wierstra</surname></persName>
 		</author>
-		<title level="m">Continuous control with deep reinforcement learning</title>
 		<imprint>
 			<date type="published" when="2019">2019</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b35">
+<biblStruct xml:id="b34">
 	<monogr>
 		<title level="m" type="main">Understanding diffusion models: A unified perspective</title>
 		<author>
@@ -904,7 +891,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b36">
+<biblStruct xml:id="b35">
 	<analytic>
 		<title level="a" type="main">Top-down design of protein architectures with reinforcement learning</title>
 		<author>
@@ -949,7 +936,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b37">
+<biblStruct xml:id="b36">
 	<analytic>
 		<title level="a" type="main">Rectifier nonlinearities improve neural network acoustic models</title>
 		<author>
@@ -964,18 +951,16 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</analytic>
 	<monogr>
 		<title level="m">Proc. icml</title>
-		<meeting>icml<address><addrLine>Atlanta, GA</addrLine></address></meeting>
+		<meeting>icml</meeting>
 		<imprint>
-			<date type="published" when="2013">2013</date>
 			<biblScope unit="volume">30</biblScope>
 			<biblScope unit="page">3</biblScope>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b38">
+<biblStruct xml:id="b37">
 	<monogr>
-		<title level="m" type="main">Peft: State-of-the-art parameter-efficient fine-tuning methods</title>
 		<author>
 			<persName><forename type="first">Sourab</forename><surname>Mangrulkar</surname></persName>
 		</author>
@@ -995,27 +980,28 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">Benjamin</forename><surname>Bossan</surname></persName>
 		</author>
 		<ptr target="https://github.com/huggingface/peft" />
+		<title level="m">Peft: State-of-the-art parameter-efficient fine-tuning methods</title>
 		<imprint>
 			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b39">
-	<analytic>
-		<title level="a" type="main">Aaron&apos;s Code: Meta-art</title>
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Aaron&apos;s Code: Meta-art, Artificial Intelligence, and the Work of Harold Cohen</title>
 		<author>
 			<persName><forename type="first">P</forename><surname>Mccorduck</surname></persName>
 		</author>
 		<ptr target="https://books.google.com/books?id=r3UyBgAAQBAJ" />
-	</analytic>
-	<monogr>
-		<title level="m">Artificial Intelligence, and the Work of Harold Cohen. W.H. Freeman, 1991. ISBN 9780716721734</title>
-		<imprint/>
+		<imprint>
+			<date type="published" when="1991">1991</date>
+			<publisher>W.H. Freeman</publisher>
+		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b40">
+<biblStruct xml:id="b39">
 	<monogr>
 		<title level="m" type="main">Computational storytelling and emotions: A survey</title>
 		<author>
@@ -1036,7 +1022,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b41">
+<biblStruct xml:id="b40">
 	<monogr>
 		<title level="m" type="main">Ava: A large-scale database for aesthetic visual analysis</title>
 		<author>
@@ -1055,9 +1041,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b42">
+<biblStruct xml:id="b41">
 	<monogr>
-		<title/>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
 		<author>
 			<persName><forename type="first">Adam</forename><surname>Paszke</surname></persName>
 		</author>
@@ -1094,7 +1080,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b43">
+<biblStruct xml:id="b42">
 	<analytic>
 		<title level="a" type="main">Deepfakes and democracy (theory): How synthetic audio-visual media for disinformation and hate speech threaten core democratic functions</title>
 		<author>
@@ -1105,12 +1091,14 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	<monogr>
 		<title level="j">Digital Society</title>
 		<imprint>
-			<date type="published" when="2022-09-01">1, 09 2022</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b44">
+<biblStruct xml:id="b43">
 	<analytic>
 		<title level="a" type="main">Scikit-learn: Machine learning in python</title>
 		<author>
@@ -1174,7 +1162,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b45">
+<biblStruct xml:id="b44">
 	<analytic>
 		<title level="a" type="main">Reinforcement learning model, algorithms and its application</title>
 		<author>
@@ -1186,15 +1174,15 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<idno type="DOI">10.1109/MEC.2011.6025669</idno>
 	</analytic>
 	<monogr>
-		<title level="m">2011 International Conference on Mechatronic Science, Electric Engineering and Computer (MEC)</title>
+		<title level="m">International Conference on Mechatronic Science, Electric Engineering and Computer (MEC)</title>
 		<imprint>
-			<date type="published" when="2011">2011</date>
+			<date type="published" when="2011">2011. 2011</date>
 			<biblScope unit="page" from="1143" to="1146" />
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b46">
+<biblStruct xml:id="b45">
 	<monogr>
 		<title level="m" type="main">Unsupervised representation learning with deep convolutional generative adversarial networks</title>
 		<author>
@@ -1212,7 +1200,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b47">
+<biblStruct xml:id="b46">
 	<monogr>
 		<title level="m" type="main">Learning transferable visual models from natural language supervision</title>
 		<author>
@@ -1257,7 +1245,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b48">
+<biblStruct xml:id="b47">
 	<analytic>
 		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
 		<author>
@@ -1286,7 +1274,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b49">
+<biblStruct xml:id="b48">
 	<monogr>
 		<title level="m" type="main">Photorealistic text-to-image diffusion models with deep language understanding</title>
 		<author>
@@ -1340,7 +1328,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b50">
+<biblStruct xml:id="b49">
 	<analytic>
 		<title level="a" type="main">An overview of machine learning, deep learning, and reinforcement learning-based techniques in quantitative finance: Recent progress and challenges</title>
 		<author>
@@ -1367,7 +1355,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b51">
+<biblStruct xml:id="b50">
 	<monogr>
 		<title level="m" type="main">Large-scale classification of fine-art paintings: Learning the right metric on the right feature</title>
 		<author>
@@ -1384,7 +1372,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b52">
+<biblStruct xml:id="b51">
 	<monogr>
 		<title level="m" type="main">Generative adversarial networks (gans survey): Challenges, solutions, and future directions</title>
 		<author>
@@ -1399,7 +1387,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b53">
+<biblStruct xml:id="b52">
 	<monogr>
 		<title/>
 		<author>
@@ -1415,7 +1403,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b54">
+<biblStruct xml:id="b53">
 	<monogr>
 		<title level="m" type="main">Trust region policy optimization</title>
 		<author>
@@ -1439,7 +1427,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b55">
+<biblStruct xml:id="b54">
 	<monogr>
 		<title level="m" type="main">Proximal policy optimization algorithms</title>
 		<author>
@@ -1463,9 +1451,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b56">
+<biblStruct xml:id="b55">
 	<analytic>
-		<title level="a" type="main">George van den Driessche, Thore Graepel, and Demis Hassabis</title>
+		<title level="a" type="main">Mastering the game of go without human knowledge</title>
 		<author>
 			<persName><forename type="first">David</forename><surname>Silver</surname></persName>
 		</author>
@@ -1508,6 +1496,15 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">L</forename><surname>Sifre</surname></persName>
 		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Van Den Driessche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thore</forename><surname>Graepel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Demis</forename><surname>Hassabis</surname></persName>
+		</author>
 		<ptr target="https://api.semanticscholar.org/CorpusID:205261034" />
 	</analytic>
 	<monogr>
@@ -1518,10 +1515,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<date type="published" when="2017">2017</date>
 		</imprint>
 	</monogr>
-	<note>Mastering the game of go without human knowledge</note>
 </biblStruct>
 
-<biblStruct xml:id="b57">
+<biblStruct xml:id="b56">
 	<monogr>
 		<title level="m" type="main">Deep unsupervised learning using nonequilibrium thermodynamics</title>
 		<author>
@@ -1544,7 +1540,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b58">
+<biblStruct xml:id="b57">
 	<analytic>
 		<title level="a" type="main">Policy gradient methods for reinforcement learning with function approximation</title>
 		<author>
@@ -1559,10 +1555,10 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><surname>Mansour</surname></persName>
 		</author>
-		<ptr target="https://proceedings.neurips.cc/paper_files/paper/1999/file/464" />
+		<ptr target="https://proceedings.neurips.cc/paper_files/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf" />
 	</analytic>
 	<monogr>
-		<title level="m">Advances in Neural Information Processing Systems</title>
+		<title level="s">Advances in Neural Information Processing Systems</title>
 		<editor>
 			<persName><forename type="first">S</forename><surname>Solla</surname></persName>
 		</editor>
@@ -1573,15 +1569,14 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">K</forename><surname>Müller</surname></persName>
 		</editor>
 		<imprint>
-			<publisher>MIT Press</publisher>
-			<date type="published" when="1999">1999</date>
 			<biblScope unit="volume">12</biblScope>
+			<date type="published" when="1999">1999</date>
+			<publisher>MIT Press</publisher>
 		</imprint>
 	</monogr>
-	<note>d828b85b0bed98e80ade0a5c43b0f-Paper.pdf</note>
 </biblStruct>
 
-<biblStruct xml:id="b59">
+<biblStruct xml:id="b58">
 	<monogr>
 		<title level="m" type="main">Splicing vit features for semantic appearance transfer</title>
 		<author>
@@ -1602,7 +1597,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b60">
+<biblStruct xml:id="b59">
 	<monogr>
 		<author>
 			<persName><forename type="first">Suraj</forename><surname>Patrick Von Platen</surname></persName>
@@ -1651,9 +1646,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b61">
-	<analytic>
-		<title/>
+<biblStruct xml:id="b60">
+	<monogr>
+		<title level="m" type="main">Trl: Transformer reinforcement learning</title>
 		<author>
 			<persName><forename type="first">Younes</forename><surname>Leandro Von Werra</surname></persName>
 		</author>
@@ -1676,16 +1671,13 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><surname>Huang</surname></persName>
 		</author>
 		<ptr target="https://github.com/huggingface/trl" />
-	</analytic>
-	<monogr>
-		<title level="j">Trl: Transformer reinforcement learning</title>
 		<imprint>
 			<date type="published" when="2020">2020</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b62">
+<biblStruct xml:id="b61">
 	<analytic>
 		<title level="a" type="main">Blurring the lines: how ai is redefining artistic ownership and copyright</title>
 		<author>
@@ -1703,12 +1695,12 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<title level="j">Discover Artificial Intelligence</title>
 		<imprint>
 			<biblScope unit="volume">3</biblScope>
-			<biblScope unit="page">2023</biblScope>
+			<biblScope unit="page" from="11" to="2023" />
 		</imprint>
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b63">
+<biblStruct xml:id="b62">
 	<monogr>
 		<title level="m" type="main">Generative artificial intelligence for de novo protein design</title>
 		<author>
@@ -1726,7 +1718,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b64">
+<biblStruct xml:id="b63">
 	<monogr>
 		<title level="m" type="main">Imagereward: Learning and evaluating human preferences for text-to-image generation</title>
 		<author>
@@ -1759,9 +1751,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b65">
-	<monogr>
-		<title level="m" type="main">Sung-Ho Bae, and In So Kweon. A survey on audio diffusion models: Text to speech synthesis and enhancement in generative ai</title>
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">A survey on audio diffusion models: Text to speech synthesis and enhancement in generative ai</title>
 		<author>
 			<persName><forename type="first">Chenshuang</forename><surname>Zhang</surname></persName>
 		</author>
@@ -1777,39 +1769,101 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">Maryam</forename><surname>Qamar</surname></persName>
 		</author>
-		<idno>2023. 22.75 2.46</idno>
-		<imprint/>
+		<author>
+			<persName><forename type="first">Sung-Ho</forename><surname>Bae</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">In</forename><surname>So Kweon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Diffusion-CLIP Based (Image Dim</title>
+		<imprint>
+			<biblScope unit="volume">512</biblScope>
+			<biblScope unit="page">75</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
 	</monogr>
-	<note>Diffusion-K-Means Text Based (Image Dim 512) 21.50 2.32 Diffusion-K-Means Image Based. Image Dim 512) 21.50 2.32 Diffusion-DCGAN Based (Image Dim 512</note>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">46 Diffusion-K-Means Text Based</title>
+	</analytic>
+	<monogr>
+		<title level="j">Image Dim</title>
+		<imprint>
+			<biblScope unit="volume">512</biblScope>
+			<biblScope unit="page" from="50" to="52" />
+		</imprint>
+	</monogr>
 </biblStruct>
 
 <biblStruct xml:id="b66">
 	<monogr>
-		<title level="m" type="main">88 Diffusion-CLIP Based (Image Dim 256) 11.2 1.21 Diffusion-K-Means Text Based (Image Dim 256) 17.25 1.86 Diffusion-K-Means Image Based (Image Dim 256) 12.67 1.37 Diffusion-DCGAN Based</title>
+		<title level="m" type="main">Diffusion-K-Means Image Based (Image Dim 512) 21.50 2.32 Diffusion-DCGAN Based (Image Dim 512) 21.44 2.32 CAN</title>
 		<imprint/>
 	</monogr>
-	<note>Image Dim 256</note>
+	<note>Image Dim 256) 72.94 7. 88 Diffusion-CLIP Based (Image Dim 256) 11.2 1.21 Diffusion-K-Means Text Based Image Dim 256) 17.25 1</note>
 </biblStruct>
 
 <biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Diffusion-K-Means Image Based</title>
+	</analytic>
 	<monogr>
-		<title level="m" type="main">Diffusion-K-Means Text Based (Image Dim 128) 6.40 0.69 Diffusion-K-Means Image Based (Image Dim 128) 6.65 0.72 Diffusion-DCGAN Based</title>
-		<idno>15 Diffusion-CLIP Based (Image Dim 128) 7.05 0.76</idno>
-		<imprint/>
+		<title level="j">Image Dim</title>
+		<imprint>
+			<biblScope unit="volume">256</biblScope>
+			<biblScope unit="page">67</biblScope>
+		</imprint>
 	</monogr>
-	<note>Image Dim 128</note>
 </biblStruct>
 
 <biblStruct xml:id="b68">
 	<monogr>
-		<title level="m" type="main">Diffusion-K-Means Text Based (Image Dim 64) 6.85 0.74 Diffusion-K-Means Image Based (Image Dim 64) 6.55 0.71 Diffusion-DCGAN Based</title>
-		<idno>Diffusion-CLIP Based (Image Dim 64) 7.30 0.79</idno>
+		<title level="m" type="main">1.37 Diffusion-DCGAN Based (Image Dim 256) 8.53 0.92 CAN</title>
+		<imprint/>
+	</monogr>
+	<note>Image Dim 128) 66.14 7.15 Diffusion-CLIP Based (Image Dim 128) 7.05 0.76</note>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Diffusion-K-Means Text Based</title>
+	</analytic>
+	<monogr>
+		<title level="j">Image Dim</title>
 		<imprint>
-			<publisher>Training</publisher>
-			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="volume">128</biblScope>
+			<biblScope unit="page" from="40" to="40" />
 		</imprint>
 	</monogr>
-	<note>Image Dim 64) 6.14 0.66 Table</note>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<monogr>
+		<title level="m" type="main">Diffusion-K-Means Image Based (Image Dim 128) 6.65 0.72 Diffusion-DCGAN Based</title>
+		<imprint/>
+	</monogr>
+	<note>Image Dim 128) 6.24 0.67 CAN (Image Dim 64) 83.33</note>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<monogr>
+		<title level="m" type="main">9 Diffusion-CLIP Based (Image Dim 64) 7.30 0.79 Diffusion-K-Means Text Based</title>
+		<imprint>
+			<biblScope unit="page" from="85" to="85" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Diffusion-K-Means Image Based (Image Dim 64) 6.55 0.71 Diffusion-DCGAN Based</title>
+		<imprint/>
+	</monogr>
+	<note>Image Dim 64) 6.14 0.66 Table 16: Training</note>
 </biblStruct>
 
 				</listBibl>

@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Using the eRm Package for Rasch Modeling</title>
+				<funder>
+					<orgName type="full">Baylor University</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Department of Educational Psychology</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>Informa UK Limited</publisher>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2020-07-02">2020-07-02</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">R</forename><forename type="middle">Noah</forename><surname>Padgett</surname></persName>
+							<idno type="ORCID">0000-0002-9114-3896</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Grant</forename><forename type="middle">B</forename><surname>Morgan</surname></persName>
+							<idno type="ORCID">0000-0002-3077-4643</idno>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Educational Psychology</orgName>
+								<orgName type="institution" key="instit1">Baylor University</orgName>
+								<orgName type="institution" key="instit2">Baylor University</orgName>
+								<address>
+									<settlement>Grant</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Department of Educational Psychology</orgName>
+								<orgName type="department" key="dep2">Department of Educational Psychology</orgName>
+								<orgName type="institution">Baylor University</orgName>
+								<address>
+									<addrLine>One Bear Place #</addrLine>
+									<postCode>97304</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="institution">Baylor University</orgName>
+								<address>
+									<postCode>76798.</postCode>
+									<settlement>Waco</settlement>
+									<region>TX</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Using the eRm Package for Rasch Modeling</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Measurement: Interdisciplinary Research and Perspectives</title>
+						<title level="j" type="abbrev">Measurement: Interdisciplinary Research and Perspectives</title>
+						<idno type="ISSN">1536-6367</idno>
+						<idno type="eISSN">1536-6359</idno>
+						<imprint>
+							<publisher>Informa UK Limited</publisher>
+							<biblScope unit="volume">18</biblScope>
+							<biblScope unit="issue">3</biblScope>
+							<biblScope unit="page" from="163" to="176"/>
+							<date type="published" when="2020-07-02" />
+						</imprint>
+					</monogr>
+					<idno type="MD5">492773A745BF43CE8C3112312376EE05</idno>
+					<idno type="DOI">10.1080/15366367.2020.1732155</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:21+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>software review</term>
+					<term>Rasch</term>
+					<term>eRm</term>
+					<term>R</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The "extended Rasch modeling" (eRm) package in R provides users with a comprehensive set of tools for Rasch modeling for scale evaluation and general modeling. We provide a brief introduction to Rasch modeling followed by a review of literature that utilizes the eRm package. Then, the key features of the eRm package for scale evaluation are reviewed.</p><p>The ease of use and the advantages of the R environment make the eRm package an appealing free option for rigorous Rasch modeling. We demonstrate the functionality with a small example using data from the Rosenberg Self-Esteem scale. Using these data we show how to 1) fit dichotomous and polytomous Rasch models, 2) obtain key figures (e.g., item characteristic curves and person-item maps) to aid model assessment , 3) assess dimensionality, and 4) obtain item fit statistics.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Using the eRm package for Rasch modeling</head><p>In educational settings, data are often of the ordered categorical type given the common use of various response formats <ref type="bibr">(e.g., correct-incorrect, Likert-type, etc.)</ref>. The use of the ordered categorical format comes from the need for obtaining more precise scoring of items <ref type="bibr" target="#b32">(Tuerlinckx &amp; Wang, 2004)</ref> and, therefore, a more accurate measurement of the construct of interest. Along with advancements in item development, advanced statistical techniques are necessary for evaluating and scoring tests. Many techniques have been developed to analyze such polytomous data, including extensions of the Rasch model <ref type="bibr" target="#b25">(Rasch, 1960)</ref>; item response theory (IRT; <ref type="bibr" target="#b6">de Ayala, 2009;</ref><ref type="bibr" target="#b7">de Boeck &amp; Wilson, 2004)</ref>, exploratory factor analysis (EFA), confirmatory factor analysis (CFA; <ref type="bibr" target="#b3">Brown, 2015)</ref>, and structural equation modeling (SEM; <ref type="bibr" target="#b14">Kaplan, 2009;</ref><ref type="bibr" target="#b15">Kline, 2015;</ref><ref type="bibr" target="#b29">Schumacker &amp; Lomax, 2016)</ref>.</p><p>The variety of analytical choices may be daunting at first for an analyst that is unfamiliar with the numerous approaches available. However, the frameworks listed above have unique features that could help answer a wide range of research questions. Deciding which approach is appropriate requires understanding the type of question asked. For example, EFA is commonly used to help find evidence for scale development to help assess the dimensionality of an underlying construct of interest <ref type="bibr" target="#b2">(Benson &amp; Nasser, 1998)</ref>.</p><p>However, when more fine grained information about a the performance of a particular item is of interest, an IRT or Rasch framework is frequently used <ref type="bibr" target="#b6">(de Ayala, 2009)</ref>. IRT and Rasch, though mathematically similar, offer distinctly different viewpoints on item and scale evaluation. From an IRT viewpoint, researchers typically aim to identify an IRT model that best explains the observed data <ref type="bibr" target="#b6">(de Ayala, 2009)</ref>. While from a Rasch perspective, the aim is to find evidence that the data at hand support a chosen Rasch model <ref type="bibr" target="#b30">(Smith &amp; Smith, 2004)</ref>. The focus of this review is on scale evaluation within a Rasch framework.</p><p>A consideration for any analysis nowadays is to figure out which software to use. Some popular Rasch software tools are Winsteps <ref type="bibr" target="#b18">(Linacre, 2019b)</ref> and Facets <ref type="bibr">(Linacre, 2019a)</ref>. However useful these software tools are, many such tools are not free. In this review, we focus on the free extended Rasch modeling (eRm) package <ref type="bibr" target="#b19">(Mair &amp; Hatzinger, 2007;</ref><ref type="bibr" target="#b20">Mair et al., 2013)</ref>. The eRm package is built in R (R Core Team, 2019), meaning that there exists a large ecosystem of open-source tools and support available to researchers and practitioners in case an issues arises. In this review and brief tutorial, we describe the features of the eRm package, and illustrate how to utilize the package for item and scale analysis through a Rasch framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rasch and the eRm Package</head><p>The use of Rasch methods comes with some particularly unique features that can be utilized when analyzing ordinal data. When the Rasch model assumptions are tenable, the Rasch model can provide researchers with 1) a common, interval-level metric by which persons and items are measured, 2) fit statistics to evaluate which (if any) persons or items do not fit the model, and 3) evaluation of coverage of the latent construct. The use of Rasch models is an important step for understanding the characteristics of an assessment. Importantly, the Rasch models places persons and items on a common, sample-independent scale that allows for a rigorous investigation of the data.</p><p>The eRm package was built to provide modeling flexibility for the user to explore a wide array of models. The vast array of models are built from the underlying flexibility of the linear partial credit model (LPCM). The LPCM is basis for the general architecture by which Rasch models can be specified where convenient wrapper functions are available for important special cases such as the partial credit model (PCM),rating scale model (RSM), and Rasch Model. The hierarchy of extended Rasch models is broken up into two major strands: one for the traditional RM, RSM, and PCM, and the other for the linearized counterparts linear logistic test model (LLTM), linear RSM (LRSM), and LPCM. These counterparts are simply specializations of one another. The specification of the wide range of models comes from the implementation of a design matrix. A large portion of the functionality of the design matrix is out of scope for this review, but the interested reader can refer to <ref type="bibr" target="#b19">Mair and Hatzinger (2007)</ref> and <ref type="bibr" target="#b13">Hatzinger and Rusch (2009)</ref> for more details. Some of the functionality is reviewed next through examples in the literature that utilize the eRm package.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Literature Utilizing eRm</head><p>The eRm has been reported in literature to help answer a variety of questions. Some researchers have used the package to assist with Monte Carlo simulation studies <ref type="bibr" target="#b9">(Edelsbrunner &amp; Dablander, 2019;</ref><ref type="bibr" target="#b16">Krammer, 2019;</ref><ref type="bibr" target="#b31">Strobl et al., 2015)</ref>. For example, in <ref type="bibr" target="#b9">Edelsbrunner and Dablander (2019)</ref>, as part of their review of scientific reasoning research the authors conducted a Monte Carlo simulation study to investigate how INFIT mean-square was sensitive to violations of unidimensionality. They used the eRm package to generate data from a four-dimensional Rasch model then fit a unidimensional model to these data. These authors capitalized on the data simulation procedures in the eRm package to generate data specifics types of assumption violations to conduct a small scale focused simulation study. Others have reportedly used the eRm to help find validity evidence during the development of a scale <ref type="bibr" target="#b5">(Conrad et al., 2014;</ref><ref type="bibr" target="#b10">Elsman et al., 2019)</ref>. For example, in <ref type="bibr" target="#b10">Elsman et al. (2019)</ref>, the authors investigated fit of their data to the partial credit model on an assessment of quality of life. The use of the eRm package for Rasch modeling has spread to a variety of disciplines and has been used in a to help address a wide range of issues. Next, we discuss the features of the eRm package in more detail starting with the estimation underlying many of the Rasch models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Estimation</head><p>With respect to estimation, the eRm package uses conditional maximum likelihood (CML) for the dichotomous and polytomous models. CML <ref type="bibr" target="#b0">(Andersen, 1972</ref>) may be used to estimate models for which there are sufficient statistics available, as is the case for the family of Rasch models. That is, the item mean and person mean are sufficient statistics for the item and person measures, respectively. Given this property of Rasch models, joint maximum likelihood (JML), or unconditional maximum likelihood <ref type="bibr">(Wright &amp; Stone, 1979)</ref>, is also available and is employed by other Rasch software, such as WINSTEPS <ref type="bibr" target="#b18">(Linacre, 2019b)</ref>. However, JML cannot produce estimates for individuals with sum scores of zero or the maximum possible score (e.g., all items incorrect or all items correct), and the estimates produced are inconsistent and asymptotically normal <ref type="bibr" target="#b1">(Andersen, 1973;</ref><ref type="bibr" target="#b11">Haberman, 1977</ref><ref type="bibr" target="#b12">Haberman, , 2004))</ref>. Additionally, the limitations of JML are due to the simultaneous estimation of item and person measures. On the other hand, CML does not have the same limitations as JML so the CML estimator can be viewed as a strength if considering different software for modeling. For instance, CML can produce consistent maximum likelihood estimates because it separates the item and person parameter estimates by conditioning the estimation of the likelihood function on the person sufficient statistics <ref type="bibr" target="#b0">(Andersen, 1972;</ref><ref type="bibr" target="#b6">de Ayala, 2009)</ref>. The person measures are estimated in eRm in a step following the estimation of item measures using JML. This two-step process sidesteps the limitations of JML because (1) the parameters are not estimated simultaneously and (2) the item parameters estimated through CML can be treated as "known" (i.e., fixed) in order to estimate the person measures. The two-step process uses the advantages of both estimation procedures. The estimates for persons and items can be viewed in the person-item map using the plotPImap command, which is a very attractive graphic compared with other software. CML is used for the dichotomous (RM), partial credit (PCM), and rating scale (RSM) models as well as the linear versions of these models (LLTM, LPCM, LRSM; commands shown in parentheses).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Diagnostics</head><p>The eRm package offers an array of tests and statistics to assist with diagnosing multiple areas of potential model misfit. First, the information-weighted mean square (INFIT) and unweighted mean square (OUTFIT) estimates are provided for each item and each person, which is customary in evaluating Rasch model-data fit. These estimates along with their χ 2 values, degrees of freedom, p value, and t test statistics are available with the itemfit and personfit commands, respectively, for items and persons. The INFIT t test statistics can also be plotted for items or persons using the plotPImap command, in which users may plot with or without confidence intervals. This plot may be particularly helpful in examining many items or person efficiently.</p><p>Secondly, the eRm package offers the Anderson likelihood ratio test <ref type="bibr" target="#b1">(Andersen, 1973)</ref> using the LRtest command. The procedure tests for person homogeneity, which can be an indication of differential item function or violations of monotonicity, by estimating the item measures using two or three subgroups from the sample. Two or three subgroups are the only options, but this will likely meet most users' needs.</p><p>Invariance between the two or three sets of parameter estimates supports the model-data fit. The LRtest command produces the LR value (i.e., ∼ χ 2 ), degrees of freedom, and p value. By default, two groups are formed based on raw scores above or below the median. Subgroups can also be created by the user based on a variable coded as a factor (e.g., sex) or based on the distribution of a quantitative variable. Because the test divides the sample in subgroups, a sufficiently large sample size is an important consideration to ensure that all subgroups are large enough.</p><p>Third, the generalized Martin-Löf test is available for testing dimensionality, which is a different approach from the conventional method of conducting principal components analysis on the standardized residual matrix. <ref type="bibr" target="#b21">Martin-Löf (1970)</ref> proposed a test of unidimensionality for dichotomous Rasch models that is a likelihood ratio test for comparing the null hypothesis of unidimensionality against the alternative hypothesis of two dimensions. <ref type="bibr" target="#b4">Christensen et al. (2002)</ref> generalized the test for (1) polytomous models and</p><p>(2) an alternative hypothesis with more than two dimensions. The MLoef procedure splits the items into two subgroups using the median (default) or mean of the item raw scores, or the user can specify a grouping of two or three subgroups of items. The command produces the log-likelihood value for each item grouping as well as for the overall model. The MLoef procedure also produces the likelihood ratio value, degrees of freedom, and p value, which is the output that is examined when making a decision about the tenability of the unidimensionality assumption. The MLoef command is a large sample approximation (i.e., ∼ χ 2 ), but the eRm package also provides an exact test using the NPtest command. This command offers 12 different methods for testing unidimensionality with the default method checking for local dependence based on inter-item correlations. (Verguts2000) showed that the Martin-Löf test is a bit conservative unless used with a large sample but that it has appropriate power when the split of items is correct. (Christensen2007)</p><p>showed that the Martin-Löf test works well but notes the requirement of a very large sample for the null distribution to follow the asymptotic χ 2 distribution. In light of the available research on the Martin-Löf test and its generalization, the exact test (NPtest) may be an attractive option for some users.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tutorial on Using eRm for Rasch Analyses</head><p>Generally, the use of R for statistical analyses has grown exponentially in recent years given the increase in personal computing power and continued development of open source tools. In our demonstration of the eRm package use for Rasch modeling, we highlight various functionalities through a guiding example with data on the Rosenberg Self-Esteem Scale (RSES; <ref type="bibr" target="#b28">Rosenberg, 1989)</ref>. The RSES is analyzed from two perspectives. First, using the Rasch model for binary outcomes to discuss the use of the classic Rasch model. Secondly, using the partial-credit model (PCM; <ref type="bibr" target="#b22">Masters, 1982)</ref> as a polytomous extension of the Rasch model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Instrument</head><p>Data used in the following example were collected as part of previous research <ref type="bibr" target="#b8">(DiStefano &amp; Morgan, 2011;</ref><ref type="bibr" target="#b23">Morgan et al., 2016)</ref> and used here to show the utility of the eRm package. Briefly, these data contain 757 complete responses to the Rosenberg Self-Esteem scale providing measures of global self-esteem <ref type="bibr" target="#b28">(Rosenberg, 1989)</ref>. The Rosenberg Self-Esteem scale used here consists of 10 items, five of which were positively worded and five negatively worded. All items on the scale were rated on a four-point Likert scale with verbal anchors of Strongly Disagree (0), Disagree (1), Agree (2), and Strongly Agree (3).</p><p>The frequency of responses to each category are reported in Table <ref type="table" target="#tab_0">1</ref>. The survey respondents were an average age was 22.4 years (SD ± 7.2 years) ranging from 16 to 75 years. The sample was 42% male, 48% female, and the remaining 10% did not disclose sex. The respondents were 67.9% Caucasian, 12.8% Black, 2.4% Hispanic, 3.4% Asian, 1.7% Multiracial, 0.3% other races, and 11.5% did not report race.</p><p>Responses to these items are analyzed in two ways in the example Rasch analyses that follow.</p><p>First, we dichotomized these responses based on direction of agreement to create binary data. These artificially binary data were then analyzed with the Rasch model. Secondly, we used the original responses and analyzed these data with the partial credit model. For each analysis we describe how to 1) fit the model, 2) plot the item characteristic curves (ICC), 3) obtain person-item maps, 4) assess dimensionality and tenability of other assumptions, and 5) obtain item/person fit statistics. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Applying the Rasch Model in eRm</head><p>Applying the Rasch Model in eRm is straightforward once data are read into the R environment.</p><p>Here, we demonstrate how the eRm package can be used to analyze data from the RSE scale. The top six rows of our data are &gt; head ( data ) I t e m_1 I t e m_2 I t e m_3 I t e m_4 I t e m_5 I t e m_6 I t e m_7 I t e m_8 I t e m_9 I t e m_10 1 1</p><formula xml:id="formula_0">1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 0 1 1 1 1 3 1 0 1 1 1 1 1 1 1 1 4 1 1 1 1 1 1 1 1 1 1 5 1 0 1 1 1 1 1 1 0 1 6 1 1 1 1 1 1 1 1 1 1</formula><p>where the head function was used to just look at these top six rows (or participants) in our data (named</p><formula xml:id="formula_1">rse_dich</formula><p>in R for dichotomously scored RSE data). Most of the responses are 1's, which makes sense given that a large proportion of responses shown in Table 1 are on the agree side of the response scale. Based on the agreeable response versus a disagreeable response, these data may be reflective of a person's level of self-esteem. The RSE scale is thought to measure a single underlying construct, or said another way, a unidimensional construct. The Rasch model was easily fit to these data and obtain the model results using the RM function (see below). &gt; f i t . rm &lt;-RM( data ) &gt; summary ( f i t . rm) R e s u l t s o f RM e s t i m a t i o n : C a l l : RM(X = data ) C o n d i t i o n a l log-l i k e l i h o o d : -1309.919 Number o f i t e r a t i o n s : 16 Number o f p a r a m e t e r s : 9 I t e m ( C a t e g o r y ) D i f f i c u l t y P a r a m e t e r s ( e t a ) : w i t h 0 . 9 5 CI : E s t i m a t e Std . E r r o r lower CI upper CI I t e m_2 2 . 1 0 1 0 . 1 0 2 1 . 9 0 1 2 . 3 0 2 I t e m_3 -1.586 0 . 1 6 8 -1.916 -1.256 I t e m_4 -0.059 0 . 1 1 7 -0.289 0 . 1 7 1 I t e m_5 -0.341 0 . 1 2 3 -0.582 -0.099 I t e m_6 2 . 0 9 3 0 . 1 0 2 1 . 8 9 2 2 . 2 9 3 I t e m_7 -0.243 0 . 1 2 1 -0.480 -0.006 I t e m_8 -0.781 0 . 1 3 6 -1.047 -0.515 I t e m_9 1 . 0 0 7 0 . 1 0 4 0 . 8 0 3 1 . 2 1 1 I t e m_10 -0.605 0 . 1 3 0 -0.860 -0.350 I t e m E a s i n e s s P a r a m e t e r s ( beta ) w i t h 0 . 9 5 CI : E s t i m a t e Std . E r r o r lower CI upper CI beta I t e m_1 1 . 5 8 6 0 . 1 6 8 1 . 2 5 6 1 . 9 1 6 beta I t e m_2 -2.101 0 . 1 0 2 -2.302 -1.901 beta I t e m_3 1 . 5 8 6 0 . 1 6 8 1 . 2 5 6 1 . 9 1 6 beta I t e m_4 0 . 0 5 9 0 . 1 1 7 -0.171 0 . 2 8 9 beta I t e m_5 0 . 3 4 1 0 . 1 2 3 0 . 0 9 9 0 . 5 8 2 beta I t e m_6 -2.093 0 . 1 0 2 -2.293 -1.892 beta I t e m_7 0 . 2 4 3 0 . 1 2 1 0 . 0 0 6 0 . 4 8 0 beta I t e m_8 0 . 7 8 1 0 . 1 3 6 0 . 5 1 5 1 . 0 4 7 beta I t e m_9 -1.007 0 . 1 0 4 -1.211 -0.803 beta I t e m_10 0 . 6 0 5 0 . 1 3 0 0 . 3 5 0 0 . 8 6 0</p><p>A feature of the eRm package is the item easiness parameters are also reported along with the item difficulties. The default settings fix the scale by fixing the sum of item easiness parameters to zero. The scale can easily be set by fixing the first easiness (beta) to 0 instead by using sum0=FALSE as an argument in the function. These options provide users for flexibility in modeling and even greater flexibility can be achieved by utilizing the design matrix formulation.</p><p>However, for the given model, more detailed information about the fitted model can be investigated next. The item characteristic curves for all ten items can be easily obtained using the plotICC command. The command nicely plots the ICC for each item on a separate window so that each item can be inspected individually. All the ICCs can be plotted on the same window as well, using plotjointICC, which is shown in Figure <ref type="figure" target="#fig_0">1</ref>.</p><p>The ICC plot highlights how the items are distributed and ordered the item legend based on the difficulty. The difficulty in jointly plotting all the ICCs is that some of the curves can be difficult to see (e.g., item 7). Another useful feature for examining the relationship between persons and items is the person-item map. These figures help provide a useful representation of how the difficulty of items relates to the person-parameters for the fitted Rasch model. This map is created using plotPImap(fit.rm, sorted = TRUE), where the argument "sorted = TRUE" is not necessary, but will help significantly with interpretation and identifying how items are distributed across the person parameter distributions. The person-item map is shown in Figure 2. The fit of these data to the Rasch model can be evaluated in numerous ways in the eRm package. The package supports tests such as Anderson's likelihood ratio test, Wald-type tests, Martin-Löf test, various nonparametric tests, item and person fit indices, and graphical procedures. Testing for unidimensionality based on the fitted Rasch model using the Martin-Löf test resulted in &gt; MLoef ( f i t . rm) Martin -L o e f -T e s t ( s p l i t c r i t e r i o n : median ) LR-v a l u e : 1 0 9 . 2 8 1 Chi-s q u a r e d f : 24 p-v a l u e : 0</p><p>where, based on the default settings which uses the median as the split criterion, there is evidence that unidimensionality may not be tenable. Other tests for unidimensionality are available through NPtest</p><formula xml:id="formula_2">Item_2 Item_6 Item_9 Item_4 Item_7 Item_5 Item_10 Item_8 Item_1 Item_3 -2 -1 0 1 2 3</formula><p>Latent Dimension</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Person-Item Map</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Person Parameter Distribution</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 2</head><p>Person-Item map for Rasch model function. Then, if we find evidence of unidimensionality then an investigation of the item fit to the model could be the next step. The item fit information is obtained through a two-step process. First, we compute the person parameters along will all the residuals. Then, the investigation of the item fit statistics is a straightforward extension. The item fit statistics (i.e., INFIT/OUTFIT t or MSQ) are obtained using &gt; pp &lt;-p e r s o n . p a r a m e t e r s ( f i t . rm) &gt; i t e m f i t ( pp ) I t e m f i t S t a t i s t i c s : C h i s q d f p-v a l u e O u t f i t MSQ I n f i t MSQ O u t f i t t I n f i t t I t e m_1 3 1 8 . 1 0 1 491 1 . 0 0 0 0 . 6 4 7 0 . 8 4 8 -1.38 -1.30 I t e m_2 9 5 1 . 2 0 5 491 0 . 0 0 0 1 . 9 3 3 1 . 1 5 4 7 . 1 5 3 . 3 8 I t e m_3 3 4 2 . 2 1 3 491 1 . 0 0 0 0 . 6 9 6 0 . 7 8 9 -1.14 -1.87 I t e m_4 3 7 3 . 7 3 6 491 1 . 0 0 0 0 . 7 6 0 0 . 8 4 3 -2.12 -2.42 I t e m_5 3 0 4 . 8 7 9 491 1 . 0 0 0 0 . 6 2 0 0 . 8 3 8 -3.07 -2.29 I t e m_6 5 4 6 . 9 2 6 491 0 . 0 4 1 1 . 1 1 2 1 . 0 6 1 1 . 0 8 1 . 3 8 I t e m_7 3 9 0 . 3 5 2 491 1 . 0 0 0 0 . 7 9 3 0 . 8 7 0 -1.61 -1.87 I t e m_8 4 6 7 . 0 4 9 491 0 . 7 7 5 0 . 9 4 9 0 . 9 3 9 -0.23 -0.69 I t e m_9 4 3 0 . 8 2 9 491 0 . 9 7 6 0 . 8 7 6 0 . 8 8 5 -1.62 -2.25 I t e m_10 4 3 9 . 9 9 7 491 0 . 9 5 2 0 . 8 9 4 0 . 8 6 7 -0.61 -1.68</p><p>where, these results give additional evidence that these data, nd potentially the scale, do not fit the Rasch</p><p>model. One source of misfit is likely due to item 2. The INFIT/OUTFIT statistics appear to be quite extreme, especially the OUTFIT t. What this indicates is that the residuals for item 2 are more variable than the Rasch model predicts the residuals should. The high values of OUTFIT for item 2 indicates that individuals with person measures high above or below the item measure are responding more erratically than expected under the Rasch model. A likely next step would be to go back to content of item 2 to try to identify whether there is a reason based on content for why individuals may be responding different than the model predicts. Other features of the eRm package utilize the person-parameters and we encourage exploring the options such as person fit statistics and residual plots. We have already discussed a few of the graphical capabilities, but various other graphical displays (e.g., the plotGOF command) can be created to help assess the fit of the data to the Rasch model. Next, we used the polytomous data to fit the partial credit model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Applying the Partial Credit Model in eRm</head><p>The previous example with the Rasch model is somewhat artificial given that we dichotomized the four response categories. In practice we would likely not impose such a transformation on our data and instead analyzed the survey data as polytomous responses from the outset of the scale evaluation. Next, we</p><p>show how the polytomous RSE data can be modeled and explored in the eRm package. Again, many of the functions and capabilities are straightforwardly extended from the Rasch to the polytomous models (partial credit model and rating scale model</p><p>). Fitting the partial credit model proceeds by the same methods used in the Rasch model. The only difference is that we now use PCM instead. The function names in the package were well chosen to facilitate finding the needed tools more easily. The results from the fitted PCM are the following &gt; f i t . pcm &lt;-PCM( data ) &gt; summary ( f i t . pcm ) R e s u l t s o f PCM e s t i m a t i o n : C a l l : PCM(X = data ) C o n d i t i o n a l log-l i k e l i h o o d : -4571.338 Number o f i t e r a t i o n s : 48 Number o f p a r a m e t e r s : 29 I t e m ( C a t e g o r y ) D i f f i c u l t y P a r a m e t e r s ( e t a ) : w i t h 0 . 9 5 CI : E s t i m a t e Std . E r r o r lower CI upper CI I t e m_1 . c2 -1.691 0 . 2 6 0 -2.202 -1.181 I t e m_1 . c3 -0.117 0 . 2 6 5 -0.637 0 . 4 0 3 I t e m_2 . c1 -0.515 0 . 1 4 5 -0.799 -0.232 I t e m_2 . c2 1 . 1 3 9 0 . 1 6 7 0 . 8 1 1 1 . 4 6 6 I t e m_2 . c3 4 . 9 0 2 0 . 2 2 2 4 . 4 6 6 5 . 3 3 7 . . .</p><p>where the full output is shown in the appendix. The results are displayed nearly identically which eases use when fitting different models. Based on the four category response scale for this version of the Rosenberg Self-Esteem scale, we get three parameters per item corresponding to the three thresholds. By default, the first threshold of the first item is fixed to 0. A feature of this package is that the easiness parameters are reported for this polytomous model.</p><p>The ICCs for the partial credit model are each reported separately using the same plotICC function. Because the characteristic curves are plotted for each category, the joint plotting object is not available because such a figure would be very difficult to interpret. We selected the ICC for items one and four. Item 1 provides of an example an item with disordered categories which may indicate that item 1 needs to be revised. However, item 4 seems to be performing much better in comparison due to each response category being the most likely response for some range of the latent dimension. The ICCs provide a general idea of the fit of specific items to the PCM, but more fine grained information is obtained with the item fit statistics.</p><p>-4 -2 0 2 4 0.0 0.2 0.4 0.6 0.8 1.0 ICC plot for item Item_1 Latent Dimension Probability to Solve Category 0 Category 1 Category 2 Category 3 -4 -2 0 2 4 0.0 0.2 0.4 0.6 0.8 1.0</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ICC plot for item Item_4</head><p>Latent Dimension</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Probability to Solve</head><p>Category 0 Category 1 Category 2 Category 3</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 3 Item characteristic curves for the partial credit model</head><p>The item fit statistics indicated similar results compared to the dichotomous fit statistics. We did not observe the same magnitude of OUTFIT statistics for item 2. However, we still would recommend revisiting the content of item 2. The estimates of the item fit statistics for the PCM are &gt; pp &lt;-p e r s o n . p a r a m e t e r s ( f i t . pcm ) &gt; i t e m f i t ( pp ) I t e m f i t S t a t i s t i c s : C h i s q d f p-v a l u e O u t f i t MSQ I n f i t MSQ O u t f i t t I n f i t t I t e m_1 6 8 5 . 4 8 3 705 0 . 6 9 4 0 . 9 7 1 0 . 9 5 5 -0.35 -0.65</p><p>I t e m_2 8 1 1 . 4 5 6 705 0 . 0 0 3 1 . 1 4 9 1 . 1 1 6 2 . 8 6 2 . 2 3 I t e m_3 6 2 3 . 7 5 6 705 0 . 9 8 7 0 . 8 8 4 0 . 8 8 7 -1.70 -1.79 I t e m_4 6 4 2 . 9 6 2 705 0 . 9 5 4 0 . 9 1 1 0 . 8 4 3 -1.26 -2.87 I t e m_5 5 6 6 . 7 3 6 705 1 . 0 0 0 0 . 8 0 3 0 . 8 1 8 -3.77 -3.43 I t e m_6 7 6 6 . 2 7 9 705 0 . 0 5 4 1 . 0 8 5 1 . 0 7 6 1 . 6 6 1 . 4 9 I t e m_7 5 1 4 . 0 6 3 705 1 . 0 0 0 0 . 7 2 8 0 . 7 3 6 -3.07 -4.73 I t e m_8 6 9 8 . 0 6 0 705 0 . 5 6 7 0 . 9 8 9 0 . 9 5 6 -0.17 -0.75 I t e m_9 5 7 8 . 2 9 9 705 1 . 0 0 0 0 . 8 1 9 0 . 8 4 5 -3.23 -3.12 I t e m_10 5 8 8 . 8 4 1 705 0 . 9 9 9 0 . 8 3 4 0 . 8 5 0 -2.95 -2.69</p><p>where new items were identified as potentially misfitting. That is, item 5 and item 7 resulted in low</p><p>OUTIFT and INFIT estimates. The additional information has made the evaluation of which items to retain and which to revise (or omit) has become more difficult. The item level information is useful, but next a more global investigation of the item person relationship is described.</p><p>Next, the person-item map for partial credit model is shown in Figure <ref type="figure">4</ref>. Here we see that the threshold locations are represented along with the item location. This provides users with an efficient way to determine if any items have disordered thresholds, which is an indicator that a higher category is not frequently used. A nice feature is that all items with disordered categories are marked with a ( * ) on the right vertical axis. The map also provides an nice visual representation of how the person distribution relates to the items and thresholds. The identification of items with disordered thresholds leads us to a point in evaluating the scale where we have to make a choice on how to utilize this information. One option would be to do nothing and leave the item in the scale and acknowledge that these data may not fit the PCM. Another option would be to remove the item entirely, which would side step the issue and allow for the measurement of self-esteem to occur with less items. But, we don't recommend removing an item based solely on the disordered threshold because the interpretation of the construct may change by removing items. A potentially useful option is to collapse categories. Collapsing the Strongly Disagree and Disagree categories for item 2 may be more justifiable. We recommend the reader refer to <ref type="bibr" target="#b30">(Smith &amp; Smith, 2004</ref>)'s chapter on optimizing category effectiveness.</p><p>The fit (or misfit) of the items may be masked by potential issues of dimensionality. Testing dimensionality is a straightforward extension from the methods used previous for the Rasch model. The</p><p>MLoef function also works for the testing the dimensionality of the PCM. The Martin-Löef test was not significant when the polytomous data were fit to the PCM, &gt; MLoef ( f i t . pcm )</p><p>Martin -L o e f -T e s t ( s p l i t c r i t e r i o n : median ) LR-v a l u e : 2 1 6 . 5 6 8 Chi-s q u a r e d f : 224</p><formula xml:id="formula_3">Item_2 Item_6 Item_9 Item_4 Item_5 Item_10 Item_7 Item_8 Item_1 Item_3 -2 -1 0 1 2 3 4 5</formula><p>Latent Dimension p-v a l u e : 0 . 6 2 7</p><p>where we conclude that there is evidence for unidimensionality.</p><p>The evaluation has lead to some conflicting and somewhat troubling information with regard to the fit of these data to the PCM. The disordered categories and the potential misfit of multiple items prompts next steps in the evaluation of the Rosenberg self-esteem scale in this population. We would take the information on which items may not be performing as expected under the PCM (e.g., item 2, 5 and 7) and review the content in these items. We may decide that we need to keep all items based on theoretical grounds that the items are necessary to retain the interpretation of self-esteem. The decision for how to the address the sources of misfit to the PCM should be done thoughtfully and with clear justification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Closing Remarks</head><p>The eRm package provides a flexibly modeling environment for a variety of Rasch models. The flexibility provides users with a broad toolkit for modeling data from educational settings whether the data is correct-incorrect, Likert-type, or longitudinal (see <ref type="bibr" target="#b20">Mair et al., 2013)</ref>. Additionally, the use of conditional maximum likelihood (CML) fits into the Rasch framework where for whichever model is of interest, a researcher can have the advantage of consistent maximum likelhood estimates. This feature is in line with Rasch models where total scores are a sufficient statistic for person measures. These features along with the array of tests and diagnostics tools make the eRm package a useful free tool for modeling data within the Rasch framework.</p><p>The package has been utilized through published literature in a variety of fields partly due to the flexibility, ease of use, and built into the R environment. An added benefit of being within the R environment is the advantage for data management and the utility of incorporating other R packages in a project. For example, additional plotting capabilities with ggplot2 (Wickham, 2016) or utilizing other analysis packages such as ltm <ref type="bibr" target="#b26">(Rizopoulos, 2006)</ref> are possible, further adding to the attractiveness of the eRm package.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Developments</head><p>The use of the eRm package has prompted future developments to further increase the functionality. According to the developers <ref type="bibr" target="#b20">(Mair et al., 2013)</ref>, an implementation of mixed Rasch models (MIRA; von Davier &amp; Rost, 1995) is in development. A feature that is currently not implemented, but may be of interest to researchers fitting survey data to Rasch models, is the use of sampling weights in the computation of the item parameters. Differentially weighting cases based on the sampling frame is common practice with large national datasets. The incorporation of sampling weights for the item parameter estimation may be out of scope for the eRm package, though. Researchers interested in such features may find the sirt package <ref type="bibr" target="#b27">(Robitsch, 2019)</ref> of interest, also available in the R environment. However, for many practitioners and researchers, the flexibility in modeling in the eRm package is likely more than sufficient while providing many nice features and graphics to aid the modeling process.</p><p>Wickham, H. (2016). ggplot2: Elegant graphics for data analysis. Springer. Wright, B. D., &amp; Stone, M. H. (1979). Best test design. Chicago, MESA Press. Appendix Fitted partial credit model full results &gt; f i t . pcm &lt;-PCM( data ) &gt; summary ( f i t . pcm ) R e s u l t s o f PCM e s t i m a t i o n : C a l l : PCM(X = data ) C o n d i t i o n a l log-l i k e l i h o o d : -4571.338 Number o f i t e r a t i o n s : 48 Number o f p a r a m e t e r s : 29 I t e m ( C a t e g o r y ) D i f f i c u l t y P a r a m e t e r s ( e t a ) : w i t h 0 . 9 5 CI : E s t i m a t e Std . E r r o r lower CI upper CI I t e m_1 . c2 -1.691 0 . 2 6 0 -2.202 -1.181 I t e m_1 . c3 -0.117 0 . 2 6 5 -0.637 0 . 4 0 3 I t e m_2 . c1 -0.515 0 . 1 4 5 -0.799 -0.232 I t e m_2 . c2 1 . 1 3 9 0 . 1 6 7 0 . 8 1 1 1 . 4 6 6 I t e m_2 . c3 4 . 9 0 2 0 . 2 2 2 4 . 4 6 6 5 . 3 3 7 I t e m_3 . c1 -0.773 0 . 3 4 0 -1.439 -0.108 I t e m_3 . c2 -2.140 0 . 2 9 8 -2.724 -1.556 I t e m_3 . c3 -0.304 0 . 2 9 8 -0.889 0 . 2 8 1 I t e m_4 . c1 -0.694 0 . 2 1 6 -1.118 -0.271 I t e m_4 . c2 -0.660 0 . 2 0 9 -1.070 -0.249 I t e m_4 . c3 1 . 1 5 2 0 . 2 2 6 0 . 7 0 8 1 . 5 9 5 I t e m_5 . c1 -1.520 0 . 2 9 5 -2.099 -0.941 I t e m_5 . c2 -1.848 0 . 2 8 0 -2.397 -1.298 I t e m_5 . c3 1 . 0 0 8 0 . 2 9 0 0 . 4 4 1 1 . 5 7 6 I t e m_6 . c1 -0.455 0 . 1 4 3 -0.735 -0.175 I t e m_6 . c2 1 . 2 2 0 0 . 1 6 6 0 . 8 9 5 1 . 5 4 5 I t e m_6 . c3 4 . 7 4 8 0 . 2 1 8 4 . 3 2 0 5 . 1 7 7 I t e m_7 . c1 -0.505 0 . 2 1 6 -0.929 -0.081 I t e m_7 . c2 -0.447 0 . 2 0 9 -0.857 -0.038 I t e m_7 . c3 0 . 6 8 6 0 . 2 2 1 0 . 2 5 3 1 . 1 2 0 I t e m_8 . c1 -1.257 0 . 3 0 4 -1.853 -0.661 I t e m_8 . c2 -1.950 0 . 2 8 3 -2.504 -1.396 I t e m_8 . c3 0 . 5 6 4 0 . 2 8 9 -0.003 1 . 1 3 0 I t e m_9 . c1 -0.943 0 . 1 8 6 -1.307 -0.578 I t e m_9 . c2 -0.024 0 . 1 9 4 -0.405 0 . 3 5 6 I t e m_9 . c3 2 . 3 7 7 0 . 2 2 1 1 . 9 4 3 2 . 8 1 1 I t e m_1 0 . c1 -1.027 0 . 2 7 2 -1.560 -0.495 I t e m_1 0 . c2 -1.598 0 . 2 5 3 -2.094 -1.102 I t e m_1 0 . c3 0 . 9 1 2 0 . 2 6 5 0 . 3 9 3 1 . 4 3 1 I t e m E a s i n e s s P a r a m e t e r s ( beta ) w i t h 0 . 9 5 CI : E s t i m a t e Std . E r r o r lower CI upper CI beta I t e m_1 . c1 0 . 2 3 9 0 . 3 1 2 -0.372 0 . 8 5 1 beta I t e m_1 . c2 1 . 6 9 1 0 . 2 6 0 1 . 1 8 1 2 . 2 0 2 beta I t e m_1 . c3 0 . 1 1 7 0 . 2 6 5 -0.403 0 . 6 3 7 beta I t e m_2 . c1 0 . 5 1 5 0 . 1 4 5 0 . 2 3 2 0 . 7 9 9 beta I t e m_2 . c2 -1.139 0 . 1 6 7 -1.466 -0.811 beta I t e m_2 . c3 -4.902 0 . 2 2 2 -5.337 -4.466 beta I t e m_3 . c1 0 . 7 7 3 0 . 3 4 0 0 . 1 0 8 1 . 4 3 9 beta I t e m_3 . c2 2 . 1 4 0 0 . 2 9 8 1 . 5 5 6 2 . 7 2 4 beta I t e m_3 . c3 0 . 3 0 4 0 . 2 9 8 -0.281 0 . 8 8 9 beta I t e m_4 . c1 0 . 6 9 4 0 . 2 1 6 0 . 2 7 1 1 . 1 1 8 beta I t e m_4 . c2 0 . 6 6 0 0 . 2 0 9 0 . 2 4 9 1 . 0 7 0 beta I t e m_4 . c3 -1.152 0 . 2 2 6 -1.595 -0.708 beta I t e m_5 . c1 1 . 5 2 0 0 . 2 9 5 0 . 9 4 1 2 . 0 9 9 beta I t e m_5 . c2 1 . 8 4 8 0 . 2 8 0 1 . 2 9 8 2 . 3 9 7 beta I t e m_5 . c3 -1.008 0 . 2 9 0 -1.576 -0.441 beta I t e m_6 . c1 0 . 4 5 5 0 . 1 4 3 0 . 1 7 5 0 . 7 3 5 beta I t e m_6 . c2 -1.220 0 . 1 6 6 -1.545 -0.895 beta I t e m_6 . c3 -4.748 0 . 2 1 8 -5.177 -4.320 beta I t e m_7 . c1 0 . 5 0 5 0 . 2 1 6 0 . 0 8 1 0 . 9 2 9 beta I t e m_7 . c2 0 . 4 4 7 0 . 2 0 9 0 . 0 3 8 0 . 8 5 7 beta I t e m_7 . c3 -0.686 0 . 2 2 1 -1.120 -0.253 beta I t e m_8 . c1 1 . 2 5 7 0 . 3 0 4 0 . 6 6 1 1 . 8 5 3 beta I t e m_8 . c2 1 . 9 5 0 0 . 2 8 3 1 . 3 9 6 2 . 5 0 4 beta I t e m_8 . c3 -0.564 0 . 2 8 9 -1.130 0 . 0 0 3 beta I t e m_9 . c1 0 . 9 4 3 0 . 1 8 6 0 . 5 7 8 1 . 3 0 7 beta I t e m_9 . c2 0 . 0 2 4 0 . 1 9 4 -0.356 0 . 4 0 5 beta I t e m_9 . c3 -2.377 0 . 2 2 1 -2.811 -1.943 beta I t e m_1 0 . c1 1 . 0 2 7 0 . 2 7 2 0 . 4 9 5 1 . 5 6 0 beta I t e m_1 0 . c2 1 . 5 9 8 0 . 2 5 3 1 . 1 0 2 2 . 0 9 4 beta I t e m_1 0 . c3 -0.912 0 . 2 6 5 -1.431 -0.393</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Figure 1Joint ICC plot forRasch model    </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><figDesc>Figure 4Person-Item map for the partial credit model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>Category response frequency across items</figDesc><table><row><cell>Item</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="funding">
+<div><p>This research was supported by <rs type="funder">Baylor University</rs> and the <rs type="funder">Department of Educational Psychology</rs> as funding toward the completion of <rs type="person">R. Noah Padgett</rs>'s doctoral degree.</p></div>
+			</div>
+			<listOrg type="funding">
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The Numerical Solution of a Set of Conditional Estimation Equations</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">B</forename><surname>Andersen</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2517-6161.1972.tb00887.x</idno>
+		<ptr target="https://doi.org/10.1111/j.2517-6161.1972.tb00887.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="42" to="54" />
+			<date type="published" when="1972">1972</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A goodness-of-fit test for the Rasch model</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">B</forename><surname>Andersen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="123" to="140" />
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">On the Use of Factor Analysis as a Research Tool</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Benson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Nasser</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Vocational Education Research</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="13" to="33" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Confirmatory factor analysis for applied research</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Brown</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<publisher>The Guilford Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Testing unidimensionality in polytomous Rasch models</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">B</forename><surname>Christensen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Bjorner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kreiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Petersen</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02295131</idno>
+		<ptr target="https://doi.org/10.1007/BF02295131" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="563" to="574" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The psychometric properties of the German version of the WHOQOL-OLD in the German population aged 60 and older</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Conrad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Matschinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Riedel-Heller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Von Gottberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kilian</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12955-014-0105-4</idno>
+		<ptr target="https://doi.org/10.1186/s12955-014-0105-4" />
+	</analytic>
+	<monogr>
+		<title level="j">Health and Quality of Life Outcomes</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">105</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>De Ayala</surname></persName>
+		</author>
+		<title level="m">The theory and practice of item response theory</title>
+		<meeting><address><addrLine>New York, NY</addrLine></address></meeting>
+		<imprint>
+			<publisher>Guilford Publications</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Exploratory item response models: A generalized linear and nonlinear approach</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>De Boeck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wilson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004">2004</date>
+			<publisher>Springer Science and Business Media</publisher>
+			<pubPlace>New York, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Examining Classification Criteria: A Comparison of Three Cut Score Methods</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Distefano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Morgan</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0021745</idno>
+		<ptr target="https://doi.org/10.1037/a0021745" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Assessment</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="354" to="363" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The Psychometric Modeling of Scientific Reasoning: a Review and Recommendations for Future Avenues</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Edelsbrunner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Dablander</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10648-018-9455-5</idno>
+		<ptr target="https://doi.org/10.1007/s10648-018-9455-5" />
+	</analytic>
+	<monogr>
+		<title level="j">Educational Psychology Review</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="34" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Cross-cultural validation of the Functional Vision Questionnaire for Children and Young People with visual impairment in the Dutch population: Challenges and opportunities</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">B</forename><surname>Elsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Tadić</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Peeters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">H</forename><surname>Van Rens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Rahi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Van Nispen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Medical Research Methodology</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">221</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Log-linear models and frequency tables with small expected cell counts</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Haberman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annuals of Statistics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1148" to="1169" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Joint and conditional maximum likelihood etimation for the Rasch model for binary responses</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Haberman</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/j.2333-8504.2004.tb01947.x</idno>
+		<ptr target="https://doi.org/10.1002/j.2333-8504.2004.tb01947.x" />
+	</analytic>
+	<monogr>
+		<title level="j">ETS Research Report Series</title>
+		<imprint>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">63</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">IRT Models with Relaxed Assumptions in eRm : A Manual-like Instruction</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hatzinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Rusch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="87" to="120" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kaplan</surname></persName>
+		</author>
+		<title level="m">Structural equation modeling: Foundations and extensions (2nd)</title>
+		<meeting><address><addrLine>Upper Saddle River, NJ</addrLine></address></meeting>
+		<imprint>
+			<publisher>Prentice-Hall</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Kline</surname></persName>
+		</author>
+		<title level="m">Principles and practice of structural equation modeling (4th)</title>
+		<meeting><address><addrLine>New York, NY</addrLine></address></meeting>
+		<imprint>
+			<publisher>The Guilford Press</publisher>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The Andersen Likelihood Ratio Test with a Random Split Criterion Lacks Power</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Krammer</surname></persName>
+		</author>
+		<idno type="DOI">10.22237/jmasm/1555594442</idno>
+		<ptr target="https://doi.org/10.22237/jmasm/1555594442" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Modern Applied Statistical Methods</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Facets computer program for many-facets Rasch measurement</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Linacre</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<publisher>WINSTEPS</publisher>
+			<biblScope unit="volume">3</biblScope>
+			<pubPlace>Beaverton, Oregon</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">WINSTEPS Rasch measurement computer program</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Linacre</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019b</date>
+			<pubPlace>Beaverton, Oregon</pubPlace>
+		</imprint>
+	</monogr>
+	<note>WINSTEPS.com</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Extended Rasch modeling: The eRm package for the application of IRT models in R</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hatzinger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">eRm: Extended Rasch Modeling</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hatzinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Maier</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note>tech. rep</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">On the notion of randomness</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Martin-Löf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Studies in Logic and the Foundations of Mathematics</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">100</biblScope>
+			<biblScope unit="page" from="73" to="78" />
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A rasch model for partial credit scoring</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">N</forename><surname>Masters</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02296272</idno>
+		<ptr target="https://doi.org/10.1007/BF02296272" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="149" to="174" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Examining Class Differences in Method Effects Related to Negative Wording: An Example using Rasch Mixture Modeling</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">B</forename><surname>Morgan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Distefano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Motl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of applied measurement</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="441" to="457" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">R: A language and environment for statistical computing</title>
+		<author>
+			<persName><forename type="first">Team</forename><surname>Core</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">R Foundation for Statistical Computing</title>
+		<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Probabilistic models for some intelligence and attainment tests</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Rasch</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1960">1960</date>
+			<pubPlace>Copenhagen</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Danish Institute for Educational Research</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">ltm: An R package for latent variable modeling and item response theory analyses</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rizopoulos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of statistical software</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1" to="25" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Sirt: Supplementary item response theory models [R package version 3.7</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Robitsch</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=sirt" />
+	</analytic>
+	<monogr>
+		<title level="m">R package version 3</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="7" to="40" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<title level="m">Society and the adolescent self image</title>
+		<meeting><address><addrLine>Middletown, CT</addrLine></address></meeting>
+		<imprint>
+			<publisher>Wesleyan University Press</publisher>
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+	<note>Revised)</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Schumacker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">G</forename><surname>Lomax</surname></persName>
+		</author>
+		<title level="m">A beginner&apos;s guide to structural equation modeling (4th)</title>
+		<meeting><address><addrLine>New York, NY</addrLine></address></meeting>
+		<imprint>
+			<publisher>Routledge</publisher>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Introduction to Rasch measurement: Theory, models and applications</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">V</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Smith</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004">2004</date>
+			<publisher>JAM Press</publisher>
+			<pubPlace>Maple Grove, MN</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Rasch Trees: A New Method for Detecting Differential Item Functioning in the Rasch Model</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Strobl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zeileis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="289" to="316" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Models for polytomous data</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tuerlinckx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">C</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Exploratory item response models</title>
+		<editor>
+			<persName><forename type="first">P</forename><surname>Boeck</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">&amp;</forename><forename type="middle">M</forename><surname>Wilson</surname></persName>
+		</editor>
+		<meeting><address><addrLine>New York, NY; New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="page" from="75" to="109" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Polytomous Mixed Rasch Models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Von Davier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rost</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-4612-4230-7_20</idno>
+		<ptr target="https://doi.org/10.1007/978-1-4612-4230-7_20" />
+	</analytic>
+	<monogr>
+		<title level="m">Rasch models</title>
+		<meeting><address><addrLine>New York, NY, Springer New York</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1995">1995</date>
+			<biblScope unit="page" from="371" to="379" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

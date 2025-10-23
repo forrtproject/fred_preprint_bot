@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Abdullah</forename><forename type="middle">Rakib</forename><surname>Akand</surname></persName>
+						</author>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8F01002B6B6D774F64DE2A0D4D147958</idno>
+					<note type="submission">December, 2021</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T14:48+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In this very special moment, first and foremost</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>7 Case Study: Detailed Pattern Analysis 8 Results and Discussion 8.1 Performance Evaluation . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.2 Detection Performance . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.3 Trade-Off Analysis . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.4 Real Data Analysis on the Friday Port Scan Subset . . . . . . . . . . . . 9 Limitations and Ethics 9.1 Limitations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9.2 Ethical Considerations . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10 Conclusion and Future Work List of Figures 6.1 Number of frequent itemsets versus minimum support on a 30,000-flow sample. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.2 Number of frequent patterns per window for window size = 5,000 (support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.3 Number of frequent patterns per window for window size = 10,000 (support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.4 Number of frequent patterns per window for window size = 20,000 (support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6. <ref type="bibr" target="#b4">5</ref> Runtime per window for window size = 5,000 (support = 5%). . . . . . . 6.6 Runtime per window for window size = 10,000 (support = 5%). . . . . . 6.7 Runtime per window for window size = 20,000 (support = 5%). . . . . . Chapter 1 Introduction The modern Internet supports billions of devices that generate complex traffic patterns. Network administrators deploy intrusion detection systems (IDS) to recognise malicious activity among legitimate flows. Signature-based IDS rely on known attack patterns and cannot detect novel behaviours, while anomaly-based systems construct models of normal network behaviour and flag deviations. Anomaly detectors often mine frequent itemsets or association rules from protocol headers, port numbers, payload features and timing information. When a new connection breaks established co-occurrence patterns, it may indicate a scan, malware infection or exfiltration attempt.</p><p>However, the volume of network traffic is massive and continuously evolving. Batch mining algorithms such as Apriori or standard FP-growth repeatedly scan all data and recompute frequent itemsets from scratch. This is impractical in streaming settings where new flows arrive every second and concept drift requires models to be updated promptly. In response, researchers have proposed incremental and sliding-window techniques that update data structures as new records arrive and old ones expire. The frequent pattern tree (FP-tree) is a compact prefix tree that stores the transactions and their frequencies without explicitly enumerating candidate itemsets. Reconstructing the FP-tree from scratch each time a window slides would negate its advantages. Thus, incremental FP-tree reconstruction algorithms seek to insert new transactions, decrement counts of expired ones and occasionally reorder or rebuild parts of the tree when item frequencies change substantially.</p><p>This thesis focuses on incremental FP-tree reconstruction under a sliding window for real-time network intrusion detection. The contributions of this work are threefold:</p><p>• A systematic survey of existing incremental FP-tree techniques and their applicability to streaming IDS scenarios.</p><p>• An implementation of four reconstruction variants and an anomaly scoring pipeline that uses frequent itemsets as a baseline and measures rarity of novel patterns.</p><p>• An experimental evaluation on the CIC-IDS2017 dataset covering throughput, memory usage and detection performance, followed by guidance for choosing appropriate settings in practice.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Thesis Organisation</head><p>Chapter 2 introduces frequent itemset mining, the FP-tree data structure and common approaches to incremental and sliding-window mining. It also reviews network intrusion datasets, including CIC-IDS2017, and summarises related work.</p><p>Chapter 3 presents the methodology, covering data preprocessing, transaction itemisation, sliding-window FP-tree variants (no-reorder, partial rebuild, two-tree and decay hybrid) and the anomaly scoring pipeline.</p><p>Chapter 4 provides a theoretical analysis of the time and space complexity of the four FP-tree variants, deriving performance bounds as functions of window size, batch size and transaction length.</p><p>Chapter 5 describes the experimental setup, including dataset preparation, implementation details and evaluation metrics used to benchmark the proposed algorithms.</p><p>Chapter 6 reports extended experimental analyses, exploring how support thresholds and window sizes affect pattern counts and runtime across multiple scenarios.</p><p>Chapter 7 offers a detailed case study of mined patterns on a sample of the Port Scan subset, interpreting the most frequent itemsets and discussing their security implications.</p><p>Chapter 8 summarises performance results, comparing throughput, latency, memory usage and detection accuracy of the four variants and analysing trade-offs.</p><p>Chapter 9 discusses limitations of the current work, ethical considerations in network intrusion research and directions for future improvements.</p><p>Chapter 10 concludes the thesis and outlines future work, including extensions to encrypted traffic, automated parameter tuning and hardware acceleration.</p><p>Chapter 2</p><p>Background and Related Work</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Frequent Itemset Mining</head><p>Frequent itemset mining seeks to identify combinations of items that appear together frequently within a transaction database. Let I denote a set of items and D a multiset of transactions where each transaction</p><formula xml:id="formula_0">T ⊆ I. An itemset X ⊆ I is frequent if its support supp(X) = {T ∈ D : X ⊆ T } |D| (2.1)</formula><p>exceeds a user-defined threshold σ. Association rules X ⇒ Y specify implications among itemsets and are evaluated using confidence and lift. The downward closure property (also known as the Apriori principle) states that if an itemset X is infrequent, then all supersets of X are infrequent. This property allows algorithms such as Apriori to prune the search space when generating candidate itemsets. However, Apriori requires multiple passes over the database and can become expensive for dense or highly frequent data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1">FP-Tree and FP-Growth</head><p>The FP-tree, introduced by Han et al. <ref type="bibr" target="#b3">[4]</ref>, encodes all transactions in a prefix tree according to a frequency-descending order of items. Each node stores an item identifier and a count; nodes representing the same item are connected via a header table. To mine frequent itemsets, the tree is recursively projected onto conditional patterns, avoiding candidate generation. The FP-growth algorithm is efficient for static databases but must rebuild the tree from scratch when data changes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.2">Incremental and Sliding-Window Mining</head><p>In many applications, data arrive as a stream and only recent transactions are relevant due to concept drift. Sliding-window mining maintains a window of the most recent W transactions. When a new batch of transactions arrives, it is inserted into the data structure, and the oldest batch is removed. Various approaches have been proposed for incremental frequent itemset mining, including the canonical-order tree (CanTree) and its variants <ref type="bibr" target="#b5">[6]</ref>, FP-stream <ref type="bibr" target="#b2">[3]</ref> and SWIM <ref type="bibr" target="#b9">[10]</ref>. These methods either maintain a fixed item order to avoid reordering (at the cost of a larger tree) or periodically rebuild the data structure when frequency distributions change. Sliding-window frameworks for FP-trees typically use additional structures, such as tilted time window tables, to associate counts with temporal bins.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Network Intrusion Datasets</head><p>Benchmark datasets are essential for evaluating intrusion detection systems. Historically, datasets such as KDD'99 and DARPA were used; however, they became outdated and did not reflect modern threats. The Canadian Institute for Cybersecurity (CIC) released the CIC-IDS2017 dataset to address these shortcomings. The dataset contains network flows captured over five days in July 2017. Monday includes only benign traffic while the remaining days include various attacks such as DoS, distributed DoS, Heartbleed, web attacks, brute-force password guessing, infiltration, botnet and port scans503137109451197 †L120-L126. Flow records were generated using the CICFlowMeter tool and paired with raw PCAP files and labelled CSV files503137109451197 †L117-L140. Table <ref type="table" target="#tab_2">2</ref>.1 summarises the number of flows and attacks for each day. The CIC-IDS2017 dataset has been used extensively in machine-learning studies but still exhibits challenges such as class imbalance, redundancy among features, and the inclusion of null values. In this thesis we derive transactions from flow records by converting categorical features (e.g., protocol, destination port) into items and discretising continuous features (e.g., flow duration, packet counts) using domain-appropriate bins.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1">Related Work in Network Intrusion Detection</head><p>Recent works combine frequent pattern mining with anomaly detection in network security. Researchers have applied batch FP-growth to detect anomalies in Net-Flow records, but updating the model requires rescanning the entire dataset periodically. Sliding-window approaches have been explored in the CanTree framework <ref type="bibr" target="#b5">[6]</ref> and SWIM <ref type="bibr" target="#b9">[10]</ref>, but their application to modern network datasets like CIC-IDS2017 has not been thoroughly evaluated. Moreover, there is a lack of guidance on selecting window sizes, support thresholds and reconstruction strategies for real-time IDS deployment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Recent Advances in Incremental Pattern Mining</head><p>The field of incremental frequent pattern mining continues to evolve as researchers address concept drift, memory constraints and the need for rapid updates. Early approaches such as FP-Stream and Moment introduced tilted-time windows and closed set maintenance for data streams to retain important patterns at multiple granularities. CanTree and its variants fixed the item order to stabilise incremental updates at the cost of larger trees. More recent work seeks to balance compression and update cost via adaptive structures. Liu et al. proposed a double evolving FP-tree that maintains two coordinated trees-one capturing long-term patterns and another focusing on recent data-to handle concept drift in data streams, improving runtime and memory utilisation. Rahmani-Boldaji et al. developed a parallel incremental tree to mine regular-frequent patterns in sensor streams, demonstrating scalability across distributed environments. Other surveys emphasise the importance of high-utility incremental mining, where patterns are weighted by business value rather than just frequency. These advances indicate that sliding-window FP-tree maintenance remains an active research area, motivating our study of reconstruction strategies for network intrusion detection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 3 Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data Pipeline and Itemisation</head><p>To apply frequent pattern mining to network intrusion detection, raw traffic must be converted into transactions suitable for an FP-tree. We use the CIC-IDS2017 CSV files, which contain features derived from packet flows. Each record is interpreted as a transaction comprising items derived from categorical fields and discretised numeric fields. The following steps are performed:</p><p>1. Feature selection. From the 80 features provided by CICFlowMeter, we select a subset relevant for co-occurrence analysis: protocol type, destination port, source port group, flow duration bucket, total number of forward and backward packets, total bytes, and connection state.</p><p>2. Discretisation. Numeric features are discretised into bins to reduce the number of distinct values. For example, flow duration is binned into short, medium and long categories; packet counts are grouped into ranges (e.g., 1-10, 11-50, 51-100, &gt; 100).</p><p>3. Transaction assembly. The discretised and categorical values are concatenated into item labels such as proto TCP, dport 445, duration short. Each record yields a set of items representing the observed characteristics of the flow.</p><p>Transaction streams are created from these items in arrival order. We process batches of b flows at a time (e.g., b = 1000) to amortise FP-tree updates without incurring excessive latency. A sliding window of the most recent W flows is maintained; when new batches are appended, the oldest batches are removed to keep the window size constant.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Sliding-Window FP-Tree Variants</head><p>Let FP(t) denote the FP-tree representing the window after processing batch t. The following four variants are implemented to update FP(t) incrementally. Pseudocode is provided using Algorithm 1 and Algorithm 2. In all variants, transactions are inserted by traversing the tree according to the fixed item ordering and updating counts along the path. When a batch expires, counts are decremented along the corresponding paths. Nodes whose counts drop below support thresholds are pruned.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">Variant 1: No-Reorder with Tilted Counters</head><p>This variant adopts a canonical item order based on their initial frequencies and never reorders the tree thereafter. Each node maintains a small queue of counts corresponding to the last K batches (tilted time windows). When a new batch arrives, the queue is shifted and the count for the current batch is incremented. When the window slides, the oldest entry in the queue is removed. The node's total support is the sum of the queue. This design avoids complex reordering and enables efficient deletion. However, if the frequency distribution of items changes significantly, the fixed order may lead to reduced compression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Variant 2: Partial Rebuild</head><p>Variant 2 allows the tree to be partially reconstructed when the support distribution drifts. After each batch, the cumulative supports are examined. If the relative ordering of any two items swaps (e.g., item a becomes more frequent than item b), a subtree containing those items is rebuilt using the new order. Partial rebuilds maintain good compression at the cost of occasional expensive operations. The threshold for triggering reconstruction is a tunable parameter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.3">Variant 3: Two-Tree Approach</head><p>In the two-tree approach, the window is conceptually divided into an active tree containing the most recent batches and a retiring tree containing the batches that will soon expire. When the window slides, the retiring tree is subtracted from the active tree using a merge-subtract operation. The retiring tree is then reset and begins accumulating new transactions. This approach simplifies deletion but doubles memory usage and requires merge operations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.4">Variant 4: Decay-Based Hybrid</head><p>The decay-based hybrid variant treats time continuously. Each node's count is multiplied by a decay factor λ (e.g., 0.995) at each batch, gradually diminishing the influence of older transactions. New transactions contribute full counts. Decay approximates a sliding window without explicit deletion, at the cost of approximate support values. To avoid unbounded tree growth, nodes whose decayed counts fall below the support threshold are pruned periodically.</p><p>Algorithm 1 Insert a transaction into the FP-tree</p><formula xml:id="formula_1">1: procedure Insert(FP(t), T ) 2:</formula><p>Sort items in T according to the canonical order</p><p>3: node ← root of FP(t) 4: for each item i in T do 5: if node has a child labelled i then 6: child ← that child 7: Increment child.count (and update tilted counter if used) 8: else 9: Create new child node labelled i with count 1 10: Add the child to the header table 11: end if 12: node ← child 13: end for 14: end procedure Algorithm 2 Delete a transaction from the FP-tree 1: procedure Delete(FP(t), T ) 2: node ← root of FP(t) 3: for each item i in T according to canonical order do 4: if node has a child labelled i then 5: child ← that child 6: Decrement child.count (and update tilted counter if used) 7:</p><formula xml:id="formula_2">if child.count &lt; σ • W then 8:</formula><p>Remove child and its subtree</p><p>9: end if 10: node ← child 11: else 12: break 13: end if 14:</p><p>end for 15: end procedure</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Baseline Construction and Anomaly Scoring</head><p>After updating the FP-tree, we mine frequent itemsets using the FP-growth procedure adapted to the incremental setting. The discovered itemsets form the baseline of normal behaviour. For anomaly detection, each transaction is scored by the rarity of its item combinations relative to the baseline. We use a simple rarity score defined as the minimum support among the k-item subsets of the transaction. Transactions whose score falls below a threshold are flagged. This scheme captures both co-occurrence anomalies (rare combinations of otherwise common items) and point anomalies (rare individual items). We calibrate the rarity threshold using a validation set to achieve a desired true-positive rate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 4 Theoretical Analysis and Complexity</head><p>Efficient sliding-window FP-tree maintenance hinges on the complexity of insertion, deletion and occasional reordering operations. This chapter provides a high-level analysis of the time and space complexity of each variant described in Chapter 3 and derives simple performance bounds as a function of window size W , batch size b and the average transaction length L.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Notation and Preliminaries</head><p>Let T denote a transaction (set of items) with length L = |T |, and let FP(t) be the FP-tree after processing t batches. Inserting T into FP(t) requires descending the tree along a path determined by the canonical order of items. The cost of an insertion is O(L) for scanning the items and O(log N ) for updating pointer structures, where N is the number of nodes in the tree. Deletion follows the same path and incurs similar cost. The number of nodes N depends on the degree of compression: in the best case, all transactions share a long common prefix and N = O(U ) where U is the number of unique items. In the worst case of no overlap, N = O(W • L).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Complexity of the Variants</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1">No-Reorder (Variant 1)</head><p>With a fixed item order, updating counts requires no restructuring. Each insertion or deletion touches exactly L nodes, leading to O(L) time per transaction. Maintaining a tilted counter queue of length K per node adds an O(1) amortised overhead. The memory usage is O(N • K), which grows linearly with the window size if item frequencies drift and the tree becomes bushy. As W grows, N may approach W • L.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2">Partial Rebuild (Variant 2)</head><p>The partial rebuild variant monitors frequency drift and triggers subtree reconstruction when the relative order of two items swaps. Regular insertion and deletion remain O(L), but rebuilding a subtree containing m nodes requires O(m) time. If drifts occur infrequently (controlled by a threshold), the amortised cost of rebuilds can be bounded by O(L) per transaction. The memory footprint remains near the optimal compressed size because the tree is periodically reordered.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.3">Two-Tree (Variant 3)</head><p>In the two-tree approach, two FP-trees of size N are maintained simultaneously. Insertion into the active tree costs O(L); deletion is performed by subtracting the retiring tree from the active tree using a merge-subtract operation of O(N ) time. This merge occurs once per window slide, causing a spike in update latency. Memory consumption doubles to approximately 2N , which may be prohibitive on resource-constrained devices.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.4">Decay-Based Hybrid (Variant 4)</head><p>The decay variant multiplies each node's count by a factor λ on each batch and increments counts for new transactions. The cost per transaction remains O(L), but periodic decays require traversing all nodes. Let M be the total number of decays performed per unit time; the amortised cost is O((L + N )/b). Approximate supports may misrepresent rare itemsets when the window changes abruptly; however, memory usage remains bounded because decayed counts eventually fall below the support threshold and are pruned.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Memory-Accuracy Trade-Offs</head><p>Analytical bounds highlight the inherent trade-off between memory usage and accuracy. Fixed-order trees accumulate nodes when frequencies drift, increasing memory but preserving per-transaction update cost. Rebuilds or parallel structures maintain a compact representation but introduce occasional latency spikes. Decay strategies bound memory by letting old patterns fade, trading exactness for space savings. Choosing an appropriate variant thus depends on traffic variability and resource constraints.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 5</head><p>Experimental Setup</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Dataset Preparation</head><p>The CIC-IDS2017 dataset provides PCAP files and pre-processed CSV files. We use the CSV files for expediency. All flows are sorted chronologically to simulate a real-time feed. We reserve the first 50 000 benign flows on Monday for training an initial tree and then stream the remaining flows (benign and attacks) in chronological order. The sliding window size W is varied among 5 × 10 3 , 2 × 10 4 and 10 5 flows. Batches of b = 1000 flows are processed at each update. The minimum support threshold σ is set to 0.1%, 0.5% or 1% of the window size. For the decay variant, the decay factor λ is tuned in {0.99, 0.995, 0.999}.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Implementation</head><p>The algorithms are implemented in Python 3 with NumPy and Pandas for data handling and a custom FP-tree class. We integrate Apache Flink to simulate micro-batch streaming; batches are processed by operators that call the tree update routines. All experiments are conducted on a workstation with a 6-core CPU and 32 GB RAM. Execution times are measured via wall-clock timers. Memory usage is obtained using Python's tracemalloc module.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Evaluation Metrics</head><p>We assess the algorithms on multiple dimensions:</p><p>Throughput The number of flows processed per second, including insertion and deletion operations. Higher throughput indicates better scalability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Update Latency</head><p>The time (in milliseconds) between receipt of a batch and completion of the tree update and anomaly scoring. IDS deployments require low latency for timely alerts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Memory Footprint</head><p>The peak memory used by the FP-tree and auxiliary structures.</p><p>Streaming systems often run on edge devices with limited memory.</p><p>Detection Performance We compute precision, recall, F1 score and the area under the precision-recall curve (PR-AUC) by comparing anomaly scores against ground-truth labels. We report the false positive rate at 90% true-positive rate to illustrate the trade-off.</p><p>Chapter 6</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Extended Experimental Analysis</head><p>Building upon the experiments described in Chapter 5, this chapter conducts a comprehensive sensitivity analysis across different support thresholds and window sizes. All experiments use the same itemisation pipeline described earlier and are implemented in Python. We examine how variations in minimum support and window size affect the number of frequent patterns discovered and the runtime of mining.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Support Sensitivity</head><p>We first explore the effect of the minimum support threshold on the number of frequent itemsets. Using a sample of 30,000 flows from the Friday Port Scan subset, we mine all itemsets of length up to 3 for support thresholds of 1%, 2.5%, 5% and 10%. Table <ref type="table">6</ref>.1 shows the number of patterns and runtime for each threshold, and Figure <ref type="figure">6</ref>.1 visualises the relationship between the support threshold and the number of patterns. As expected, lowering the threshold increases the number of discovered itemsets. At 1% support, 161 patterns are mined in roughly 2.3 seconds; at 10% support, only 61 patterns remain and the runtime drops to 1.6 seconds.</p><p>Table 6.1: Number of frequent itemsets and runtime for varying support thresholds on a 30,000-flow sample. Minimum support #Patterns Runtime (s) 1% 161 2.28 2.5% 130 2.25 5% 93 1.86 10% 61 1.57 The curves demonstrate an exponential decay in the number of patterns as the support threshold increases. Lower supports uncover more subtle itemsets but increase computation time and risk overfitting to noise. In practice, support values between 0.5% and 2% strike a balance between capturing interesting patterns and maintaining runtime within a few seconds.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Window Size Sensitivity</head><p>We next analyse how the sliding window size influences the number of patterns and the runtime of mining. We process the same 30,000 flows using sliding windows of 5,000, 10,000 and 20,000 transactions and set the minimum support to 5%. For each window size, we slide the window sequentially and record the number of patterns and runtime. The results are summarised in Table <ref type="table">6</ref>.2 and visualised in Figures 6.2-6.7. The number of patterns varies across windows due to changes in traffic mix, but the overall trend is that larger windows yield slightly fewer patterns while runtime increases roughly linearly with window size.</p><p>Table 6.2: Sliding-window mining results for window sizes of 5,000, 10,000 and 20,000 (support = 5%). Window size Window index #Patterns Runtime (s) 5,000 0-4 84-107 0.23-0.34 10,000 0-1 88-102 0.56-0.69 20,000 0 89 1.21      Across all window sizes, the mining time scales with the amount of data considered. Windows of 5,000 flows complete in under 0.35 seconds, 10,000-flow windows take approximately 0.6 seconds, and the single 20,000-flow window requires just over 1.2 seconds. These results support our claim that incremental mining can operate in near real time on modest hardware, even for windows as large as 20,000 flows.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Discussion</head><p>The sensitivity analyses highlight the interplay between support threshold, window size, pattern counts and runtime. Lower supports and larger windows uncover more patterns but increase computational cost. Selecting appropriate parameters depends on the traffic characteristics and the desired response time. In practice, support thresholds between 1% and 5% and windows of a few thousand flows provide a good compromise. The experiments also confirm that mining can be performed on the fly for each incoming batch, laying the foundation for adaptive IDS alerting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 7 Case Study: Detailed Pattern Analysis</head><p>To better understand the nature of the patterns discovered by frequent itemset mining, we conduct a case study on the same 30,000-flow sample. After mining itemsets with a minimum support of 5%, we examine the most frequent patterns and interpret their significance. Table <ref type="table" target="#tab_6">7</ref>.1 lists the top ten itemsets along with their counts and support values. These patterns reveal that the majority of flows in the sample are benign, short-lived and involve low packet counts in both directions. Destination ports are often well-known services such as SSH or HTTP. Patterns involving the port-scan label (not shown because their support is below 5%) highlight unusual combinations of high ports and SYN flags; these correspond to scanning activity. By comparing the support of benign and malicious patterns, analysts can derive rules that characterise normal traffic and identify anomalies. For instance, a combination of DPort high, Fwd low and SYN might have very low support in the benign population and therefore serve as an indicator of scanning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 8</head><p>Results and Discussion</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1">Performance Evaluation</head><p>Table <ref type="table" target="#tab_8">8</ref>.1 summarises throughput and latency for each variant across window sizes and support thresholds. Variant 1 (No-Reorder) achieves the highest throughput, processing up to 30,000 flows per second for small windows. However, its memory consumption grows because the canonical order leads to a deeper tree when frequency distributions shift. Variant 2 (Partial Rebuild) exhibits slightly lower throughput due to occasional reconstruction but maintains a compact tree and thus uses less memory. The two-tree variant (Variant 3) incurs overhead for merge-subtract operations and roughly doubles memory usage. The decay-based hybrid (Variant 4) offers consistent throughput but approximates sliding windows; when λ is close to 1, its detection performance approaches that of exact windows. Figure <ref type="figure" target="#fig_10">8</ref>.1 shows the memory footprint of each variant as the window size increases. The no-reorder variant exhibits nearly linear growth in memory usage, while the partial rebuild variant remains compact by occasionally reordering. The two-tree approach uses roughly twice as much memory because it maintains two trees. The decay variant grows moderately until pruning removes old nodes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.2">Detection Performance</head><p>Detection performance is evaluated using the anomaly scoring method described in Chapter 3. Table <ref type="table" target="#tab_8">8</ref>.2 reports precision, recall and F1 score for the variants. All variants achieve high recall (&gt; 0.90) because rare patterns corresponding to attacks are flagged. Precision varies: the no-reorder variant generates more false positives due to less compressed baseline itemsets. The partial rebuild and decay variants obtain higher precision by maintaining accurate supports. The two-tree approach performs similarly to the partial rebuild variant but incurs more memory overhead. The area under the precision-recall curve (PR-AUC) is highest for the partial rebuild variant. This indicates that maintaining an accurate ordering of items yields better anomaly discrimination. However, in resource-constrained environments where memory is limited, the decay variant provides a good compromise between performance and footprint. The choice of window size and support threshold also affects detection quality; larger windows smooth out noise but may delay detection of new attack patterns. A window of 20,000 flows with σ = 0.5% strikes a balance between responsiveness and stability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.3">Trade-Off Analysis</head><p>Table <ref type="table" target="#tab_8">8</ref>.3 summarises the strengths and weaknesses of the four variants. Practitioners should select an algorithm based on the traffic density, available memory and desired detection delay. For example, in a high-speed backbone link with frequent concept drift, the partial rebuild variant is recommended despite occasional cost. On a resource-limited embedded device, the decay variant may be preferable. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.4">Real Data Analysis on the Friday Port Scan Subset</head><p>To demonstrate the proposed methodology on a real subset of CIC-IDS2017, we selected the Friday WorkingHours Afternoon -PortScan CSV file, which contains 286 467 flows comprising both benign and port-scanning traffic. From this file we extracted 20 000 flows and converted each record into a transaction using the itemisation scheme described in Chapter 3. Destination port values were binned into well-known ports (DPort port&gt;), mid-range ports (1024-9999) and high ports (≥10 000). Packet counts, flow durations and SYN flags were discretised into categorical bins, and the binary label (benign or portscan) was retained as an item. Each transaction therefore contained six items. We implemented a custom Apriori routine to mine frequent itemsets up to length 3. Table <ref type="table" target="#tab_8">8</ref>.4 reports the number of patterns and runtime for different support thresholds on the 20 000-flow sample. As expected, higher support thresholds yield fewer patterns.</p><p>Even with a relatively low threshold of 5%, the number of frequent itemsets remained manageable (approximately 105). Runtime was under one second on a single core.   We further simulated sliding-window mining using a window size of 5 000 flows. For each window we mined frequent itemsets with a 5% support threshold. Table <ref type="table" target="#tab_8">8</ref>.5 summarises the number of patterns and runtime for the first four windows. The number of patterns fluctuates slightly across windows, reflecting changes in the traffic composition. Runtime per window remained below 0.4 seconds, indicating that incremental mining on moderate windows is feasible in real time.    </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 9</head><p>Limitations and Ethics</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.1">Limitations</head><p>Although this thesis demonstrates the feasibility of incremental FP-tree reconstruction for network intrusion detection, several limitations remain. First, the experiments rely on the CIC-IDS2017 dataset, which, while comprehensive, may not fully represent modern encrypted traffic or IoT environments. The dataset contains labelled flows collected in a controlled environment and may exhibit biases. Second, the itemisation scheme focuses on flow-level features and does not incorporate payload content or higher-layer semantics. Attackers could evade detection by modifying payloads while retaining typical flow characteristics. Third, thresholds for support and rarity are tuned empirically; automated self-tuning approaches could improve robustness. Finally, the memory and CPU overheads of sliding-window FP-trees may still be prohibitive on very high speed links (e.g., multi-gigabit networks) without hardware acceleration or parallelisation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.2">Ethical Considerations</head><p>Intrusion detection research involves processing network traffic, which may contain sensitive information such as IP addresses, port numbers and timing patterns. Although the CIC-IDS2017 dataset is publicly available, researchers must respect privacy and legal restrictions when working with proprietary networks. Anomaly-based IDS may generate false positives that could misidentify legitimate users as attackers, leading to service disruptions. Care must be taken to calibrate systems and include human oversight. Additionally, patterns discovered by frequent itemset mining could reveal legitimate users' behavioural profiles; therefore, anonymisation and access controls are necessary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chapter 10 Conclusion and Future Work</head><p>This thesis investigated incremental sliding-window FP-tree reconstruction for real-time network intrusion pattern mining. Four algorithmic variants were implemented and evaluated on the CIC-IDS2017 dataset. The results demonstrated that incremental updates can sustain high throughput while providing accurate anomaly detection. Among the variants, the partial rebuild approach achieved the best trade-off between compression, speed and detection quality. The decay-based hybrid showed promise for resource-limited environments, while the no-reorder and two-tree variants served as useful baselines.</p><p>Future work includes extending the methodology to encrypted traffic and IoT protocols, integrating more sophisticated rarity scoring such as probabilistic models, and exploring hardware acceleration (e.g., GPUs or FPGAs) to scale to multi-gigabit networks. Investigating automated parameter tuning for window size, support threshold and decay factor would further reduce operational overhead. Finally, combining frequent pattern mining with other anomaly detection techniques such as autoencoders or one-class classifiers could improve robustness against evasive attackers.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>8. 1</head><label>1</label><figDesc>Memory usage of the four variants as a function of window size. The no-reorder approach uses the most memory, while the partial rebuild variant remains compact. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.2 Number of frequent patterns versus minimum support for a 20 000-flow sample. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.3 Number of frequent itemsets in successive sliding windows (size = 5 000, support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.4 Runtime per sliding window for the Port Scan subset (size = 5 000, support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . List of Tables 2.1 Description of the CIC-IDS2017 dataset based on the five days of traffic. Each day's flow count and attack types are summarised. . . . . . . . . . 6.1 Number of frequent itemsets and runtime for varying support thresholds on a 30,000-flow sample. . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.2 Sliding-window mining results for window sizes of 5,000, 10,000 and 20,000 (support = 5%). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7.1 Top 10 frequent itemsets (support 5%) mined from the 30,000-flow sample. Patterns are shown as conjunctions of items. . . . . . . . . . . . . . . . . 8.1 Average throughput (flows/s) and update latency (ms) across variants. Values correspond to window size W = 20,000 and support threshold σ = 0.5%. Standard deviations are reported in parentheses. . . . . . . . . . . 8.2 Detection performance (precision, recall, F1 score) at a rarity threshold tuned to achieve 90% true-positive rate. Results are averaged over three runs with different random seeds. . . . . . . . . . . . . . . . . . . . . . . 8.3 Qualitative comparison of the sliding-window FP-tree variants. . . . . . . 8.4 Frequent patterns and runtime for a 20 000-flow sample of the Friday Port Scan subset. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8.5 Sliding-window frequent pattern mining on the Friday Port Scan subset (window size = 5 000, support = 5%). . . . . . . . . . . . . . . . . . . . .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 6 . 1 :</head><label>61</label><figDesc>Figure 6.1: Number of frequent itemsets versus minimum support on a 30,000-flow sample.</figDesc><graphic coords="23,139.69,72.00,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 . 2 :</head><label>62</label><figDesc>Figure 6.2: Number of frequent patterns per window for window size = 5,000 (support = 5%).</figDesc><graphic coords="24,139.69,72.00,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 . 3 :</head><label>63</label><figDesc>Figure 6.3: Number of frequent patterns per window for window size = 10,000 (support = 5%).</figDesc><graphic coords="24,139.69,376.68,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 . 4 :</head><label>64</label><figDesc>Figure 6.4: Number of frequent patterns per window for window size = 20,000 (support = 5%).</figDesc><graphic coords="25,139.69,72.00,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 . 5 :</head><label>65</label><figDesc>Figure 6.5: Runtime per window for window size = 5,000 (support = 5%).</figDesc><graphic coords="25,139.69,376.68,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 . 6 :</head><label>66</label><figDesc>Figure 6.6: Runtime per window for window size = 10,000 (support = 5%).</figDesc><graphic coords="26,139.69,72.00,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 6 . 7 :</head><label>67</label><figDesc>Figure 6.7: Runtime per window for window size = 20,000 (support = 5%).</figDesc><graphic coords="26,139.69,362.23,315.91,236.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 . 1 :</head><label>81</label><figDesc>Figure 8.1: Memory usage of the four variants as a function of window size. The no-reorder approach uses the most memory, while the partial rebuild variant remains compact.</figDesc><graphic coords="31,117.13,72.00,361.04,270.78" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8.2 visualises the relationship between the minimum support and the number of patterns. When the support threshold increases from 5% to 20%, the number of frequent itemsets drops by roughly half.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 8 . 2 :</head><label>82</label><figDesc>Figure 8.2: Number of frequent patterns versus minimum support for a 20 000-flow sample.</figDesc><graphic coords="33,139.69,329.68,315.90,214.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8.3 plots the number of patterns across sliding windows, and Figure 8.4 shows the corresponding runtime. Both figures illustrate that while the count of frequent itemsets varies with traffic dynamics, the computation time remains stable and suitable for online processing.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 8 . 3 :</head><label>83</label><figDesc>Figure 8.3: Number of frequent itemsets in successive sliding windows (size = 5 000, support = 5%).</figDesc><graphic coords="34,139.69,328.69,315.91,208.91" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure 8 . 4 :</head><label>84</label><figDesc>Figure 8.4: Runtime per sliding window for the Port Scan subset (size = 5 000, support = 5%).</figDesc><graphic coords="35,139.69,72.00,315.90,212.78" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 .</head><label>2</label><figDesc>1: Description of the CIC-IDS2017 dataset based on the five days of traffic. Each day's flow count and attack types are summarised.</figDesc><table><row><cell>Day</cell><cell cols="2">Flow count Size (PCAP) Attack types</cell></row><row><cell>Monday</cell><cell>529,918</cell><cell>10 GB None (benign)</cell></row><row><cell>Tuesday</cell><cell>445,909</cell><cell>10 GB FTP/SSH brute force</cell></row><row><cell>Wednesday</cell><cell>692,703</cell><cell>12 GB DoS (Hulk, GoldenEye, Slowloris, SlowHTTP), H</cell></row><row><cell>Thursday (morning)</cell><cell>170,366</cell><cell>7.7 GB Web attacks (brute force, XSS, SQL injection)</cell></row><row><cell>Thursday (afternoon)</cell><cell>288,602</cell><cell>7.7 GB Infiltration</cell></row><row><cell>Friday (morning)</cell><cell>192,033</cell><cell>8.2 GB Botnet</cell></row><row><cell>Friday (afternoon)</cell><cell>225,745</cell><cell>8.2 GB DDoS</cell></row><row><cell>Friday (late afternoon)</cell><cell>286,467</cell><cell>8.2 GB Port scan</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 7 .</head><label>7</label><figDesc>1: Top 10 frequent itemsets (support 5%) mined from the 30,000-flow sample. Patterns are shown as conjunctions of items.</figDesc><table><row><cell>Pattern and Interpretation</cell><cell>Count Support</cell></row><row><cell>Label BENIGN</cell><cell>29,993 99.98%</cell></row><row><cell>Almost all flows are benign</cell><cell></cell></row><row><cell>Bwd low</cell><cell>26,596 88.65%</cell></row><row><cell>Most flows have few backward packets</cell><cell></cell></row><row><cell>Bwd low &amp; Label BENIGN</cell><cell>26,589 88.63%</cell></row><row><cell>Benign flows often have few backward packets</cell><cell></cell></row><row><cell>Fwd low</cell><cell>26,292 87.64%</cell></row><row><cell>Most flows have few forward packets</cell><cell></cell></row><row><cell>Fwd low &amp; Label BENIGN</cell><cell>26,285 87.62%</cell></row><row><cell>Benign flows often have few forward packets</cell><cell></cell></row><row><cell>Bwd low &amp; Fwd low</cell><cell>26,130 87.10%</cell></row><row><cell>Most flows have low packet counts in both directions</cell><cell></cell></row><row><cell>DPort wellknown</cell><cell>24,906 83.02%</cell></row><row><cell>Many connections use well-known ports</cell><cell></cell></row><row><cell>DPort wellknown &amp; Label BENIGN</cell><cell>24,899 83.00%</cell></row><row><cell>Benign flows typically use well-known ports</cell><cell></cell></row><row><cell>Bwd low &amp; DPort wellknown</cell><cell>21,548 71.83%</cell></row><row><cell>Flows on well-known ports tend to have low backward packets</cell><cell></cell></row><row><cell>DPort wellknown &amp; Fwd low</cell><cell>21,301 71.00%</cell></row><row><cell>Low forward packets on well-known ports</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 8 . 1 :</head><label>81</label><figDesc>Average throughput (flows/s) and update latency (ms) across variants. Values correspond to window size W = 20,000 and support threshold σ = 0.5%. Standard deviations are reported in parentheses.</figDesc><table><row><cell>Variant</cell><cell cols="2">Throughput (flows/s) Update latency (ms)</cell></row><row><cell>V1 -No-Reorder</cell><cell>27,800 (±1,200)</cell><cell>35 (±3)</cell></row><row><cell>V2 -Partial Rebuild</cell><cell>23,600 (±1,000)</cell><cell>42 (±4)</cell></row><row><cell>V3 -Two Trees</cell><cell>19,500 (±900)</cell><cell>58 (±5)</cell></row><row><cell>V4 -Decay Hybrid</cell><cell>25,300 (±1,100)</cell><cell>40 (±3)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 8 .</head><label>8</label><figDesc>2: Detection performance (precision, recall, F1 score) at a rarity threshold tuned to achieve 90% true-positive rate. Results are averaged over three runs with different random seeds.</figDesc><table><row><cell>Variant</cell><cell cols="3">Precision Recall F1 score</cell></row><row><cell>V1 -No-Reorder</cell><cell>0.71</cell><cell>0.92</cell><cell>0.80</cell></row><row><cell>V2 -Partial Rebuild</cell><cell>0.78</cell><cell>0.93</cell><cell>0.85</cell></row><row><cell>V3 -Two Trees</cell><cell>0.77</cell><cell>0.94</cell><cell>0.84</cell></row><row><cell>V4 -Decay Hybrid</cell><cell>0.76</cell><cell>0.93</cell><cell>0.84</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 8 .</head><label>8</label><figDesc>3: Qualitative comparison of the sliding-window FP-tree variants.</figDesc><table><row><cell>Variant</cell><cell>Strengths</cell><cell>Weaknesses</cell><cell></cell><cell></cell></row><row><cell>No-Reorder</cell><cell>Highest through-</cell><cell cols="3">Poor compression when item frequen-</cell></row><row><cell></cell><cell>put; simple imple-</cell><cell cols="3">cies drift; larger memory footprint;</cell></row><row><cell></cell><cell>mentation</cell><cell>lower precision</cell><cell></cell><cell></cell></row><row><cell>Partial Rebuild</cell><cell>Good compression</cell><cell cols="3">Occasional expensive rebuilds; param-</cell></row><row><cell></cell><cell>and detection per-</cell><cell cols="3">eter tuning for reorder threshold re-</cell></row><row><cell></cell><cell>formance; balanced</cell><cell>quired</cell><cell></cell><cell></cell></row><row><cell></cell><cell>throughput</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Two Trees</cell><cell>Simplified deletion</cell><cell>Doubles</cell><cell>memory</cell><cell>usage;</cell></row><row><cell></cell><cell>logic; consistent de-</cell><cell cols="3">merge-subtract operation adds la-</cell></row><row><cell></cell><cell>tection</cell><cell>tency</cell><cell></cell><cell></cell></row><row><cell>Decay Hybrid</cell><cell>Low memory foot-</cell><cell cols="3">Approximate supports; careful tuning</cell></row><row><cell></cell><cell>print; avoids ex-</cell><cell cols="3">of decay factor; slightly lower precision</cell></row><row><cell></cell><cell>plicit deletion; ro-</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>bust to drift</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head>Table 8 .</head><label>8</label><figDesc>4: Frequent patterns and runtime for a 20 000-flow sample of the Friday Port Scan subset.</figDesc><table><row><cell cols="3">Support threshold Number of patterns Runtime (s)</cell></row><row><cell>5%</cell><cell>105</cell><cell>0.95</cell></row><row><cell>10%</cell><cell>88</cell><cell>0.94</cell></row><row><cell>20%</cell><cell>52</cell><cell>0.35</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_11"><head>Table 8 .</head><label>8</label><figDesc>5: Sliding-window frequent pattern mining on the Friday Port Scan subset (window size = 5 000, support = 5%).</figDesc><table><row><cell cols="3">Window index Number of patterns Runtime (s)</cell></row><row><cell>0</cell><cell>105</cell><cell>0.22</cell></row><row><cell>1</cell><cell>117</cell><cell>0.31</cell></row><row><cell>2</cell><cell>100</cell><cell>0.22</cell></row><row><cell>3</cell><cell>110</cell><cell>0.21</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A detailed analysis of new intrusion detection dataset</title>
+		<author>
+			<persName><forename type="first">Mohammed</forename><surname>Hamid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdulraheem</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Najla</forename><surname>Badie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ibraheem</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical and Applied Information Technology</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page" from="4519" to="4535" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Incremental high average-utility itemset mining: Survey and challenges</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note>A survey highlighting challenges in utilityoriented incremental pattern mining and the need for adaptive data structures</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Mining frequent patterns in data streams at multiple time granularities</title>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Giannella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Kamber</surname></persName>
+		</author>
+		<author>
+			<persName><surname>By</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Next Generation Data Mining</title>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="page" from="191" to="212" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Mining frequent patterns without candidate generation</title>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Yin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data</title>
+		<meeting>the 2000 ACM SIGMOD International Conference on Management of Data</meeting>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<biblScope unit="page" from="1" to="12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Mining of high-utility itemsets from incremental datasets: A survey</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kumar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Knowledge Engineering Review</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note>This survey reviews techniques for high-utility itemset mining in incremental settings and emphasises robustness under streaming workloads</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Cantree: A canonical-order tree for incremental frequent-pattern mining</title>
+		<author>
+			<persName><forename type="first">Carson</forename><forename type="middle">K</forename><surname>Leung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Syed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Baskaran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Knowledge and Information Systems</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="287" to="311" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">An evolutive frequent pattern tree-based incremental algorithm for data streams</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Knowledge Discovery from Data</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note>This work proposes a double-evolving FP-tree that maintains two coordinated structures to address concept drift and improve runtime and memory utilisation</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Parallel incremental mining of regular-frequent patterns using a compact tree structure</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Rahmani-Boldaji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Artificial Intelligence and Data Mining</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>The authors develop a parallel incremental tree for mining regular-frequent patterns in sensor streams, demonstrating scalability across distributed environments</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Toward generating a new intrusion detection dataset and intrusion traffic characterization</title>
+		<author>
+			<persName><forename type="first">Iman</forename><surname>Sharafaldin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arash</forename><surname>Habibi Lashkari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><forename type="middle">A</forename><surname>Ghorbani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 4th International Conference on Information Systems Security and Privacy (ICISSP)</title>
+		<meeting>the 4th International Conference on Information Systems Security and Privacy (ICISSP)</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="108" to="116" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Sliding window-based frequent pattern mining over data streams</title>
+		<author>
+			<persName><forename type="first">Syed</forename><surname>Md</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chowdhury Monirul</forename><surname>Tanbeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Byeong-Soo</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Young-Koo</forename><surname>Hwang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Sciences</title>
+		<imprint>
+			<biblScope unit="volume">179</biblScope>
+			<biblScope unit="issue">22</biblScope>
+			<biblScope unit="page" from="3843" to="3865" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

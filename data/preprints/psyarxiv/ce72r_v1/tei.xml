@@ -1,0 +1,1830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">How Implicit Sequence Learning and Explicit Sequence Knowledge Are Expressed in a Serial Response Time Task</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Marius</forename><surname>Barth</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Cologne</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Christoph</forename><surname>Stahl</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Cologne</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hilde</forename><surname>Haider</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Cologne</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">How Implicit Sequence Learning and Explicit Sequence Knowledge Are Expressed in a Serial Response Time Task</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">049AF2FF6AD7A27C5302276F55B0C8F3</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>implicit learning</term>
+					<term>sequence learning</term>
+					<term>drift-diffusion model Word count: 9</term>
+					<term>351</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Sequence learning in the serial response time task (SRTT) is one of the few learning phenomena that are widely agreed to be implicit in nature (i.e., that learning may proceed in the absence of awareness). Evidently, it is also possible to explicitly learn a sequence of events. In the past few decades, research into sequence learning largely focused on the type of representation that may underlie implicit sequence learning, and whether or not two independent learning systems are necessary to explain qualitative differences between implicit and explicit learning. Using the drift-diffusion model, here we take a cognitive-processes perspective on sequence learning and investigate the cognitive operations that benefit from implicit and explicit sequence learning (e.g., stimulus detection or encoding, response selection, or response facilitation). To separate the processes involved in expressing implicit versus explicit knowledge, we manipulated explicit sequence knowledge independently of the opportunity to express such knowledge. Performance data from this experiment was fed into a dynamic drift-diffusion model that allowed us to disentangle the contributions of the above-mentioned processes to sequence-learning effects. Results revealed three findings that are relevant for sequence learning theories. We discuss how the diffusion model may be helpful in future research addressing these theories.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Sequence learning in the serial response time task (SRTT) is one of few learning phenomena where researchers agree that such learning may proceed in the absence of awareness. In the classical paradigm <ref type="bibr" target="#b39">(Nissen &amp; Bullemer, 1987)</ref>, stimuli are presented on a computer screen, and participants are instructed to press corresponding keys on the keyboard as quickly and accurately as possible. Unbeknownst to participants, stimuli are not presented in a random order, but follow an underlying sequential regularity. Over the course of learning, participants respond more quickly and accurately to stimuli that are presented in regular (compared with nonregular) stimulus locations. However, participants often fail to express any explicit sequence knowledge in direct tests of <ref type="bibr">Marius Barth, Christoph Stahl, and Hilde Haider, Department</ref> of Psychology, University of Cologne. This work was funded by Deutsche Forschungsgemeinschaft Grant BA-7059/1-1 to Marius Barth. Data, code and materials necessary to reproduce the analyses reported in this article are available at <ref type="url" target="https://github.com/methexp/cpl-public">https://github.com/methexp/  cpl-public</ref> Correspondence concerning this article should be addressed to Marius <ref type="bibr">Barth,</ref><ref type="bibr">50931</ref> Cologne, Germany. Email: marius.barth@uni-koeln.de such knowledge, including verbal report, cued or free generation tasks, recognition tests, or process-dissociation measures <ref type="bibr" target="#b5">(Buchner, Steffens, Erdfelder, &amp; Rothkegel, 1997;</ref><ref type="bibr" target="#b8">Cohen, Ivry, &amp; Keele, 1990;</ref><ref type="bibr" target="#b9">Curran &amp; Keele, 1993;</ref><ref type="bibr" target="#b10">Destrebecqz &amp; Cleeremans, 2001;</ref><ref type="bibr">Frensch &amp; Rünger, 2003;</ref><ref type="bibr" target="#b23">Haider &amp; Frensch, 2005;</ref><ref type="bibr" target="#b66">Willingham, Greeley, &amp; Bardone, 1993;</ref><ref type="bibr" target="#b67">Willingham, Nissen, &amp; Bullemer, 1989)</ref>. It has therefore been concluded that, at least under specific circumstances, sequence learning may proceed in the absence of awareness. Yet, participants may also obtain conscious sequence knowledge during learning. When trying to use this explicit knowledge to improve task performance, different processes are involved than in the expression of implicit knowledge. As a consequence, SRTT performance is often driven by a mixture of the sets of processes involved in expressing implicit and explicit knowledge. Hence, pinpointing empirical findings to implicit learning is difficult, slowing theoretical progress.</p><p>Here we use drift-diffusion models to identify the processes involved in expressing implicit sequence knowledge and separate them from processes involved in expressing explicit knowledge.</p><p>In the remainder of the introduction, first we briefly discuss theories of implicit and explicit sequence learning. Next, the drift-diffusion model is introduced, as well as its application to the SRTT in the present study.</p><p>D R A F T 2 MARIUS BARTH, CHRISTOPH STAHL, &amp; HILDE HAIDER</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Processes and representations underlying implicit sequence learning</head><p>Despite a broad agreement that sequence learning may occur implicitly, there is no consensus on the representations underlying sequence learning (for a review, see <ref type="bibr" target="#b0">Abrahamse, Jiménez, Verwey, &amp; Clegg, 2010)</ref>: In a standard SRTT, stimulus locations and motor responses follow the same sequence, allowing for (at least) four different types of representations that could subserve sequence learning. We first discuss two types of simple representations: associations between subsequent responses, and between subsequent stimuli.</p><p>Drawing on early findings of an involvement of motor areas in sequence learning, associations between responses (frequently coined as the formation of R-R associations) has been one of the first explanations of sequence learning. Importantly, the standard SRTT effect seems to be driven by effector-independent representations <ref type="bibr" target="#b8">(Cohen et al., 1990;</ref><ref type="bibr" target="#b32">Keele, Jennings, Jones, Caulton, &amp; Cohen, 1995)</ref>. <ref type="bibr" target="#b68">Willingham, Wells, Farrell, and Stemwedel (2000)</ref> proposed that the representations underlying implicit sequence learning comprise sequences of response locations (see also <ref type="bibr" target="#b65">Willingham, 1999)</ref>. In addition, <ref type="bibr" target="#b57">Verwey and Clegg (2005)</ref> found evidence for effector-specific sequence learning after extensive practice.</p><p>In addition to response-based learning, some studies found evidence for purely perceptual learning, considered to be subserved by associations between consecutive stimuli (S-S learning): <ref type="bibr" target="#b29">Howard, Mutter, and Howard (1992)</ref> demonstrated that participants could learn a stimulus sequence from mere observation. <ref type="bibr" target="#b37">Mayr (1996)</ref> found learning of a sequence of stimulus locations that was unrelated to another sequence of key presses (see also <ref type="bibr" target="#b20">Haider, Eberhardt, Esser, &amp; Rose, 2014)</ref>.</p><p>In the dual-systems model <ref type="bibr" target="#b31">(Keele, Ivry, Mayr, Hazeltine, &amp; Heuer, 2003)</ref>, these simple associations can be located in the unidimensional system, which is considered to comprise multiple dimension-specific modules that allow for independent processing of stimulus and response features. The acquired representations in this system are thought to be inaccessible to consciousness. Going beyond simple associations, the dual-systems model also postulates a multidimensional system that may integrate information from multiple dimensions, for instance, stimulus and response features. This system is thought to depend on attention and its contents are accessible to consciousness.</p><p>As one example for complex representations that integrate information from stimulus and response, response-effect learning (or R-S learning) has been proposed. It refers to the formation of associations between compounds comprising of the current trial's response and the stimulus presented in the subsequent trial <ref type="bibr" target="#b28">(Hoffmann, Sebald, &amp; Stöcker, 2001;</ref><ref type="bibr" target="#b69">Ziessler &amp; Nattkemper, 2001)</ref>. However, <ref type="bibr" target="#b0">Abrahamse et al. (2010)</ref> argued that response-effect learning resembles the anticipation of an outcome of an action, the principle underlying the ideomotor theory to action control <ref type="bibr" target="#b54">(Shin, Proctor, &amp; Capaldi, 2010)</ref>, and suggested that the ideomotor principle might be restricted to explicit sequence learning.</p><p>Another form of associations between stimuli and responses are considered in S-R learning, which considers compounds comprising the current trial's stimulus and response. Initial evidence for S-R learning comes from studies manipulating the stimulus setup: <ref type="bibr" target="#b67">Willingham et al. (1989)</ref> found only minimal transfer of a sequence of motor key presses after the stimulus setup changed. The authors concluded that sequence learning is neither perceptual nor purely motor, but that a sequence of "condition-action statements" <ref type="bibr" target="#b67">(Willingham et al., 1989</ref><ref type="bibr">(Willingham et al., , p. 1058</ref>) is learned. Similarly, <ref type="bibr" target="#b51">Schwarb and Schumacher (2010)</ref> found that sequence learning is disrupted if the S-R rules between a training and a transfer task are are changed. Furthermore, E. H. <ref type="bibr" target="#b47">Schumacher and Schwarb (2009)</ref> found that a secondary task requiring parallel response selection disrupted sequence learning, and <ref type="bibr" target="#b50">Schwarb and Schumacher (2009)</ref> found that spatial response selection and spatial sequence learning (of stimulus locations and/or key presses) are related to almost entirely the same brain areas.</p><p>In the dual-systems-model, the two systems are considered to differ with respect to their accessibility to consciousness, their dependence on attention, and the representations subserving learning. Findings regarding the attentional demands of implicit sequence learning point into the direction that sequence learning relies on attention. For instance, <ref type="bibr" target="#b53">Shanks, Rowland, and Ranger (2005)</ref> manipulated attentional load and found that sequence learning is moderated by attentional load. More importantly, <ref type="bibr" target="#b17">Gaschler, Frensch, Cohen, and Wenke (2012)</ref> manipulated the task set via instructions and found that even under conditions where it is unlikely that participants acquired explicit sequence knowledge, instructions predicted which of two sequences were learned. In a similar vein, E. H. <ref type="bibr" target="#b46">Schumacher and Hazeltine (2016)</ref> summarized their response-selection account as positing that not simple associations, but hierarchically organized representations containing features of stimuli and responses, task goals, and drives are acquired in sequence learning. Response selection is, however, typically considered to be a central process <ref type="bibr">(Hazeltine &amp; Schumacher, 2016)</ref>, to be dependent on selective attention (i.e., the task set), and necessitates information about both stimuli and responses, The dual-systems model considers these features to be characteristic of the multidimensional learning system. In other words, a phenomenon described as implicit-that is, inaccessible to consciousness-is being explained by a process D R A F T ON THE EXPRESSION OF SEQUENCE LEARNING 3 thought to be accessible to consciousness. This presents a challenge to the dual-systems model. What constitutes a dimension is, however, not well-defined in the model, and since its introduction there has been considerable debate whether the modules comprising the unidimensional system are separated along dimensions such as stimulus and response features, or whether the modules are separated along abstract feature dimensions such as location <ref type="bibr" target="#b11">(Eberhardt, Esser, &amp; Haider, 2017;</ref><ref type="bibr" target="#b22">Haider, Esser, &amp; Eberhardt, 2020)</ref>. If, indeed, the unidimensional learning system included a processing module specific to spatial location, stimulus and response locations could be represented together within such a module, providing the necessary information to subserve a responseselection mechanism.</p><p>Taken together, there is still considerable debate about the processes, representations, or systems underlying implicit sequence learning. This line of research is considerably complicated by the omnipresent possibility that empirical findings may be driven not only by implicit sequence learning, but may also (or only) reflect explicit knowledge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Explicit sequence knowledge</head><p>The emergence of explicit sequence knowledge is accompanied with sudden decreases of response times during training <ref type="bibr" target="#b23">(Haider &amp; Frensch, 2005;</ref><ref type="bibr" target="#b24">Haider &amp; Rose, 2007)</ref>. Using a combination of EEG and fMRI studies, <ref type="bibr" target="#b44">Rose, Haider, and Büchel (2010)</ref> and <ref type="bibr" target="#b64">Wessel, Haider, and Rose (2012)</ref> found that such rapid decreases in response times were accompanied by increases in neural coupling between distant brain areas and an increase in neural activity in brain areas that have been discussed as being involved in the processing of predictions and prediction errors. They interpreted these findings as evidence in favor of an increase in error processing that may serve as an unexpected event that triggers the emergence of sequence awareness.</p><p>The Unexpected Event Hypothesis <ref type="bibr">(Frensch et al., 2003</ref>; for a recent discussion, see <ref type="bibr" target="#b13">Esser, Lustig, &amp; Haider, 2021)</ref> postulates that experiencing an unexpected event triggers a search process that may result in the discovery of the sequential regularity. Multiple studies <ref type="bibr">(Esser &amp; Haider, 2017;</ref><ref type="bibr" target="#b45">Rünger &amp; Frensch, 2008;</ref><ref type="bibr" target="#b49">Schwager, Rünger, Gaschler, &amp; Frensch, 2012)</ref> found that inserting unexpected events into the SRTT indeed resulted in more explicit sequence knowledge. Other studies suggest that RT drops may not be a precursor of sequence awareness, but may rather indicate a switch from stimulus-based to plan-based action control: These studies found that effects of response-selection conflict or difficulty were reduced if participants acquired explicit sequence knowledge: <ref type="bibr" target="#b27">Hoffmann and Koch (1997)</ref> found that RT differences between easy and difficult stimuli disappeared for explicit learners, <ref type="bibr" target="#b21">Haider, Eichler, and Lange (2011)</ref> demon-strated that participants who showed an RT drop (i.e., explicit learners) also showed reduced Stroop-congruency effects. <ref type="bibr" target="#b56">Tubau, Hommel, and López-Moliner (2007)</ref> found reduced response-repetition costs only for explicit learners, <ref type="bibr" target="#b33">Koch (2007)</ref> found that participants who acquired explicit sequence knowledge showed reduced Simon effects. <ref type="bibr" target="#b36">Lustig, Esser, and Haider (2022)</ref> directly tested whether rapid RT decreases are a precursor of sequence awareness or an indicator of a switch to plan-based action control, a switch that is only possible after participants acquired explicit sequence knowledge. To this end, they manipulated the ease of producing RT drops in the SRTT by manipulating the RSI in either a predictable or a random fashion, assuming that if RT drops are a precursor of explicit knowledge, hampering such drops should reduce the acquisition of explicit sequence knowledge. If, instead, RT drops are indicative of a strategy shift from stimulus-based to plan-based action control that is possible as soon as explicit sequence knowledge has been acquired and the task design (and materials) allow to use this knowledge. <ref type="bibr" target="#b36">Lustig et al. (2022)</ref> found that RT drops are not a precursor of explicit conscious insight, but rather a consequence of a switch to plan-based action control.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Separating the processes underlying the expression of implicit and explicit knowledge</head><p>Plan-based action control may be beneficial in some SRTT paradigms but not others. <ref type="bibr" target="#b1">Barth (2018)</ref> reanalyzed two SRTT experiments using a drift-diffusion model. In Experiment 1, participants worked on probabilistic materials with 60% regular trials (i.e., with a probability of .6, the next stimulus follows the sequential structure). Such sequence materials are typically considered to enable robust sequence learning while participants remain largely unaware of the sequence <ref type="bibr" target="#b2">(Barth, Stahl, &amp; Haider, 2019;</ref><ref type="bibr" target="#b30">Jiménez &amp; Méndez, 1999)</ref>. By contrast, in Experiment 2, stimulus materials consisted of runs of 15 to 22 stimulus locations that followed a deterministic six-item first-order conditional sequence interrupted with runs of random trials of the same length. With these materials, participants were well able to acquire substantial amounts of explicit sequence knowledge. A comparison of both experiments revealed qualitatively different patterns of effects on diffusion model parameters. While these results may point to different representations underlying implicit versus explicit knowledge, they are more likely to reflect the switch to plan-based action control that was supported by deterministic but not probabilistic material. Note that the opportunity to gain explicit knowledge was confounded with the ability to switch strategy: Probabilistic materials did not allow for reliably predicting the next stimulus and therefore encourage stimulus-based action control. In contrast, materials with chunks of deterministic runs might encourage a switch to plan-based action control (if participants are able to D R A F T detect differences between regular and deterministic chunks, e.g., by detecting changes in fluency). Here we aimed at removing this confound and to more conclusively separate the amount of participants' explicit knowledge from its expression. To identify the processes involved in the expression of implicit versus explicit knowledge, we used the diffusion model that is introduced next.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Drift-Diffusion Model</head><p>The drift-diffusion model (DDM) has originally been proposed as a theory of memory retrieval <ref type="bibr" target="#b42">(Ratcliff, 1978)</ref>, but has been successfully applied to many speeded-choice tasks, furthering the understanding of the cognitive processes involved in these tasks (for reviews, see <ref type="bibr" target="#b43">Ratcliff, Smith, Brown, &amp; McKoon, 2016;</ref><ref type="bibr" target="#b59">Voss, Nagler, &amp; Lerche, 2013;</ref><ref type="bibr" target="#b62">Wagenmakers, 2009)</ref>.</p><p>Figure <ref type="figure">1</ref> illustrates the processing assumptions of the DDM. It is assumed that on each trial, evidence is accumulated in a noisy fashion to reach a decision about the to-be-selected response. The average rate of evidence accumulation (drift rate δ) is dependent on the quality of information from the stimulus or a match with memory. In the SRTT, harder-todiscriminate stimuli or more difficult S-R mappings should affect this parameter; moreover, if indeed consecutive S-R rules or R-R associations are learned in the SRTT, this would result in a memory match for regular responses and a mismatch for nonregular responses. The starting point of the decision process (parameter β) captures information that is already available before the stimulus is presented. In the SRTT, it may capture an anticipation of the to-be-selected response, which may also be driven either by R-R or S-R associations. The spread between both thresholds captures the decision criterion (i.e., response caution α). Extradecisional processes, such as stimulus detection, its encoding, and response execution are captured by nondecision time τ. If it is indeed the guiding of attention on the screen that mediates sequence learning, nondecision time should be affected by stimulus regularity. It is also possible to further disentangle stimulus processing and response-related differences in nondecision time for regular vs. nonregular responses by estimating an additional response-competition parameter ξ <ref type="bibr" target="#b60">(Voss, Rothermund, Gast, &amp; Wentura, 2013;</ref><ref type="bibr" target="#b61">Voss, Voss, &amp; Klauer, 2010)</ref>; purely-motor learning (effector-specific or not) could selectively mediate such a response-competition effect. The full DDM also assumes inter-trial variability in starting point, drift rate, and nondecision time; moreover, most recent advances in DDM modelling allow to capture temporal changes in parameter estimates (for an overview, see L. <ref type="bibr" target="#b48">Schumacher, Schnuerch, Voss, &amp; Radev, 2024)</ref>, and there are first examples of how such models can be used to investigate learning curves <ref type="bibr" target="#b7">(Cochrane, Sims, Bejjanki, Green, &amp; Bavelier, 2023)</ref>. Details on the DDM used in this study can be found in Appendix A.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Aims of the present study</head><p>To separate the processes underlying the expression of implicit versus explicit knowledge, we manipulated explicit sequence knowledge by revealing, to a subset of participants, the sequence of stimulus and response locations. Orthogonally, we manipulated the possibility to switch to planbased action control by using either probabilistic or mixeddeterministic stimulus materials.</p><p>Participants who work on probabilistic materials and do not receive advance knowledge of the sequence may be considered our baseline condition, because such materials have been found to generate substantial sequence learning while participants remain largely implicit about the sequence <ref type="bibr" target="#b2">(Barth et al., 2019;</ref><ref type="bibr" target="#b30">Jiménez &amp; Méndez, 1999)</ref>. It should therefore be possible to explore the processes involved in the expression of implicit sequence learning in this condition. Comparing this condition with participants who work on probabilistic materials but receive advance knowledge of the sequence, it is possible to explore whether explicit knowledge per se is expressed differently than implicit sequence learning, Comparing probabilistic and deterministic materials in fully explicit participants, it is possible to explore which processes are altered by switching to planbased vs. stimulus-based action control. Finally, participants who did not receive advance knowledge of the sequence but worked on deterministic materials complete the picture: If deterministic materials indeed facilitate the acquisition of explicit sequence knowledge, these participants should also be able to switch to plan-based action control as soon as they acquired explicit sequence knowledge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method Participants</head><p>One hundred and twenty-three participants (104 women) aged between 18 and 49 years (Md = 23 years) completed the study. Most were undergraduates from University of Cologne. Participants were randomly assigned to experimental conditions. They received either course credit or 7.50 Euro for their participation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and Procedure</head><p>Participants worked on an SRTT consisting of 14 blocks with 144 trials each (for a total of 2,016 responses). The experiment was run on 24" LCD monitors with a screen resolution of 1,920 × 1,080px. The viewing distance was . The diffusion model. On each trial, the decision process (depicted as grey lines) begins at a starting point that is determined by parameter β. The spread of the thresholds is determined by parameter α. Evidence is accumulated in a randomwalk fashion. When one of the two thresholds is reached, a decision is made. The average rate of evidence accumulation is determined by parameter δ. The decision process is preceded by stimulus encoding and succeeded by response execution, the duration of both processes is captured by nondecision time τ. This basic diffusion model may be extended by responseexecution bias ξ and intertrial variabilites for core parameters. approximately 60cm. A horizontal sequence of six black squares (72px each) with mid-gray outlines were presented on a black screen. The distance between squares was 72px. Each screen location corresponded to one of six keys on a QWERTZ keyboard (from left to right Y, X, C, comma, period, minus), which were marked with red stickers. Participants were instructed to place their ring, middle, and index fingers of both hands on these keys. They were instructed to press the corresponding key whenever a square's color changed from black to mid-gray. On each trial of the SRTT, after a response-stimulus interval (RSI) of 250ms, the imperative stimulus was presented until a response was given. If a response was given before the stimulus had occurred, for 2sec, participants were reminded to press a key only after the stimulus had occurred. To obtain a significant proportion of error responses, we used a response deadline of 500msec. To allow participants to get used to the task, in the first block, we used response deadlines of 900, 800, 700, 600msec for 24 trials each before switching to 500msec for the remain-der of the experiment. If the response deadline had been exceeded, a warning sign together with a reminder to answer more quickly, even at the expense of committing more errors, was presented for 1200msec. If the wrong key had been pressed, "wrong key" was presented for 300msec.</p><p>For each participant anew, we generated a random permutation of the six possible stimulus locations which served as the six-item sequence. For participants in the probabilistic sequence conditions, stimulus locations followed this sequence with a probability of .6; otherwise, another stimulus location was randomly selected from a uniform distribution (excluding immediate repetitions). For participants in the mixeddeterministic sequence conditions, stimulus locations deterministically followed this six-item sequence in deterministic blocks; in random blocks, stimulus locations were randomly selected from a uniform distribution (excluding immediate repetitions). The order of random vs. deterministic blocks was randomly selected for these participants: Either blocks <ref type="bibr">3, 5, 7, 9, 11, 13, or 2, 4, 6, 8, 10, 12, 14</ref> were deterministic. Note that in random blocks, approximately 1/5 = 20% of stimuli followed the sequence by chance. Hence, all participants received stimulus materials that consisted of approximately 60% regular stimulus locations.</p><formula xml:id="formula_0">D R A F T 1,</formula><p>Prior to the SRTT, participants in the sequence concealed conditions did not receive any a-priori information that stimulus locations follow an underlying sequential structure. By contrast, participants in the sequence revealed conditions were informed that stimulus locations followed such a regularity. If these participants worked on probabilistic materials, they were informed that on 60% of trials, the stimuli would be presented in regular location, and in 40% of trials, they would be randomly selected. If these participants worked on mixed-deterministic materials, they were informed about the blocked structure of deterministic vs. random blocks, with exact information about which in blocks stimuli would follow the sequence and in which blocks stimulus locations would be randomly selected. Moreover, participants in the sequence revealed conditions were explicitly encouraged to try to use their advance sequence knowledge to optimize task performance. They were then informed about the exact sixitem structure of their sequence (e.g., "2-1-6-5-3-4") and they performed 18 trials of the sequence (i.e. three repetitions of the full sequence).</p><p>Following the SRTT, we assessed explicit sequence knowledge in a post-experimental interview. Participants were told that they had been assigned to an experimental condition with or without a sequential structure, and were asked to indicate if they believed that they were in a sequenced or a random condition. If they believed that they were in a sequence condition, they were then asked to freely reproduce the sequence. Finally, all participants were asked to reproduce the sequence in a forced-choice manner. Participants were then thanked and debriefed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Design</head><p>Between participants, we manipulated material (probabilistic vs. mixed deterministic) and instructions (sequence concealed vs. sequence revealed). Each participant worked on 14 SRTT blocks that were collapsed into seven block pairs.</p><p>Within probabilistic materials, two trial types may be distinguished: Nonregular trials that did not follow the sixitem sequence, and regular trials that did follow the sequence. With mixed-deterministic materials, each block pair was composed of a random block (where stimuli were randomly selected) and a deterministic block (where stimuli always followed the sequence). Hence, three trial types may be distinguished: Nonregular trials and regular trials from random blocks (remember that single transitions could fol-low the sequence by chance), and deterministic trials from deterministic blocks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data preparation</head><p>Because an SRTT with a response deadline can be a demanding task, we screened participant data for the proportion of too-slow responses and error rates: We excluded participants who, in one of block pairs 2-7, exceeded an error rate of 50% or responded too slowly on more than 30% of trials.</p><p>We also excluded data of two participants who did not finish the study and of five participants whose response times were not properly saved. Furthermore, trials that followed an erroneous response or a response that exceeded the response deadline were excluded from analyses. We also excluded the first four trials of each block, and trials with responses faster than 20ms or slower than 2s. Trials that followed an erroneous response or a response that exceeded the response deadline were excluded from analyses. We also excluded the first four trials of each block, and trials with responses faster than 20ms or slower than 2s.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Response times and error rates</head><p>We first analyzed response times and error rates. For ease of interpretation, we report three separate analyses for both RTs and errors: One for the data from the probabilistic groups, and one each for the deterministic and random blocks from the mixed-deterministic groups.</p><p>Subsequently, we report analyses of two distinct types of error responses: Errors that follow the regularity of motor responses, and errors that do not follow that regularity. Probabilistic materials. Figure 2 shows mean response times for correct responses and error rates for the probabilistic materials. Analyzing RTs for correct responses using a 2 (instructions: sequence concealed vs. revealed) × 2 (stimulus-location regularity: regular vs. nonregular) × 7 (block pair) ANOVA, we found a main effect of block pair, F(2.95, 306.84) = 267.55, p &lt; .001, η2 G = .148, reflecting the decreasing RTs over blocks. We also found a main effect of stimulus-location regularity, F(1, 104) = 194.80, p &lt; .001, η2 G = .423, and a significant two-way interaction of block pair and stimulus-location regularity, F(2.79, 290.40) = 59.80, p &lt; .001, η2 G = .028: Responses were increasingly faster for regular compared with nonregular trials, indicating sequence-specific learning. Responses in regular trials were descriptively faster in the sequencerevealed (compared with the sequence-concealed) condition, D R A F T ON THE EXPRESSION OF SEQUENCE LEARNING 7 0.30 0.35 0.40 0.45 0.50 0.55 0.60 1 2 3 4 5 6 7 Block Pair Response time [s] nonregular, sequence concealed regular, sequence concealed nonregular, sequence revealed regular, sequence revealed 0.0 0.1 0.2 0.3 0.4 0.5 1 2 3 4 5 6 7 Block Pair Error rate Figure 2. Response times for correct responses, and error rates in probabilistic materials. Error bars represent 95% (betweensubjects) confidence intervals. but all remaining model terms were not significant, all other ps ≥ .135. An analogous ANOVA of error rates revealed a main effect of block pair, F(4.63, 245.16) = 34.32, p &lt; .001, η2 G = .099, a main effect of stimulus-location regularity, F(1, 53) = 277.26, p &lt; .001, η2</p><p>G = .359, and a two-way interaction of block pair with stimulus-location regularity, F(5.17, 274.03) = 22.39, p &lt; .001, η2 G = .050: Error rates were increasingly higher for nonregular compared with regular trials, also indicating sequence learning. Neither the main effect of instructions, F(1, 53) = 2.98, p = .090, η2 G = .033, nor the interaction of instructions with block pair was significant, F(4.63, 245.16) = 0.80, p = .544, η2 G = .003. These above effects were qualified by a significant three-way interaction, F(5.17, 274.03) = 2.48, p = .031, η2 G = .006 and a two-way interaction of instructions with stimulus-location regularity, F(1, 53) = 4.06, p = .049, η2 G = .008. To disentangle these interactions, we analyzed regular and nonregular trials separately. Analyzing only regular trials, we found only a main effect of block pair, F(4.69, 248.42) = 9.08, p &lt; .001, η2 G = .041, reflection increasing error rates over blocks, all other ps ≥ .348. By contrast, analyzing only nonregular trials, we found a main effect of block pair, F(1, 53) = 4.41, p = .040, η2 G = .054, F(5.22, 276.40) = 37.58, p &lt; .001, η2 G = .183, F(5.22, 276.40) = 1.91, p = .090, η2 G = .011, and a main effect of instructions, F(1, 53) = 4.41, p = .040, η2 G = .054, with more errors in the sequence-revealed condition. The interaction of block pair and instructions, reflecting the descriptive observation that the difference between conditions increased over block pairs, was not significant, F(5.22, 276.40) = 1.91, p = .090, η2 G = .011.</p><p>To summarize, for participants working on probabilistic materials, we found robust sequence learning in both RTs and error rates. Revealing the sequence to such participants had only small effects on RTs: Responses were only descriptively faster for regular trials. However, error rates were higher for nonregular trials. We interpret this finding as first evidence that participants in the sequence-revealed condition actually tried to use their explicit sequence knowledge, but were hardpressed to do so. In the probabilistic material group, topdown attempts to apply explicit knowledge appear to have interfered with performance (instead of facilitating it). Interference is suggested by the specificity of the finding; in an alternative account in terms of a more liberal decision criterion (e.g., by frustrating participants with a virtually impossible task), RTs for nonregular trials and error rates for regular trials should also have been affected. More research is needed to better pin down such a possible interference and to determine its boundary conditions.</p><p>Deterministic blocks of mixed-deterministic materials.</p><p>Figure <ref type="figure" target="#fig_2">3</ref> shows mean response times for correct responses and error rates in deterministic blocks. Analyzing RTs for correct responses using a 2 (instructions: sequence concealed vs. revealed) × 7 (block pair) ANOVA, we found a main effect of block pair, F(2.79, 136.47) = 128.09, p &lt; .001, η2 G = .312, reflecting decreasing RTs over blocks. We also found a main effect of instructions, F(1, 49) = 11.64, p = .001, η2 G = .164, RTs were faster in the sequencerevealed condition. Although, descriptively, the RT difference between sequence concealed vs. revealed conditions decreased, these main effects were not qualified by an interaction, F(2.79, 136.47) = 2.10, p = .108, η2 G = .007.</p><p>An analogous ANOVA for error rates revealed only a main effect of block pair, F(4.31, 210.95) = 10.21, p &lt; .001, η2 G = .048, reflecting decreasing error rates over blocks. Neither the main effect of instructions, F(1, 49) = 3.01, p = .089, η2 G = .044. nor the interaction were significant, F(4.31, 210.95) = 0.88, p = .481, η2 G = .004. We conclude that, in the deterministic blocks, participants were well able to use their explicit knowledge to improve task performance. Although participants in the sequenceconcealed condition have acquired substantial amounts of sequence knowledge (likely explicit knowledge; see the results of the post-experimental interview reported below), the speed with which they performed the task did not reach that of participants in the sequence-revealed condition (while both reached comparable levels of accuracy).</p><p>Random blocks of mixed-deterministic materials. Figure <ref type="figure" target="#fig_3">4</ref> shows mean response times for correct responses and error rates in random blocks. Note that, in random blocks, it is also possible to distinguish between nonregular and regular stimulus locations because in a fifth of trials, stimulus locations adhere to the sequence by chance. Analyzing RTs for correct responses using a 2 (instructions: sequence concealed vs. revealed) × 2 (stimulus-location regularity: regular vs. nonregular) × 7 (block pair) ANOVA, we found a main effect of block pair, F(3.80, 185.98) = 19.64, p &lt; .001, η2 G = .070, with RTs decreased over blocks. We also found a main effect of stimulus-location regularity, F(1, 49) = 44.62, p &lt; .001, η2 G = .075, with faster responses for regular (vs. nonregular) stimulus locations. This effect of regularity indicates that sequence learning was expressed in these blocks. The interaction of block pair and stimuluslocation regularity was not significant, F(3.74, 183.35) = 0.59, p = .657, η2 G = .002. We did not find an effect of revealing explicit sequence knowledge on RTs: All model terms including instructions (main effect and interactions) were not significant, all ps ≥ .161.</p><p>Mirroring RT results, a parallel ANOVA for error rates revealed main effects of block pair, F(4.67, 228.97) = 10.88, p &lt; .001, η2 G = .068, and stimulus-location regularity, F(1, 49) = 29.39, p &lt; .001, η2 G = .042. The interaction of block pair and stimulus-location regularity was not significant, F(5.18, 253.76) = 1.72, p = .128, η2 G = .009. All model terms including instructions were not significant, all ps ≥ .164.</p><p>To summarize, participants who worked on mixeddeterministic materials expressed sequence learning not only in deterministic blocks (where it is possible to process the task in a plan-based fashion), but also in the random blocks (where only stimulus-based action control is adaptive).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>More errors through sequence learning?</head><p>In the probabilistic and random (but not deterministic) materials, a stimulus was sometimes presented in a nonregular stimulus location and thus prompted a nonregular response. In this case, two distinct types of error responses may be distinguished: Error responses that follow the regularity of motor responses (i.e., rule-adhering errors), and error responses that do not follow that regularity. If, over the course of learning, participants tend to generate rule-adhering errors more frequently, this would indicate that response-selection processes (i.e., processes that may impact which response is selected) are involved in sequence learning. To test this notion, we analyzed error responses (excluding post-error and postfeedback trials as well as response repetitions) and calculated the proportion of rule-adhering errors.</p><p>Analyzing these proportions with an ANOVA reveals a main effect of material, F(1, 101) = 7.16, p = .009, η2 G = .025, with more rule-adhering errors in probabilistic materials, all other ps ≥ .125.</p><p>We also tested these proportions against chance baseline (i.e., 1/4 = .25, given that response repetitions and correct responses are excluded from this analysis). The proportion of rule-adhering errors exceeded the chance baseline in both conditions: For random blocks of mixed-deterministic material, it was M = 0.28, 95% CI [0.26, ∞], t(101) = 2.21, p = .015. For probabilistic materials, it was M = 0.33, 95% CI [0.31, ∞], t(101) = 6.19, p &lt; .001. This trend toward rule-adhering errors suggests that response selection may have been impacted by sequence learning. The effect was stronger for participants who worked on probabilistic materials, which might be explained with differences in processing mode, or with different representations underlying sequencespecific effects in these conditions.</p><p>Faster errors through sequence learning?</p><p>We also analyzed response times (see Figure <ref type="figure" target="#fig_4">5</ref>) for error responses (again excluding post-error trials) and found a main effect of response regularity, F(1, 76) = 60.49, p &lt; .001, η2 G = .049, a main effect of block pair, F(3.14, 238.48) = 25.97, p &lt; .001, η2 G = .106, and their interaction, F(2.85, 216.53) = 4.68, p = .004, η2 G = .016. Moreover, the interactions of material and response regularity, F(1, 76) = 15.45, p &lt; .001, η2 G = .013, and of block pair and response regularity were significant, F(2.85, 216.53) = 4.68, p = .004, η2 G = .016, all other ps ≥ .144. To disentangle these interactions, we analyzed probabilistic and random materials separately (note that the deterministic material contained no relevant trials): For probabilistic materials, we found a main effect of block pair, F(4.09, 180.10) = 20.39, p &lt; .001, η2 G = .126, a main effect of response regularity, F(1, 44) = 99.80, p &lt; .001, η2 G = .140, and their interaction, F(4.21, 185.35) = 5.40, p &lt; .001, η2 G = .026, all other other ps ≥ .135. Participants not only produced an above-chance proportion of rule-adhering errors, but these error responses also became increasingly faster over blocks.</p><p>For random materials, we only found a main effect of block pair, F(2.41, 74.62) = 8.93, p &lt; .001, η2 G = .096, reflecting decreasing RTs over blocks, and a main effect of response regularity, F(1, 31) = 4.96, p = .033, η2 G = .010. all other ps ≥ .274, In the random blocks, responses were also faster for rule-adhering (or motor-regular) responses.</p><p>In sum, the effect of motor regularity on response times mirrored the result that rule-adhering errors are chosen above chance. In other words, when stimuli were presented in nonregular locations and a wrong key was chosen, participants were not only more likely to select a regular response, but were also faster when doing so. It is not clear whether such an effect may be attributable to changes in response tendencies or response-selection learning, or whether this is a motor-specific effect attributable to extensive practice of the same consecutive responses.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Post-experimental interview</head><p>Participants were asked whether they believed they have been working on materials containing a sequence (and to name that sequence); and then were presented with each stimulus and asked to select the next one in the sequence (i.e., forced choice). We first analyzed how many participants indicated that they believed that they were in a sequenced condition. For mixed-deterministic materials, 25 out of 26 participants in the sequence-revealed condition indicated that they were in a sequenced condition; 20 out of 23 participants in the sequence-concealed condition indicated the same. For participants who worked on probabilistic materials, only 12 out of 26 participants in the sequence-revealed condition and 14 out of 27 participants in the sequence-concealed condition believed that they had worked on sequenced materials. portion of correct responses using a 2 (material: probabilistic vs. mixed deterministic) × 2 (instructions: sequence concealed vs. sequence revealed) ANOVA that revealed a main effect of material, F(1, 101) = 26.11, p &lt; .001, η2 G = .205, a main effect of instructions, F(1, 101) = 3.67, p = .058, η2 G = .035, and no interaction, F(1, 101) = 0.35, p = .555, η2 G = .003. We also tested forced-choice performance against chance baseline (1/5 = .2) using planned contrasts. Performance in the probabilistic/sequence-concealed condition did not differ from chance M = 0.29, t(101) = 1.34, p = .091. (with a small number of participants showing above-chance performance). Participants in the probabilistic/sequencerevealed condition performed above chance, M = 0.38, t(101) = 2.59, p = .005. With mixed-deterministic materials, both groups of participants clearly performed above chance (M = 0.60, t(101) = 5.55, p &lt; .001 in the sequenceconcealed condition, and M = 0.77, t(101) = 8.28, p &lt; .001 in the sequence-revealed condition).</p><p>Participants who worked on mixed-deterministic materials were well able to acquire substantial amounts of explicit sequence knowledge that they were also able to verbally report in our post-experimental interview. Participants who had received advance knowledge about the sequence performed better than those who had not. In contrast, most participants who worked on probabilistic materials were not able to acquire substantial amounts of such knowledge. Those who had received advance knowledge about the sequence could report above-chance knowledge on the forced-choice questions, but the amount of knowledge was small (i.e., much smaller than that obtained by participants in the mixeddeterministic/sequence-concealed group). Most of these participants appear to have forgotten the structure of the sequence, perhaps because they were not able to use this knowledge to improve their SRTT performance. A complete overview of results from the post-experimental interview can be found in Appendix B.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model-based analyses</head><p>In a next step, we applied the diffusion model to the present data. We first report parameter estimates for the whole sample of participants. In a second step, we contrasted the parameters involved in the expression of implicit knowledge from those reflecting the expression of explicit knowledge in a plan-based fashion. To this end, we report modelling results for a subset of participants who (1) worked on probabilistic materials, were not revealed any sequence knowledge, and, according to the post-experimental interview, remained fully implicit about the sequence, and (2) for a subset who worked on mixed-deterministic materials, were instructed about the sequence, and reported comprehensive explicit sequence knowledge. Starting point. The starting point parameter captures information that is available before the evidence accumulation process starts (i.e., before the imperative stimulus is presented). In the present application of the diffusion model, it could be biased either towards regular (i.e., upper boundary) or towards nonregular responses (i.e., lower boundary). Figure <ref type="figure" target="#fig_6">6</ref> shows parameter estimates of the starting point. Participants who worked on probabilistic materials were increasingly biased to select regular responses: In both the sequence-concealed condition (BF 10 &gt; 1,000) and the sequence-revealed condition (BF 10 &gt; 1,000) the BF clearly favored the alternative hypothesis of an effect of regularity.</p><p>Participants who worked on mixed-deterministic materials showed a strong bias towards the regular response in deterministic compared with random blocks: In both the sequence-concealed condition (BF 10 &gt; 1,000) and the sequence-revealed condition (BF 10 &gt; 1,000), Bayes Factors clearly favored the alternative hypothesis of greater starting point estimates in deterministic (vs. random) blocks. Comparing regular and nonregular trials in random blocks, we found evidence against an effect of regularity (sequence concealed: BF 01 = 6.63, sequence revealed: BF 01 = 4.75).</p><p>Drift rate. The drift rate reflects the speed of evidence accumulation (i.e., information uptake from the stimulus and/or a match with memory). Figure <ref type="figure">7</ref> shows drift-rate estimates. With probabilistic materials, the expression of sequence learning is mediated by faster evidence accumulation for regular (compared with nonregular) trials. In the sequence-concealed condition, we found BF 10 &gt; 1,000, in the sequence-revealed condition, we found BF 10 &gt; 1,000. By contrast, with deterministic materials, we consistently found evidence against an effect on drift rate. Comparing deterministic with random blocks, we found evidence against an effect in both the sequence-concealed (BF 01 = 15.72) and the sequence-revealed condition (BF 01 = 11.26). Comparing regular and nonregular trials in random blocks also revealed evidence against an effect of regularity, (sequence concealed: BF 01 = 3.13, sequence revealed: BF 01 = 9.61).</p><p>Boundary separation. The boundary separation parameter reflects response caution: Higher values reflect more separated boundaries, hence more cautious responding. Figure <ref type="figure">8</ref> shows boundary separation parameter estimates. In all conditions, we find strong evidence for an overall decrease in response caution (all BF 10 &gt; 1,000), Participants responded more liberally over time to accommodate the time pressure in this experiment. However, in deterministic blocks, partici-pants were able to exploit the speedup attributable to changes in other model parameters (starting point and nondecision time) to maintain higher response caution (sequence concealed: BF 10 = 112.84, sequence revealed BF 10 &gt; 1,000).</p><p>Nondecision time. In the diffusion model, the nondecision time parameter subsumes all processes (i.e., perceptual and motor) occurring before and after the response-selection decision.</p><p>Figure <ref type="figure">9</ref> shows nondecision times as a function of stimulus regularity. With probabilistic materials, we find evidence for the absence of sequence-specific effects, with BF 01 = 6.15 in the sequence-concealed condition, and BF 01 = 3.74 in the sequence-revealed condition. We therefore conclude that, if participants are performing the SRTT in a stimulus-based fashion, it is neither stimulus detection nor encoding that mediate the expression of sequence learning.</p><p>A similar pattern can be observed in participants who worked on mixed-deterministic materials: When considering random blocks, we find evidence for an absence of a difference in nondecision time attributable to sequence learning, with BF 01 = 36.93 in the sequence-concealed condition, and BF 01 = 33.85 in the sequence-revealed condition.</p><p>By contrast, with mixed-deterministic materials, we find strong evidence for a rapid decrease in nondecision time for deterministic compared with random materials, with BF 10 &gt; 1,000 in the sequence-concealed condition, and BF 10 &gt; 1,000 in the sequence-revealed condition. We interpret this finding as indicative that a switch to plan-based action control allows participants to largely skip the process of stimulus detection and encoding; instead, during the RSI, they already prepare a response that is executed as soon as something appears on the screen.</p><p>Response competition. We applied an extended diffusion model with an additional response-competition parameter 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1 2 3 4 5 6 7 probabilistic sequence concealed Block pair Boundary separation α 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1 2 3 4 5 6 7 probabilistic sequence revealed Block pair Boundary separation α 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1 2 3 4 5 6 7 mixed deterministic sequence concealed Block pair Boundary separation α deterministic random 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1 2 3 4 5 6 7 mixed deterministic sequence revealed Block pair Boundary separation α Figure 8. Boundary separation (response caution). Points represent posterior means of the group-level parameters µ (β) kb . 0.0 0.1 0.2 0.3 0.4 0.5 1 2 3 4 5 6 7 probabilistic sequence concealed Block pair Nondecision time θ nonregular regular 0.0 0.1 0.2 0.3 0.4 0.5 1 2 3 4 5 6 7 probabilistic sequence revealed Block pair Nondecision time θ 0.0 0.1 0.2 0.3 0.4 0.5 1 2 3 4 5 6 7 mixed deterministic sequence concealed Block pair Nondecision time θ nonregular regular deterministic 0.0 0.1 0.2 0.3 0.4 0.5 1 2 3 4 5 6 7 mixed deterministic sequence revealed Block pair Nondecision time θ Figure 9. Nondecision times, separated by stimulus-location regularity. Points represent posterior means of the group-level parameters µ (θ) kb . D R A F T ON THE EXPRESSION OF SEQUENCE LEARNING 13 reflecting differences in nondecision times between motorregular and motor-nonregular responses.</p><p>Figure <ref type="figure" target="#fig_8">10</ref> shows response-competition parameter estimates.</p><p>For probabilistic materials, we found clear evidence for a response competition effect, (sequence concealed: BF 10 &gt; 1,000, sequence revealed BF 10 &gt; 1,000). For deterministic materials, we found such an effect if the sequence was concealed, BF 10 = 62.61; but found evidence against such an effect if the sequence was revealed, BF 01 = 47.43.</p><p>Subset analyses. To more clearly pin down the expression of implicit versus explicit sequence knowledge, using the post-experimental-interview data, we classified participants (within each condition) into three groups: (1) Participants who indicated that they probably were in a random condition and only reproduced less than two transitions correctly in both the forced-choice and free-recall test (henceforth coined implicit groups), (2) participants who indicated that they probably were in a sequenced condition, and reproduced six transitions correctly in both free-recall and forcedchoice test (the explicit group), and (3) participants who fell in-between these criteria (the intermediate groups). We then re-estimated the DDM for these sub-groups if there were at least four participants in the respective group, and compared parameter estimates across groups.</p><p>Results showed that, in general, the overall patterns of parameter estimates were not affected by the amount of explicit knowledge: Parameter patterns were largely identical across all participants in the probabilistic groups (regardless of whether they had received advance knowledge about the sequence, or had acquired some explicit knowledge during their time on the task). Similarly, parameter patterns were also largely identical among the subgroups working on mixed-deterministic material, regardless of the source or amount of explicit knowledge. <ref type="foot" target="#foot_0">1</ref> These findings demonstrate that the presence of explicit knowledge per se does not necessarily affect performance. Participants also need the opportunity, afforded by the deterministic blocks, to express that knowledge in a plan-based manner.</p><p>To characterize the expression of implicit sequence knowledge, we used the parameter estimates from the group who worked on probabilistic materials in the sequence concealed condition and did not show any indication of explicit knowledge (i.e., the implicit subgroup). These participants could only perform the task in a stimulus-based manner. The left panels of Figure <ref type="figure" target="#fig_9">11</ref> show parameter estimates for this subgroup. In line with our whole-sample results, if the SRTT is performed in a stimulus-based fashion and participants remained implicit about the sequence, such implicit learning affects the response-selection process, with a tendency to select the rule-adhering response (starting point β), and faster evidence accumulation for rule-adhering stimuli (drift rate δ). We found no effect of stimulus regularity on nondecision time θ, but a robust effect of motor regularity (response competition ξ).</p><p>To characterize the expression of explicit knowledge, we used the parameter estimates from the group of participants who worked on mixed-deterministic materials, received full advance sequence knowledge, and were able to report the complete sequence at the end of the experiment. These participants most likely performed the task in a plan-based fashion. The right panels of Figure <ref type="figure" target="#fig_9">11</ref> show parameter estimates for this subgroup. Plan-based action control in deterministic blocks was reflected in an anticipation of the next response (starting point β), indicating that response selection is almost completed when the stimulus appears on the screen. Evidence accumulation from the stimulus (drift rate δ) was not affected by a switch to plan-based action control, indicating that in such a processing mode, the little information that is necessary to select the response (i.e., the appearance of a stimulus on the screen) is processed as efficiently as in random blocks. Nondecision time θ was dramatically reduced in deterministic blocks (compared with random blocks), indicating that stimulus detection and/or encoding can be bypassed. Participants were also able to use their performance advantage to respond more cautiously in deterministic versus random blocks (boundary separation α). There was no effect of motor regularity on nondecision time (i.e., no responsecompetition effect).</p><p>To summarize, implicit knowledge affected the drift rate as well as the starting point of the diffusion process, and also caused response competition. In contrast, expressing explicit knowledge in a plan-based fashion did not affect the drift rate; it was most prominently reflected in a decrease of nondecision time and an effect on the starting point. While the starting point was affected in both cases, implicit sequence knowledge selectively involved an effect on drift rate, and plan-based expression of explicit knowledge selectively affected overall nondecision time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>We set out to pinpoint the cognitive processes that are involved in the expression of implicit versus explicit sequence knowledge. We found that implicit sequence knowledge gradually affects cognitive processes during stimulus- based task processing, whereas explicit knowledge supports a switch to plan-based processing.</p><p>In our baseline condition (probabilistic materials, sequence concealed), we found that sequence learning was expressed by a combination of effects on starting point, drift rate, and response-competition bias. Over the course of training, the starting point was shifted towards the regular response, indicating that even before the imperative stimulus was presented, the response-selection process was increasingly biased towards the rule-adhering response option. Moreover, as suggested by higher drift rates for regular trials, evidence accumulation was faster for rule-adhering trials, indicating that either the information from the imperative stimulus or the stimulus-response rule was processed more efficiently. Nondecision time was invariant to stimulus-location regularity, but varied by response-location regularity (i.e., we found an effect of response competition), indicating an additional learning effect at the motor level. To summarize, response selection appears to be involved in implicit sequence learning. This is in line with previous findings supporting S-R representations <ref type="bibr" target="#b52">(Schwarb &amp; Schumacher, 2012)</ref>, and suggests the involvement of a multidimensional system (i.e., combining stimulus and response dimensions). In addition, we found evidence for response-competition bias toward the regular responses, suggesting the involvement of motor facilitation.</p><p>As the present study confounded effectors with response locations, it could be explained by both effector-specific or general effects <ref type="bibr" target="#b57">(Verwey &amp; Clegg, 2005;</ref><ref type="bibr" target="#b68">Willingham et al., 2000)</ref>. Future research is needed to separate these two factors and their effects on the response-competition parameter.</p><p>Participants who worked on probabilistic materials and received advance knowledge of the sequential structure, and were encouraged to use this knowledge, were hard-pressed to express this extra knowledge. Overall, the performance pat-tern of this group was highly similar to that of the sequenceconcealed group, with sequence learning being reflected in effects on starting point, drift rate, and response competition.</p><p>Compared with the sequence-concealed condition, the effect on drift rate was increased, whereas the effect on starting point was reduced. Future research is needed to determine whether these differences are robust and reflect participants' attempts to express their explicit knowledge.</p><p>By contrast, participants who worked on mixed-deterministic materials showed a qualitatively distinct pattern of parameter estimates. It was characterized by a much stronger effect on the starting point and a steep reduction in nondecision time. In addition, boundary separation was increased in the deterministic blocks. There were no effects on drift rate or the response-competition parameter. This parameter pattern suggests that participants engaged in plan-based task performance, using their explicit knowledge to anticipate the stimulus and prepare their response. This anticipation was so successful (i.e., the starting point was so strongly shifted towards the regular boundary) that participants needed to extract only very little information from the stimulus during the decision process. (The present finding of no effect on drift rate in the deterministic condition should therefore be interpreted with caution: It may simply reflect the fact that, in our study, virtually no information needed to be sampled from the stimulus.) Because plan-based performance speeded up participants' responses in the deterministic blocks, they could afford to increase their response caution (i.e., boundary separation) in these blocks.</p><p>Participants who worked on mixed-deterministic materials but did not receive advance sequence knowledge showed a similar pattern, with smaller effects overall. In this condition, a substantial subset of participants have apparently acquired D R A F T 16 MARIUS BARTH, CHRISTOPH STAHL, &amp; HILDE HAIDER</p><p>processing mode. The only difference was the (small) effect on the response-competition parameter, which was found in the mixed-deterministic/sequence-concealed group but not in the sequence-revealed group. Because the proportion of regular motor key presses is comparable between all four conditions, the absence of a response-competition effect for the mixed-deterministic/sequence-revealed group suggests that this parameter does not capture a purely motor-learning effect that is a mere by-product of repeatedly performing the same sequence of motor key presses. Instead, it might depend on performing the task in a stimulus-driven manner.</p><p>Because participants who worked on mixed-deterministic materials in the sequence-revealed condition were able to work in a plan-based fashion from the very start, they might not have engaged in a sufficient amount of stimulus-based task performance in order to acquire a response-competition effect. In contrast, participants who worked on mixeddeterministic materials in the sequence-concealed condition were not able to engage in plan-based task performance from the start. The response-competition effect may be explained by the notion that this learning effect develops if and only if participants perform the task in a stimulus-based fashion.</p><p>Clearly, future empirical work is needed to clarify the interpretation of this effect.</p><p>Limitations. It may be argued that our manipulation of sequence knowledge was not successful, given that revealed sequence knowledge was largely forgotten with probabilistic materials. However, we found a clear effect of instructions on error rates for nonregular trials, indicating that at least some participants tried to implement their sequence knowledge while performing the task.</p><p>Instead of reflecting the absence of implicit learning effects on stimulus detection or encoding, the lack of an effect on nondecision time may point to the fact that both stimulus detection and encoding were relatively easy in our experiment (i.e., a floor effect). Alternatively, such a learning effect may truly be nonexistent. Earlier findings of purely observational <ref type="bibr" target="#b29">(Howard et al., 1992;</ref><ref type="bibr" target="#b55">Song, Howard, &amp; Howard, 2008)</ref> or parallel learning of stimulus locations <ref type="bibr" target="#b37">(Mayr, 1996)</ref> may then reflect either an artifact of explicit knowledge or implicit learning of spatial locations in a unidimensional system (c.f., <ref type="bibr" target="#b11">Eberhardt et al., 2017)</ref> that is expressed at the responseselection stage.</p><p>The DDM has been widely successful in capturing and explaining performance in many speeded-choice tasks, and we therefore deem it an excellent starting point for modelling performance in the SRTT. However, it makes a set of processing assumptions. Most importantly, it assumes that stimulus encoding, response selection, and response execution are organized sequentially, an assumption that might be violated in sequence learning, given that parallel architectures have been proposed for motor-behavior tasks such as the SRTT (e.g., <ref type="bibr" target="#b35">Logan, 1988;</ref><ref type="bibr" target="#b58">Verwey, Shea, &amp; Wright, 2015)</ref>. Hence, unless the model receives further validation for SRT tasks, the present set of findings may be alternatively accounted for by theories involving parallel processes.</p><p>As another point of criticism, it may be argued that the DDM, as a decision model, may be less useful for conditions involving plan-based actions to the degree that plan-based action control requires little information from the stimulus to arrive at a decision. Note, however, that the DDM was developed for decisions from memory, and the use of explicit knowledge may well be characterized as involving such memorybased decisions (i.e., recalling the next element of the sequence).</p><p>Future Directions. Extensions of the SRTT allow to orthogonally manipulate stimulus vs. motor sequences by changing the stimulus-response mapping on each trial (e.g., <ref type="bibr" target="#b11">Eberhardt et al., 2017;</ref><ref type="bibr" target="#b18">Goschke &amp; Bolte, 2012)</ref> Such extended designs provide the opportunity to validate the DDM's application to the SRTT, and to further pin down the interpretation of the observed parameter changes: To clarify how to interpret the response-competition effect that we found for stimulus-based implicit learners, it could be tested whether motor sequences, but not stimulus sequences selectively influence this parameter. Moreover, the effectorspecificity of this effect could be investigated using a transfer task where effectors are changed but response locations are kept constant (e.g., <ref type="bibr" target="#b57">Verwey &amp; Clegg, 2005)</ref>. If sequence learning of stimulus locations guides spatial attention on the screen (as suggested by <ref type="bibr" target="#b37">Mayr, 1996)</ref>, it should selectively influence stimulus detection (i.e., nondecision time). In the present work, we did not find such an effect, but stimulus detection was very easy; increasing the difficulty of stimulus detection (e.g., by presenting irrelevant stimuli in the other locations) might give rise to an effect of sequence learning on stimulus detection when responses are unrelated to stimulus locations.</p><p>It is an unresolved issue whether two distinct learning systems (one multidimensional, one unidimensional) are necessary to explain the pattern of findings in the sequencelearning literature <ref type="bibr" target="#b3">(Barth, Stahl, &amp; Haider, 2023)</ref>, one of the reasons being that it is not clear along which dimensions information is considered to be processed separately within the unidimensional system. Our findings indicate that response selection is the locus of sequence learning in the SRTT, and that, therefore, only joint representations of stimulus and response features may subserve the standard SRTT effect. A unidimensional learning system that is separated along the lines of stimulus and response can, therefore, not explain our findings. However, if the unidimensional system is separated along abstract features such as location (as suggested by <ref type="bibr" target="#b11">Eberhardt et al., 2017;</ref><ref type="bibr" target="#b22">Haider et al., 2020)</ref>, a unidimensional learning system could indeed provide the information D R A F T necessary to guide spatial response selection. With the diffusion model introduced here, it would be possible to more directly test the separation of information processing that is implied by modularization. For instance, if other stimulus features not only affect stimulus processing (i.e., nondecision time) but also response-selection parameters, this would clearly speak against such modularized processing ( <ref type="bibr" target="#b3">Barth et al., 2023)</ref>.</p><p>In the present work, we used a regression approach at the group-level means to model the changes in parameter estimates over the course of learning. Most recently, considerable efforts have been made to model both gradual and sudden shifts in parameter estimates <ref type="bibr" target="#b19">(Gunawan, Hawkins, Kohn, Tran, &amp; Brown, 2022;</ref><ref type="bibr" target="#b48">L. Schumacher et al., 2024)</ref>. Such non-stationary models may be used to model individual learning curves at the level of a single transition, providing a principled on-line measure of a switch to plan-based action control in the SRTT. Moreover, these methods allow to investigate whether implicit sequence learning is indeed a gradual or a sudden phenomenon (c.f., <ref type="bibr" target="#b38">Musfeld, Souza, &amp; Oberauer, 2023)</ref>. For a regression-based approach, recent advances in Bayesian estimation carry the potential to facilitate such endeavors: Henrich, Hartmann, Pratz, <ref type="bibr" target="#b26">Voss, and Klauer (2023)</ref> implemented the seven-parameter DDM in Stan <ref type="bibr" target="#b6">(Carpenter et al., 2017)</ref>, a probabilistic programming language that uses Hamiltonian Monte Carlo, a sampling algorithm that provides better computational efficiency than the sampling algorithms used in the present work <ref type="bibr" target="#b4">(Betancourt, 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion.</head><p>The present study is the first to use the diffusion model to analyze processes underlying performance in the SRTT. In this first step, we focused on the effects of implicit learning and plan-based expression of explicit knowledge. Our results demonstrate the usefulness of the diffusion model in research on implicit learning. They indicate that implicit sequence learning in the SRTT guides response selection, supporting either multidimensional accounts of implicit sequence learning (E. H. <ref type="bibr">Schumacher &amp; Hazeltine, 2016)</ref> or, alternatively, unidimensional accounts that assume that features from the same abstract dimension (e.g., spatial location) of both stimulus and response are jointly represented <ref type="bibr" target="#b22">(Haider et al., 2020)</ref>.</p><p>In addition, we find evidence for response competition that is independent of response selection. More research is needed to investigate whether this effect represents effector-specific motor learning <ref type="bibr" target="#b57">(Verwey &amp; Clegg, 2005)</ref> or is linked to abstract response categories <ref type="bibr" target="#b68">(Willingham et al., 2000)</ref>. Supporting the recent tests of the unexpected-event hypothesis <ref type="bibr" target="#b36">(Lustig et al., 2022)</ref>, strong decreases in response time are readily accounted for as a consequence of a switch to planbased action control. This switch is possible only after the sequence already has become explicit, and only if the structure of the task makes such a change beneficial for perfor-mance. When implemented, such a strategy shift results in an anticipation of the next response even before the imperative stimulus is presented, allowing participants to largely bypass stimulus processing (as reflected in reduced interference effects in Stroop and Simon tasks, <ref type="bibr" target="#b21">Haider et al., 2011;</ref><ref type="bibr" target="#b33">Koch, 2007)</ref>.</p><p>D R A F T D R A F T ON THE EXPRESSION OF SEQUENCE LEARNING D R A F T 20 D R A F T ON THE EXPRESSION OF SEQUENCE LEARNING 21 Appendix A Model specification</p><p>We implemented the drift-diffusion model in JAGS <ref type="bibr" target="#b40">(Plummer, 2003)</ref>. Response times and accuracy on each trial n were modeled as coming from a Wiener distribution with the models' core parameters boundary separation α ik * b , starting point β n , drift rate δ n and nondecision time τ n y n ∼ W (α ik * b , β n , δ n , τ n ) Boundary separation is assumed to vary by participant i and block pair b. For mixed-deterministic materials, it also varies by condition k * , denoting deterministic vs. random blocks.</p><formula xml:id="formula_1">α ik * b = ζ (α) ik * b</formula><p>The other core parameter are assumed to vary by trial, and are assumed to come from truncated normal distributions with standard deviations s i .</p><p>β n ∼ N .99 .01 ζ (β) ikb + p (β) κ (β) i j , s (β) i δ n ∼ N ζ (δ) ikb + p (δ) κ (δ) i j , s (δ) i τ n ∼ N .001 ζ (θ) ikb + p (θ) κ (θ) i j + ζ (ξ) il + p (ξ) κ (ξ) il , s (τ) i</p><p>where ζ ikb is an individual's condition (nonregular, regular, deterministic) mean in block pair b, p is a scaling factor, and κ i j represent an individual's stimulus-locationdependent deviations from the individual's condition mean.</p><p>Participant-level parameters ζ ikb are assumed to be normally distributed, e.g.</p><formula xml:id="formula_2">ζ (β) ikb ∼ N µ (β)</formula><p>kb , σ (β)   where σ (β) ∼ q (β) t + df =I-1 and q is a scaling factor, and t + df is a half-t distribution with I -1 degrees of freedom restricted to positive values.</p><p>In the SRTT, response times and accuracy vary substantially by stimulus and/or response location. Therefore, for each participant i and stimulus location j = 1, ..., 6, we included normally distributed parameters κ i j to capture such differences κ We use these functions in a similar fashion as model terms in linear models: Condition means are the weighted sum of multiple temporally-changing functions (instead of regression coefficients), and the condition weights w km chosen in a way that the first function is equivalent to an intercept term, the second function is equivalent to the effect of regular vs. nonregular trials, and the third function is equivalent to the effect of deterministic trials vs. the average of regular and nonregular trials; amounting to a Helmert coding scheme.</p><p>The functions (depicted in Figure <ref type="figure" target="#fig_14">A1</ref>) are defined as</p><formula xml:id="formula_3">f m (b) = υ m + (ι m -υ m )e -( b λm ) -γm</formula><p>where υ m is the initial limit, ι m is the final limit. λ m is the temporal location of the inflection point of this function, and γ m is a stretching exponent (shifting the function's steepness).</p><p>D R A F T 22 MARIUS BARTH, CHRISTOPH STAHL, &amp; HILDE HAIDER</p><p>The final limit ι m may be re-written as</p><formula xml:id="formula_4">ι m = γ m ψ m B λ m Γ(γ -1 m ) + υ m</formula><p>where B is the number of block pairs, Γ(.) is the Gamma function, and ψ m is the average effect, i.e., the average difference between f m (b) and the initial limit υ m .</p><p>We use these average effects ψ m as the target of inference to test for overall changes (first function), the effect of nonregular vs. regular trials (second function), and the effect of deterministic vs. random blocks (third function). Bayes Factors (BF) are calculated using the Savage-Dickey density ratio <ref type="bibr" target="#b63">(Wagenmakers, Lodewyckx, Kuriyal, &amp; Grasman, 2010)</ref> from logspline densities <ref type="bibr" target="#b34">(Kooperberg &amp; Stone, 1992)</ref>. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><figDesc>Figure1. The diffusion model. On each trial, the decision process (depicted as grey lines) begins at a starting point that is determined by parameter β. The spread of the thresholds is determined by parameter α. Evidence is accumulated in a randomwalk fashion. When one of the two thresholds is reached, a decision is made. The average rate of evidence accumulation is determined by parameter δ. The decision process is preceded by stimulus encoding and succeeded by response execution, the duration of both processes is captured by nondecision time τ. This basic diffusion model may be extended by responseexecution bias ξ and intertrial variabilites for core parameters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. RTs (for correct responses) and error rates in deterministic blocks. Error bars represent 95% (between-subjects) confidence intervals.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. RTs (for correct responses) and error rates in random blocks. Error bars represent 95% (between-subjects) confidence intervals.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Response times for error responses. Error bars represent 95% within-subjects confidence intervals.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><figDesc>Whole sample. Parameter estimates are depicted in Figures 6-10. We report Bayes Factors (BF) for model comparisons that tested the effects of experimental manipulations on model parameters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Starting point of the diffusion process. Points represent posterior means of the group-level parameters µ (β) kb .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 .Figure 8 .Figure 9 .</head><label>789</label><figDesc>Figure 7. Average evidence accumulation (drift rate). Points represent posterior means of the group-level parameters µ (ν) kb .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 10 .</head><label>10</label><figDesc>Figure 10. Response-competition parameter ξ, capturing differences in nondecision time between motor-regular and motornonregular responses. Positive values imply faster responses for motor-regular responses. Points represent posterior means of the group-level parameters µ (ξ) kb .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 11 .</head><label>11</label><figDesc>Figure 11. DDM parameters for stimulus-based (on the left) versus plan-based SRTT performance (on the right).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><figDesc>The condition means are defined as the weighted sum of one or more shifted and stretched exponential functionsf (b), m (b) λ m ,γ m ,υ m ,ι m</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure A1 .</head><label>A1</label><figDesc>Figure A1. Left panel: Shifted and stretched exponential functions for different values of λ (location) and γ (shape), with υ = 1 and ι ∈ {0, 2}. Right panel: The average effect ψ corresponds to the area under the curve (blue) between initial limit and the function's value f (b).</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Participants who worked on mixed-deterministic materials and received advance knowledge of the sequence but were, according to our criteria, classified as being implicit about the sequence also showed an above-zero response-competition effect. Evidently, these participants failed to remember the sequence or did not read the instructions properly and, therefore, also engaged in stimulusbased processing of the SRTT.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Representing serial action and perception</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Abrahamse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Jiménez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">B</forename><surname>Verwey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Clegg</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/PBR.17.5.603</idno>
+		<ptr target="https://doi.org/10.3758/PBR.17.5.603" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="603" to="623" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barth</surname></persName>
+		</author>
+		<ptr target="https://nbn-resolving.org/urn:nbn:de:hbz:38-101322" />
+		<title level="m">Measuring implicit and explicit sequence learning</title>
+		<meeting><address><addrLine>Cologne, Germany</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+		<respStmt>
+			<orgName>University of Cologne ; University of Cologne</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Assumptions of the process-dissociation procedure are violated in implicit sequence learning</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Stahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/xlm0000614</idno>
+		<ptr target="https://doi.org/10.1037/xlm0000614" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="641" to="676" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Parallel acquisition of uncorrelated sequences does not provide firm evidence for a modular sequence-learning system</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Stahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.5334/joc.258</idno>
+		<ptr target="https://doi.org/10.5334/joc.258" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognition</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Betancourt</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1701.02434" />
+		<title level="m">A conceptual introduction to Hamiltonian Monte Carlo</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A multinomial model to assess fluency and recollection in a sequence learning task</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Buchner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Steffens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Erdfelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rothkegel</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/027249897392053</idno>
+		<ptr target="https://doi.org/10.1080/027249897392053" />
+	</analytic>
+	<monogr>
+		<title level="j">The Quarterly Journal of Experimental Psychology A: Human Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="631" to="663" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Stan: A Probabilistic Programming Language</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Carpenter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Goodrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Betancourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Riddell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v076.i01</idno>
+		<ptr target="https://doi.org/10.18637/jss.v076.i01" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page" from="1" to="32" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Multiple timescales of learning indicated by changes in evidence-accumulation processes during perceptual decision-making</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cochrane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Sims</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">R</forename><surname>Bejjanki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bavelier</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41539-023-00168-9</idno>
+		<ptr target="https://doi.org/10.1038/s41539-023-00168-9" />
+	</analytic>
+	<monogr>
+		<title level="j">Npj Science of Learning</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Attention and structure in sequence learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">I</forename><surname>Ivry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Keele</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.16.1.17</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.16.1.17" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="17" to="30" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Attentional and nonattentional forms of sequence learning</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Curran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Keele</surname></persName>
+		</author>
+		<ptr target="http://psycnet.apa.org/journals/xlm/19/1/189/" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cogni-tion</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">189</biblScope>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Can sequence learning be implicit? New evidence with the process dissociation procedure</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Destrebecqz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cleeremans</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03196171</idno>
+		<ptr target="https://doi.org/10.3758/BF03196171" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="343" to="350" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Abstract feature codes: The building blocks of the implicit learning system</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Eberhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/xhp0000380</idno>
+		<ptr target="https://doi.org/10.1037/xhp0000380" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Human Perception and Performance</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1275" to="1290" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">The Emergence of Explicit Knowledge in a Serial Reaction Time Task: The Role of Experienced Fluency and Strength of Representation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2017.00502</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2017.00502" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">What triggers explicit awareness in implicit sequence learning? Implications from theories of consciousness</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lustig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-021-01594-3</idno>
+		<ptr target="https://doi.org/10.1007/s00426-021-01594-3" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">The Route From Implicit Learning to Verbal Expression of What has Been Learned</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rünger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Neugebauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Voigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Werg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Attention and Implicit Learning</title>
+		<editor>
+			<persName><forename type="first">L</forename><surname>Jimenez</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="page">335</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">John</forename><surname>Benjamins</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Implicit Learning</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rünger</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/1467-8721.01213</idno>
+		<ptr target="https://doi.org/10.1111/1467-8721.01213" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Directions in Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="13" to="18" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Implicit sequence learning based on instructed task set</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gaschler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wenke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">1389</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">On the modularity of implicit sequence learning: Independent acquisition of spatial, symbolic, and manual sequences</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Goschke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bolte</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2012.04.002</idno>
+		<ptr target="https://doi.org/10.1016/j.cogpsych.2012.04.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="284" to="320" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Time-evolving psychological processes over repeated decisions</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gunawan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kohn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M.-N</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<ptr target="https://psycnet.apa.org/journals/rev/129/3/438/" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">438</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Implicit visual learning: How the task set modulates learning by determining the stimulus-response binding</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Eberhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rose</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.concog.2014.03.005</idno>
+		<ptr target="https://doi.org/10.1016/j.concog.2014.03.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Consciousness and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="145" to="161" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">An old problem: How can we distinguish between conscious and unconscious knowledge acquired in an implicit learning task</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Eichler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lange</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.concog.2010.10.021</idno>
+		<ptr target="https://doi.org/10.1016/j.concog.2010.10.021" />
+	</analytic>
+	<monogr>
+		<title level="j">Consciousness and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="658" to="672" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Feature codes in implicit sequence learning: Perceived stimulus locations transfer to motor response locations</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Eberhardt</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-018-0980-0</idno>
+		<ptr target="https://doi.org/10.1007/s00426-018-0980-0" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="192" to="203" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The generation of conscious awareness in an incidental learning situation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-004-0209-2</idno>
+		<ptr target="https://doi.org/10.1007/s00426-004-0209-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="399" to="411" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">How to investigate insight: A proposal</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rose</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ymeth.2006.12.004</idno>
+		<ptr target="https://doi.org/10.1016/j.ymeth.2006.12.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Methods</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="57" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Understanding Central Processes: The Case against Simple Stimulus-Response Associations and for Complex Task Representation</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hazeltine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/bs.plm.2015.09.006</idno>
+		<ptr target="https://doi.org/10.1016/bs.plm.2015.09.006" />
+	</analytic>
+	<monogr>
+		<title level="m">Psychology of Learning and Motivation</title>
+		<editor>
+			<persName><forename type="first">B</forename><forename type="middle">H</forename><surname>Ross</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Academic Press</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="page" from="195" to="245" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian Analyses</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Henrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hartmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Pratz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Klauer</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-023-02179-1</idno>
+		<ptr target="https://doi.org/10.3758/s13428-023-02179-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Stimulus-response compatibility and sequential learning in the serial reaction time task</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Koch</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF00419682</idno>
+		<ptr target="https://doi.org/10.1007/BF00419682" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="87" to="97" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Irrelevant response effects improve serial learning in serial reaction time tasks</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sebald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Stöcker</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.27.2.470</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.27.2.470" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="470" to="482" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Serial pattern learning by event observation</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Mutter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">V</forename><surname>Howard</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.18.5.1029</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.18.5.1029" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1029" to="1039" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Which attention is needed for implicit sequence learning?</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Jiménez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Méndez</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.25.1.236</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.25.1.236" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="236" to="259" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">The cognitive and neural architecture of sequence representation</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Keele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ivry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Mayr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hazeltine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Heuer</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-295X.110.2.316</idno>
+		<ptr target="https://doi.org/10.1037/0033-295X.110.2.316" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="316" to="339" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">On the Modularity of Sequence Representation</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Keele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jennings</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Caulton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00222895.1995.9941696</idno>
+		<ptr target="https://doi.org/10.1080/00222895.1995.9941696" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Motor Behavior</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="17" to="30" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Anticipatory response control in motor sequence learning: Evidence from stimulus-response compatibility</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Koch</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.humov.2007.01.004</idno>
+		<ptr target="https://doi.org/10.1016/j.humov.2007.01.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Movement Science</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="257" to="274" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Logspline Density Estimation for Censored Data</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kooperberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Stone</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10618600.1992.10474588</idno>
+		<ptr target="https://doi.org/10.1080/10618600.1992.10474588" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="301" to="328" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Toward an instance theory of automatization</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Logan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">492</biblScope>
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The interplay between unexpected events and behavior in the development of explicit knowledge in implicit sequence learning</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lustig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-021-01630-2</idno>
+		<ptr target="https://doi.org/10.1007/s00426-021-01630-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="2225" to="2238" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Spatial attention and implicit sequence learning: Evidence for independent learning of spatial and nonspatial sequences</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Mayr</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.22.2.350</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.22.2.350" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="350" to="364" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Repetition learning is neither a continuous nor an implicit process</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Musfeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Souza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oberauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2218042120</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2218042120" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="issue">16</biblScope>
+			<biblScope unit="page">2218042120</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Attentional requirements of learning: Evidence from performance measures</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Nissen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bullemer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0010-0285(87)90002-8</idno>
+		<ptr target="https://doi.org/10.1016/0010-0285(87)90002-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="32" />
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Plummer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Workshop on Distributed Statistical Computing</title>
+		<meeting>the 3rd International Workshop on Distributed Statistical Computing</meeting>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="volume">124</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Vienna</surname></persName>
+		</author>
+		<ptr target="https://www.r-project.org/conferences/DSC-2003/Drafts/Plummer.pdf" />
+		<imprint>
+			<pubPlace>Austria</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">A theory of memory retrieval</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Review</title>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="59" to="108" />
+			<date type="published" when="1978">1978</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Diffusion Decision Model: Current Issues and History</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mckoon</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2016.01.007</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2016.01.007" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="260" to="281" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">The Emergence of Explicit Memory during Learning</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Büchel</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/cercor/bhq025</idno>
+		<ptr target="https://doi.org/10.1093/cercor/bhq025" />
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral Cortex</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2787" to="2797" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">How Incidental Sequence Learning Creates Reportable Knowledge: The Role of Unexpected Events</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rünger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0012942</idno>
+		<ptr target="https://doi.org/10.1037/a0012942" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology. Learning, Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1011" to="1026" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Hierarchical task representation: Task files and response selection</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hazeltine</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0963721416665085</idno>
+		<ptr target="https://doi.org/10.1177/0963721416665085" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Directions in Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="449" to="454" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Parallel response selection disrupts sequence learning under dual-task conditions</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schwarb</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">138</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">270</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Validation and Comparison of Non-Stationary Cognitive Models: A Diffusion Model Application</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Schumacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schnuerch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Radev</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/dg9zy</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/dg9zy" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Data-driven sequence learning or search: What are the prerequisites for the generation of explicit sequence knowledge?</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Schwager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rünger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gaschler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Frensch</surname></persName>
+		</author>
+		<idno type="DOI">10.2478/v10053-008-0110-4</idno>
+		<ptr target="https://doi.org/10.2478/v10053-008-0110-4" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="132" to="143" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Neural evidence of a role for spatial response selection in the learning of spatial sequences</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schwarb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.brainres.2008.09.097</idno>
+		<ptr target="https://doi.org/10.1016/j.brainres.2008.09.097" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Research</title>
+		<imprint>
+			<biblScope unit="volume">1247</biblScope>
+			<biblScope unit="page" from="114" to="125" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Implicit sequence learning is represented by stimulus-response rules</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schwarb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="677" to="688" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Generalized lessons about sequence learning from the study of the serial reaction time task</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schwarb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Schumacher</surname></persName>
+		</author>
+		<idno type="DOI">10.2478/v10053-008-0113-1</idno>
+		<ptr target="https://doi.org/10.2478/v10053-008-0113-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="165" to="178" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Attentional load and implicit sequence learning</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Shanks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Rowland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Ranger</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-004-0211-8</idno>
+		<ptr target="https://doi.org/10.1007/s00426-004-0211-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">5-6</biblScope>
+			<biblScope unit="page" from="369" to="382" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">A review of contemporary ideomotor theory</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">K</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Proctor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Capaldi</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0020541</idno>
+		<ptr target="https://doi.org/10.1037/a0020541" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">136</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">943</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Perceptual sequence learning in a serial reaction time task</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">V</forename><surname>Howard</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00221-008-1411-z</idno>
+		<ptr target="https://doi.org/10.1007/s00221-008-1411-z" />
+	</analytic>
+	<monogr>
+		<title level="j">Experimental Brain Research</title>
+		<imprint>
+			<biblScope unit="volume">189</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="145" to="158" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Modes of executive control in sequence learning: From stimulus-based to plan-based control</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tubau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hommel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>López-Moliner</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0096-3445.136.1.43</idno>
+		<ptr target="https://doi.org/10.1037/0096-3445.136.1.43" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">136</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="43" to="63" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Effector dependent sequence learning in the serial RT task</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">B</forename><surname>Verwey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Clegg</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00426-004-0181-x</idno>
+		<ptr target="https://doi.org/10.1007/s00426-004-0181-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Research</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="242" to="251" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">A cognitive framework for explaining serial processing and sequence execution strategies</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">B</forename><surname>Verwey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Shea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Wright</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13423-014-0773-4</idno>
+		<ptr target="https://doi.org/10.3758/s13423-014-0773-4" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="54" to="77" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Diffusion models in experimental psychology</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nagler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Lerche</surname></persName>
+		</author>
+		<idno type="DOI">10.1027/1618-3169/a000218</idno>
+		<ptr target="https://doi.org/10.1027/1618-3169/a000218" />
+	</analytic>
+	<monogr>
+		<title level="j">Experimental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="385" to="402" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Cognitive processes in associative and categorical priming: A diffusion model analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rothermund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wentura</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0029459</idno>
+		<ptr target="https://doi.org/10.1037/a0029459" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="536" to="559" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Separating response-execution bias from decision bias: Arguments for an additional parameter in Ratcliff&apos;s diffusion model</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Klauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1348/000711009X477581</idno>
+		<ptr target="https://doi.org/10.1348/000711009X477581" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Mathematical and Statistical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="539" to="555" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Methodological and empirical developments for the Ratcliff diffusion model of response times and accuracy</title>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Wagenmakers</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/09541440802205067</idno>
+		<ptr target="https://doi.org/10.1080/09541440802205067" />
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="641" to="671" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Bayesian hypothesis testing for psychologists: A tutorial on the Savage-Dickey method</title>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Wagenmakers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lodewyckx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kuriyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Grasman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2009.12.001</idno>
+		<ptr target="https://doi.org/10.1016/j.cogpsych.2009.12.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="158" to="189" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">The transition from implicit to explicit representations in incidental learning situations: More evidence from high-frequency EEG coupling</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Wessel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rose</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00221-011-2982-7</idno>
+		<ptr target="https://doi.org/10.1007/s00221-011-2982-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Experimental Brain Research</title>
+		<imprint>
+			<biblScope unit="volume">217</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="153" to="162" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Implicit motor sequence learning is not purely perceptual</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Willingham</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="561" to="572" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Dissociation in a serial response time task using a recognition measure: Comment on Perruchet and Amorim</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Willingham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Greeley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Bardone</surname></persName>
+		</author>
+		<ptr target="http://doi.apa.org/journals/xlm/19/6/1424.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">JOURNAL OF EXPERIMENTAL PSYCHOL-OGY LEARNING MEMORY AND COGNITION</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="1424" to="1424" />
+			<date type="published" when="1992">1993. 1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">On the development of procedural knowledge</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Willingham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Nissen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bullemer</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.15.6.1047</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.15.6.1047" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1047" to="1060" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Implicit motor sequence learning is represented in response locations</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Willingham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Wells</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Farrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Stemwedel</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03198552</idno>
+		<ptr target="https://doi.org/10.3758/BF03198552" />
+	</analytic>
+	<monogr>
+		<title level="j">Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="366" to="375" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Learning of event sequences is based on response-effect learning: Further evidence from a serial reaction task</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ziessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Nattkemper</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0278-7393.27.3.595</idno>
+		<ptr target="https://doi.org/10.1037/0278-7393.27.3.595" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, Memory, and Cognition</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="595" to="613" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
