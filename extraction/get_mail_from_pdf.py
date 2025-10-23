@@ -11,6 +11,15 @@ def get_mail_from_pdf(path):
     doc = PdfReader(path)
     regex_pattern = re.compile(pattern=r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', flags=re.IGNORECASE | re.MULTILINE | re.UNICODE)
 
+    # Pattern explained:
+    # \b                   Word boundary. Needed for it to work in a long text, makes sure the email is a 1 word. 
+    #[A-Za-z0-9._%+-]+     Local part: letters, numbers, dots, underscores, etc.
+    #@                     Literal @
+    #[A-Za-z0-9.-]+        Domain name: letters, numbers, dots, hyphens. Supports subdomains (like name@faculty.university.tld)
+    #\.                    Literal dot (escaped)
+    #[A-Za-z]{2,}          Top-level domain. at least 2 letters, maximum not specified
+    #\b                    Word boundary (clean end)
+
     article_emails = []
 
     for page in doc.pages:

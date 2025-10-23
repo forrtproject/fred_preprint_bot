@@ -17,7 +17,7 @@ class Sources(Enum):
 
 root_path = path.abspath("../data/preprints") # The default if the function is called from it's current position.
 
-def get_mails_from_all_pdfs(root_path):
+def get_mails_from_all_pdfs(root_path=path.abspath("../data/preprints")):
     file_name = "file.pdf" # This is a convension held by the preprint bot
 
     structure_that_holds_author_emails = {}
@@ -36,3 +36,5 @@ def get_mails_from_all_pdfs(root_path):
 
     with open('emails_from_pdf.json', 'w') as fp:
         json.dump(structure_that_holds_author_emails, fp)
+
+get_mails_from_all_pdfs()
