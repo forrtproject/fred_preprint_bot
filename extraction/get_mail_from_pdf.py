@@ -1,28 +1,15 @@
 import re
 from pypdf import PdfReader
 
-
 def get_emails_from_pdf(path):
     doc = PdfReader(path)
-    
+    regex_pattern = re.compile(pattern=r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', flags=re.IGNORECASE | re.MULTILINE | re.UNICODE)
 
-    emails = []
-    auth_email = r"^\\S+@\\S+\\.\\S+$"
-
+    article_emails = []
 
     for page in doc.pages:
-        text = page.extract_text()
-        # Find all matches of the pattern
-        page_matches = re.findall(auth_email, text, re.IGNORECASE)
-        
-        for match in page_matches:
-            emails.append(match)    
-    return emails 
+        page_text = page.extract_text()
+        page_matches = re.findall(regex_pattern, page_text)
+        article_emails.extend(page_matches)
 
-
-get_emails_from_pdf('tester.pdf')
-
-
-
-
-
+    return article_emails
