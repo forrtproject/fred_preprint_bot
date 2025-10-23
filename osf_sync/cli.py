@@ -1,6 +1,16 @@
 import argparse
 from osf_sync.celery_app import app
 
+def cmd_fetch_one(args):
+    from osf_sync.celery_app import app
+    if args.id:
+        r = app.send_task("osf_sync.tasks.sync_one_by_id",
+                          kwargs={"osf_id": args.id, "run_pdf_and_grobid": not args.metadata_only})
+    else:
+        r = app.send_task("osf_sync.tasks.sync_one_by_doi",
+                          kwargs={"doi_or_url": args.doi, "run_pdf_and_grobid": not args.metadata_only})
+    print("enqueued:", r.id)
+
 def cmd_sync_from_date(args):
     r = app.send_task("osf_sync.tasks.sync_from_date_to_now",
                       kwargs={"start_date": args.start, "subject_text": args.subject})
@@ -32,6 +42,13 @@ def main():
     p3 = sub.add_parser("enqueue-pdf")
     p3.add_argument("--limit", type=int, default=50)
     p3.set_defaults(func=cmd_enqueue_pdf)
+
+    p4 = sub.add_parser("fetch-one", help="Fetch one preprint by OSF id or DOI; optionally download PDF & run GROBID")
+    g = p4.add_mutually_exclusive_group(required=True)
+    g.add_argument("--id", help="OSF preprint id, e.g. 7wnsz_v2")
+    g.add_argument("--doi", help="DOI or https://doi.org/... link")
+    p4.add_argument("--metadata-only", action="store_true", help="Only upsert metadata; skip PDF & GROBID")
+    p4.set_defaults(func=cmd_fetch_one)
 
     args = p.parse_args()
     args.func(args)
