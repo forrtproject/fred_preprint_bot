@@ -2,32 +2,42 @@ import copy
 import json
 import requests
 from thefuzz import fuzz #TODO Add to requirements.txt
+import time
 
 # TODO - Multiple steps
-# 1. (Done) Get list of papers with the same title - with year, journal name, author name fields also selected
+# 1. Get list of papers with the same title - with year, journal name, author name fields also selected
 #  1.1. (Done) Case agnostic - already by default on openalex
-# 2. (Done) Filter by publication year (no querying the API again)
+#  1.2. TODO Some strange errors, "Invalid" reference, looks like it's splitting on punctuation?
+# 2. TODO Filter by publication year (need better querying of API)
 # 3. (Done) Fuzzy search by journal name (for abbreviations)
-# 4. Fuzzy search on authors (for initials and name order)
+# 4. TODO Fuzzy search on authors (for initials and name order) - Implement yourself, as Levenshtein alone won't work
+
+#TODO Test OpenAlex accuracy by querying on objects that have a DOI in input - after fixing querying problems
 
 # TODO Set a threshold via experimentation
 FUZZY_MATCH_THRESHOLD = 75
 
-def read_from_json(fname):
-    with open(fname, 'r') as f:
-        data = json.load(f)
-    reflist = data[0]['references']
-    preprint_data = copy.deepcopy(data[0]['preprint'])
-    preprint_data['file_path'] = data[0]['file_path']
-    return preprint_data, reflist
+test_mode = False
 
+# Populate a dictionary with values from the original e.g., if no match was found on OpenAlex
+def default_copy(orig, klist):
+    obj_dict = dict()
+    for key in klist:
+        if key == 'authors': # Need to do a deep copy for lists inside dictionaries
+            obj_dict[key] = copy.deepcopy(orig[key])
+        else:
+            obj_dict[key] = orig.get(key)
+    return obj_dict
+
+# Process the OpenAlex output into the format we want
 def parse_query_results(query_output):
     #print(query_output)
     try:
         info = query_output['results']
         parsed_list = []
         if len(info) == 0:
-            print('No results found on OpenAlex...')
+            #print('No results found on OpenAlex...')
+            return []
         for result in info:
             #print(result)
             obj_dict = dict()
@@ -56,18 +66,24 @@ def parse_query_results(query_output):
     except KeyError:
         etyp = query_output['error']
         emsg = query_output['message']
-        print('ERROR: Could not retrieve results from Open Alex!')
-        print(etyp, emsg)
+        #print('ERROR: Could not retrieve results from OpenAlex!')
+        #print(etyp, emsg)
         return []
 
 def match_title_and_year(title,year):
     url = 'https://api.openalex.org/works?filter=title.search:"{title}"&mailto=nid@dmi.dk'.format(title=title, year=year) #TODO Generic email
     #print(url)
     #TODO Paging (returns max 25 results otherwise)
-    res = requests.get(url).json()
-    #print(res)
-    title_matches = parse_query_results(res)
-    return title_matches
+    response = requests.get(url)
+    try:
+        res = response.json()
+        #print(response.elapsed.total_seconds())
+        #print(res)
+        title_matches = parse_query_results(res)
+        return title_matches
+    except json.decoder.JSONDecodeError:
+        print(response)
+        return []
 
 def match_year(title_matches, year):
     year_matches = []
@@ -122,60 +138,63 @@ def fuzzy_match_authors(journal_matches, author_list):
 fname = '../data/preprints_with_references.json' #TODO better folder traversal
 fout = '../data/openalex_doi_matched_preprints_with_references.json'
 
-dat, reflist = read_from_json(fname)
+with open(fname, 'r') as f:
+    data = json.load(f)
 
-final_data = dict()
+parsed_data = []
 
-if (dat['has_doi'] == False) or (dat['doi'] == 'null'):
-    preprint_match = match_title_and_year(dat['title'], dat['published_date'])
-    if len(preprint_match) == 0:
-        final_data['title'] = dat['title']
-        final_data['author'] = dat['authors']
-        final_data['journal'] = None
-        final_data['published_date'] = dat['published_date']
-        final_data['doi'] = None
-    else:
-        final_data = copy.deepcopy(preprint_match[0]) #TODO Same as below, check which result has a DOI
-else:
-    final_data['title'] = dat['title']
-    final_data['author'] = dat['authors']
-    final_data['journal'] = None
-    final_data['published_date'] = dat['published_date']
-    final_data['doi'] = dat['doi']
+ctr = 0
 
-ref_doi = []
-for ref in reflist:
-    tm = dict()
-    tm['ref_id'] = ref['ref_id']
-    if ref['has_doi']:
-        tm['title'] = ref['title']
-        tm['author'] = copy.deepcopy(ref['authors'])
-        tm['year'] = ref['year']
-        tm['journal'] = ref['journal']
-        tm['doi'] = ref['doi']
-    else:
-        title_matches = match_title_and_year(ref['title'], ref['year'])
-        #print(ref['title'], len(title_matches))
-        if len(title_matches) > 0:
-            tm0 = title_matches[0]
-            if tm0['doi'] is None:
-                for pm in title_matches[1:]:
-                    if pm['doi'] is not None:
-                        tm0 = pm
-            for key in tm0:
-                tm[key] = tm0[key]
+for doc in data:
+    print(doc['preprint']['title'])
+    reflist = doc['references']
+    preprint_data = copy.deepcopy(doc['preprint'])
+    preprint_data['file_path'] = doc['file_path']
+    
+    final_data = dict()
+
+    preprint_key_list = ['doi', 'title', 'authors', 'journal', 'published_date']
+    references_key_list = ['ref_id', 'doi', 'title', 'authors', 'journal', 'year']
+
+    if (preprint_data['has_doi'] == False) or (preprint_data['doi'] == 'null'):
+        preprint_match = match_title_and_year(preprint_data['title'], preprint_data['published_date'])
+        if len(preprint_match) == 0:
+            final_data = default_copy(preprint_data, preprint_key_list)
         else:
-            tm['title'] = ref['title']
-            tm['author'] = copy.deepcopy(ref['authors'])
-            tm['year'] = ref['year']
-            tm['journal'] = ref['journal']
-            tm['doi'] = ref['doi']
-    ref_doi.append(tm)
+            final_data = copy.deepcopy(preprint_match[0]) # TODO Multiple results from OpenAlex?
+    else:
+        if not test_mode: # If we are not testing, then do not waste time querying OpenAlex
+            final_data = default_copy(preprint_data, preprint_key_list)
 
-final_data['references'] = ref_doi
+    ref_doi = []
+    for ref in reflist:
+        tm = dict()
+        tm['ref_id'] = ref['ref_id']
+        if ref['has_doi']:
+            if not test_mode:
+                tm = default_copy(ref, references_key_list)
+        else:
+            title_matches = match_title_and_year(ref['title'], ref['year'])
+            #print(ref['title'], len(title_matches))
+            if len(title_matches) > 0:
+                tm0 = title_matches[0]
+                if tm0['doi'] is None:
+                    for pm in title_matches[1:]:
+                        if pm['doi'] is not None:
+                            tm0 = pm
+                for key in tm0:
+                    tm[key] = tm0[key]
+            else:
+                tm = default_copy(ref, references_key_list)
+        ref_doi.append(tm)
+
+    #print(type(final_data))
+    final_data['references'] = ref_doi
+    parsed_data.append(final_data)
+    ctr = ctr + 1
 
 with open(fout, 'w') as f:
-    json.dump(final_data, f)
+    json.dump(parsed_data, f)
 
 
 #title_matches = match_title_and_year("cancer", 2021) # TODO read from json
