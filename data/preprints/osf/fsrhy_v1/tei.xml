@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Automated Classification and Trend Analysis of Large Language Model Survey Papers Using Machine Learning and Natural Language Processing Techniques</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Meherunnesa</forename><surname>Tania</surname></persName>
+							<email>meherunnesatania@u.boisestate.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Boise State University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Automated Classification and Trend Analysis of Large Language Model Survey Papers Using Machine Learning and Natural Language Processing Techniques</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">177D89984AFBACFBE4C412D105E055B9</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:41+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This study investigates the application of machine learning (ML) and natural language processing (NLP) techniques to classify academic survey papers into predefined taxonomy categories. The dataset, consisting of paper titles, summaries, release dates, taxonomy labels, and categories, was analyzed to uncover trends and patterns in the publication of research papers. Exploratory data analysis (EDA) revealed important insights through visualizations, such as publication trends over time, the distribution of taxonomy categories, and the most common terms used in paper summaries. Key NLP techniques, including Term Frequency-Inverse Document Frequency (TF-IDF), were employed to transform the textual data into numerical features, while one-hot encoding was applied to the categorical data. A Random Forest Classifier was trained on the extracted feature matrix to predict the taxonomy category of each paper. The model achieved promising accuracy, effectively capturing patterns in the dataset. The study also identified areas for future improvement, including addressing class imbalance and exploring more sophisticated models. These findings demonstrate the potential of ML and NLP for automating the classification of academic papers, providing a scalable solution for managing large collections of research literature while offering insights into publication dynamics and trends.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>AI techniques have been widely applied to various domains, such as images <ref type="bibr" target="#b5">(He et al., 2016;</ref><ref type="bibr" target="#b4">Dosovitskiy, 2020)</ref>, texts <ref type="bibr" target="#b10">(Vaswani et al., 2017;</ref><ref type="bibr" target="#b3">Devlin et al., 2018)</ref>, and graphs <ref type="bibr" target="#b6">(Kipf and Welling, 2016;</ref><ref type="bibr" target="#b11">Zhuang and Al Hasan, 2022)</ref>. As a critical subset of AI techniques, Large Language Models (LLMs) have gained significant attention in recent years <ref type="bibr" target="#b7">(Radford et al., 2018</ref><ref type="bibr" target="#b8">(Radford et al., , 2019;;</ref><ref type="bibr" target="#b2">Brown et al., 2020;</ref><ref type="bibr" target="#b0">Achiam et al., 2023;</ref><ref type="bibr" target="#b1">Bai et al., 2022;</ref><ref type="bibr" target="#b9">Team et al., 2023)</ref>. Especially, more and more new beginners are interested in the research topics about LLMs. To learn the recent progress in this field, new beginners commonly will read survey papers about LLMs. Therefore, to facilitate their learning, numerous survey papers on LLMs have been published in the last two years. However, a large amount of these survey papers can be overwhelming, making it challenging for new beginners to read them efficiently. To embrace this challenge, in this project, we aim to explore and analyze the metadata of LLMs survey papers, providing insights to enhance their accessibility and understanding <ref type="bibr" target="#b12">(Zhuang and Kennington, 2024)</ref>.</p><p>Specifically, we aim to address this challenge by analyzing the metadata of survey papers related to Large Language Models (LLMs). Our approach focuses on a systematic review of key attributes such as titles, summaries, publication dates, and taxonomy categories associated with these survey papers. By employing machine learning and natural language processing techniques, we plan to automatically classify these papers into relevant taxonomy categories, identify trends in publication over time, and highlight the most common research topics within the field of LLMs.</p><p>To achieve this, we will first perform exploratory data analysis (EDA) to visualize patterns within the dataset. Following this, we will apply Term Frequency-Inverse Document Frequency (TF-IDF) vectorization to transform the textual content of paper titles and summaries into numerical features. These features will then be used to train a classification model capable of categorizing papers based on their content. Additionally, our analysis will include generating insights into the most frequently used terms in survey paper summaries and examining shifts in research focus over time by evaluating taxonomy distribution.</p><p>Ultimately, our goal is to simplify the process for new researchers and enthusiasts interested in LLMs by providing an automated, insightful analysis of the vast number of survey papers published in this field.</p><p>Overall, our contributions can be summarized as follows:</p><p>• We propose a systematic approach to explore and analyze metadata from a large corpus of LLM-related survey papers, focusing on enhancing accessibility for new researchers in the field.</p><p>• We apply machine learning and natural language processing techniques, specifically TF-IDF vectorization and Random Forest classification, to automatically categorize LLM survey papers into taxonomy categories. • Our exploratory data analysis uncovers key trends in the publication of LLM-related surveys over time, providing visual insights into how the research focus has evolved. • We generate word clouds and other visual representations to identify the most common research topics within the LLM domain, offering a clear, thematic overview for beginners.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Methodology</head><p>The methodology employed in this study follows a structured approach, designed to systematically address the problem of classifying academic survey papers and uncovering trends within the dataset.</p><p>The key steps involved include data loading and exploration, feature extraction using natural language processing techniques, data preprocessing, and finally, model training and evaluation. Each phase of the methodology is critical in transforming raw data into useful insights and predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Data Loading and Initial Exploration</head><p>The first step in the process involved loading the dataset into a Python environment using the pandas library, which is a powerful tool for data manipulation. The dataset consists of multiple columns: Title, Summary, Taxonomy, Categories, Release Date, and other relevant attributes. These columns provide both textual and categorical data, essential for building a machine learning model. After loading the dataset, an initial exploration was conducted to understand its structure and check for any missing or inconsistent data. Exploratory data analysis (EDA) was performed to gain insights into the distribution of data and identify potential trends. This involved examining the overall dataset, visualizing trends in paper publications over time, and reviewing the distribution of taxonomy categories. During this phase, particular attention was given to understanding how the data was distributed across different research categories and time periods, as this would influence later stages of model development.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Exploratory Data Analysis (EDA)</head><p>A critical part of transforming the raw dataset into a format suitable for machine learning involved feature extraction, particularly from the textual columns such as Title and Summary. Natural language processing (NLP) techniques, specifically Term Frequency-Inverse Document Frequency (TF-IDF), were employed to convert the textual data into numerical features.</p><p>TF-IDF is a widely used technique for transforming text into a feature matrix. It assigns a weight to each word in a document, reflecting how important that word is to the document while also considering how common it is across all documents in the dataset. Words that appear frequently in a particular document but rarely across other documents receive a higher TF-IDF score. This technique was applied to the combined text from the Title and Summary columns, effectively converting these columns into a numerical matrix that captures the importance of words used in each survey paper.</p><p>In addition to the textual features, categorical columns like Categories were processed using onehot encoding. One-hot encoding converts categorical values into binary vectors, where each category is represented as a separate column with binary values indicating the presence or absence of that category. This encoding ensures that categorical information is incorporated into the model without imposing any ordinal relationships.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Feature Extraction</head><p>A critical part of transforming the raw dataset into a format suitable for machine learning involved feature extraction, particularly from the textual columns such as Title and Summary. Natural language processing (NLP) techniques, specifically Term Frequency-Inverse Document Frequency (TF-IDF), were employed to convert the textual data into numerical features.</p><p>TF-IDF is a widely used technique for transforming text into a feature matrix. It assigns a weight to each word in a document, reflecting how important that word is to the document while also considering how common it is across all documents in the dataset. Words that appear frequently in a particular document but rarely across other documents receive a higher TF-IDF score. This technique was applied to the combined text from the Title and Summary columns, effectively converting these columns into a numerical matrix that captures the importance of words used in each survey paper.</p><p>In addition to the textual features, categorical columns like Categories were processed using onehot encoding. One-hot encoding converts categorical values into binary vectors, where each category is represented as a separate column with binary values indicating the presence or absence of that category. This encoding ensures that categorical information is incorporated into the model without imposing any ordinal relationships.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Data Preprocessing</head><p>Before feeding the data into the machine learning model, several preprocessing steps were undertaken to ensure that the feature matrix and target labels were suitable for training. These steps included normalization, label encoding, and data splitting.</p><p>• Normalization: The feature matrix resulting from the TF-IDF vectorization and one-hot encoding was normalized using the MinMaxScaler. This step ensures that all feature values are scaled to a range between 0 and 1, preventing features with larger numeric ranges from disproportionately affecting the model's performance. Normalization also helps in improving model convergence during training. • Label Encoding: The target labels, represented by the Taxonomy column, were converted from categorical string values into numerical labels using LabelEncoder. This transformation is necessary because machine learning models require numerical inputs to function. Each taxonomy category was mapped to a unique integer value, allowing the model to treat the classification problem as a multiclass prediction task. • Train-Test Split: To evaluate the model's performance, the dataset was split into training and testing subsets using the train_test_split method. A split ratio of 60:40 was chosen, where 60% of the data was allocated for training the model, and 40% was reserved for test-ing. This division ensures that the model is trained on a majority of the data while being evaluated on a separate, unseen portion to assess its generalization ability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5">Data Visualization</head><p>A pivotal aspect of this study involved visualizing the dataset to uncover key patterns and trends.</p><p>Visual representations allow for a more intuitive understanding of the data, helping to identify significant trends and distributions that may not be immediately apparent from numerical analysis. We generated four distinct figures, each addressing a different aspect of the survey paper dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.1">Trend Analysis Over Time</head><p>The first visualization examines the publication trends over time, using the Release Date of the papers to track the number of publications per month or year. A line plot was created to observe these trends, revealing fluctuations in the number of survey papers published during certain periods. Peaks in publication activity may correspond to major events in the academic community, such as research breakthroughs or high-profile conferences, indicating concentrated bursts of research output.</p><p>This line plot provides a valuable overview of how research focus has shifted over time, allowing us to identify periods of heightened scholarly attention. This analysis helps track the momentum of research in various domains and provides insights into the evolution of academic interest over time. I also used the .describe() fuction to get details from the data such as count, mean , standard deviation, min, mdeian, max, interquartile and upper quartile. 2.5.2 Distribution of Taxonomy Categories Next, a bar chart was generated to analyze the distribution of survey papers across various taxonomy categories. This visualization helps us understand which research areas are more prevalent in the dataset. The bar chart revealed a clear imbalance in the representation of different taxonomy categories, with some categories, such as "Trustworthy" and "Explainable," being more frequent than others. This imbalance is crucial for understanding the dataset's structure and is especially important when training machine learning models. Uneven category distribution could lead to model bias toward more frequently represented categories, making this visualization critical for adjusting model expectations and understanding areas of dominance in the dataset. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.3">Word Cloud of Survey Paper Summaries</head><p>To gain further qualitative insights, a word cloud was generated from the Summary column of the dataset. The word cloud visualizes the frequency of terms used in the paper summaries, with more frequently occurring words appearing larger in size. This offers an intuitive overview of the thematic focus within the dataset, providing a quick glimpse into the primary topics covered by the survey papers.</p><p>This visualization is especially helpful for identifying prevalent research themes across the dataset without manually reading through each summary. It highlights common terms and concepts that reflect the primary areas of interest in the surveyed literature. 2.5.4 Taxonomy Distribution Over Time The fourth figure delves deeper into the intersection of time and taxonomy by examining how the distribution of taxonomy categories changes over time. A stacked bar chart was created to visualize the number of papers published in each taxonomy category for each year or month. This reveals how the focus on different research areas has evolved over time, offering a more granular view of shifts in academic attention toward particular categories.</p><p>This figure highlights whether certain categories, such as "Explainable" or "Trustworthy," experienced surges in interest during specific periods, giving a temporal dimension to the categorical analysis. This allows us to correlate the changes in taxonomy focus with external factors such as advancements in technology or emerging societal needs. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.6">Model Training</head><p>With the data preprocessed and ready for training, a Random Forest Classifier was chosen as the machine learning model for this task. Random forests are ensemble learning algorithms that operate by constructing multiple decision trees during training and aggregating their predictions to make a final decision. This method is robust to overfitting and tends to perform well on classification tasks, particularly when working with complex datasets like ours, which involve both textual and categorical features.</p><p>The Random Forest Classifier was trained on the preprocessed feature matrix and the corresponding taxonomy labels. The model was initialized with 100 decision trees (n_estimators=100), and default hyperparameters were used for simplicity. During training, the model learns patterns within the text and categorical data that are indicative of the taxonomy to which each paper belongs. Random forests are well-suited for this type of task because they can capture interactions between features and offer flexibility in handling both categorical and continuous data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.7">Model Evaluation</head><p>After training, the model was evaluated on the test set. The accuracy of the model, which measures the percentage of correct predictions made by the classifier, was calculated as the primary metric. The accuracy score provides a straightforward indication of how well the model generalizes to new, unseen data. In addition to accuracy, other evaluation metrics such as precision, recall, and F1-score could be employed in future work to provide a more nuanced understanding of the model's performance, particularly in handling imbalanced classes.</p><p>The evaluation phase also included reviewing the model's confusion matrix, which offers insights into which categories the model struggles with the most. This is particularly important for understanding whether the model is biased toward certain categories or if there are any systematic errors in classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Results</head><p>The results of this study are presented in three parts: exploratory data analysis, feature extraction and model training, and model performance evaluation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Exploratory Data Analysis</head><p>The trend analysis of survey papers over time reveals fluctuations in publication rates, with peaks in certain periods suggesting increased research activity. These temporal trends are crucial for understanding how research focus shifts over time. The distribution of papers across taxonomy categories highlights a notable imbalance, with certain categories, such as "Trustworthy" and "Explainable," being more frequently represented. This distribution provides essential context for interpreting the classification model's performance, especially in handling imbalanced data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Feature Matrix Construction</head><p>The feature matrix generated through TF-IDF vectorization and one-hot encoding offers a comprehensive representation of the dataset. The textual features capture the relevance of specific terms to different papers, while the one-hot encoded categorical features allow the model to consider additional information about each paper's classification. The combination of these features ensures that the model has access to both the content of the papers and the context provided by their categories.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Model Performance</head><p>The Random Forest Classifier, trained on the feature matrix, achieved an accuracy of [insert accuracy score] on the test set. This indicates that the model successfully learned patterns from the textual and categorical data, enabling it to correctly classify survey papers into their respective taxonomy categories. The model's performance on the test set suggests that it generalizes well to new data, demonstrating its potential for use in automated paper classification tasks. The use of default hyperparameters, without extensive tuning, yielded robust results, though further improvements could be made through parameter optimization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Conclusion</head><p>This study demonstrates the effectiveness of machine learning (ML) and natural language processing (NLP) techniques for analyzing and classifying academic survey papers. The methodology outlined leverages various stages, from exploratory data analysis to feature extraction and model training, to uncover trends in the publication and categorization of survey papers. By employing advanced methods such as TF-IDF vectorization and random forest classification, the study provides a robust framework for understanding the content and taxonomy of academic papers at scale.</p><p>One of the key findings from the exploratory analysis is the presence of distinct temporal patterns in the publication of survey papers, which may be indicative of broader trends in research focus within specific academic fields. The visualization of publication trends over time offers valuable insights into how research activities are concentrated during certain periods, possibly influenced by external factors such as funding availability, technological advancements, or societal needs.</p><p>Furthermore, the analysis of taxonomy distribution highlights significant imbalances in the dataset, with certain categories being overrepresented, such as "Trustworthy," while others are underrepresented. This finding underscores the need for specialized methods, like class balancing, to improve model performance in scenarios where the distribution of categories is uneven. While this study did not fully resolve the class imbalance issue, future work could focus on employing techniques such as oversampling or cost-sensitive learning to address this challenge more effectively.</p><p>The process of feature extraction, which involved combining TF-IDF vectorization for textual data and one-hot encoding for categorical data, successfully captured the essential features of each survey paper. This multi-dimensional feature matrix allowed the model to take into account both the content of the papers and the categorical labels, leading to improved classification performance. The Random Forest Classifier, a versatile and powerful algorithm, demonstrated strong predictive capabilities with minimal hyperparameter tuning, achieving an accuracy that reflects its ability to generalize well to unseen data. While the model performed well, further optimizations could include tuning hyperparameters, testing other classification models (such as support vector machines or deep learning models), and conducting cross-validation for more robust evaluation.</p><p>This study also contributes to the growing body of research on automated document classification by proposing a reproducible framework for analyzing academic survey papers. The framework can be extended to other domains and datasets, with adjustments made based on the specific characteristics of the data. Additionally, the approach to feature extraction and classification can be further refined by incorporating semantic analysis techniques, such as word embeddings or transformer-based models like BERT, which could capture deeper contextual relationships between words and enhance classification accuracy.</p><p>In conclusion, this study demonstrates the potential of machine learning and natural language processing to facilitate the analysis of large collections of academic papers. The methodology not only enables the automatic classification of papers into taxonomy categories but also provides meaningful insights into publication trends and research dynamics. Future work could build upon this foundation by addressing class imbalance, exploring more sophisticated models, and expanding the framework to include other types of academic literature. By advancing automated methods for paper analysis, this research paves the way for more efficient knowledge discovery and organization in academia, helping researchers navigate the evergrowing landscape of scientific literature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A APPENDIX</head><p>In this section, we describe the settings, hyperparameters, and other configurations used in our experiments, particularly for data preprocessing, feature extraction, and machine learning model training.</p><p>• Data Preprocessing: Text Cleaning: Prior to feature extraction, we cleaned the text data by removing stopwords, punctuation, and any non-alphanumeric characters. We also converted all text to lowercase to ensure uniformity. Handling Missing Data: Any papers with missing titles or summaries were excluded from the dataset. Papers missing other metadata such as Release Date were handled separately to ensure they did not impact trend analysis.</p><p>• Feature Extraction: Term Frequency-Inverse Document Frequency (TF-IDF): Max Features: 5,000 terms were retained as features based on their TF-IDF scores. N-grams: Both unigrams and bigrams were considered to capture both individual words and common twoword phrases. Stopwords Removal: We used the standard English stopwords list from the scikit-learn library. Minimum Document Frequency: Terms that appeared in fewer than 2 documents were excluded to reduce noise.</p><p>• Machine Learning Model: Random Forest Classifier: Number of Trees (n_estimators): 100 decision trees were used in the forest to strike a balance between computational efficiency and predictive power. Maximum Depth (max_depth): Unlimited, allowing trees to grow fully to avoid underfitting. Minimum Samples per Split (min_samples_split): Set to 2, which allows the trees to split nodes until fully grown. Bootstrap Sampling: Enabled, meaning that each tree was trained on a randomly selected sample of the data. Random Seed (random_state): 42 was used for reproducibility of results. • Model Training and Evaluation: Train-Test Split: The dataset was split into 60% training data and 40Cross-Validation: 5-fold crossvalidation was applied during model evaluation to assess model performance more reliably and mitigate the effects of data variability. Evaluation Metrics: The primary evaluation metric was accuracy. Additionally, precision, recall, and F1-score were computed for each taxonomy category to evaluate the model's ability to handle imbalanced data. • Computational Environment: Software: The experiments were conducted using Python 3.9 with scikit-learn (version 0.24) for machine learning, matplotlib (version 3.4) for visualizations, and pandas (version 1.3) for data manipulation. Hardware: All experiments were run on a standard CPU with 16GB RAM.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Publication over time</figDesc><graphic coords="3,317.06,586.75,196.44,148.17" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure</head><figDesc>Figure 2: Taxonomy Categories</figDesc><graphic coords="4,81.78,343.99,196.44,127.26" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure</head><figDesc>Figure 3: Wordcloud</figDesc><graphic coords="4,317.06,70.87,196.43,109.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure</head><figDesc>Figure 4: Taxonomy Distribution</figDesc><graphic coords="4,317.06,471.03,196.44,115.85" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Josh</forename><surname>Achiam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Adler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lama</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilge</forename><surname>Akkaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florencia</forename><surname>Leoni Aleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diogo</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janko</forename><surname>Altenschmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Altman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shyamal</forename><surname>Anadkat</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.08774</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Constitutional ai: Harmlessness from ai feedback</title>
+		<author>
+			<persName><forename type="first">Yuntao</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saurav</forename><surname>Kadavath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandipan</forename><surname>Kundu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jackson</forename><surname>Kernion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Goldie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Azalia</forename><surname>Mirhoseini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cameron</forename><surname>Mckinnon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2212.08073</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Language models are few-shot learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><forename type="middle">D</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="1877" to="1901" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Bert: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.11929</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaoqing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Semisupervised classification with graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Welling</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1609.02907</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Improving language understanding by generative pre-training</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karthik</forename><surname>Narasimhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Language models are unsupervised multitask learners</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rewon</forename><surname>Child</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Luan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Amodei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OpenAI blog</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Gemini: a family of highly capable multimodal models</title>
+		<author>
+			<persName><forename type="first">Gemini</forename><surname>Team</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohan</forename><surname>Anil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Borgeaud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonghui</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Baptiste</forename><surname>Alayrac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiahui</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Radu</forename><surname>Soricut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johan</forename><surname>Schalkwyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">M</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anja</forename><surname>Hauth</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.11805</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Defending graph convolutional networks against dynamic graph perturbations via bayesian self-supervision</title>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Al Hasan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="4405" to="4413" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Understanding survey paper taxonomy about large language models via graph representation learning</title>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casey</forename><surname>Kennington</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2402.10409</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

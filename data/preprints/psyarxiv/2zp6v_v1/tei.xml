@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Distinguishing the attentional mechanisms of distinct mindfulness states: A computational modeling comparison of focused attention and open monitoring</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Yanli</forename><surname>Lin</surname></persName>
+							<email>yanlil@uark.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychological Science</orgName>
+								<orgName type="institution">University of Arkansas</orgName>
+								<address>
+									<settlement>Fayetteville</settlement>
+									<region>Arkansas</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Grant</forename><forename type="middle">S</forename><surname>Shields</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychological Science</orgName>
+								<orgName type="institution">University of Arkansas</orgName>
+								<address>
+									<settlement>Fayetteville</settlement>
+									<region>Arkansas</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Psychological Science</orgName>
+								<orgName type="institution">University of Arkansas</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Distinguishing the attentional mechanisms of distinct mindfulness states: A computational modeling comparison of focused attention and open monitoring</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">A9B90F35D065EDA2A81156B2D88A90A5</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:18+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>mindfulness</term>
+					<term>attention</term>
+					<term>attentional control</term>
+					<term>shrinking spotlight</term>
+					<term>focused attention</term>
+					<term>open monitoring</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Objectives: Focused Attention (FA) and Open Monitoring (OM) meditation are theorized to confer distinct neurobehavioral influences, yet the specific cognitive mechanisms underlying these effects remain poorly understood. This study leveraged computational modeling to formally test and distinguish how these two distinctive mindfulness states modulate theoretical processes of attention control. Methods: Specifically, we analyzed flanker task data from a prior study in which twenty-nine novice non-meditating participants completed a fully within-subject crossover protocol, involving brief state inductions of FA, OM, and active control. We then fit a Shrinking Spotlight (SSP) computational model to quantify parameters of attentional scope, decision thresholds, and non-decision related processing. Results: As hypothesized, FA decreased the maximum "width" of the attentional spotlight compared to both OM and control conditions (ts &gt; |8.43|, ps &lt; .001), while slowing the rate of narrowing (ts &gt; |7.29|, ps &lt; .001). In contrast, open monitoring accelerated the rate of attention narrowing (t(82) = 2.18, p = .032) and increased nondecision time (ts &gt; 2.01, ps &lt; .048). Conclusions: These results indicate that FA narrows attentional scope, possibly reducing initial distraction but with limitations to rapidly recalibrate attention beyond the initial scope of focus. In contrast, OM appears to improve the speed of selecting relevant targets, while slowing the speed of perceptual-motor encoding and motor execution. Together, these findings provide model-based evidence for the distinct attentional mechanisms of FA and OM and illustrate the utility of computational cognitive modeling for testing key theories within mindfulness science.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Scientific interest in mindfulness, broadly defined as intentional nonjudgmental awareness of present momentary experience <ref type="bibr">(Bishop et al., 2004;</ref><ref type="bibr">Kabat-Zinn, 1990)</ref>, has surged in recent decades, with a significant portion of investigative enthusiasm centering on how mindfulness training might influence, and potentially benefit, fundamental cognitive functions (e.g., <ref type="bibr">Chiesa et al., 2011;</ref><ref type="bibr">Lin et al., 2022;</ref><ref type="bibr">Whitfield et al., 2022)</ref>. Central to the practice of mindfulness are two distinct, yet often complementary, meditation techniques: focused attention (FA) and open monitoring (OM). Briefly, FA involves deliberately sustaining attention on a chosen target object (e.g., the breath), with continuous redirection whenever mind wandering is detected; whereas OM cultivates open non-reactive monitoring of mental and sensory experiences (e.g., thoughts, feelings, physical sensations) as they naturally arise <ref type="bibr">(Britton et al., 2018;</ref><ref type="bibr" target="#b12">Lutz et al., 2008</ref><ref type="bibr" target="#b11">Lutz et al., , 2015))</ref>.</p><p>Although these practices have become increasingly well differentiated from both theoretical and empirical perspectives <ref type="bibr">(Brown et al., 2022;</ref><ref type="bibr" target="#b3">Fox et al., 2016;</ref><ref type="bibr">Lin, White, Viravan, et al., 2024;</ref><ref type="bibr" target="#b8">Lin, White, Wu, et al., 2024;</ref><ref type="bibr" target="#b10">Lohani et al., 2020;</ref><ref type="bibr" target="#b13">Manna et al., 2010)</ref>, the precise mechanisms through which FA and OM exert their cognitive effects remain poorly understood and in need of further investigation.</p><p>A key limitation maintaining this knowledge gap is that traditional behavioral measures (e.g., accuracy, reaction time), while informative for assessing mindfulness effects on various domains of cognition, often fail to adequately capture the underlying processes that give rise to observed behavior. Aimed directly at remediating such problems, computational modeling offers a powerful method to formalize mechanistic theories of cognition into mathematical expressions, enabling latent parameter estimation to quantify the distinct contributions of specific cognitive processes (e.g., evidence accumulation, decision boundaries, attention allocation) on task performance <ref type="bibr" target="#b2">(Farrell &amp; Lewandowsky, 2018;</ref><ref type="bibr" target="#b15">Ratcliff et al., 2016;</ref><ref type="bibr" target="#b14">Ratcliff &amp; McKoon, 2008)</ref>. In light of these advantages, there have been explicit calls (see <ref type="bibr" target="#b20">van Vugt et al., 2019)</ref> and increasing interest to harness the significant potential of computational modeling within the context of mindfulness research. Consequently, various drift diffusion models (DDM) for example, have been applied to investigate how mindfulness modulates key decision-making parameters such decision thresholds, evidence accumulation rate, and learning <ref type="bibr" target="#b4">(Golubickis et al., 2024;</ref><ref type="bibr" target="#b18">van Vugt &amp; Jha, 2011;</ref><ref type="bibr" target="#b19">van Vugt &amp; van den Hurk, 2017)</ref>. Although these studies showcase the utility of the approach, applying computational modeling to advance the cognitive science of mindfulness, including differentiation of FA and OM, remains in its earliest stages, with many investigative possibilities and promising models left unexplored. Indeed, although DDM is useful for probing decision-level processes, the key theoretical distinctions between FA and OM often center around the scope and object of attention <ref type="bibr" target="#b12">(Lutz et al., 2008</ref><ref type="bibr" target="#b11">(Lutz et al., , 2015))</ref>. Therefore, alternative models designed specifically to assess attentional processes may prove exceptionally fruitful toward distinguishing the cognitive mechanisms of FA and OM.</p><p>One promising possibility is the shrinking spotlight, a class of models that conceptualizes attention as a visuospatial spotlight which can vary in scope and processing intensity <ref type="bibr" target="#b22">(White et al., 2011;</ref><ref type="bibr" target="#b21">White &amp; Curl, 2018)</ref>. A narrower spotlight is theorized to enhance information processing at the attended location but may fail to capture peripheral items, while a broader spotlight can hold more information simultaneously, though at the potential expense of diminished processing resolution for any subset of attended items. Critically, these defining characteristics of the shrinking spotlight model align remarkably well with the hypothesized attentional properties of FA and OM. FA, with its namesake emphasis on sustained focus, has been theorized to cultivate a narrower scope of attention, possibly leading to enhanced processing of target stimuli while decreasing the response potency of distractors <ref type="bibr" target="#b12">(Lutz et al., 2008</ref><ref type="bibr" target="#b11">(Lutz et al., , 2015;;</ref><ref type="bibr" target="#b17">Ullrich et al., 2021)</ref>. Conversely, OM, characterized by open awareness, is thought to foster a wider attentional spotlight, allowing for more diffuse processing of a broader range of internal and external stimuli. Despite the natural linkage and clear conceptual overlap, to our knowledge, the shrinking spotlight or other related computational models have yet to be implemented to empirically test the putative differences in visual attention processing between FA and OM.</p><p>The present study aims to address this missed opportunity by fitting an adapted version of the shrinking spotlight model to flanker task data collected from a recently completed study that directly manipulated and compared the neurobehavioral effects of FA and OM using a fully withinsubject state induction design <ref type="bibr">(Lin, White, Viravan, et al., 2024)</ref>. Briefly, the parent study found that OM selectively induced a more cautious and intentional response style, characterized by higher accuracy, slower reaction times (RTs), and reduced P3 amplitude; whereas FA did not produce the hypothesized reduction in flanker interference effects. Although these results illustrate the neurocognitive distinctions between FA and OM, computational modeling approaches may be better suited to capture the subtle attentional processes that may further distinguish FA vs. OM effects on task performance. Consequently, by fitting the shrinking spotlight model to the data, we sought to elucidate for the first time how these distinct mindfulness states may differentially modulate the dynamics of attentional scope and information processing.</p><p>Expanding upon the conceptual framework outlined above, we hypothesized that the FA state, relative to OM and an active control condition, would be selectively characterized by model parameters indicative of a narrower attentional spotlight; in contrast, we hypothesized that the OM state would be uniquely associated with parameters suggestive of a broader attentional spotlight coupled with greater response caution. Ultimately, by elucidating the specific attention processes modulated by the FA and OM, the current study aims to directly test long-held theoretical distinctions between these foundational mindfulness states and practices, while simultaneously advancing the application of computational modeling approaches toward understanding mindfulness effects on human cognition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>Thirty healthy, mindfulness naïve, fluent or native English-speaking participants were recruited and enrolled in the study. As reported previously, one participant was excluded from all analyses due to repeated failure to comply with task instructions, resulting in a final sample of twenty-nine participants (17 females, 12 males, Mage = 20.72 years, SDage = 4.04 years). Moreover, two sessions of data (one each from two participants) were removed due to poor accuracy (3 SD below group mean) based on preregistered outlier exclusion criteria. Importantly, the data used here for computational modeling was identical to the parent study <ref type="bibr">(Lin, White, Viravan, et al., 2024)</ref>, which provides a complete description of the recruitment procedures, sample characteristics, and inclusion/exclusion criteria. All data, materials, and analysis code from the original study are publicly available via that publication. The study protocol was approved by the Washington University in St. Louis Institutional Review Board (IRB #202012148).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Design &amp; Procedures</head><p>Briefly, the study utilized a fully within-subject state induction protocol, during which each participant completed three laboratory testing sessions occurring across separate days (all completed within one week of beginning the first session). Each session involved either the FA, OM, or active control (C) induction, with the order of session randomized across participants to minimize order effects.</p><p>At the beginning of each FA/OM session, participants listened to a 10-minute guided audio recording designed to induce the respective mindfulness state, followed by active instructions to maintain the FA/OM state during task performance. In the C session, participants listened to a 10minute duration-matched educational TED talk, followed by non-specific instructions for approaching the tasks. Each audio induction was administered twice per session, once immediately before the flanker task and another before an affective picture viewing task (task order randomized). Analytic and procedural details pertaining to the affective picture viewing task have been reported elsewhere <ref type="bibr" target="#b8">(Lin, White, Wu, et al., 2024)</ref>; these details will not be discussed further here.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tasks</head><p>Audio Inductions. To maintain standardization, both mindfulness inductions were recorded by a certified MBSR teacher. The FA induction guided participants to sustain attention on their breath and to redirect focus back to the breath whenever mind wandering was detected, whereas the OM induction fostered open, nonjudgmental awareness of arising thoughts, feelings, or physical sensations. The active control C induction was a condensed audio recording of a TED talk on how to learn a second language quickly by the linguist Chris Lonsdale. All three induction recordings were exactly 10 minutes in duration and have been successfully implemented in prior work (e.g., <ref type="bibr" target="#b5">Lin et al., 2019;</ref><ref type="bibr" target="#b16">Tang &amp; Braver, 2020)</ref>. Finally, participants were instructed to keep their eyes open during the audio inductions based on prior evidence that mindfulness inductions may selectively promote sleepiness during eyes-closed conditions among novices <ref type="bibr" target="#b6">(Lin et al., 2020)</ref>.</p><p>Flanker Task. The study administered an arrow version of the Eriksen flanker task <ref type="bibr" target="#b0">(Eriksen &amp; Eriksen, 1974)</ref>. Briefly, participants were presented with a five-arrow array that were either directionally congruent (e.g., &gt;&gt;&gt;&gt;&gt;) or incongruent (e.g., &gt;&gt;&lt;&gt;&gt;) with the center arrow.</p><p>Participants were instructed to respond as quickly and accurately to the direction of the target central arrow by pressing the respective mouse button using their right index or middle finger.</p><p>Each stimulus array was displayed for 200 ms, followed by a 950 ms response window. The intertrial interval varied randomly between 600 and 1000 ms. Participants completed a total of 512 trials, evenly divided between congruent and incongruent trials, across 8 blocks of 64 trials. The task was programmed and presented using E-Prime software (Psychology Software Tools Inc, Sharpsburg, PA, USA).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational Modeling</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Specification</head><p>In line with many models of executive attention and control, the Shrinking Spotlight (SSP; <ref type="bibr" target="#b22">White et al., 2011)</ref> posits that attentional breadth begins wide and progressively narrows onto the goal-relevant stimulus. Formally, this initial attentional breadth (sda (0)) and its narrowing (rd) are modeled via a linear decrease:</p><formula xml:id="formula_0">sda (t) = sda (t-1) -rd (t)</formula><p>Target and flanking stimuli are assumed to have a unit width of 1.0, with both attention and the target centered at 0.0. Activations of inner and outer stimuli are estimated by the following equations, which sum to 1:</p><formula xml:id="formula_1">𝑎 𝑜𝑢𝑡𝑒𝑟-𝑟𝑖𝑔ℎ𝑡 (𝑡) = ∫ ϕ 𝑖𝑛𝑓 1.5 (0, 𝑠𝑑 𝑎 (𝑡) ) 𝑎 𝑖𝑛𝑛𝑒𝑟-𝑟𝑖𝑔ℎ𝑡 (𝑡) = ∫ ϕ 1.5 0.5 (0, 𝑠𝑑 𝑎 (𝑡) ) 𝑎 𝑡𝑎𝑟𝑔𝑒𝑡 (𝑡) = ∫ ϕ 0.5 -0.5 (0, 𝑠𝑑 𝑎 (𝑡) ) 𝑎 𝑖𝑛𝑛𝑒𝑟-𝑙𝑒𝑓𝑡 (𝑡) = ∫ ϕ -0.5 -1.5 (0, 𝑠𝑑 𝑎 (𝑡) ) 𝑎 𝑜𝑢𝑡𝑒𝑟-𝑙𝑒𝑓𝑡 (𝑡) = ∫ ϕ -1.5 𝑖𝑛𝑓 (0, 𝑠𝑑 𝑎 (𝑡) )</formula><p>Finally, the mean drift of the evidence accumulation diffusion process [i.e., Xt = Xt -1 + N(vt, σ)] (σ is fixed because drift, threshold, and σ are not concurrently identifiable; it was fixed to 7.0 in this study) is modeled as the sum of all stimuli multiplied by estimated perceptual input parameter P:</p><formula xml:id="formula_2">𝑣 (𝑡) = ∑ 𝑃 * 𝑎 𝑖 (𝑡) 𝑁 𝑎 𝑖</formula><p>As shown in the above, goal-irrelevant stimuli (e.g., flanking arrows) contribute to response selection to the extent that they are within the attentional window, which is greater during the earlier portion of a trial. The sign of P is positive for all nontarget a on congruent trials and negative on incongruent trials.</p><p>In addition to fitting parameters for attentional processes, the model also fits parameters for the time that it takes to encode and execute a chosen motor action (i.e., nondecision time, Ndt), variability in the time it takes to encode and execute a chosen motor action (i.e., nondecision time variability, Ndtσ), and the amount of information needed before making a decision (i.e., decision boundary, b).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Parameter Estimation</head><p>To fit the model to trial data, the model was fit to cumulative density functions (CDFs), capturing response time distributions (.1, .3, .5, .7, .9, 1 sextiles), and conditional accuracy functions (CAFs; .25, .5, .75, 1.0 quartiles), which constitute the error data considered in the fitting procedure <ref type="bibr">(Servant et al., 2016;</ref><ref type="bibr" target="#b21">White et al., 2018)</ref>. Parameters were constrained to be positive numbers. The observed and predicted CDFs and CAFs were then fit by minimizing the log likelihood of summed -2 log binomial probability densities of each cell corresponding to the cell's model predictions. For determining goodness of fit post-fitting, we calculated a chi square statistic:</p><formula xml:id="formula_3">χ 2 = 𝑁 𝑖 (𝑝 𝑖𝑗 -𝜋 𝑖𝑗 ) 2</formula><p>𝜋 𝑖𝑗 where pij represents the observed and πij represents the predicted proportion of trials in bin j of trial type (i.e., congruent, incongruent) i, and Ni represents the number of trials per trial type i.</p><p>We fit the model in Julia, using the Nelder-Mead simplex method via the following hierarchical procedure. First, we estimated a single set of population-level parameters by fitting the model to all data across all participants. We generated 100 parameter values for [sda (0), rd, P, b, Ndt, Ndtσ] by drawing from truncated normal distributions with means [1.8, 0.017, 0.6, 60, 250, 30] and standard deviations <ref type="bibr">[1.2, 0.05, 0.3, 30, 60, 20]</ref>, lower bounds [0.8, 0.005, 0.2, 20, 175, 10], and upper bounds <ref type="bibr">[4.0, 0.15, 2.0, 150, 375, 50]</ref>. We simulated 25,000 trials (12,500 congruent, 12,500 incongruent) for each conjunction of parameters during each fitting step. The best-fitting parameters from these 100 minimization routines were saved as the population parameter values.</p><p>Second, we fit deviation (Δ) parameters around the population parameters corresponding to each condition's deviation. We generated 100 parameter sets for each of the three conditions (300 parameter sets total) by drawing from truncated normal distributions with means of 0 and standard deviations <ref type="bibr">[1.2, 0.05, 0.3, 30, 60, 20]</ref>. The bounds of these truncated normal distributions were constrained such that population + condition values did not fall below 0 (lower bounds) or above [6.0, 0.2, 5.0, 200, 450, 90] (upper bounds). Each minimization routine only included data from one of the three conditions (across participants). The best-fitting parameters from these 100 minimization routines for each condition were saved as that condition's deviation (Δ) parameter values.</p><p>Third, and independent of condition, we fit deviation (Δ) parameters around the population means corresponding to each participant. We generated 100 parameter sets for each of the 29 participants (2900 parameter sets total) by drawing from truncated normal distributions with means of 0 and standard deviations <ref type="bibr">[1.2, 0.05, 0.3, 30, 60, 20]</ref>. The bounds of these truncated normal distributions were constrained such that population + participant values did not fall below 0 (lower bounds) or above [6.0, 0.2, 5, 200, 450, 90] (upper bounds). Each minimization routine only included data from the one participant (across conditions). The best-fitting parameters from these 100 minimization routines for each condition were saved as that participant's deviation (Δ) values.</p><p>Because the participant and condition parameter deviations around the population are independently estimated maximum likelihood estimates, concurrently summing these deviations with population parameters produces, for each parameter, a value that varies from the true parameter value only by observation variance-a nondifferentiable conjunction of participant × condition variance and error variance. This sum is thus analogous to the "within transformation" used in panel and timeseries analyses. This has two desirable properties, which we leverage for analyses below. First, when analyzed in a general linear model, this approach removes the same variance as that which is removed by a repeated measures ANOVA or MANOVA, with the critical difference that this approach, unlike a repeated measures ANOVA, does not require observationlevel estimates, and thus is not limited by parameter bounds and resultant truncation that is required for estimating parameters at the level of observation. Although the values that fall outside of parameter boundaries make producing graphs of expected values difficult, they are more suited to analysis of within statistical models that assume normal (e.g., nontruncated) distributions, such as ANOVAs and linear models. Second, this approach makes explicit the hierarchical structure of the data. Parameter estimation at the level of observation cannot differentiate error variance from true variance, and can thus produce estimates biased by error <ref type="bibr" target="#b2">(Farrell &amp; Lewandowsky, 2018)</ref>.</p><p>Estimating population parameter values by fitting all participants' data sequentially (nonaggregated) to a single set of parameters, then estimating condition deviation parameters by fitting every participants' data within that condition to that condition's deviation parameters, and concurrently estimating participant deviation parameters by fitting every condition's data within that participant to that participant's deviation parameters ensures that the resultant sum respects the hierarchical structure of the data and does not fit error variance as true variance. As will be described below, results were largely consistent when we analyzed the observation-level estimates.</p><p>We refer to regressions using the population + Δcondition + Δparticipant estimates as withintransformed variable regressions.</p><p>Finally, for estimation of model fit, considering both condition and participant deviations (Δ), we fit deviation parameters around parameter population + Δcondition + Δparticipant values, corresponding to each observation's noise Δ. This sum is equivalent to an observation-level estimation that is weakly informed by the data's hierarchical structure. We generated 100 parameter sets for each of the 85 observations (8500 parameter sets total) by drawing from truncated normal distributions with means of 0 and standard deviations <ref type="bibr">[1.2, 0.05, 0.3, 30, 60, 20]</ref>.</p><p>The bounds of these truncated normal distributions were constrained such that population + Δcondition + Δparticipant + Δnoise values did not fall below 0 (lower bounds) or above [6.0, 0.2, 5.0, 200, 450, 90] (upper bounds). Each minimization routine only included data from the one participant by condition observation. The best-fitting parameters from these 100 minimization routines for each observation were saved as that participant-by-condition noise deviation. These final best-fitting parameters-population + Δcondition + Δparticipant + Δnoise-were saved as each observation's parameter values.</p><p>The key model parameter estimates for each participant in each of the three conditions were: (1) attention spotlight width; (2) shrinkage rate; (3) mean nondecision time; (4) boundary separation; and (5) perceptual input.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical Analyses and Hypothesis Testing</head><p>Model parameters were derived as described above. For analyses of model fit, we used the observation-level estimates to quantify fit to the data at each observation. We analyzed fit statistics using a multivariate ANOVA (MANOVA) with induction (FA, OM, C) as a within-subjects factor.</p><p>Analyses of observation-level parameters took the same approach (i.e., MANOVA). For the within-transformed parameter analyses, we used a general linear model and set induction condition as a fixed effect. When significant effects emerged, post hoc pairwise comparisons between conditions were performed to parse the specific pattern of differences.</p><p>The above allowed us to test the primary hypothesis-namely, that FA and OM will confer differentiable effects on attentional spotlight width and decision making. Consistent with the aforementioned rationale, we specifically predicted that FA would be characterized by a narrower attentional spotlight as evidenced by a significantly smaller spotlight width parameter relative to both OM and C. Conversely, we expected that the OM induction would produce larger width and boundary separation estimates compared to FA and C, collectively suggestive of a wider attentional spotlight coupled with higher evidence threshold.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>A comprehensive analysis of the behavioral and electrophysiological data from this study is detailed in the parent publication <ref type="bibr">(Lin, White, Viravan, et al., 2024)</ref>; here, we focus exclusively on reporting the computational modeling results. Specifically, we present model fit indices, followed by the effects of the mindfulness inductions on estimated model parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Fit</head><p>We first assessed the fit of the model to the data, both at the participant level and at the group level. Aggregated across all χ 2 statistics, the model was an acceptable fit to the data, χ 2 /df = 1.01, p = .322. At the observation level (i.e., individual participant by condition datasets), the model provided an acceptable fit to the data of 82.3% of datasets. Importantly, fit did not differ as a function of meditation condition, F(2, 52) = 0.08, p = .923, indicating that the induction condition did not change the latent structure of attentional control, and that any differences in parameter estimates by condition are not explainable by differences in model fit. Predicted and observed response time data are depicted in Figure <ref type="figure" target="#fig_0">1</ref>, and predicted and observed accuracy data are depicted in Figure <ref type="figure" target="#fig_1">2</ref>. Predicted and Observed Response Time Cumulative Distribution Functions Note. RT = response time; CDF = cumulative distribution function. Predicted and Observed Conditional Accuracy Functions Note. RT = response time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Induction Effects on Model Parameters</head><p>Consistent with our primary hypothesis, we found a significant effect of induction condition on the initial attentional spotlight width parameter sda (0), F(2, 82) = 49.35, p &lt; .001. Follow-up pairwise comparisons revealed that the FA induction (M = 0.42, SE = 0.34) produced a significantly narrower initial attentional spotlight than that seen in both the OM condition (M = 4.63, SE = 0.33), t(82)= -8.86, p &lt; .001, and the active control condition (M = 4.43, SE = 0.33), t(82) = -8.43, p &lt; .001. Conversely, and failing to support our second hypothesis, the initial spotlight width did not differ between the OM induction condition and the active control condition, t(82) = -0.44, p = .664.</p><p>We also observed a significant effect of induction condition on the shrinkage rate parameter rd, F(2, 82) = 48.37, p &lt; .001. This effect was largely (though, this time, not exclusively) driven by the FA induction (M = .001, SE = .008), which showed a slower rate of attentional narrowing than both the OM condition (M = .105, SE = .008), t(82) = -9.43, p &lt; .001, and the active control condition (M = .081, SE = .008), t(82) = -7.29, p &lt; .001. In contrast, the OM condition showed a faster rate of attentional narrowing than the active control condition, t(82) = 2.18, p = .032. Additionally, we observed a marginal effect of induction condition on mean nondecision time Ndt, F(2, 82) = 3.09, p = .051. This effect was driven by the OM induction (M = 285.0 SE = 4.2), which showed a greater mean nondecision time than both the FA induction (M = 271.2, SE = 4.4), t(82) = 2.26, p = .027, and the active control condition (M = 273.0, SE = 4.2), t(82) = 2.01, p = .048. The FA induction condition did not differ in mean nondecision time from the active control condition, t(82) = -0.29, p = .773.</p><p>Inconsistent with our hypothesis that the OM induction would elevate response caution, there was no significant main effect of induction condition on the boundary separation parameter b, F(2, 82) = 0.49, p = .617. Additionally, although the active control condition showed numerically weaker strength of perceptual input than either meditation induction condition, there was no significant effect of induction condition on strength of perceptual input parameter P, F(2, 82) = 1.28, p = .283. Finally, although not a primary parameter estimate of interest, we observed a significant effect of induction condition on variability in nondecision time, Ndtσ, F(2, 82) = 14.80, p &lt; .001. Similar to the mean nondecision time results above, this effect was driven by an effect of the OM induction (M = 31.42, SE = 1.98), which showed greater nondecision time variability than both the FA induction (M = 17.65, SE = 2.05), t(82) = 4.83, p &lt; .001, and the active control condition (M = 18.64, SE = 1.98), t(82) = 4.56, p &lt; .001. The FA induction condition did not differ in nondecision time variability from the active control condition, t(82) = -0.45, p = .729.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sensitivity Analyses: Observation-Level Parameter Estimates</head><p>To comparatively contextualize the findings from our hierarchical analysis, we conducted a sensitivity analysis using a more standard method based on observation-level estimates.</p><p>Although common, this traditional approach relies on observation-level variance, as the nondifferentiable conjunction of participant x condition and error, rendering it susceptible to overfitting error variance The results from this analysis largely replicated our primary findings for attentional parameters, but differed for non-decision time parameters. Specifically, we again found a significant main effect of induction condition on the attentional spotlight width parameter sda (0), F(2, 52) = 8.22, p &lt; .001. Post hoc pairwise comparisons revealed that the FA induction produced a significantly narrower attentional spotlight (M = 2.14, SE = 0.26) relative to both the OM (M = 3.61, SE = 0.40), t(26) = -3.12, p = .004, and active control (M = 3.55, SE = 0.40) conditions, t(26) = -3.23, p = .003. Conversely, the spotlight width did not differ between OM and the active control condition, t(26) = -0.19, p = .856. Additionally, we again observed a significant main effect of induction on the shrinkage rate parameter rd, F(2, 52) = 8.66, p &lt; .001. This effect was similarly driven by the FA induction, which produced a slower rate of attentional narrowing (M = .035, SE = .007) relative to both OM (M = .080, SE = .014), t(26) = -3.27, p = .003, and the active control (M = .072, SE = .013) condition, t(26) = -2.96, p = .007. Although the shrinkage rate was numerically greatest in the OM condition, the shrinkage rate did not significantly differ between the OM and active control condition, t(26) = 1.08, p = .291. Figure <ref type="figure">3</ref> illustrates these effects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 3</head><p>Expected Attention-Driven Evidence Accumulation by Induction Note. Depicted evidence accumulation time does not represent total trial response time; nondecision time must be added to produce response time. Solid lines illustrate the expected value of evidence accumulation toward a decision, quantified as drift sans noise. Dashed lines illustrate the interquartile range of 50,000 simulated trials. Under focused attention, attention was more centered on the target stimulus at the beginning of the trial (i.e., sda (0) was lower), and as a result, the focused attention condition had less of a tendency to make fast errors. In contrast, initial attentional breadth was the largest of the three conditions in open monitoring. Open monitoring, though, with the largest rate of decrease in attentional breadth at each step, was ultimately first to attend solely to the target (i.e., the first value of t satisfying sda (t) == 0.001 was lowest in the open monitoring condition). Because of that, although the open monitoring condition was more sensitive to incongruent information at the beginning of trials, it ultimately became more accurate as time went on (see also <ref type="bibr">Lin et al., 2024)</ref>.</p><p>There was also no significant main effect of induction condition on the boundary separation parameter b, F(2, 52) = 0.37, p = .694. There were no other significant effects of induction condition on any other model parameter, Fs &lt; 0.42, ps &gt; .662. Notably, OM effects on non-decision time that were detected in the primary hierarchical analysis were not significant here, suggesting that these effects may be subtle and are thus best captured by methods that can more effectively separate induction effects from error variance-a point to which we return in the discussion section to follow.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>The present study leveraged computational modeling to empirically test the attentional mechanisms underlying focused attention (FA) and open monitoring (OM) effects on flanker task performance. Specifically, we applied an adapted Shrinking Spotlight (SSP) model to flanker data collected from a within-subject state induction design to quantify how FA and OM may differentially modulate parameters of attentional scope and decision-making. The results provided partial support for our hypotheses, and more broadly, served to advance the promise and utility of applying process-specific computational models to mindfulness research. As expected, the FA induction selectively narrowed the attentional spotlight, providing novel computational evidence for the longstanding yet relatively untested theoretical assumption that FA is characterized by reduced attentional aperture <ref type="bibr" target="#b12">(Lutz et al., 2008</ref><ref type="bibr" target="#b11">(Lutz et al., , 2015))</ref>. Contrary to our predictions, however, the OM induction did not modulate parameters related to the width of visuospatial attention or decision thresholds, but was instead characterized by a faster rate of attentional narrowing coupled with longer non-decision times.</p><p>Consistent with our primary hypothesis, the FA state was distinguished by a narrower initial attentional spotlight relative to both the OM and active control conditions. This result lends quantitative support for the conceptualization of FA as a practice that narrows the scope of attention. Critically, this finding also provides direct, model-based evidence for the successful transfer from an inducted meditative state to active task performance. This addresses a pervasive methodological challenge associated with implementing state induction designs-namely, that it is often assumed but rarely demonstrated that participants successfully maintain the target state during actual task performance. By confirming a selective shift in a computational parameter (sda (0)) derived from trial-level behavior, our results move beyond assumption or self-report manipulation checks, to provide performance-based evidence of state maintenance. Despite the demonstrative success of the induction, FA did not reduce behavioral flanker interference as reported in the parent study <ref type="bibr">(Lin, White, Viravan, et al., 2024)</ref>. As previously suggested, one possibility, which is bolstered by our findings, is that the heightened cognitive demands required to continually sustain a restricted range of attention may detract from performance benefits for novice practitioners <ref type="bibr" target="#b1">(Esterman &amp; Rothlein, 2019)</ref>. This idea is consistent with our finding that FA also decreased the rate of attentional narrowing, ultimately leading to relatively better performance (vs. the other two conditions) earlier in the trial but relatively worse performance later in the trial (see also <ref type="bibr">Lin, White, Viravan et al., 2024)</ref>.</p><p>In contrast, our hypothesis that OM would produce a broader attentional spotlight with a higher decision boundary was not supported. Instead, OM was unexpectedly associated with both a faster rate of attention narrowing and longer nondecision time. The nondecision time parameter indexes the perceptual encoding and motor execution components that occur outside of the evidence accumulation process <ref type="bibr" target="#b22">(White et al., 2011)</ref>. The absence of an effect on spotlight width (sda (0)) or decision boundary (b) is particularly notable, suggesting that the cautious responding observed in the parent study is not driven by the visuospatial attention mechanisms formalized by the SSP model. More critically, this null finding implies that the "diffuse awareness" commonly attributed to OM should not be equated with a wider scope of visual attention. Rather, it may reflect a fundamentally different process wherein attention is more broadly distributed between external (e.g., flanker arrows) and internal stimuli (e.g., mental activity, bodily sensations).</p><p>Although the observed OM effects were post hoc and require cautious interpretation, they offer an alternative account for the behavioral effects. One plausible, albeit speculative, interpretation is that the longer nondecision time reflects a brief orienting period at the start of each trial. Because the OM instruction promotes awareness of internal experience, attention may not be fully primed to the external task. Consequently, upon stimulus presentation, a discrete amount of time may be required to orient and encode the flanker stimuli, thereby prolonging nondecision time, and accordingly, overall RT. This pause, coupled with a greater rate of attentional narrowing, could also explain the observed increase in accuracy. By delaying the decision process until a stable perceptual representation is available, the orienting period both facilitates more rapid target selection and mitigates premature responses based on incomplete encoding. It is also possible that the interoceptive features of the OM state foster greater intentionality in motor execution, which could contribute to the longer non-decision time and reduce impulsive errors. The improvement in accuracy may therefore be a downstream consequence of a more deliberate trial-to-trial approach, rather than a direct change in the decision threshold as we had hypothesized. With that said, we reemphasize that interpretations regarding nondecision time require caution. As reported in the results, this effect was marginal in our primary analysis and was not detected by the standard observation-level method. This discrepancy may indicate that the effect of OM on nondecision time is subtle, and that its detection may require the increased sensitivity of our hierarchical modeling approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodological Implications, Limitations, and Future Directions</head><p>The present study directly answers previous calls to leverage computational modeling within mindfulness science (M. <ref type="bibr" target="#b20">van Vugt et al., 2019)</ref>, showcasing the considerable promise of the approach. By moving beyond traditional behavioral measures, our application of the SSP enabled a more granular investigation to test longstanding theories involving the distinct attentional mechanisms of FA and OM. Our findings demonstrate the power of computational modeling to not only confirm or falsify process-oriented hypotheses, but also to generate new datadriven insights. Specifically, the model revealed that FA produced a narrower attentional spotlight via the sda (0) parameter, providing direct support for the theoretical alignment between this practice and the SSP's visuospatial framework. In contrast, the model yielded an informative null result for our OM hypothesis, finding no effect on spotlight width (sda (0)) or decision boundary (b) parameters, but instead revealed an unexpected increase in both the rate of spotlight shrinkage and nondecision time. By explicitly ruling out changes in decision thresholds, the model constrains the space of viable explanations for OM's behavioral effect. This, in turn, positions the unexpected increase in the spotlight shrinkage rate and nondecision time as key parameters of interest and opens clear new directions for future investigation.</p><p>With that said, a central limitation of this work is that the findings regarding OM were post hoc. Although the aforementioned interpretation of an orienting period is consistent with the data and broader theory, it remains fundamentally speculative and requires further direct empirical testing. Consequently, one promising avenue for future research is to conduct additional model comparisons. For example, a standard drift-diffusion model could be used to examine if an OM effect on decision boundary emerges after the SSP's visuospatial parameters are removed.</p><p>Additionally, state-switching or mixture models could be applied to formally test the proposed OM process of switching between internal and external attentional states.</p><p>Another limitation is that our results were derived from the flanker task, which primarily measures the resolution of perceptual response conflict. It is therefore unclear whether the observed findings here are specific to this domain or generalizable to other forms of conflict or facets of cognitive control. Future research should extend this modeling approach to a broader range of tasks to establish convergent and divergent validity. For instance, testing for similar effects in other conflict paradigms, such as the Stroop task or the Simon task, could clarify whether these mechanisms apply across semantic and spatial conflict. Furthermore, applying the SSP to a visual search task could assess the robustness of the FA effect on spotlight width in a different attentional context. Finally, probing other facets of cognitive control, such as response inhibition with a stop-signal task or working memory updating with the n-back task, would be likewise informative. Employing these distinct paradigms will be crucial for clarifying the boundary conditions and specific mechanisms through which FA and OM exert their influence on cognitive functioning.</p><p>Lastly, the findings here are circumscribed to a sample of mindfulness-naïve novice participants, capturing acute state effects as opposed to the effects of long-term practice.</p><p>Consequently, an important avenue for future research is to apply the SSP model to a sample of experienced meditators or as part of a longitudinal training study. This would enable an informative investigation of how meditation experience or prospective training might modulate the attentional mechanisms observed here. It would be interesting, for example, to test whether expert FA practitioners exhibit an even narrower attentional spotlight or whether repeated OM training among novices also prolongs non-decision times. Collectively, these future modeling efforts will build upon the foundations established here toward a more precise and mechanistic science of mindfulness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>Although distinct mindfulness practices are known to exert differential effects on a range of neurocognitive <ref type="bibr">(Brown et al., 2022;</ref><ref type="bibr">Lin, White, Viravan, et al., 2024;</ref><ref type="bibr" target="#b8">Lin, White, Wu, et al., 2024)</ref> and noncognitive outcomes (e.g., <ref type="bibr" target="#b9">Lindsay et al., 2018)</ref>, the theoretical mechanisms thought to differentiate them remain largely untested. We addressed this gap in the present study by comparing the effects of FA and OM (vs. a control induction) on latent cognitive parameters quantified by computational cognitive modeling using a randomly assigned within-subjects, crossover design. We found that FA reduced attentional spotlight width, supporting prior theories on the process and effects of this practice. In contrast, we found that OM increased both nondecision time and the rate of attentional spotlight shrinkage, a pattern that may reflect a greater threshold of perceptual stability prior to evidence accumulation that then facilitates target selection. In short, our results suggest that FA quite literally helps filter irrelevant information from one's field of view, whereas open monitoring may produce a "crisper" representation of the task environment prior to engaging attentional control.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Figure 1</figDesc><graphic coords="15,72.00,127.20,468.00,234.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2</head><label>2</label><figDesc>Figure 2</figDesc><graphic coords="15,166.50,457.79,267.00,210.72" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Effects of noise letters upon the identification of a target letter in a nonsearch task</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Eriksen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03203267</idno>
+		<ptr target="https://doi.org/10.3758/BF03203267" />
+	</analytic>
+	<monogr>
+		<title level="j">Perception &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="143" to="149" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Models of sustained attention</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Esterman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rothlein</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.copsyc.2019.03.005</idno>
+		<ptr target="https://doi.org/10.1016/j.copsyc.2019.03.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Opinion in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="174" to="180" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Farrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+		<ptr target="https://books.google.com/books?hl=en&amp;lr=&amp;id=VMhJDwAAQBAJ&amp;oi=fnd&amp;pg=PP1&amp;dq=computational+modeling+for+cognitive+psychology&amp;ots=zo0tXw35tl&amp;sig=zeAVMl9JPdtagLnd-NozIAttp" />
+		<title level="m">Computational modeling of cognition and behavior</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Functional neuroanatomy of meditation: A review and meta-analysis of 78 functional neuroimaging investigations</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C R</forename><surname>Fox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Dixon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nijeboer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Girn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Floman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lifshitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ellamil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sedlmeier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Christoff</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neubiorev.2016.03.021</idno>
+		<ptr target="https://doi.org/10.1016/j.neubiorev.2016.03.021" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuroscience and Biobehavioral Reviews</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="208" to="228" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Brief mindfulness-based meditation enhances the speed of learning following positive prediction errors</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Golubickis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">B G</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jalalian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Falbén</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">C</forename><surname>Macrae</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/17470218241228859</idno>
+		<ptr target="https://doi.org/10.1177/17470218241228859" />
+	</analytic>
+	<monogr>
+		<title level="j">Quarterly Journal of Experimental Psychology</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">On Variation in Mindfulness Training: A Multimodal Study of Brief Open Monitoring Meditation on Error Monitoring</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Eckerle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">W</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Moser</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/brainsci9090226</idno>
+		<ptr target="https://doi.org/10.3390/brainsci9090226" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Sciences</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">An electrophysiological investigation on the emotion regulatory mechanisms of brief open monitoring meditation in novice non-meditators</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Gloe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Louis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Eckerle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Moser</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-020-71122-7</idno>
+		<ptr target="https://doi.org/10.1038/s41598-020-71122-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">14252</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Parsing state mindfulness effects on neurobehavioral markers of cognitive control: A within-subject comparison of focused attention and open monitoring</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Viravan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Braver</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13415-024-01167-y</idno>
+		<ptr target="https://doi.org/10.3758/s13415-024-01167-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive, Affective, &amp; Behavioral Neuroscience</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Distinct Mindfulness States Produce Dissociable Effects on Neural Markers of Emotion Processing: Evidence From the Late Positive Potential</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Viravan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Braver</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpsgos.2024.100357</idno>
+		<ptr target="https://doi.org/10.1016/j.bpsgos.2024.100357" />
+	</analytic>
+	<monogr>
+		<title level="j">Biological Psychiatry Global Open Science</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">100357</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Acceptance lowers stress reactivity: Dismantling mindfulness training in a randomized controlled trial</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Lindsay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Smyth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Creswell</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.psyneuen.2017.09.015</idno>
+		<ptr target="https://doi.org/10.1016/j.psyneuen.2017.09.015" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychoneuroendocrinology</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="page" from="63" to="73" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A Longitudinal Training Study to Delineate the Specific Causal Effects of Open Monitoring Versus Focused Attention Techniques on Emotional Health</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lohani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mcelvaine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Payne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mitcheom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Britton</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ctim.2020.102525</idno>
+		<ptr target="https://doi.org/10.1016/j.ctim.2020.102525" />
+	</analytic>
+	<monogr>
+		<title level="j">Complementary Therapies in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page">102525</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Investigating the phenomenological matrix of mindfulness-related practices from a neurocognitive perspective</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Dunne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Saron</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0039585</idno>
+		<ptr target="https://doi.org/10.1037/a0039585" />
+	</analytic>
+	<monogr>
+		<title level="j">The American Psychologist</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Attention regulation and monitoring in meditation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Slagter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Dunne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Davidson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2008.01.005</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2008.01.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Neural correlates of focused attention and cognitive monitoring in meditation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Manna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Raffone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Perrucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Nardo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ferretti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tartaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Londei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Del Gratta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">O</forename><surname>Belardinelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">L</forename><surname>Romani</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.brainresbull.2010.03.001</idno>
+		<ptr target="https://doi.org/10.1016/j.brainresbull.2010.03.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Research Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="46" to="56" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">The diffusion decision model: Theory and data for twochoice decision tasks</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mckoon</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/neco.2008.12-06-420</idno>
+		<ptr target="https://doi.org/10.1162/neco.2008.12-06-420" />
+	</analytic>
+	<monogr>
+		<title level="j">Neural Comput</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="873" to="922" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Diffusion Decision Model: Current Issues and History</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mckoon</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2016.01.007</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2016.01.007" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="260" to="281" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Towards an Individual Differences Perspective in Mindfulness Training Research: Theoretical and Empirical Considerations</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Braver</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2020.00818</idno>
+		<ptr target="https://www.frontiersin.org/articles/10.3389/fpsyg.2020.00818" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Short-term Focused Attention Meditation Restricts the Retrieval of Stimulus-Response Bindings to Relevant Information</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ullrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">S</forename><surname>Colzato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Wolff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Beste</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s12671-021-01599-</idno>
+		<ptr target="https://doi.org/10.1007/s12671-021-01599-" />
+	</analytic>
+	<monogr>
+		<title level="j">Mindfulness</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1272" to="1281" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Investigating the impact of mindfulness meditation training on working memory: A mathematical modeling approach</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Van Vugt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Jha</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13415-011-0048-8</idno>
+		<ptr target="https://doi.org/10.3758/s13415-011-0048-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive, Affective &amp; Behavioral Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="344" to="353" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Modeling the Effects of Attentional Cueing on Meditators</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Van Vugt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Van Den Hurk</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s12671-015-0464-x</idno>
+		<ptr target="https://doi.org/10.1007/s12671-015-0464-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Mindfulness</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="38" to="45" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Computational modelling approaches to meditation research: Why should we care?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Vugt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Moye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sivakumar</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.copsyc.2018.10.011</idno>
+		<ptr target="https://doi.org/10.1016/j.copsyc.2018.10.011" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Opinion in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="49" to="53" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Cueing Effects in the Attentional Network Test: A Spotlight Diffusion Model Analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">N</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Curl</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s42113-018-0004-6</idno>
+		<ptr target="https://doi.org/10.1007/s42113-018-0004-6" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Brain &amp; Behavior</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="59" to="68" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Diffusion models of the flanker task: Discrete versus gradual attentional selection</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">N</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ratcliff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Starns</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogpsych.2011.08.001</idno>
+		<ptr target="https://doi.org/10.1016/j.cogpsych.2011.08.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Psychology</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="210" to="238" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

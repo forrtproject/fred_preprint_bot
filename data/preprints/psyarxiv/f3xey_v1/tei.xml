@@ -7,8 +7,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<fileDesc>
 			<titleStmt>
 				<title level="a" type="main">HMLET -High-resolution Machine Learning Eye-tracking Toolbox</title>
-				<funder>
-					<orgName type="full">UC Davis Department of Psychology Summer Research Fellowship and Dissertation Research Fellowship</orgName>
+				<funder ref="#_b2CSb4W">
+					<orgName type="full">UC Davis Department of Psychology Summer Research Fellowship</orgName>
 				</funder>
 			</titleStmt>
 			<publicationStmt>
@@ -96,8 +96,10 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</fileDesc>
 		<encodingDesc>
 			<appInfo>
-				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:34+0000">
+				<application version="0.8.2" ident="GROBID" when="2025-10-23T06:23+0000">
 					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
 					<ref target="https://github.com/kermitt2/grobid"/>
 				</application>
 			</appInfo>
@@ -114,26 +116,26 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 				</keywords>
 			</textClass>
 			<abstract>
-<div xmlns="http://www.tei-c.org/ns/1.0"><p>Eye-tracking technology yields high temporal and spatial resolution data on visual behavior. Detection and quantification of cognitive processes underlying looking behavior can be challenging using conventional processing and statistical analysis. Non-parametric statistical methods are powerful alternatives for high-resolution time series analysis and data driven machine learning techniques can provide an unbiased and explorative description in the analysis of high dimensional data. This paper introduces high-resolution machine learning eye-tracking toolbox (HMLET) that provides an accurate implementation of non-parametric statistical methods in R language and an executable graphic user interface (GUI) comprising novel methods and tools for extraction and analysis of informative measures from eye-tracking data with high temporal resolution. This package supports processing of raw eye-tracking data for basic preprocessing, high-resolution time series analysis, non-parametric permutation tests, datadriven evaluation and selection of eye-tracking measures, a novel visual exploration similarity analysis, along with a sets of visualization tools. HMLET is freely available for download and contribution on GitHub https://github.com/Alireza-Kazemi/MLET, distributed under the MIT license.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Eye-tracking technology yields high temporal and spatial resolution data on visual behavior. Detection and quantification of cognitive processes underlying looking behavior can be challenging using conventional processing and statistical analysis. Non-parametric statistical methods are powerful alternatives for high-resolution time series analysis and data driven machine learning techniques can provide an unbiased and explorative description in the analysis of high dimensional data. This paper introduces high-resolution machine learning eye-tracking toolbox (HMLET) that provides an accurate implementation of non-parametric statistical methods in R language and an executable graphic user interface (GUI) comprising novel methods and tools for extraction and analysis of informative measures from eye-tracking data with high temporal resolution. This package supports processing of raw eye-tracking data for basic preprocessing, high-resolution time series analysis, non-parametric permutation tests, datadriven evaluation and selection of eye-tracking measures, a novel visual exploration similarity analysis, along with a sets of visualization tools.</p></div>
 			</abstract>
 		</profileDesc>
 	</teiHeader>
 	<text xml:lang="en">
 		<body>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Eye-tracking is a well-established method to collect data on looking behaviors <ref type="bibr" target="#b23">(Mele &amp; Federici, 2012)</ref>. Looking behaviors are governed by numerous cognitive processes including, but not limited, to perception and visual attention <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref>, emotion <ref type="bibr" target="#b19">(Lim et al., 2020)</ref>, decision-making <ref type="bibr" target="#b12">(Gidlöf et al., 2013;</ref><ref type="bibr" target="#b33">Selmeczy et al., 2021;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref>, and memory <ref type="bibr" target="#b25">(Oakes et al., 2013;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016;</ref><ref type="bibr" target="#b30">Richmond &amp; Nelson, 2009)</ref>. In addition, there is evidence that eye movements are influenced by the autonomic nervous system <ref type="bibr" target="#b22">(McDougal &amp; Gamlin, 2014)</ref>. As a result, even in well-controlled experiments, eye-tracking data reflect the combination of ongoing cognitive and autonomic processes as well as recording-related errors <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. As a result, it can be challenging to detect and quantify what aspects of looking behaviors reflect a specific cognitive process (e.g., episodic memory), particularly when the effect of interest is small and/or its temporal dynamics are likely changing over the course of the trial. In order to make the best use of eye-tracking data, researchers should use methods that maximize their ability to utilize the available data without sacrificing precision and leverage robust statistical methods to compare relevant experimental conditions.</p><p>Most studies average specific measures (e.g., looking proportions) across many timepoints <ref type="bibr" target="#b13">(Hannula, 2010)</ref>. Although this practice is typically used to improve the chance of detecting a hypothesized effect reliably by avoiding multiple comparison correction <ref type="bibr" target="#b14">(Hannula &amp; Ranganath, 2009;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016)</ref>, there is the risk of losing important information about temporal dynamics. Capturing the high temporal resolution of the eye-tracking data can increase statistical power especially when the target effect is hypothesized to vary across time and its size may be limited <ref type="bibr" target="#b1">(Andersson et al., 2010;</ref><ref type="bibr" target="#b4">Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b29">Prasse et al., 2020)</ref>. Modern eye-tracking devices can record gaze positions up to 2000 times per second <ref type="bibr">(2000 Hz)</ref> resulting in a dense time series of gaze points with 0.5ms time interval between samples. Such a high temporal resolution may seem unnecessary when one considers that it takes tens of milliseconds for the visual cortex to receive the visual input <ref type="bibr" target="#b0">(Albrecht et al., 2002;</ref><ref type="bibr" target="#b35">Shapley et al., 2007)</ref>. However, eye-tracking technology relies on discrete time sampling of eye movements and based on the Nyquist-Shannon theorem <ref type="bibr" target="#b34">(Shannon, 1949)</ref> the sampling rate must be at least twice the bandwidth of the actual signal. Bandwidth of a signal is defined as the difference between upper and lower rate of change in the signal <ref type="bibr" target="#b27">(Oppenheim &amp; Schafer, 1975)</ref>. Eye movements include very slow drifts to ultra-rapid saccades that can peak at 650 degrees per seconds in some individuals <ref type="bibr" target="#b40">(Wilson et al., 1993)</ref>. Sampling rate for a signal with peak bandwidth of 650hz should be at least 1300hz to provide enough data for accurate estimation of all eye-movements from slow drifts and steady fixations to ultra-rapid saccades. Therefore, the sampling frequency of an eye-tracker limits the estimation of fast dynamics in the eye-movements consistent with the evidence that accurate detection of fast events can benefit from higher temporal resolutions <ref type="bibr" target="#b16">(Kirchner &amp; Thorpe, 2006)</ref>.</p><p>As a result, analyzing the time series of eye-movements may provide more accurate estimation of the dynamics of the targeted effects compared to estimating fixations and saccades collapsed within pre-determined time bins. To mitigate the multiple-comparison problem in the analysis of time series data, permutation tests are a suitable solution <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>.</p><p>In some research, the same comparison might be repeated across different measures and conditions <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b38">Wang et al., 2020)</ref>. Critically, permutation tests are computationally demanding, and multiple permutation tests to investigate hypothesized effects on all possible measures (e.g., looking proportions, switching frequency, and saccades frequency) not only demand for high computational resource, but also may increase the chance of false discovery through "fishing" <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. Therefore, it is helpful to explore novel methods capable of cross validating a custom set of measures. Similar challenges have been addressed in the field of machine learning through data-driven methods of feature evaluation/selection <ref type="bibr" target="#b2">(Ang et al., 2016;</ref><ref type="bibr" target="#b36">Solorio-Fernández et al., 2020)</ref>. For the sake of consistency, we are going to use the term feature to refer to measures obtained from eye-tracking data. In this paper, we introduce a package for analysis of high-temporal resolution eye-tracking time series, data driven evaluation and selection of numerous features, and a novel visual exploration similarity analysis.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical Analysis of the Time Series</head><p>Commercial eye-tracking software solutions such as Tobii Pro Lab, formerly known as Tobii Pro Studio <ref type="bibr" target="#b37">(Tobii AB, 2024)</ref> are usually limited to a specific eye-tracking hardware and provide limited analytical methods. However, most of them can export raw or preprocessed data for further analysis in other software and packages. Several open-source packages have been introduced for eye-tracking data analysis with different capabilities. EyetrackingR <ref type="bibr" target="#b6">(Dink, J. W. &amp; Ferguson, B., 2015)</ref> is the most cited package that provides tools to perform different analyses including onset contingent analysis <ref type="bibr" target="#b9">(Fernald et al., 2008)</ref>, growth curve analysis <ref type="bibr" target="#b24">(Mirman et al., 2008)</ref>, and divergence analysis <ref type="bibr" target="#b39">(Wendt et al., 2014)</ref>. Some of these methods use permutation tests for statistical comparison and to the best of our knowledge, eyetrackingR is the only package that provides permutation test for high-temporal resolution time series of eye-tracking data. However, the current version of the eyetrackingR does not account for the repetition of the permutation samplings. In a permutation test, the null distribution is estimated non-parametrically through a Monte Carlo approximation which includes computing the desired statistic in a relatively large number of unique permutation of the input data <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>. If one does not control for the repeated permutations, false positive or false negative results may be observed depending on the number of observations, simulations, and the likelihood and distribution of the repeated permutations <ref type="bibr" target="#b20">(Mahadevan, 1997;</ref><ref type="bibr" target="#b32">Rubinstein &amp; Kroese, 2016)</ref>.</p><p>Moreover, as <ref type="bibr" target="#b21">Maris and Oostenveld (2007)</ref> discussed, in within-subject studies, permutations can be completed either across subject-level averages (i.e., subject-level permutations) or across trials within each subject (i.e., trial-level permutations). Critically, in studies with small sample sizes, the total number of possible subject-level permutations theoretically limits the accuracy of p-value estimation. For example, in a study with 5 participants with 2 within-subject conditions, only 2 5 = 32 unique subject-level permutations are possible hence the smallest possible p-value is 1/32 = 0.031. In cases of small sample sizes, but large numbers of trials available for each participant, trial-level permutation is a better estimation tool, which is not available in eyetrackingR or other open-source eye-tracking packages.</p><p>In HMLET, we implemented both trial-level and subject-level permutation tests, equipped with routines to produce unique permutation labels. We also provided a couple of preprocessing routines for checking data for common issues in ordering and indexing, resampling, binning in time, and interpolation (See Time Series Analysis Section).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Eye-tracking is a well-established method to collect data on looking behaviors <ref type="bibr" target="#b23">(Mele &amp; Federici, 2012)</ref>. Looking behaviors are governed by numerous cognitive processes including, but not limited, to perception and visual attention <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b41">Yu et al., 2022)</ref>, emotion <ref type="bibr" target="#b19">(Lim et al., 2020)</ref>, decision-making <ref type="bibr" target="#b12">(Gidlöf et al., 2013;</ref><ref type="bibr" target="#b32">Selmeczy et al., 2021;</ref><ref type="bibr" target="#b41">Yu et al., 2022)</ref>, and memory <ref type="bibr" target="#b25">(Oakes et al., 2013;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016;</ref><ref type="bibr" target="#b30">Richmond &amp; Nelson, 2009)</ref>. In addition, there is evidence that eye movements are influenced by the autonomic nervous system <ref type="bibr" target="#b22">(McDougal &amp; Gamlin, 2014)</ref>. As a result, even in well-controlled experiments, eye-tracking data reflect the combination of ongoing cognitive and autonomic processes as well as recording-related errors <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. As a result, it can be challenging to detect and quantify what aspects of looking behaviors reflect a specific cognitive process (e.g., episodic memory), particularly when the effect of interest is small and/or its temporal dynamics are likely changing over the course of the trial. In order to make the best use of eye-tracking data, researchers should use methods that maximize their ability to utilize the available data without sacrificing precision and leverage robust statistical methods to compare relevant experimental conditions.</p><p>Most studies average specific measures (e.g., looking proportions) across many timepoints <ref type="bibr" target="#b13">(Hannula, 2010)</ref>. Although this practice is typically used to improve the chance of detecting a hypothesized effect reliably by avoiding multiple comparison correction <ref type="bibr" target="#b14">(Hannula &amp; Ranganath, 2009;</ref><ref type="bibr" target="#b28">Pathman &amp; Ghetti, 2016)</ref>, there is the risk of losing important information about temporal dynamics. Capturing the high temporal resolution of the eye-tracking data can increase statistical power especially when the target effect is hypothesized to vary across time and its size may be limited <ref type="bibr" target="#b1">(Andersson et al., 2010;</ref><ref type="bibr" target="#b4">Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b29">Prasse et al., 2020)</ref>. Modern eye-tracking devices can record gaze positions up to 2000 times per second <ref type="bibr">(2000 Hz)</ref> resulting in a dense time series of gaze points with 0.5ms time interval between samples. Such a high temporal resolution may seem unnecessary when one considers that it takes tens of milliseconds for the visual cortex to receive the visual input <ref type="bibr" target="#b0">(Albrecht et al., 2002;</ref><ref type="bibr" target="#b34">Shapley et al., 2007)</ref>. However, eye-tracking technology relies on discrete time sampling of eye movements and based on the Nyquist-Shannon theorem <ref type="bibr" target="#b33">(Shannon, 1949)</ref> the sampling rate must be at least twice the bandwidth of the actual signal. Bandwidth of a signal is defined as the difference between upper and lower rate of change in the signal <ref type="bibr" target="#b27">(Oppenheim &amp; Schafer, 1975)</ref>. Eye movements include very slow drifts to ultra-rapid saccades that can peak at 650 degrees per seconds in some individuals <ref type="bibr" target="#b39">(Wilson et al., 1993)</ref>. Sampling rate for a signal with peak bandwidth of 650hz should be at least 1300hz to provide enough data for accurate estimation of all eye-movements from slow drifts and steady fixations to ultra-rapid saccades. Therefore, the sampling frequency of an eye-tracker limits the estimation of fast dynamics in the eye-movements consistent with the evidence that accurate detection of fast events can benefit from higher temporal resolutions <ref type="bibr" target="#b16">(Kirchner &amp; Thorpe, 2006)</ref>.</p><p>As a result, analyzing the time series of eye-movements may provide more accurate estimation of the dynamics of the targeted effects compared to estimating fixations and saccades collapsed within pre-determined time bins. To mitigate the multiple-comparison problem in the analysis of time series data, permutation tests are a suitable solution <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>.</p><p>In some research, the same comparison might be repeated across different measures and conditions <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020;</ref><ref type="bibr" target="#b37">Wang et al., 2020)</ref>. Critically, permutation tests are computationally demanding, and multiple permutation tests to investigate hypothesized effects on all possible measures (e.g., looking proportions, switching frequency, and saccades frequency) not only demand for high computational resource, but also may increase the chance of false discovery through "fishing" <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. Therefore, it is helpful to explore novel methods capable of cross validating a custom set of measures. Similar challenges have been addressed in the field of machine learning through data-driven methods of feature evaluation/selection <ref type="bibr" target="#b2">(Ang et al., 2016;</ref><ref type="bibr" target="#b35">Solorio-Fernández et al., 2020)</ref>. For the sake of consistency, we are going to use the term feature to refer to measures obtained from eye-tracking data. In this paper, we introduce a package for analysis of high-temporal resolution eye-tracking time series, data driven evaluation and selection of numerous features, and a novel visual exploration similarity analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical Analysis of the Time Series</head><p>Commercial eye-tracking software solutions such as Tobii Pro Lab, formerly known as Tobii Pro Studio <ref type="bibr" target="#b36">(Tobii AB, 2024)</ref> are usually limited to a specific eye-tracking hardware and provide limited analytical methods. However, most of them can export raw or preprocessed data for further analysis in other software and packages. Several open-source packages have been introduced for eye-tracking data analysis with different capabilities. EyetrackingR <ref type="bibr" target="#b6">(Dink, J. W. &amp; Ferguson, B., 2015)</ref> is the most cited package that provides tools to perform different analyses including onset contingent analysis <ref type="bibr" target="#b9">(Fernald et al., 2008)</ref>, growth curve analysis <ref type="bibr" target="#b24">(Mirman et al., 2008)</ref>, and divergence analysis <ref type="bibr" target="#b38">(Wendt et al., 2014)</ref>. Some of these methods use permutation tests for statistical comparison and to the best of our knowledge, eyetrackingR is the only package that provides permutation test for high-temporal resolution time series of eye-tracking data. However, the current version of the eyetrackingR does not account for the repetition of the permutation samplings. In a permutation test, the null distribution is estimated non-parametrically through a Monte Carlo approximation which includes computing the desired statistic in a relatively large number of unique permutation of the input data <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>. If one does not control for the repeated permutations, false positive or false negative results may be observed depending on the number of observations, simulations, and the likelihood and distribution of the repeated permutations <ref type="bibr" target="#b20">(Mahadevan, 1997;</ref><ref type="bibr" target="#b32">Rubinstein &amp; Kroese, 2016)</ref>.</p><p>Moreover, as <ref type="bibr" target="#b21">Maris and Oostenveld (2007)</ref> discussed, in within-subject studies, permutations can be completed either across subject-level averages (i.e., subject-level permutations) or across trials within each subject (i.e., trial-level permutations). Critically, in studies with small sample sizes, the total number of possible subject-level permutations theoretically limits the accuracy of p-value estimation. For example, in a study with 5 participants with 2 within-subject conditions, only 2 5 = 32 unique subject-level permutations are possible hence the smallest possible p-value is 1/32 = 0.031. In cases of small sample sizes, but large numbers of trials available for each participant, trial-level permutation is a better estimation tool, which is not available in eyetrackingR or other open-source eye-tracking packages.</p><p>In HMLET, we implemented both trial-level and subject-level permutation tests, equipped with routines to produce unique permutation labels. We also provided a couple of preprocessing routines for checking data for common issues in ordering and indexing, resampling, binning in time, and interpolation (See Time Series Analysis Section).</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Informative Measures</head><p>The field has generated several tools to preprocess and analyze eye-movement. For example, GazeR <ref type="bibr" target="#b10">(Geller et al., 2020)</ref> and PyTrack <ref type="bibr" target="#b11">(Ghose et al., 2020)</ref> are successful opensource packages which provided a strong set of tools for different stages of eye-tracking data analysis including, preprocessing of the raw data, common and novel feature and parameter extraction, statistical analysis and visualization. Despite the strengths of existing analytical tools, to our knowledge, there is no available eye-tracking package that supports unbiased and comprehensive feature analysis, which is a necessary step to conduct a formal and replicable data exploration in a principled fashion <ref type="bibr" target="#b4">(Carter &amp; Luke, 2020)</ref>. The use of systematic and reproducible analytical methods for feature evaluation and selection across different studies is crucial to improve replicability and reliability of the scientific findings. In HMLET, we provided a set of complementary tools to perform feature evaluation and provide a set of temporal and overall ranking of the measures in terms of their informativeness in dissociating specified experimental conditions (See Feature Analysis Section).</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration</head><p>Another desirable ability of eye-tracking packages is to produce estimates of visual exploration, given its importance for attention allocation <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b42">Yu et al., 2022)</ref> and information processing <ref type="bibr" target="#b17">(Krajbich et al., 2010;</ref><ref type="bibr" target="#b18">Krajbich &amp; Rangel, 2011)</ref>.</p><p>Scanpath similarity analysis has been shown to be an informative eye-tracking measure which quantifies the extent to which visual exploration is similar across different conditions or between encoding and retrieval <ref type="bibr" target="#b8">(Fahimi &amp; Bruce, 2021)</ref>. Fixation density maps are conceptually a mapped version of scanpaths on a 2 dimensional plane, which have been widely used in the similarity-based analysis of visual exploration <ref type="bibr" target="#b7">(Engelke et al., 2013;</ref><ref type="bibr" target="#b26">Olsen et al., 2014)</ref>. For example, similarity analysis of fixation density maps in a memory task showed that revisiting the same fixation points that were visited during the encoding, in the retrieval improve visuospatial memory <ref type="bibr" target="#b41">(Wynn et al., 2018)</ref>. Eyesim (https://github.com/bbuchsbaum/eyesim) is an opensource package that provides similarity analysis for fixation density maps. Critically, the temporal resolution of the fixation density maps is bound to the fixation durations, and this is not necessarily temporally comparable across participants.</p><p>In HMLET, we introduced a novel method for visual exploration similarity analysis in which we used time series of gaze points rather than fixations to estimate the pattern of the gaze distribution across time and space. We also provided some routines to create output videos (See Visual Exploration Similarity Analysis Section).</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET workflow</head><p>In the following sections, we provide an overview of the functions and capabilities implemented in HMLET. The workflow and main modules are presented in Figure <ref type="figure" target="#fig_0">1</ref>. Feature analysis includes functions and routines for feature evaluation and selection based on machine learning. VESA includes functions and routines for visual exploration similarity analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration</head><p>Another desirable ability of eye-tracking packages is to produce estimates of visual exploration, given its importance for attention allocation <ref type="bibr" target="#b3">(Borys &amp; Plechawska-Wójcik, 2017;</ref><ref type="bibr" target="#b41">Yu et al., 2022)</ref> and information processing <ref type="bibr" target="#b17">(Krajbich et al., 2010;</ref><ref type="bibr" target="#b18">Krajbich &amp; Rangel, 2011)</ref>.</p><p>Scanpath similarity analysis has been shown to be an informative eye-tracking measure which quantifies the extent to which visual exploration is similar across different conditions or between encoding and retrieval <ref type="bibr" target="#b8">(Fahimi &amp; Bruce, 2021)</ref>. Fixation density maps are conceptually a mapped version of scanpaths on a 2 dimensional plane, which have been widely used in the similarity-based analysis of visual exploration <ref type="bibr" target="#b7">(Engelke et al., 2013;</ref><ref type="bibr" target="#b26">Olsen et al., 2014)</ref>. For example, similarity analysis of fixation density maps in a memory task showed that revisiting the same fixation points that were visited during the encoding, in the retrieval improve visuospatial memory <ref type="bibr" target="#b40">(Wynn et al., 2018)</ref>. Eyesim (<ref type="url" target="https://github.com/bbuchsbaum/eyesim">https://github.com/bbuchsbaum/eyesim</ref>) is an opensource package that provides similarity analysis for fixation density maps. Critically, the temporal resolution of the fixation density maps is bound to the fixation durations, and this is not necessarily temporally comparable across participants.</p><p>In HMLET, we introduced a novel method for visual exploration similarity analysis in which we used time series of gaze points rather than fixations to estimate the pattern of the gaze distribution across time and space. We also provided some routines to create output videos (See Visual Exploration Similarity Analysis Section).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET workflow</head><p>In the following sections, we provide an overview of the functions and capabilities implemented in HMLET. The workflow and main modules are presented in Figure <ref type="figure" target="#fig_0">1</ref>. time stamps, and grouping variables in CSV format. Pre-processing includes functions and routines for AOI definition, gaze point mapping, and data preparation for the subsequent tools.</p><p>Feature analysis includes functions and routines for feature evaluation and selection based on machine learning. VESA includes functions and routines for visual exploration similarity analysis.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization includes functions and routines to visualize data and results.</head><p>The preprocessing module is designed to be compatible with all types of eye-tracking technology that supports CSV or TXT file export. We encourage users to export raw gaze-point coordinates with time stamps to preserve high temporal resolution and use pre-processing functions to define AOIs. However, HMLET is amenable for users exporting AOIs and fixation data computed by their software of choice. In this case, users would skip pre-processing steps in HMLET and use the functions for data preparation for the desired module which convert user data to a compatible format for HMLET modules.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Structure</head><p>Data must be prepared in the long format. General data structure should include subject index (within-trial permutation tests support single subject data), time variable indicating time stamp in milliseconds (e.g., 16, 32, 48, …), or indexes (e.g., 1, 2, 3, …), grouping variables indicating trial or subject level conditions, and response types (e.g., hit, false-alarm) and eyetracking variables indicating gaze point coordinates on screen or they can be relative coordinates with respect to a fixed or changing center (e.g., fixation [x, y] coordinate relative to the stimuli center), areas of interest, and gaze proportions. Additional variables can be included, and some can be replaced as an alternative to the listed required variables. For example, HMLET supports reverse time analysis which allows for examining eye-movement patterns backward in time from a specific incident (e.g., response submission) which can be replaced with the normal time stamp or time index variables. See Table .1 for details. </p><formula xml:id="formula_0">✓ - ✓ ✓ - ✓ ✓ ✓ Features Different Eye-tracking Measures - ✓</formula></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET Modules in R</head></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocessing</head><p>Eye-tracking data in raw format consist of a temporal sequence of 2-dimensional gaze coordinates within the experimental screen per trial/subject/condition. Data must be loaded into a variable of type dataframe in R and sorted in long format. The standard preprocessing pipeline available in HMLET for raw data is shown in Figure <ref type="figure" target="#fig_1">2</ref>. We suggest using these modules in the presented order to avoid unwanted error propagation. In the following sections, we provide detailed functions of each module. Validation. In the analysis of time series data, it is crucial to have the exact time stamp of all data points. The time interval between samples must also be equal to implement permutation tests because average values in each time point across trials and participant ID is used to compute the statistic that is later used to form clusters across time points. Even a small deviation or mislabeling of the time stamps between trials and participants can result in large errors in the average time series and corresponding permutation tests. In practice, due to truncation errors, it is very common to have slight deviations in the time stamps exported by the eye-trackers. For example, for an eye-tracker with sampling rate of 60hz the time interval between samples will be 16.(6)ms, which has an indefinitely repeating 6 in its decimal, but a rounded or truncated version of this number will be stored by the software which may cause varying time intervals across samples (e.g., with presumably an ideal 60hz sampler, time intervals frequently alternate between 16ms and 17ms). As a result, in practice, there can be discrepancies in time intervals between samples that have to be fixed before proceeding to permutation tests. The function ComputeSamplingInterval_HMLET provides estimates of the sampling interval in the given data. This function produces a warning if there are discrepancies in the current data. To fix the issue, Preprocess_FixSampling_HMLET, can be used in which all the data points will be labeled with consistent time stamps.</p><p>We strongly suggest using the function Preprocess_CheckData_HMLET for quality to check data for critical issues such as consistency of time stamps and identification of missing values due to blink or head movements.</p><p>Interpolation. It is very common to have missing gaze points in any given temporal sequence of gaze coordinates. This may happen due to blinking, the participant not looking within the screen area, or device error. Critically, when it comes to high temporal resolution analysis of eye-tracking data, removing missing gaze points results in misalignment of data time points across trials. Users can estimate gaze point trajectory for missing time points using the Preprocess_Interpolate_HMLET function. This function performs linear interpolation for the specified number of consecutive missing gaze points and leaves the value of longer consecutive missing gaze points as NA. This step is not mandatory, and it can be ignored.</p><p>AOI Extraction. This step adds a categorical column to the data indicating the name of the AOI the subject is looking at during each time point. Users need to provide 4 arguments for rectangular AOIs as {Center_X, Center_Y, Width, Height}, indicating center of each AOI and its width and height in pixels with respect to top left corner of the screen (i.e., origin {0, 0}). Areas outside the listed AOI will be labeled as Content (user can change the label). The function</p><p>Preprocess_AOIExtraction_HMLET performs these computations. The AOI column is mandatory for permutation tests, but if it is already available in the data this step can be ignored.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocessing</head><p>Eye-tracking data in raw format consist of a temporal sequence of 2-dimensional gaze coordinates within the experimental screen per trial/subject/condition. Data must be loaded into a variable of type dataframe in R and sorted in long format. The standard preprocessing pipeline available in HMLET for raw data is shown in Figure <ref type="figure" target="#fig_1">2</ref>. We suggest using these modules in the presented order to avoid unwanted error propagation. In the following sections, we provide detailed functions of each module. used in the presented order. Validation, Interpolation, AOI Extraction, Relative Gaze Points, and Define Time Bins, modules are not mandatory if the corresponding process was already performed in the user data.</p><p>Validation. In the analysis of time series data, it is crucial to have the exact time stamp of all data points. The time interval between samples must also be equal to implement permutation tests because average values in each time point across trials and participant ID is used to compute the statistic that is later used to form clusters across time points. Even a small deviation or mislabeling of the time stamps between trials and participants can result in large errors in the average time series and corresponding permutation tests. In practice, due to truncation errors, it is very common to have slight deviations in the time stamps exported by the eye-trackers. For example, for an eye-tracker with sampling rate of 60hz the time interval between samples will be 16.( <ref type="formula">6</ref>)ms, which has an indefinitely repeating 6 in its decimal, but a rounded or truncated version of this number will be stored by the software which may cause varying time intervals across samples (e.g., with presumably an ideal 60hz sampler, time intervals frequently alternate between 16ms and 17ms). As a result, in practice, there can be discrepancies in time intervals between samples that have to be fixed before proceeding to permutation tests. The function ComputeSamplingInterval_HMLET provides estimates of the sampling interval in the given data. This function produces a warning if there are discrepancies in the current data. To fix the issue, Preprocess_FixSampling_HMLET, can be used in which all the data points will be labeled with consistent time stamps.</p><p>We strongly suggest using the function Preprocess_CheckData_HMLET for quality to check data for critical issues such as consistency of time stamps and identification of missing values due to blink or head movements.</p><p>Interpolation. It is very common to have missing gaze points in any given temporal sequence of gaze coordinates. This may happen due to blinking, the participant not looking within the screen area, or device error. Critically, when it comes to high temporal resolution analysis of eye-tracking data, removing missing gaze points results in misalignment of data time points across trials. Users can estimate gaze point trajectory for missing time points using the Preprocess_Interpolate_HMLET function. This function performs linear interpolation for the specified number of consecutive missing gaze points and leaves the value of longer consecutive missing gaze points as NA. This step is not mandatory, and it can be ignored.</p><p>AOI Extraction. This step adds a categorical column to the data indicating the name of the AOI the subject is looking at during each time point. Users need to provide 4 arguments for rectangular AOIs as {Center_X, Center_Y, Width, Height}, indicating center of each AOI and its width and height in pixels with respect to top left corner of the screen (i.e., origin {0, 0}). Areas outside the listed AOI will be labeled as Content (user can change the label). The function</p><p>Preprocess_AOIExtraction_HMLET performs these computations. The AOI column is mandatory for permutation tests, but if it is already available in the data this step can be ignored.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Define Time Bins. Time bin is defined as an interval of time across which individual time</head><p>point data is aggregated. This is most commonly used for looking proportions. Time bins can be defined as arbitrary time intervals (not smaller than sampling duration) using the function</p><p>CreateTimeBinData_HMLET. This step is not mandatory. However, it is recommended with high temporal resolution data with many missing gaze points. The aggregating function can be set by the user and is set to the mean() function by default. This function first creates new columns for all possible AOIs with binary values indicating whether gaze point was inside the AOI or not. If these binary AOI columns are already presented in the data, this step will be ignored. Subsequently, it applies the aggregating function on these binary AOIs columns within time bins for each level of the grouping variables defined by the user. If users do not specify any grouping variables, time point data will not be aggregated (e.g., averaged, summed, etc.) within time bins and only the time bin information will be added to the current data frame in the form of two additional columns. One column specifies the corresponding time interval for each sample as labels (e.g., for time bins of size 250ms: "0-250", "250-500", …), and the other column specifies the index of the time bins in numerical format (e.g., 1, 2, 3, …). This is not a mandatory step and user may ignore this step.</p><p>Data Preparation. This is a mandatory step through which data column names are converted to a compatible format for HMLET modules. To prepare data for permutation tests, the function PermutationTestDataPrep_HMLET should be called. Alternatively, to prepare the data for GUI use and performing feature analysis and VESA modules, the function</p><p>ExportDataForGUI_HMLET should be used.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Time Series Analysis</head><p>In HMLET, we implemented both subject-level and trial-level permutation tests as introduced by <ref type="bibr" target="#b21">Maris and Oostenveld, (2007)</ref> for time series data. Critically, to have a valid estimation of the null distribution, individual permutations of conditions must be unique. If not, the Monte Carlo assumption would be violated and the estimated distribution would be invalid <ref type="bibr" target="#b31">(Romano &amp; Tirlea, 2022)</ref>. In HMLET, we first produce unique random permutation labels for the number of simulations defined by the user. Subsequently, we perform simulations on these labels to estimate the null distribution. Users can directly pass the prepared data to the function PermutationTest_HMLET, which runs the permutation test pipeline at the subject-level or triallevel based on the specified binary value to the input argument permuteTrialsWithinSubject (i.e., trial-level will be used if it is set as true, otherwise participants level permutation will be performed). In principle, both methods are expected to produce the same results when ample number of permutation samples are tested <ref type="bibr" target="#b21">(Maris &amp; Oostenveld, 2007)</ref>. However, in practice, with small numbers of subjects contributing data, desired number of permutations across subjects may not be possible or enough to reliably estimate the p-value. In these cases, with large number of trials for each experimental condition, trial-level permutation is more appropriate. Subjectlevel permutation is computationally faster and when enough subjects are available, users may prefer to run subject-level tests. Trial-level permutation test can compare experimental conditions in one subject which is implemented in a separate function</p><p>PermutationTestSingleParticipant_HMLET. Results of the permutation tests can be visualized using functions PlotTimeSeries_HMLET and PlotNullDistribution_HMLET.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET GUI Modules</head><p>Feature analysis and VESA modules are available in the GUI which is implemented in MATLAB™ (2024a). To run the GUI, MATLAB™ compiler runtime is required which is freely available on MathWorks™ website 1 . Source scripts for these modules are also available which 1 https://www.mathworks.com/products/compiler/matlab-runtime.html can be directly used in MATLAB™ environment. Users can use ExportDataForGUI_HMLET function in R to prepare their data for the GUI.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Analysis</head><p>The workflow of the feature analysis module is represented in Figure <ref type="figure" target="#fig_2">3</ref>. In this module, desired features (i.e., eye-tracking measures) extracted from the data are analyzed to score their informativeness in discriminating between specified conditions. Note that any measure of eyetracking can be treated as a feature, but only conceptually comparable ones can be analyzed together in the feature analysis. Therefore, one application of the feature analysis is to identify the optimal parameters for a specific eye-tracking measure. For instance, in practice, the size of AOI around a stimulus (e.g., fixation cross) is often defined heuristically, especially when the stimulus lacks explicit borders. As a result, the value of an eye-tracking measure (e.g., looking time at that area) may vary with different sizes of AOIs with significant impact on the results. As preliminary assessment, all possible values of the looking time resulting from different AOI sizes can be compared in the feature analysis.</p><p>Features must be added in separate columns in the long format. In addition to the features provided by the user, HMLET can compute some basic features from the preprocessed data as listed in Table <ref type="table" target="#tab_1">2</ref>. If features were computed within different time windows during trials, their informativeness within each time window would be compared and scored separately. After outlier removal and normalization of the features, based on a user defined categorical dependent variable (e.g., Accuracy, Experimental Condition, etc.), features are ranked using chi square tests <ref type="bibr" target="#b15">(Jović et al., 2015)</ref> and minimum redundancy <ref type="bibr" target="#b5">(Ding &amp; Peng, 2005)</ref>. Subsequently, the ranking of the features can be validated on the performance of a KNN or SVM classifier (can be chosen by the user) to predict the desired trial/subject level variable using the feature time series. In this step, a set of features will be extracted from the preprocessed data. Features can be extracted from absolute gaze points, relative gaze points, and/or gaze proportions. By default, HMLET extracts different groups of features listed in Table <ref type="table" target="#tab_1">2</ref>. Users can choose all or a subset of these features. Alternatively, users can provide their own features in the input data and ignore the feature extraction step. </p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration Similarity Analysis (VESA)</head><p>VESA is a novel technique in which absolute or relative gaze point coordinates are used to compute similarity of gaze patterns between two conditions (e.g., Similarity between encoding and retrieval in a memory task). VESA builds an exploration map which is a 2-dimensional representation of the gaze distribution within a sliding time window (with user defined length and overlap). Therefore, a set of exploration maps will be computed for each trial. Users can choose to compare exploration-maps of the corresponding time windows between trials which will produce a time series of similarity scores for each pair of compared trials. Alternatively, exploration maps within each trial can be stacked temporally and similarity computed between the 3D volumetric representations which will result one similarity score for each pair of compared trials (See Figure <ref type="figure" target="#fig_3">4</ref>). In both cases, similarity scores are computed using a Pearson's correlation.</p><p>Each exploration map is created in 3 steps. First, a 2-dimensional pictorial representation of all gaze points in the selected time window is created as a 2D picture with the same size as the original screen in which each pixel takes the value corresponding to the number of gaze points in that coordinate. Second, the 2D images are smoothed by a specified factor. Finally, these images are rescaled with the desired factor defined by user. Rescaling smaller images is necessary for computational efficiency. However, if ample computational resources are available, users may use factor 1 for rescaling. For smoothing, users can choose between three different methods: gridbased, Gaussian, and convolution. In grid-based smoothing, for a smoothing factor R, the screen is divided into grids of R×R pixels. Smoothing and scaling are performed simultaneously by assigning one pixel to each grid, with its value being the sum of all pixel values within that grid.</p><note type="other">HMLET Toolbox 16</note><p>Gaussian smoothing applies a 2D Gaussian filter with a standard deviation of R to the image. In convolution smoothing, the value of each pixel is replaced with the average value of all pixels within a circle of radius R centered on that pixel. These methods offer different approaches to smoothing based on user preferences and requirements. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. HMLET workflow. Raw eye-tracking data should include gaze point coordinates,</figDesc><graphic coords="8,108.00,320.38,435.07,225.85" type="bitmap" /></figure>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HMLET GUI Modules</head><p>Feature analysis and VESA modules are available in the GUI which is implemented in MATLAB™ (2024a). To run the GUI, MATLAB™ compiler runtime is required which is freely available on MathWorks™ website 1 . Source scripts for these modules are also available which 1 <ref type="url" target="https://www.mathworks.com/products/compiler/matlab-runtime.html">https://www.mathworks.com/products/compiler/matlab-runtime.html</ref> can be directly used in MATLAB™ environment. Users can use ExportDataForGUI_HMLET function in R to prepare their data for the GUI.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Analysis</head><p>The workflow of the feature analysis module is represented in Figure <ref type="figure" target="#fig_2">3</ref>. In this module, desired features (i.e., eye-tracking measures) extracted from the data are analyzed to score their informativeness in discriminating between specified conditions. Note that any measure of eyetracking can be treated as a feature, but only conceptually comparable ones can be analyzed together in the feature analysis. Therefore, one application of the feature analysis module is to identify the optimal parameters for a specific eye-tracking measure. For instance, in practice, the size of AOI around a stimulus (e.g., fixation cross) is often defined heuristically, especially when the stimulus lacks explicit borders. As a result, the value of an eye-tracking measure (e.g., looking time at that area) may vary with different sizes of AOIs with significant impact on the results. As preliminary assessment, all possible values of the looking time resulting from different AOI sizes can be compared in the feature analysis.</p><p>Features must be added in separate columns in the long format. In addition to the features provided by the user, HMLET can compute some basic features from the preprocessed data as listed in Table <ref type="table" target="#tab_1">2</ref>. If features were computed within different time windows during trials, their informativeness within each time window would be compared and scored separately. After outlier removal and normalization of the features, based on a user defined categorical dependent variable (e.g., Accuracy, Experimental Condition, etc.), features are ranked using chi square tests <ref type="bibr" target="#b15">(Jović et al., 2015)</ref> and minimum redundancy <ref type="bibr" target="#b5">(Ding &amp; Peng, 2005)</ref>. Subsequently, the ranking of the features can be validated on the performance of a KNN or SVM classifier (can be chosen by the user) to predict the desired trial/subject level variable using the feature time series. runs in the GUI. Users can mark Feature Extraction, Removing Outliers, and Normalization steps to be ignored if these steps are not necessary for their input data.</p><p>In this step, a set of features will be extracted from the preprocessed data. Features can be extracted from absolute gaze points, relative gaze points, and/or gaze proportions. By default, HMLET extracts different groups of features listed in Table <ref type="table" target="#tab_1">2</ref>. Users can choose all or a subset of these features. Alternatively, users can provide their own features in the input data and ignore the feature extraction step. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visual Exploration Similarity Analysis (VESA)</head><p>VESA is a novel technique in which absolute or relative gaze point coordinates are used to compute similarity of gaze patterns between two conditions (e.g., Similarity between encoding and retrieval in a memory task). VESA builds an exploration map which is a 2-dimensional representation of the gaze distribution within a sliding time window (with user defined length and overlap). Therefore, a set of exploration maps will be computed for each trial. Users can choose to compare exploration-maps of the corresponding time windows between trials which will produce a time series of similarity scores for each pair of compared trials. Alternatively, exploration maps within each trial can be stacked temporally and similarity computed between the 3D volumetric representations which will result one similarity score for each pair of compared trials (See Figure <ref type="figure" target="#fig_3">4</ref>). In both cases, similarity scores are computed using a Pearson's correlation.</p><p>Each exploration map is created in 3 steps. First, a 2-dimensional pictorial representation of all gaze points in the selected time window is created as a 2D picture with the same size as the original screen in which each pixel takes the value corresponding to the number of gaze points in that coordinate. Second, the 2D images are smoothed by a specified factor. Finally, these images are rescaled with the desired factor defined by user. Rescaling smaller images is necessary for computational efficiency. However, if ample computational resources are available, users may use factor 1 for rescaling. For smoothing, users can choose between three different methods: gridbased, Gaussian, and convolution. In grid-based smoothing, for a smoothing factor R, the screen is divided into grids of R×R pixels. Smoothing and scaling are performed simultaneously by assigning one pixel to each grid, with its value being the sum of all pixel values within that grid.</p><note type="other">HMLET Toolbox 16</note><p>Gaussian smoothing applies a 2D Gaussian filter with a standard deviation of R to the image. In convolution smoothing, the value of each pixel is replaced with the average value of all pixels within a circle of radius R centered on that pixel. These methods offer different approaches to smoothing based on user preferences and requirements. point at each fixation point depicted by black dots. B) Two-dimensional pictorial representation of the first gaze point. C) Exploration-map representation for the first gaze point. D) Threedimensional representation of the scan-path by stacking exploration-maps of the gaze points in their temporal order. Conclusions In conclusion, the introduction of this new toolbox for eye-tracking data analysis fills a critical gap in the current landscape of eye-tracking research tools. Given the ubiquitous application of eye-tracking technology across various fields of research, the availability of comprehensive and consistent analytical tools is paramount for comparability and replicability of research findings. HMLET addresses needs that are not currently fully met by providing new and essential functions. By providing unique tools for high-temporal time-series analysis, this </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. HMLET workflow. Raw eye-tracking data should include gaze point coordinates,</figDesc><graphic coords="8,108.00,320.38,435.07,225.85" type="bitmap" /></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Preprocessing modules offered in HMLET. These modules are suggested to be</figDesc><graphic coords="11,108.00,72.00,403.66,183.45" type="bitmap" /></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Workflow of feature analysis module in HMLET. This pipeline automatically</figDesc><graphic coords="16,108.00,72.00,378.24,171.90" type="bitmap" /></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Steps of creating an exploration map. A) Hypothetical scan-path with only 1 gaze</figDesc><graphic coords="18,108.00,182.39,420.24,145.20" type="bitmap" /></figure>
@@ -143,9 +145,12 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<back>
 
 			<div type="funding">
-<div><head>Funding</head><p>The development of this package is partly supported by <rs type="funder">UC Davis Department of Psychology Summer Research Fellowship and Dissertation Research Fellowship</rs> awarded to A.K.</p></div>
+<div><head>Funding</head><p>The development of this package is partly supported by <rs type="funder">UC Davis Department of Psychology Summer Research Fellowship</rs> and <rs type="grantName">Dissertation Research Fellowship</rs> awarded to A.K.</p></div>
 			</div>
 			<listOrg type="funding">
+				<org type="funding" xml:id="_b2CSb4W">
+					<orgName type="grant-name">Dissertation Research Fellowship</orgName>
+				</org>
 			</listOrg>
 			<div type="annex">
 <div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interest statement</head><p>The authors declared no potential conflicts of interest with respect to the research, authorship, and/or publication of this article.</p></div>			</div>
@@ -194,8 +199,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">K</forename><surname>Holmqvist</surname></persName>
 		</author>
-		<idno type="DOI">10.16910/jemr.3.3.6</idno>
-		<ptr target="https://doi.org/10.16910/jemr.3.3.6" />
+		<idno type="DOI">10.16910/jemr.3.3</idno>
+		<ptr target="https://doi.org/10.16910/jemr.3.3" />
 	</analytic>
 	<monogr>
 		<title level="j">Journal of Eye Movement Research</title>
@@ -299,6 +304,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b6">
 	<monogr>
+		<title level="m" type="main">eyetrackingR: An R Library for Eye-tracking Data Analysis</title>
 		<author>
 			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Dink</surname></persName>
 		</author>
@@ -306,7 +312,6 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">B</forename><surname>Ferguson</surname></persName>
 		</author>
 		<ptr target="http://www.eyetrackingr.com" />
-		<title level="m">eyetrackingR: An R Library for Eye-tracking Data Analysis</title>
 		<imprint>
 			<date type="published" when="2015">2015</date>
 		</imprint>
@@ -389,8 +394,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">V</forename><forename type="middle">A</forename><surname>Marchman</surname></persName>
 		</author>
-		<idno type="DOI">10.1075/lald.44.06fer</idno>
-		<ptr target="https://doi.org/10.1075/lald.44.06fer" />
+		<idno type="DOI">10.1075/lald</idno>
+		<ptr target="https://doi.org/10.1075/lald" />
 	</analytic>
 	<monogr>
 		<title level="m">Developmental psycholinguistics: On-line methods in children&apos;s language processing</title>
@@ -406,7 +411,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	<analytic>
 		<title level="a" type="main">GazeR: A Package for Processing Gaze Position and Pupil Size Data</title>
 		<author>
-			<persName><forename type="first">J</forename><surname>Geller</surname></persName>
+			<persName><forename type="first">J</forename><surname>Fer Geller</surname></persName>
 		</author>
 		<author>
 			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Winn</surname></persName>
@@ -478,8 +483,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">K</forename><surname>Holmqvist</surname></persName>
 		</author>
-		<idno type="DOI">10.16910/jemr.6.1.3</idno>
-		<ptr target="https://doi.org/10.16910/jemr.6.1.3" />
+		<idno type="DOI">10.16910/jemr.6.1</idno>
+		<ptr target="https://doi.org/10.16910/jemr.6.1" />
 	</analytic>
 	<monogr>
 		<title level="j">Journal of Eye Movement Research</title>
@@ -707,7 +712,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	<monogr>
 		<title level="m">Comprehensive Physiology</title>
 		<imprint>
-			<publisher>John Wiley &amp; Sons</publisher>
+			<publisher>John Wiley &amp; Sons, Ltd</publisher>
 			<date type="published" when="2014">2014</date>
 			<biblScope unit="page" from="439" to="473" />
 		</imprint>
@@ -730,7 +735,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<title level="j">Cognitive Processing</title>
 		<imprint>
 			<biblScope unit="volume">13</biblScope>
-			<biblScope unit="issue">S1</biblScope>
+			<biblScope unit="issue">1</biblScope>
 			<biblScope unit="page" from="261" to="265" />
 			<date type="published" when="2012">2012</date>
 		</imprint>
@@ -816,6 +821,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<imprint>
 			<biblScope unit="volume">14</biblScope>
 			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">8</biblScope>
 			<date type="published" when="2014">2014</date>
 		</imprint>
 	</monogr>
@@ -823,16 +829,16 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b27">
 	<monogr>
+		<title level="m" type="main">Digital Signal Processing</title>
 		<author>
 			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Oppenheim</surname></persName>
 		</author>
 		<author>
 			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Schafer</surname></persName>
 		</author>
-		<title level="m">Digital Signal Processing</title>
 		<imprint>
-			<publisher>Prentice-Hall</publisher>
 			<date type="published" when="1975">1975</date>
+			<publisher>Prentice-Hall</publisher>
 		</imprint>
 	</monogr>
 </biblStruct>
@@ -936,24 +942,20 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 </biblStruct>
 
 <biblStruct xml:id="b32">
-	<monogr>
+	<analytic>
+		<title level="a" type="main">Developmental Differences in Subjective Recollection and Its Role in Decision Making</title>
 		<author>
 			<persName><forename type="first">R</forename><forename type="middle">Y</forename><surname>Rubinstein</surname></persName>
 		</author>
 		<author>
 			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kroese</surname></persName>
 		</author>
-		<title level="m">Simulation and the Monte Carlo Method</title>
-		<imprint>
-			<publisher>John Wiley &amp; Sons</publisher>
-			<date type="published" when="2016">2016</date>
-		</imprint>
-	</monogr>
-</biblStruct>
-
-<biblStruct xml:id="b33">
-	<analytic>
-		<title level="a" type="main">Developmental Differences in Subjective Recollection and Its Role in Decision Making</title>
+		<author>
+			<persName><forename type="first">&amp;</forename><surname>John Wiley</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sons</surname></persName>
+		</author>
 		<author>
 			<persName><forename type="first">D</forename><surname>Selmeczy</surname></persName>
 		</author>
@@ -969,14 +971,15 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	<monogr>
 		<title level="j">Child Development</title>
 		<imprint>
+			<biblScope unit="volume">92</biblScope>
 			<biblScope unit="issue">6</biblScope>
-			<biblScope unit="page">92</biblScope>
-			<date type="published" when="2021">2021</date>
+			<date type="published" when="2016">2016. 2021</date>
 		</imprint>
 	</monogr>
+	<note>Simulation and the Monte Carlo Method</note>
 </biblStruct>
 
-<biblStruct xml:id="b34">
+<biblStruct xml:id="b33">
 	<analytic>
 		<title level="a" type="main">Communication in the Presence of Noise</title>
 		<author>
@@ -996,7 +999,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b35">
+<biblStruct xml:id="b34">
 	<analytic>
 		<title level="a" type="main">The dynamics of visual responses in the primary visual cortex</title>
 		<author>
@@ -1022,7 +1025,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b36">
+<biblStruct xml:id="b35">
 	<analytic>
 		<title level="a" type="main">A review of unsupervised feature selection methods</title>
 		<author>
@@ -1051,44 +1054,44 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b37">
+<biblStruct xml:id="b36">
 	<monogr>
-		<title level="m" type="main">Tobii Pro Lab (1.241) [Computer software]</title>
+		<title level="m" type="main">Tobii Pro Lab (1.241</title>
 		<author>
 			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Tobii</surname></persName>
 		</author>
+		<ptr target="https://www.tobii.com/" />
 		<imprint>
 			<date type="published" when="2024">2024</date>
+			<publisher>Tobii AB</publisher>
 		</imprint>
 	</monogr>
+	<note>Computer software</note>
 </biblStruct>
 
-<biblStruct xml:id="b38">
+<biblStruct xml:id="b37">
 	<analytic>
 		<title level="a" type="main">Prediction of product design decision Making: An investigation of eye movements and EEG features</title>
 		<author>
-			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Tobii</surname></persName>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">Y</forename><surname>Yu</surname></persName>
+			<persName><forename type="first">S</forename><surname>Yu</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">S</forename><surname>Ma</surname></persName>
+			<persName><forename type="first">N</forename><surname>Ma</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">N</forename><surname>Wang</surname></persName>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">J</forename><surname>Hu</surname></persName>
+			<persName><forename type="first">Z</forename><surname>Hu</surname></persName>
 		</author>
 		<author>
 			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">Z</forename><surname>He</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">J</forename></persName>
+			<persName><forename type="first">J</forename><surname>He</surname></persName>
 		</author>
 		<idno type="DOI">10.1016/j.aei.2020.101095</idno>
 		<ptr target="https://doi.org/10.1016/j.aei.2020.101095" />
@@ -1103,7 +1106,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b39">
+<biblStruct xml:id="b38">
 	<analytic>
 		<title level="a" type="main">An Eye-Tracking Paradigm for Analyzing the Processing Time of Sentences with Different Linguistic Complexities</title>
 		<author>
@@ -1129,7 +1132,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b40">
+<biblStruct xml:id="b39">
 	<analytic>
 		<title level="a" type="main">Saccadic eye movement parameters in normal subjects</title>
 		<author>
@@ -1158,7 +1161,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b41">
+<biblStruct xml:id="b40">
 	<analytic>
 		<title level="a" type="main">Fixation reinstatement supports visuospatial memory in older adults</title>
 		<author>
@@ -1190,7 +1193,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	</monogr>
 </biblStruct>
 
-<biblStruct xml:id="b42">
+<biblStruct xml:id="b41">
 	<analytic>
 		<title level="a" type="main">Visual search guidance uses coarser template information than target-match decisions</title>
 		<author>
@@ -1206,7 +1209,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<ptr target="https://doi.org/10.3758/s13414-022-02478-3" />
 	</analytic>
 	<monogr>
-		<title level="j">Perception, &amp; Psychophysics</title>
+		<title level="j">Attention, Perception, &amp; Psychophysics</title>
 		<imprint>
 			<biblScope unit="volume">84</biblScope>
 			<biblScope unit="issue">5</biblScope>
@@ -1214,7 +1217,6 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
-	<note>Attention</note>
 </biblStruct>
 
 				</listBibl>

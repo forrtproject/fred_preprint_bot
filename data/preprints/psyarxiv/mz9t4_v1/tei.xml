@@ -1,0 +1,1660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Building Interpretable Natural Language Processing Models for Organizational Research</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Mengqiao</forename><surname>Liu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Amazon.com Services, Inc</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Tianjun</forename><surname>Sun</surname></persName>
+							<email>tianjunsun@rice.edu</email>
+							<affiliation key="aff1">
+								<orgName type="institution">Rice University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Feng</forename><surname>Guo</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">University of Tennessee at Chattanooga</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hanyi</forename><surname>Min</surname></persName>
+							<affiliation key="aff3">
+								<orgName type="department">Department of Psychological Sciences</orgName>
+								<orgName type="institution" key="instit1">University of Illinois Urbana-Champaign</orgName>
+								<orgName type="institution" key="instit2">Rice University</orgName>
+								<address>
+									<addrLine>MS-25 468 Sewall Hall 6100 Main Street</addrLine>
+									<postCode>77005</postCode>
+									<settlement>Houston</settlement>
+									<region>Texas</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Building Interpretable Natural Language Processing Models for Organizational Research</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">BB7C59F19E4D3B8ABCBFACB428CE54FA</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>explainable artificial intelligence</term>
+					<term>natural language processing</term>
+					<term>interpretable machine learning</term>
+					<term>organizational applications</term>
+					<term>tutorial</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In the present work, we introduce and demonstrate the steps involved in using interpretable natural language processing (NLP) to predict decision-making in organizational contexts. Interpretability is important for scientific advancement, bias detection and mitigation, user trust, and ethical and legal compliance. In this study, we discuss why NLP interpretability is important and introduce a variety of interpretability methods that can be applied throughout the model development process. Using assessment center data from a recent machine learning competition organized by SIOP, we also showcase how we can develop and interpret NLP models of various intrinsic interpretability (logistic regression, XGBoost, DistilBERT, and GPT o1) through both global and local methods. This paper serves as an overview, guideline, and hands-on tutorial for applying interpretable NLP methods in organizational research, offering practical steps and considerations for researchers and practitioners. By combining conceptual discussions with practical applications, our work underscores the potential of interpretable NLP techniques in realistic organizational settings.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Building Interpretable Natural Language Processing Models for Organizational Research</head><p>Natural language processing (NLP) models provide a powerful way to help us uncover patterns and derive insights from text, yet these models are seen as "black boxes" by many -they provide relatively accurate predictions but often lack clear logic or explanations behind them.</p><p>Organizational scientists have begun exploring and experimenting with using machine learning (ML) and NLP techniques on text (e.g., <ref type="bibr" target="#b5">Campion et al., 2016;</ref><ref type="bibr" target="#b46">Speer, 2018;</ref><ref type="bibr" target="#b37">Putka et al., 2023)</ref>, calling for a need to better understand and explain them. In this study, we aim to answer the following key questions: (a) What is NLP interpretability, and why is it important in organizational research? (b) How can we build interpretable NLP models? We hope this paper serves as a starting point for establishing responsible and best practices in organizational research toward interpretable text-based models.</p><p>We define a few technical terms here (see Table <ref type="table" target="#tab_0">1</ref> for a "cheat sheet" of related terminologies). ML is a subfield of computer science that aims to construct computer programs that can learn and improve with experience automatically <ref type="bibr" target="#b35">(Mitchell, 1997)</ref>. We commonly use ML models for two types of tasks, namely discriminative modeling and generative modeling.</p><p>Discriminative modeling is used to optimize some predictions based on data <ref type="bibr" target="#b22">(Hastie et al., 2009)</ref>, such as using interview transcripts to predict personality. Discriminative modeling includes classification (for categorical criterion variables) and regression (for continuous criterion variables). Generative modeling can produce content such as text or images. NLP is a discipline that aims to program computers that can automatically process and learn human natural language data <ref type="bibr" target="#b33">(Manning, 1999)</ref>. NLP models often leverage ML techniques to process, represent, and analyze text data, and they can also handle classification or regression tasks. In Table <ref type="table">2</ref>, we summarize common NLP use cases for both classification and regression. In this paper, we focus on interpreting supervised NLP models, given their relevance in predictive modeling in organizational research and science.</p><p>In recent years, we have seen an initial set of publications by organizational psychologists using NLP techniques to address a variety of organizational topics, such as streamlining job analysis <ref type="bibr" target="#b37">(Putka et al., 2023)</ref>, assessing competencies (e.g., <ref type="bibr" target="#b5">Campion et al., 2016)</ref> and personalities (e.g., <ref type="bibr" target="#b25">Hickman et al., 2022)</ref>, and scoring narrative performance reviews (e.g., <ref type="bibr" target="#b46">Speer, 2018)</ref>. In 2016, Psychological Methods produced a special issue on Big Data in Psychology, with papers providing overviews and tutorials on how big data techniques can be used in research relevant to organizational psychologists (e.g., <ref type="bibr" target="#b6">Chen &amp; Wojcik, 2016;</ref><ref type="bibr" target="#b29">Landers et al., 2016)</ref>. In 2018, Organizational Research Methods introduced a special issue: "Ad Hoc" Feature Topic Big Data and Modern Data Analytics, featuring papers discussing how various big data techniques can be leveraged to advance organizational science and practices. In 2020, Personnel Psychology had a special issue call for papers that used machine learning and artificial intelligence to advance organizational research and practice <ref type="bibr" target="#b4">(Campion &amp; Campion, 2023;</ref><ref type="bibr" target="#b60">Woo et al., 2024)</ref>. These research and applications benefit from the conceptual and methodological advances in the fields of computer science and artificial intelligence and showcase how such techniques can be applied to address organizational issues. NLP models and AI-driven chatbots are also increasingly being applied in organizational research for assessing individual differences, such as personality <ref type="bibr" target="#b13">(Fan et al., 2023;</ref><ref type="bibr" target="#b49">Sun et al., 2024)</ref> and vocational interests <ref type="bibr" target="#b9">(Chu et al., 2024)</ref>. These applications have demonstrated promise, but the effectiveness and accuracy of chatbot-inferred traits still require further examination <ref type="bibr" target="#b61">(Yuan et al., 2024)</ref>.</p><p>Despite the increasing interest and applications of NLP for organizational research, we have seen little on model interpretability or explainability addressed in the context of organizational science. <ref type="bibr" target="#b23">Henninger et al. (2023)</ref> showed various interpretability techniques for two types of ML models, namely random forests and neural networks, based on simulated, tabular data. However, to our knowledge, no published studies have been done on interpreting text-based, NLP models in the context of organizational research. We believe there are three main reasons for the lack of literature on this topic. First, the field of NLP is fast evolving, and so is the interpretability of these models. Although some standardization and systematic approaches exist in interpretability across different ML models <ref type="bibr" target="#b12">(Doshi-Velez &amp; Kim, 2017;</ref><ref type="bibr" target="#b36">Molnar, 2022;</ref><ref type="bibr" target="#b41">Rudin, 2019)</ref>, advances such as large language models (LLMs) call for a reexamination of how interpretability operationalizes.</p><p>Second, as a field, organizational science is still relatively new to NLP techniques, where the published literature is, quite appropriately, mainly focused on illustrating specific use cases of applying NLP models to solve research or practical problems (e.g., assessing applicant competencies, <ref type="bibr" target="#b5">Campion et al., 2016)</ref>.</p><p>Third, issues surrounding model interpretability are not typical concerns for organizational scientists, given the "traditional" models (e.g., ordinary least square regression models, structural equation models) used for organizational science are, in most cases, intrinsically interpretable (i.e., easily explainable given their relatively simple and intuitive logic and structure). Therefore, seeking additional model interpretability might be a "blind spot" for organizational researchers. That said, given the increasing adoption of NLP models, organizational researchers who wish to leverage these more complex modeling techniques will find themselves needing to explain these sometimes not-so-intuitive methods.</p><p>In the sections to follow, we plan to (a) illustrate the importance of NLP interpretability and review methods and procedures to establish interpretations and (b) present a hands-on tutorial on building several explainable NLP models. We contextualize our entire discussion in organizational science and practice because interpretations of interpretability (pun intended) can vary across domains and users, i.e., interpretable to whom? <ref type="bibr" target="#b30">(Lipton, 2017)</ref>. Therefore, we will focus on addressing NLP interpretability issues most relevant to organizational researchers and present solutions that can be easily adopted by this targeted audience.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>What is NLP Interpretability, and Why is it Important?</head><p>Interpretability can be broadly defined as "the ability to explain or to present in understandable terms to a human" <ref type="bibr" target="#b12">(Doshi-Velez &amp; Kim, 2017)</ref>. Here, we use the terms interpretability and explainability interchangeably. Breaking this definition down further, "the ability to explain or to present…" posits that interpretability is not a dichotomous concept but a continuum; it is inaccurate to say model A is either interpretable or uninterpretable. In addition, "…understandable terms…" suggests that interpretability is inherently a qualitative concept; it is difficult to impose quantifiable measures on interpretability as a whole, although there are ways to derive quantifiable measures as evidence to support or enhance interpretability; this is discussed in detail in the next section. One can probably say model A is more interpretable than model B, but never model A is n times as interpretable as model B. Lastly, "… to a human" infers that interpretability is in the eye of the beholder, and here, we contextualize it as understandable to organizational researchers and stakeholders (e.g., business leaders, recruiters, candidates). Although not specified in this definition, we argue that interpretable NLP should not solely rely on deriving post-hoc explanations after a model has been developed. Instead, building interpretable NLP requires a systematic, theory-and data-driven process throughout the premodeling, modeling, and post-modeling stages.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Importance of NLP Interpretability</head><p>There is a growing interest in NLP interpretability; Google identified over 129k search results and 23.7k publications from 2020 to 2024 on this topic. The need for interpretability arises when the objectives of NLP models cannot fully address the needs in organizational research and practice. In a discriminative modeling task, the goal is to mathematically optimize a prediction goal, such as "maximize the prediction accuracy of personality based on interview transcript," while ensuring such prediction will generalize in new data. It does so by first training a model on a dataset with the predictors (e.g., interview transcript) and outcome (e.g., personality scores), a process that identifies a set of model parameter estimates that yields the closest prediction to the outcome. Then this trained model is tested in an independent testing dataset that has not been used in the model training process to see if the derived model parameters would generalize in an unseen sample. To that end, NLP can serve many areas of organizational science and practice by producing powerful, and sometimes superior prediction tools compared to traditional models. However, maximizing prediction is not the sole purpose of organizational research; we also hope to advance the fundamental knowledge of organizational science and guide best organizational practices. Therefore, we need to understand the question, "Why/how did the model make its decision?" in addition to what is predicted, especially considering the complexity of many NLP systems.</p><p>We argue there are four reasons why the interpretability of the methodology is critical for the advancement of organizational science and practice. First, a primary goal of organizational science is to advance our scientific understanding of critical issues relevant to the productivity and well-being of organizations and their employees. Whether a researcher is studying an organizational phenomenon for general scientific advancement or diving deep to understand a specific organizational problem or application at hand, it is essential to understand the "why".</p><p>For instance, an organizational researcher wishing to understand employee turnover can collect data around the employee (e.g., performance review narrative, work samples, etc.), feed them into a complex NLP model, and reach a high prediction accuracy of .90. However, this high prediction metric does very little in advancing our scientific understanding on this topic without understanding why employees choose to leave a company, i.e., what are the most important predictors of turnover. We also have unknown confidence whether this prediction would generalize beyond the sample at hand -What if a specific variable that is unique to a single organization was a main predictor for turnover in the data? What if this specific variable is not stationary? In such cases, the learned model will unlikely generalize to future samples. It is important to point out that, answering the "why" question is relevant regardless of whether a deductive or an inductive approach is used; deriving explanations from NLP models is crucial to (in)validating or informing hypotheses, with the ultimate goal of enriching theories and human knowledge. As <ref type="bibr" target="#b30">Lipton (2017)</ref> points out, interpretable models allow researchers to better understand the "why" behind the predictions, thereby increasing the likelihood that these predictions will generalize across various settings and samples. In the context of NLP models, examining the data input-model output relationship helps identify whether the model is relying on robust, generalizable features or simply overfitting to idiosyncratic patterns in the data. By focusing on interpretability, we can scrutinize how changes in input data influence predictions, guiding adjustments to improve the model's adaptability to different organizational contexts. This process ultimately supports the development of more generalizable models, thereby enhancing their utility for researchers and practitioners in various organizational scenarios.</p><p>Second, seeking NLP interpretability is important in detecting and mitigating biases.</p><p>Organizational science is an applied discipline, and collectively, our research has a significant impact on real people in real organizations. While NLP does not make subjective predictions per se, NLP models will learn and mimic the patterns of relationships that exist in the data and, therefore, inherit and sometimes even amplify existing biases that the data contains. For instance, research has shown that NLP models trained on Google News articles yielded significant gender biases (e.g., associating "nurse" with "female" and "captain" with "male"; <ref type="bibr" target="#b2">Bolukbasi et al., 2016)</ref>. It is important to note that, such biases were not intentionally built into the language models, but rather biases that the researchers did not consider a priori and only became aware after the fact. When left unexamined and untreated, the negative consequences of such biases can be detrimental to organizational practices. For instance, if an organizational researcher were to leverage this model to build a job recommendation system without understanding how the system derives its decisions, this researcher would further exaggerate gender biases in occupations without even knowing it. Behavioral science is known for relying heavily on data from Western, Educated, Industrialized, Rich, and Democratic (WEIRD) samples <ref type="bibr" target="#b24">(Henrich et al., 2010)</ref>, which heightens the necessity to be wary of the potential biases that NLP models might inherit. Understanding how an NLP model makes predictions is crucial to detect biases that exist in data and algorithms and mitigate these biases before they turn into discriminations.</p><p>Third, being able to explain NLP systems in an understandable manner is crucial in facilitating trust and adoption from stakeholders and consumers of these systems. Drawing from the organizational justice literature <ref type="bibr" target="#b16">(Greenberg, 1990;</ref><ref type="bibr" target="#b10">Colquitt et al., 2013)</ref>, merely knowing the decision outcomes (distributive justice; e.g., whether one is hired or not) is only one piece of the puzzle. A sense of justice and fairness is fostered when individuals also perceive the decisionmaking process as consistent, accurate, and bias-free (procedural justice), as well as communicate the rationales behind the decisions in a respectful manner (interactional justice, which includes informational justice and interpersonal justice). We argue that procedural justice and interactional justice are critical to consider when dealing with NLP systems, given their "black box" reputation. Therefore, organizational decision makers need proper explanations to understand whether the model addresses the problem at hand, to ensure that the model predictions are accurate and fair, and to balance the impact of the model with other organizational objectives, such as diversity and inclusion.</p><p>On the other hand, end users of NLP systems, namely those impacted by predictions from the models, such as candidates and employees, will be looking for explanations on how they are being evaluated by the models, how the decisions are made, and whether they are being treated fairly by the algorithms. In addition, organizational researchers are also becoming consumers of NLP. Through this research, we also hope to promote trust and adoption from organizational researchers by unpacking and explaining NLP models, as well as demonstrating how they can do the same for their research and practice. Interpretability is often a prerequisite for trust, especially when deploying models in organizational research and practice. According to <ref type="bibr">Ribeiro et al. (2016a)</ref>, a model's ability to provide understandable and transparent explanations for its predictions significantly influences users' trust in its outcomes. In organizational contexts, decision-makers, such as business leaders, recruiters, and employees, are more likely to trust and adopt an NLP model if they can comprehend how it arrives at its conclusions. Without a clear rationale, even highly accurate models may be viewed with skepticism, limiting their practical use. Interpretability helps demystify the model's decision-making process, allowing stakeholders to evaluate whether the model aligns with their understanding of the underlying phenomena. This transparency not only fosters trust but also facilitates more informed decision-making. When users understand why a model makes specific predictions, they can better assess its reliability, identify potential biases, and apply its insights with greater confidence, making interpretability a crucial step toward achieving widespread acceptance of AI-driven tools in organizational settings.</p><p>Fourth, the interpretability of NLP models is necessary for regulatory compliance. The rise of artificial intelligence applications comes with increasing regulations on how algorithms can be used to make decisions that impact people, and that individuals have a right to be given explanations for algorithmic decisions (i.e., right to explanation). The European Union General Data Protection Regulation (GDPR; The European Parliament and the Council of the European Union, 2016) suggests that individuals who are "significantly" affected by algorithmic decisions have the right not to be subject to such decisions and to obtain an explanation (note that interpretations on "right to explanation" are heavily debated; e.g., <ref type="bibr" target="#b18">Goodman &amp; Faxman, 2017;</ref><ref type="bibr" target="#b55">Wachter et al., 2016)</ref>. According to the updated Principles for the Validation of Personnel Selection Procedures (Society for Industrial Organizational Psychology, 2018) and Standards for Educational and Psychological Testing (2014), the use of automated scoring algorithms should be supported by theoretical and methodological bases to establish a clear linkage between the resulting scores and the criterion constructs of interest.</p><p>In the United States, several states have enacted new legislation governing the use of artificial intelligence in employment practices. For example, Illinois was one of the first to introduce the Artificial Intelligence Video Interview Act, which requires applicants to provide informed consent, including explanations of how the algorithm works when AI is used for analyzing video interviews. Since then, other states have followed suit with more comprehensive regulations. New York City's Automated Employment Decision Tools (AEDT) law, which took effect on July 5, 2023, imposes strict requirements on employers and employment agencies using automated tools to screen candidates. The law mandates annual bias audits of AI-driven decision-making tools, transparency with job applicants, and the disclosure of the specific qualifications or characteristics used by the algorithm in assessments. Similarly, California's proposed Workplace Technology Accountability Act aims to regulate the use of surveillance and decision-making technologies, including AI, within the workplace to safeguard employees' rights. At the federal level, the Artificial Intelligence (AI) in Hiring Act of 2023 has been introduced in Congress, seeking to establish guidelines for fairness, transparency, and accountability in the use of AI-based employment decision-making tools. These recent developments highlight the increasing regulatory focus on ensuring the ethical use of AI in employment practices, underscoring the need for organizations to adopt interpretable and biasfree AI systems. As companies continue to adopt NLP into their organizational practices, we should only expect to see more regulations requiring interpretations.</p><p>Given the importance of NLP interpretability in organizational research and practices, we then attempt to answer the question, "How can we build interpretable natural language processing models?" by first introducing the different sources of interpretability evidence for NLP and then illustrating how one can establish interpretability evidence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NLP Interpretability: Sources and Methods</head><p>The interpretability of an NLP system should be seen as a unitary concept with different sources of evidence that, taken as a whole, support an overall understanding of such a system.</p><p>The different sources of evidence can and should be drawn from the various development stages of an NLP system, including pre-modeling, modeling, and post-modeling. It is difficult to rank the importance or relevance of these different interpretability evidence out of context; they should be judged for the specific use case of the NLP system (see Table <ref type="table">3</ref> for a summary of the sources of interpretability evidence and sample use cases). We suggest that organizational researchers and practitioners should (a) identify all relevant sources of interpretability evidence based on the use case of interest and (b) establish sufficient evidence for each of the identified sources.</p><p>In the following paragraphs, we will discuss (a) data interpretability in the pre-modeling stage, including data properties and exploratory data analysis; (b) model-intrinsic interpretability in the modeling stage, including simulatability, decomposability, and algorithmic transparency; and (c) post-hoc interpretability in the post-modeling stage, including global and local explanation techniques.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pre-modeling Stage: Data Interpretability</head><p>Interpretability at the pre-modeling stage mainly concerns data interpretability, i.e., the extent to which the input data are interpretable. Data interpretability can be examined prior to the model development process to gain a thorough understanding of the data and examined after models are developed to understand how varying data input affects the model output. Data interpretability can be derived and evaluated based on (a) data properties, (b) exploratory data analysis, and (c) data input-model output relationship.</p><p>Data properties. The nature of the data impacts how intrinsically interpretable they are.</p><p>We outline four properties or factors to consider when evaluating data interpretability. The first is whether data is construct-relevant or construct-ambiguous. In the world of organizational research, we are used to dealing with variables that are derived from and therefore mapped onto psychological constructs (e.g., "Am the life of the party." to the personality trait of extraversion; International Personality Item Pool; <ref type="bibr" target="#b17">Goldberg, 1999)</ref>. However, in the NLP and data science literature, variables or features are sometimes construct-ambiguous. For instance, when email content data is used to develop an NLP model for spam detection (see <ref type="bibr" target="#b47">Spirin &amp; Han, 2012</ref> for a review on web spam detection), it is difficult to directly link each word/phrase from the email content to a specific underlying construct. The second property to consider is whether the format or type of the data is easily understandable intuitively. One can argue that features from text data (e.g., words from emails) or numeric data (e.g., ratings on job performance) can be more understandable compared to those from audio or image data. Note that this is different from construct relevance: Pixels from medical imaging data can be directly linked to a particular type of gene mutation (construct-relevant) yet difficult for a human to understand. The third property that impacts data interpretability is the amount of data, both the number of variables (k) and the sample size (N), as "bigger" data can be harder to digest. The fourth data property to consider is the level of sparsity (or data density), which corresponds to the proportion of empty (vs. nonempty) cells in a dataset. A sparse data matrix with a lower number of k might be more interpretable but could create downstream problems for modeling.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Exploratory data analysis.</head><p>Leveraging exploratory data analysis (EDA) techniques <ref type="bibr" target="#b21">(Hartwig &amp; Dearing, 1979;</ref><ref type="bibr" target="#b53">Tukey, 1977)</ref>, organizational researchers can discover vital information about the data. EDA techniques leverage both descriptive statistics and data visualization methods to provide data information on three levels: (a) univariate (individual variable), (b) bivariate (relationship between two variables), and (c) multivariate (relationship among three or more variables). We encourage the readers to follow the best practices of EDA <ref type="bibr" target="#b53">(Tukey, 1977)</ref> in the organization science literature <ref type="bibr" target="#b0">(Aguinis &amp; Edwards, 2014)</ref> and provide high-level results and insights from these analyses to aid in better interpretability of the data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data input-model output relationship. Understanding the relationship between data</head><p>input and model output is fundamental for building interpretable NLP models. In NLP applications, input data characteristics-such as text length, vocabulary diversity, and syntactic complexity-can significantly impact the model's predictions. Understanding the input-output relationship allows researchers and practitioners to make more informed decisions about the model application, evaluate model biases, and ensure that the predictions align with theoretical and practical knowledge in organizational science.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Modeling Stage: Model Intrinsic Interpretability</head><p>Some models used in NLP systems have intrinsic interpretability due to their simple structures, such as sparse (i.e., small number of features) linear models (see Figure <ref type="figure">1</ref> for common models by intrinsic interpretability). Here, intrinsic interpretability refers to the level of interpretability achieved through understanding the mechanisms by which the model works, i.e., "how does the model work?" <ref type="bibr">(Lipton, 2017, p.4)</ref> ) is, such as the decision-making points in decision trees. It is worth noting that, decomposability also relies on data interpretability; it requires the input data themselves to be individually interpretable. For instance, if a feature in itself is ambiguous (e.g., pixels from a medical image) or heavily engineered (e.g., an interaction term between income and education and GPA), it will be difficult to derive explanations regardless of how "simple" the model structure is. This is an example where data interpretability and model interpretability go hand in hand.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulatability. Simulatability denotes that an interpretable model is a simple model,</head><p>where a human can work through the calculations of the entire model with reasonable effort. In other words, with model parameters and input data, one can reasonably compute and produce predictions. Therefore, simulatability relies on both the size of the model (i.e., the number of model parameters) and the computation required to make predictions. A linear regression model is typically deemed transparent and interpretable given its high simulatability; one can relatively easily compute the predicted outcome value provided the intercept, coefficient(s), and feature value(s).</p><p>Optimization transparency. Optimization transparency refers to how transparent or visible the model optimization method is to those are use, govern, and are affected by them. A high level of algorithmic transparency requires a fundamental understanding of how the model works, as well as making this information accessible. For instance, it is easy to follow, describe, and replicate how a linear model converges in the learning process. The lack of algorithmic transparency is heavily discussed and debated in the area of deep learning (i.e., a family of methods based on artificial neural networks inspired by the network of the human brain) and LLMs, with researchers even equating it to "alchemy" <ref type="bibr" target="#b38">(Rahimi et al., 2017)</ref>. Deep learning transparency is often lacking due to inadequate knowledge of how those complex models work, reluctance to share intellectual properties that can generate great commercial values, and increased "randomness" (e.g., random dropout, a technique used to prevent model overfitting where some number of layer outputs are randomly "dropped out" in the training process; <ref type="bibr" target="#b48">Srivastava et al., 2014)</ref>.</p><p>Taken together, model intrinsic interpretability takes into consideration simulatability, decomposability, and algorithmic transparency. In practice, model intrinsic interpretability impacts, sometimes even dictates, decisions on model selection. Arguments have been made that, in high-stakes decision-making situations (e.g., healthcare and criminal justice), complex models that lack intrinsic interpretability should be avoided altogether <ref type="bibr" target="#b41">(Rudin, 2019)</ref>. In organizational practice, high-stakes situations such as pre-hiring selection warrant a thorough and careful examination on model intrinsic interpretability against other factors (e.g., model prediction accuracy); sometimes, organizational scientists might want to adopt a simpler model with slightly worse prediction performance, for the purpose that it can be easily explained and understood by the various stakeholder audiences (e.g., candidates, business leaders, recruiters, legal and compliance experts).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Post-modeling Stage: Model Post-hoc Interpretability</head><p>Model post-hoc interpretability, as the term implies, is derived by applying methods that analyze the model after training, i.e., "What else can the model tell me?" <ref type="bibr">(Lipton, 2017, p.4</ref>).</p><p>Post-hoc explanations are especially important to obtain when the models lack intrinsic interpretability, although they can also be supplied with simpler models when needed (e.g., to provide additional information to a layperson). NLP model interpretation methods can be modelspecific (can only be used to interpret a specific model) or model-agnostic (can be used to interpret any model). One example of model-specific interpretation is the coefficients in a linear regression model. In this case, the model has high intrinsic interpretability, so one can interpret the model results by directly evaluating the direction and magnitude of the feature weights. In other cases, more complex models (with lower intrinsic interpretability) do not have a simple structure that allows a direct examination of the feature weights; they require additional model post-hoc interpretations to help understand what the models have learned.</p><p>When interpreting model results, one can approach from a global or local perspective, with the former focusing on understanding the general patterns of the model behavior as a whole and the latter focusing on understanding how a specific individual prediction is derived. In an example of predicting turnover from employee data, global interpretation methods will shed light on how the entire model makes its prediction on the likelihood of turnover (e.g., highlighting the most important predictors), whereas local interpretation methods will be able to explain why employee A has a probability of 0.79 for leaving the company in a year. As illustrated in Table <ref type="table">3</ref>, model global and local interpretability differ in their intent, and one might find either or both relevant depending on the use case of the machine learning system. In the following paragraphs, we will describe a few methods and tools that can be used to derive global and local interpretations from trained NLP models. More derivation details of these methods can be found </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Partial dependence plots (PDPs).</head><p>Leveraging the intuitive nature of visualization, PDPs are graphical representations of the marginal impact of chosen features on the outcome <ref type="bibr" target="#b22">(Hastie et al., 2009)</ref>. Due to human perception limitations, only one-way PDPs between one feature and one outcome, and two-way PDPs between two features and one outcome, are typically done.</p><p>PDPs operate under the independence assumption, namely the chosen feature(s) are independent from the complement features in the model, which is often violated in practice. Nevertheless, PDPs are easy to generate and can help offer intuitive interpretations to even individuals who are machine learning novices. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Global surrogate model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Shapley values.</head><p>Named after Lloyd Shapley, a Nobel Prize-winning economist, the Shapley value is a solution concept in a coalition game that represents the distribution of total gains to the players <ref type="bibr" target="#b43">(Shapley, 1951;</ref><ref type="bibr" target="#b44">1953)</ref>. In other words, the Shapley value aims to "fairly" distribute the total payoff from cooperation among players based on each player's importance to the success of the cooperation. Applying it to explain learned models, the Shapley value provides a mathematical solution to distribute the contribution to a single prediction among the features of a trained model. In this context, a model prediction is a payout, a feature is a player, and a coalition is a set of features "collaborating" to make a prediction. Four properties inherited from the Shapley value apply in model explainability: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion on NLP Interpretability</head><p>As we discussed above, sources of interpretability evidence of an NLP system can be derived from (a) data interpretability (pre-modeling and post-modeling stage), (b) model intrinsic interpretability (modeling stage), and (c) model post-hoc interpretability (post-modeling stage).</p><p>Based on the research question, the data, and the chosen model(s), we recommend that organizational researchers should identify and establish the relevant interpretability evidence from multiple sources outlined above. In the next section, we present a hands-on tutorial contextualized in the organizational research domain and illustrate how organizational researchers can build and explain NLP models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NLP Model Interpretability: A Tutorial</head><p>In this tutorial, we use explainable NLP to predict decision-making based on responses to a series of assessment center (AC) simulations. We chose decision-making as the focal research topic because it is a critical competency in organizational settings and has been extensively studied in the context of personnel selection and leadership development. The use of NLP for decision-making prediction addresses the need to automate the assessment of behaviorally anchored performance dimensions, making the process more scalable and cost-effective <ref type="bibr" target="#b5">(Campion et al., 2016;</ref><ref type="bibr" target="#b46">Speer, 2018)</ref>. We utilized open-sourced data from the SIOP 2023 Machine Learning Competition to promote open science; readers who are interested can access the dataset to replicate the tutorial results and explore further applications. In this tutorial example, candidate responses to AC exercises are text-based and exhibit varying degrees of complexity. This variability necessitates a model that not only accurately predicts decisionmaking scores but also provides interpretable insights into how specific input features influence these predictions. Opportunities: The candidate's skill in recognizing key problems and potential opportunities within a situation; (5) Interprets Information: The effectiveness with which the candidate analyzes and makes sense of available information; and (6) Involves Others: The candidate's inclination to involve relevant stakeholders in the decision-making process. In addition, there is Overall Decision-Making, a holistic score that reflects the candidate's overall decision-making effectiveness across the exercises was reported, and this score uses a feedback reporting scale of Need for development (1-2), Proficient (3-5), and Strong (6-7). Our tutorial focuses on the rating task of the overall decision-making score. For illustration purposes, we merged these feedback options to create a binary classification task: scores of 1-2 for ineffective decision-making and scores of 3-7 for effective decision-making.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head><p>Overview of the Exercises. The AC simulations involved in-basket email exercises designed to mirror realistic workplace challenges. Examples of these scenarios include managing team conflicts, handling customer complaints, making strategic decisions, and mentoring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Candidates were tasked with responding to situations including (1) Larry Hodges and Emily</head><p>Carson disagree about SEQUENCE: Handling conflict between colleagues over a work process;</p><p>(2) Request to move a team member with performance problems: Deciding whether to transfer a team member due to performance issues; (3) Kirkland plant: Addressing concerns related to team members transferring from an older plant; (4) Professional conduct: Dealing with inappropriate team member behavior during a customer tour; (5) SEQUENCE talk: Managing worker complaints about increased effort without additional compensation; (6) Team focus:</p><p>Responding to data showing higher error rates when the team lead can't support the group; ( <ref type="formula">7</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Descriptions and Intrinsic Interpretability.</head><p>To illustrate the practical application of NLP models in organizational research, we drew upon techniques explored in recent studies that leverage both classic and advanced NLP models for smarter people analytics <ref type="bibr" target="#b20">(Guo et al., 2024)</ref>. These models have been shown to improve measurement and prediction in personnel selection by integrating large language models with traditional assessment methods <ref type="bibr" target="#b27">(Koenig et al., 2023)</ref>. It is important to choose models that are suitable for answering the focal research question and the nature of our data. We focus on predicting decision-making using classification models. For the purposes of optimizing prediction and demonstrating NLP interpretability, we selected a few widely used classification models with varying levels of model intrinsic interpretability: logistic regression, eXtreme Gradient Boosting (XGBoost; Chen &amp; Guestrin, 2016), DistilBERT <ref type="bibr" target="#b42">(Sanh et al., 2019), and</ref><ref type="bibr">GPT o1 (OpenAI, 2024b)</ref>. Below, we describe these methods in detail. <ref type="bibr" target="#b26">(Kleinbaum &amp; Klein, 2002</ref>) is a widely used statistical technique in organizational research. It is a generalized linear model for binary data where estimated values are probabilities of category membership (and thus range between 0 and 1). The method is efficient yet powerful. Particularly, it offers straightforward interpretability where the resulting model comes with weights associated with each feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Logistic Regression. Logistic regression</head><p>XGBoost. A variant of gradient tree boosting system (or gradient boosted trees; <ref type="bibr" target="#b15">Friedman, 2001)</ref>, XGBoost is essentially a decision tree ensemble that combines the predictive power of many decision trees. Different from a random forest that builds trees independently and aggregates the results at the end of the process, XGBoost builds trees additively, where each tree focuses on correcting the errors coming from the previous tree (i.e., boosting), which overcomes the shortcomings of individual trees and further improves model prediction accuracy. Past gradient tree boosting systems usually requires heavy computation and is slow to train. XGBoost overcomes this issue by implementing a series of system optimizations (out-of-core computation, cache-aware and sparsity-aware learning), enabling it to scale and improve speed ten-fold. As a result, XGBoost is accurate and fast, making it a winner in many machine learning competitions (e.g., Kaggle competitions, KDDCup; Chen &amp; Guestrin, 2016).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DistilBERT. Bidirectional encoder representations from transformers (BERT) is an</head><p>open-source language model that has achieved high-level performance across numerous NLP tasks, such as text classification, question answering, and named entity recognition (BERT; <ref type="bibr" target="#b11">Devlin, 2018)</ref>. BERT has 340 million hyperparameters and is based on the Transformer architecture <ref type="bibr" target="#b54">(Vaswani et al., 2017)</ref>. The power of BERT came from pre-training the language model on an extensive corpus that included the entire Wikipedia and the BooksCorpus.</p><p>Language model pre-training refers to the process of feeding a large amount of unlabeled text data to a language model to help the model "learn" the general language before it is applied to a specific NLP task. Once pre-trained, BERT can be fine-tuned for specific NLP applications with relatively small datasets, making it highly adaptable and efficient for a wide range of tasks.</p><p>DistilBERT is a smaller, faster, and more efficient variant of BERT, introduced by <ref type="bibr" target="#b42">Sanh et al. (2019)</ref>. It retains 97% of BERT's performance while using only 40% of its parameters, making it a more lightweight and accessible model. DistilBERT achieves this reduction in size through a process known as "knowledge distillation," where a smaller model (DistilBERT) learns to approximate the behavior of a larger model (BERT). It is based on the same Transformer architecture as BERT but is optimized for speed and memory efficiency, making it particularly suitable for scenarios requiring real-time processing or limited computational resources. Despite its compact size, DistilBERT maintains strong performance across numerous NLP tasks, including text classification, question answering, and named entity recognition. Its open-source nature and reduced computational demands have contributed to its widespread adoption in the NLP community. GPT o1. GPT o1 is the latest LLM introduced by OpenAI in September 2024. It represents the new generation of LLMs that integrate reinforcement learning with human feedback (RLHF; <ref type="bibr" target="#b8">Christiano et al., 2017)</ref> and chain-of-thought prompting <ref type="bibr" target="#b59">(Wei et al., 2022)</ref> to enhance both model performance and interpretability. Reinforcement learning with human feedback allows the model to align more closely with human preferences by fine-tuning it through feedback on its responses. Chain-of-thought prompting enables the model to generate more coherent and detailed responses by breaking down complex reasoning tasks into a series of intermediate steps. Together, these techniques improve the model's ability to generate nuanced and interpretable outputs across a variety of NLP tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analyses</head><p>Before building the binary classification model to predict effective vs. ineffective decision-making, we concatenated all exercise responses for each respondent. Doing so allowed us to infer decision-making from a diverse set of situations throughout the AC. For the logistic regression and XGBoost models, we removed non-English characters, converted all text to lowercase, and removed stopwords. An advantage of the DistilBERT model is that it does not require data preprocessing, so we did not alter the raw text data before feeding it to the model. Our analysis goal was twofold. First, in building the NLP models to answer our research question, we wanted to maximize the prediction of decision-making given a collection of simulation responses while ensuring such prediction would generalize to unseen data. Second, to demonstrate model explainability, we conducted additional analyses on each trained model to derive interpretations understandable to organizational researchers.</p><p>The model development process varied based on the nature of the model type. For logistic regression and XGBoost, we trained the model with our dataset. For DistilBERT, we fine-tuned the pre-trained DistilBERT model with our dataset. For GPT o1, we used zero-shot learning to derive predictions. To ensure model generalizability, we first split the data into 80:20, where 80% (training data, n = 1,172) was used for training the models and the rest 20% (testing data, n = 294) for evaluating the generalizability of the learned model parameters. Second, we trained logistic regression and XGBoost, and fine-tuned DistilBERT, on a dataset with the predictors (e.g., responses to AC exercises) and outcome (e.g., decision-making score). By training the models, we identified a set of parameter estimates for each model that yield the closest prediction to the outcome. We then evaluated the trained models in the 20% independent testing dataset to see if the derived model parameters would generalize. Trained models were evaluated based on four metrics: Area Under the Receiver Operating Characteristic Curve (ROC AUC), precision, recall, and (point-biserial) correlation. We included GPT o1 to showcase how organizational researchers can use simple prompts to understand the rationale behind an LLM's prediction. Specifically, we used a zero-shot prompt that instructs the model to classify effective vs ineffective decision-making. The prompt (Table <ref type="table" target="#tab_1">4</ref>) describes the role of the model as an expert AC assessor, introduces the AC design, details the six decision-making dimensions, and breaks down the task step by step.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metrics for Model Evaluation</head><p>To evaluate the performance of our models, we used several commonly adopted metrics: ROC-AUC, precision, recall, and correlation. Each provides a different perspective on model accuracy and effectiveness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ROC-AUC (Receiver Operating Characteristic -Area Under the Curve). The ROC-</head><p>AUC metric measures the model's ability to distinguish between classes across all possible thresholds. The curve plots the true positive rate (sensitivity) against the false positive rate (1 -specificity) at various threshold settings. The AUC (Area Under the Curve) summarizes the overall ability of the model to correctly classify positive and negative instances. An AUC of 0.5 indicates no discrimination (i.e., random guessing), while a value closer to 1 indicates better model performance. This metric is particularly useful for assessing the model's overall predictive power without relying on a specific threshold.</p><p>Precision. Precision is the ratio of true positive predictions to the total number of positive predictions made by the model. It reflects the model's ability to only identify relevant instances among the ones it predicts as positive. High precision indicates a low false positive rate, which is critical when the cost of false positives is high (e.g., incorrectly predicting that a candidate exhibits strong decision-making skills).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Recall (Sensitivity or True Positive Rate). Recall is the ratio of true positive predictions</head><p>to the total number of actual positive instances. It measures the model's ability to identify all relevant cases. High recall indicates that the model is effective in capturing most of the positive instances, which is vital when the cost of false negatives is high (e.g., missing candidates who truly possess strong decision-making skills).</p><p>Correlation. Correlation measures the strength and direction of the linear relationship between the predicted scores and the actual scores. For this task, we adopted the point-biserial correlation to represent the relationship between a continuous variable and a binary variable. A high positive correlation (close to 1) suggests that the model's predictions align closely with the true scores, providing a straightforward and interpretable metric for evaluating models in the context of predicting continuous variables (e.g., overall decision-making scores).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metrics Choice.</head><p>Given the nature of our task (i.e., predicting decision-making from textbased response), we used a combination of these metrics. ROC-AUC offers a broad view of model performance across thresholds, while precision and recall provide insight into the tradeoffs between false positives and false negatives. Correlation is also particularly useful here, as it directly measures how well the model's predicted scores match the actual rater-assigned scores.</p><p>Using these metrics in combination provides a comprehensive evaluation of the models, capturing both their classification performance (ROC-AUC, precision, recall) and their alignment with continuous outcomes (correlation). This multi-metric approach allows for a more nuanced understanding of model accuracy and interpretability in predicting decision-making competencies.</p><p>The second goal of the analysis was to demonstrate model explainability. Because model interpretability depends on both model intrinsic and model post-hoc interpretability, we tailored our interpretability analyses and illustrations to each of the trained models based on how the models work and how intrinsically interpretable they are. For instance, creating a global surrogate model can be an appropriate method to help interpret a trained XGBoost model due to its low model intrinsic interpretability, but it is unnecessary for a trained logistic regression model. We explain our rationale for choosing the interpretability methods for each trained model and walk through our model post-hoc interpretability analysis and results below.</p><p>We conducted all analyses in Python 3.10.12. We utilized the Optuna package for XGBoost and "distilbert-base-uncased" for BERT.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Results and Post-hoc Interpretability</head><p>Table <ref type="table" target="#tab_2">5</ref> shows the model prediction results. Overall, the models adequately predicted the outcome: Logistic regression (ROC-AUC = 0.78, precision = 0.68, recall = 0.61, r = 0.48), XGBoost (ROC-AUC = 0.72, precision = 0.69, recall = 0.59, r = 0.38), and BERT (ROC-AUC = 0.71, precision = 0.64, recall = 0.60, r = 0.34). All the results are based on the holdout testing set to ensure generalizability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Logistic regression interpretations.</head><p>The structure of the logistic regression model makes interpreting results straightforward. To derive model global interpretations, we decomposed the various components of the learned logistic regression model and evaluated the direction and magnitude of most predictive words (see Figure <ref type="figure">2</ref> for top 30 most important features). Across all the words, data (2.14), jj (1.57), and team (1.30) had the largest positive impact on predicting decision-making, whereas yes (-0.90), thank (-0.89), and meeting (-0.78) had the largest negative impact. The positive features are representative of the key decisionmaking behaviors that are being scored in the AC, such as gathering data, interpreting information, and involving others (JJ is the name of a key employee), whereas the negative features might indicate a lack of critical thinking (see examples below).</p><p>To derive model local interpretations for the logistic regression model, we selected two example cases: Case 28 with a high predicted decision-making of 0.94 and Case 741 with a low predicted decision-making of 0.24. Because logistic regression model generates intrinsically interpretable feature weights, we can directly interpret the highest weighted features of these individual cases to understand what is driving high or low prediction of decision-making. Specially, we used the global most positive and most negative features and multiplied the feature weights by the actual feature values from these individual cases. For Case 28, high positive values on global most positive features such as jj (0.35) and data (0.22) drove the high prediction (Figure <ref type="figure">3</ref>), e.g., "JJ, Thanks for the email and getting me up to speed with this project. I'd like to set up a meeting for later today to review your data and research." On Case 741, high values on global most negative features such as thank (-0.27) and yes (-0.12) drove the low prediction (Figure <ref type="figure">4</ref>), "Yes lets go forward with your plans and thank you for informing my team, i will touch basis with them when i get back from my 2 week vacation starting tomorrow." XGBoost interpretations. XGBoost is a gradient tree boosting system that combines the predictive power of many decision trees. XGBoost has lower model intrinsic interpretability compared to linear models like logistic regression. Below, we demonstrate how one can derive model post-hoc global and local interpretations based on the training dataset.</p><p>For model post-hoc global interpretability, we leveraged permutation feature importance, PDP, and global surrogate model. To create permutation feature importance, we randomly changed the values on each feature and measured how such changes impact model performance.</p><p>As shown in Figure <ref type="figure">5</ref>, the permutation importance plot showed that data (0.04), work (0.02), and team (0.02) were the most important features, such that permuting these features would to sizable increases in model prediction error (shown in the x-axis, average ROC-AUC increase = 0.03).</p><p>Next, we used PDPs to create intuitive, graphical representations of the marginal impact of these important features on predicting decision-making (see Figure <ref type="figure">6</ref>). These figures demonstrate the positive impact that data and work have on predictive decision-making. These positive features are representative of the key decision-making behaviors in the AC, such as gathering data and involving others.</p><p>A logistic regression model was built as a global surrogate model to approximate the predictions of the trained XGBoost model. Specifically, we used the training data to train a logistic regression model to predict the predictions from the XGBoost model. The surrogate model showed adequate accuracy in replicating the XGBoost predictions: ROC-AUC = 0.77, precision = 0.68, recall = 0.64, r = 0.46. Therefore, we moved forward with interpreting the logistic regression model to understand the trained XGBoost model. As Figure <ref type="figure">7</ref> demonstrates, data (2.55), team (1.83), and company (1.61) had the largest positive impact on predicting decision-making, whereas contact (-1.06) and yes (-0.91) had the largest negative impact.</p><p>Comparing results from the two global explainability methods, we noticed some overlap between the predictors (e.g., data) that can help explain the predictions, as expected. The positive features are representative of the key decision-making behaviors that are being scored in the AC, such as gathering data, interpreting information, and involving others e.g., "I would like to meet with you and JJ before I leave today to determine what data were taken and what impact it will have on the company". On the other hand, the negative features are prevalent in short responses that indicate a lack of decision-making behaviors and critical thinking. e.g., "If there are any issues, continue contacting my team leaders and I am sure they will acomidate you. Thank you."</p><p>After establishing global interpretations of the XGBoost model, we then turned to model post-hoc local interpretability to understand how predictions on individual cases can be explained, using both SHAP and the local surrogate model. We picked two example cases: Case 844 with a relatively high predicted decision-making of 0.85, and Case 594 with a relatively low predicted decision-making of 0.17. Using SHAP, we computed how features in the trained XGBoost model contributed to the predictions of these two cases. Figure <ref type="figure">8</ref> shows that, for Case 844, positive values on data (0.13), future (0.11), and plan (0.09) drove the high prediction on decision making, e.g., "I alreadytold him not to remove data like that in the future, but it sounds like we have a very serious issue already. Obviously J.J. needs to be made aware of the gravity of this situation, but he is a key member of my team. Is it possible to gather more information regarding his situation?" For Case 594 (Figure <ref type="figure">9</ref>), the low prediction on decision making was mainly driven by negative values on features such as alex (-0.05) and company (-0.04), "Alex, thankyou for bringing that to may attention, when I get back and on the 21st I have a Sequence meeting earily that morning and will discuss the issues the the whole group". Comparing the local results with global permutation feature importance chart, we noticed some overlap between the predictors (e.g., data) that can help explain the predictions both globally and locally.</p><p>Another way to derive model local interpretability is via constructing a local surrogate model via LIME to explain individual predictions from a trained model. Take Case 844 as an example, we first created a perturbed sample by sampling the training data around Case 844. We then obtained predictions on the perturbed sample by using the trained XGBoost model. Based on the distance between each of the perturbed instances to the original case, we weighted the perturbed sample and trained a surrogate model on this weighted dataset. The resulting model is a surrogate for the XGBoost model that is locally faithful and only valid for the prediction on the individual case. Following this process, we trained a surrogate model for Case 844. Figure <ref type="figure">10</ref> shows the features in the surrogate model and the features with the largest effects: data (0.10), future (0.09), and training (0.08) are among the most important features driving the explanation for the prediction in this case, "I get the sense from her team members that she is struggling to develop in her new role, and I think this type of cross training and further interaction with the more experienced team leads would be beneficial." Similarly, we trained another surrogate regression model for Case 594. Figure <ref type="figure">11</ref> shows the features in the surrogate model and the features with the largest effects: meeting (0.01), alex (0.01), and shea (0.01) were among the most important features driving the explanation for the prediction in this case, e.g., "Alex, thankyou for bringing that to may attention, when I get back and on the 21st I have a Sequence meeting earily that morning and will discuss the issues the the whole group." We also used LIME to derive local interpretability for Cases 1167 and 332. Figure <ref type="figure">15</ref> shows the features in the surrogate model and the features with the largest effects: succeed, befitting, and early are among the most important features driving the explanation for the prediction on Case 1167, e.g., "We need to be inclusive of all of our employees and willing to help them succeed.", whereas thank, jamie, and BP07 (name of a meeting room) were among the most important features (Figure <ref type="figure">16</ref>) driving the explanation for the prediction on Case 332, e.g., "Great, I think room BP07 AT 12:00pm to 1:00pm is good . Thank You Jamie Pace" Data input-model output relationship. Data interpretability, the extent to which the input data are interpretable, is an important part of NLP interpretability. Data interpretability can be examined after models are developed to understand how varying data input affects the model output. By examining the data input-model output relationship, we can scrutinize how changes in input data influence predictions and make more informed decisions about the models.</p><p>To examine the data input-model output relationship, we first selected representative cases with high and low predicted probabilities. We then modified the original text input of each case, used the trained model to generate a new prediction on the case, and evaluated how such input modifications would change the probability prediction output. For example, as discussed earlier, Case 28 had high predicted decision-making scores from all three models, and "data" was a top feature driving this prediction. We manually replaced "data" with "information," a different word with similar meaning. In the logistic regression model, this substitution resulted in a decrease in predicted probability from 0.94 to 0.93. Similarly, in the XGBoost model, the probability dropped from 0.87 to 0.81. However, for the DistilBERT model, the predicted probability remained unchanged at 0.85. We suspect that the predicted decision-making scores dropped in logistic regression and XGBoost are because these two NLP models are based on bag-of-words, where replacing a highly weighted word such as "data" is essentially removing a feature from the model and directly impacts model prediction. However, pre-trained language models such as DistilBERT have garnered a better understanding of the language and the semantic relationships between different words, so swamping similar words like "data" and "information" would not impact model prediction significantly. This example illustrates that BERT-type models tend to be more robust than traditional bag-of-words-based models for grasping the underlying meaning of the language.</p><p>To test whether the DistilBERT model's prediction would be affected by a feature replacement with a different meaning, we substituted the name "Debby" with "Dave" in Case 28.</p><p>As expected, this led to a sizable drop in the predicted probability, decreasing from 0.85 to 0.72. This finding demonstrates that BERT's performance can still be impacted when the substituted feature has a distinct semantic difference. Overall, these results can enhance our understanding of how different models interpret input features and highlight the varying degrees of sensitivity in their predictions when input was modified. GPT o1. We included GPT o1 to show a simple illustration of how a prompt-based technique can be used to derive explanations from a chat-based LLM. To do so, we included detailed instructions in the prompt about how the model should predict decision-making, including setting up the role of the model as an expert AC assessor, introducing the AC design, detailing the six decision-making dimensions, and breaking down the prediction task step by step (see Table <ref type="table" target="#tab_1">4</ref>). This helps GPT o1 organize its thinking and rationale in a way that is theoretically sound. To generate model prediction explanations, we also included a sentence in the prompt to ask GPT o1 to share the rationale for the classification decision. We selected Case 300 with a high predicted probability of 0.90 and Case 640 with a low predicted probability of 0.25 by DistilBERT. For Case 300, GPT o1 classified the case as having effective decision-making. The model produced 17 reasoning steps, including evaluating response clarity, assessing responses, assessing core behaviors, and so on. In its rationale, it also highlights key behaviors within each decision-making dimension that the case exhibited, e.g., "Seeks input from team members and other departments to find solutions collaboratively." for the dimension of "gathering information". For Case 640, the rationale included behaviors that are counterproductive to decision-making, e.g., "Abruptly decides to find a replacement for Pat Landis because Cory is buying him lunch, labeling it as 'unacceptable' without providing a clear rationale or following proper procedures" for the dimension of "choosing appropriate actions."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>NLP interpretability is important for scientific advancement, bias detection and mitigation, user trust, and ethical and legal compliance. To address the need to better understand and explain NLP models in an organizational research context, this paper takes an initial step to illustrate what NLP interpretability is and how organizational researchers can build interpretable NLP modes.</p><p>Our discussion focuses on two areas. First, we discuss the implications of NLP interpretability for organizational research and offer some practical considerations. Second, we discuss the current study's limitations and future research directions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implications for Organizational Research and Practice</head><p>One important takeaway from this article is that NLP interpretability should be understood as a continuum based on different sources of evidence derived from the different stages of the NLP model development process, including pre-modeling (data properties and exploratory data analysis), modeling (model intrinsic interpretability), and post-modeling (global and local explanations). In other words, interpretable NLP should not solely rely on deriving post-hoc explanations after a model has already been developed, but instead requires a systematic, theory-and data-driven process throughout the pre-modeling, modeling, and postmodeling stages. Therefore, researchers and practitioners who are interested in using NLP to answer organizational questions should take into consideration interpretability issues during the study planning process, along with other factors such as the research question, data, high vs lowstakes nature of the study, and so on. For instance, if the main goal of the study is to maximize prediction using different NLP models in a research context, it is probably appropriate to use models with lower intrinsic interpretability and try to offer post-modeling explanations. In That said, we do not think it is necessary to include every single interpretability method in a particular study. Rather, researchers and practitioners can pick and choose specific methods based on the nature of their research. For instance, if the research focuses on building and advancing scientific theory, then the global interpretability of the model is a priority. In contrast, in a practical prediction scenario such as predicting job performance, one might want to leverage local interpretations to understand what is driving extremely high vs. low performers, as these individuals might make the biggest practical difference in return on investment.</p><p>It should not be forgotten that, besides using these interpretability methods, we, as the subject matter experts of organizational phenomena, can enhance the interpretability of NLP models by bringing in theory and job relatedness when designing and interpreting research studies or organizational applications. For instance, when developing personnel assessments using NLP, organizational researchers should be guided by theory and job-relatedness <ref type="bibr" target="#b50">(Tippins et al., 2021)</ref>, such as considering the theoretical basis of the assessment stimuli and the elicited predictors, as well as how they relate to the knowledge, skills, abilities, and other characteristics (KSAOs) required for the job. In addition, when interpreting results from NLP models, rather than stopping at merely identifying the variables that contribute the most to model predictions, we can offer theory-based insights as to what theoretical mechanisms are driving such variables to impact the criterion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Study Limitations and Future Research Directions</head><p>In this study, we took an initial step toward illustrating interpretable NLP in organizational research. To that end, we focused on supervised NLP models as we believe this is one of the most commonly adopted NLP methodologies in organization research so far.</p><p>However, other types of techniques, such as unsupervised learning (e.g., <ref type="bibr" target="#b51">Tonidandel et al., 2022)</ref> or reinforcement learning <ref type="bibr" target="#b28">(Kumwilaisak et al., 2022)</ref>, also apply to organizational research.</p><p>Therefore, future research can extend the current study by providing guidance and illustrating methods for interpreting unsupervised and reinforcement learning models.</p><p>Second, the field of NLP is advancing rapidly, with newer, more complex models emerging constantly. In the current study, we sampled a few NLP models on the spectrum of model intrinsic interpretability from high (logistic regression) to low (GPT o1) to illustrate how interpretability evidence can be established. While we cannot exhaust the different types of NLP models, future studies can extend our work by illustrating how interpretability can be established for other types of NLP models, such as large multimodal models (LMMs) like GPT-4 Vision (OpenAI, 2024a) and sparse models like Switch Transformers <ref type="bibr" target="#b14">(Fedus et al., 2022)</ref>. These models present unique interpretability challenges due to their ability to process diverse data types (e.g., text, images) and their dynamic routing of information through vast parameter spaces. Furthermore, the increasing complexity of LLMs has led to growing concerns about their application in organizational research. For example, recent studies have highlighted potential limitations and biases in LLMs that require careful consideration. <ref type="bibr">Wang, Xiao et al. (2024)</ref> found that LLMs can exhibit cognitive biases, such as the representativeness heuristic, suggesting that their decision-making processes do not always align with human reasoning. Similarly, <ref type="bibr">Wang et al. (2024)</ref> emphasize the need to understand rater effects when interpreting ratings derived from these models. Additionally, the debate continues on whether LLMs can fully replace human respondents in psychometric research, as <ref type="bibr" target="#b58">Wang, Zou et al. (2024)</ref> argue that current LLMs still fall short in capturing the nuances of human responses. These findings underscore the importance of interpretability and the need for future research to address these challenges when employing LLMs in organizational contexts.</p><p>Future research should focus on developing more robust frameworks for AI applications in organizational research. <ref type="bibr" target="#b34">Min et al. (2024)</ref> proposed a checklist to ensure transparency and trust in supervised machine learning studies, which could serve as a guideline for extending the interpretability of advanced NLP models. Additionally, exploring new methods, such as pseudofactor analysis of language embedding similarity matrices <ref type="bibr" target="#b19">(Guenole et al., 2024)</ref>, could provide innovative ways to model latent constructs and further the interpretability of LLMs in the context of organizational assessments. The output variable that the model is trying to predict, derived from the features. Each label corresponds to a specific instance in the training dataset and serves as the known correct answer during the learning process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tables and Figures</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dependent variable Outcome variable</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sparsity</head><p>A condition where most of the elements in a dataset or model are zero or missing, often leading to efficiency in storage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model fit</head><p>A measure of how well a model's predictions align with actual observed data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training</head><p>The process of using a dataset to teach a model to make predictions or decisions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Testing</head><p>The evaluation of a trained model's performance on unseen data to assess its accuracy and generalization ability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cross-validation</head><p>A technique for assessing how the results of a statistical analysis will generalize to an independent dataset by partitioning the data into subsets.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LIME Surrogate Model Explanation for Low Prediction in Case 332 for DistilBERT</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><figDesc>. Three key factors determine model intrinsic interpretability: (a) decomposability: Can one decompose and understand each part of the trained model (e.g., model parameter)? (b) simulatability: Can one simulate the entire trained model and calculate model predictions? (c) optimization transparency: Can one understand and replicate the optimization or learning process of the model? Decomposability. Decomposability corresponds to how intuitively explainable each component of the model (e.g., parameter</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><figDesc>in the Appendix. Model post-hoc global interpretability. Model post-hoc global interpretability is determined by the extent to which predictions from a trained NLP model can be interpreted as a whole. Obtaining global interpretations is essential across multiple use cases of NLP in organizational research, including advancing scientific understanding (e.g., understanding the "why" and "how"), detecting and mitigating biases (e.g., detecting model systematic biases towards certain populations), and meeting regulatory compliance (e.g., demonstrating construct relevance). We describe three methods to establish model-agnostic global interpretations, including permutation feature importance, partial dependence plots (PDP), and global surrogate model. Permutation feature importance. First introduced by Breiman (2001) for random forests, permutation feature importance measures the importance of the model features by randomly changing the values on each feature and measuring how such changes impact model performance. The rationale is, if a feature is important, then randomly changing its values will make the model predictions less accurate (higher error); if a feature is unimportant, then model performance should not be impacted much regardless of the values for this feature. This is based on the fact that NLP models rely on important features to make predictions. Permutation feature importance can be applied to any supervised learning model for feature evaluation and model interpretation. Permutation importance can be calculated using either the training set or the testing set. Using the training set will generate feature importance metrics that are more reflective of the trained model (i.e., what actually are the most important predictors in the trained model), whereas using the testing set will shed more light on which features contribute more to the generalizability of model (i.e., what features will remain important in predicting the outcome in a new, unseen testing data).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>.</head><figDesc>As the term implies, a surrogate model is an approximation model, presumably one with high intrinsic interpretability, trained to mimic the predictions of a complicated, less-interpretable model. For example, you can train a linear regression model on the predictions from RoBERTa (Robustly Optimized BERT Pretraining Approach;<ref type="bibr" target="#b31">Liu, 2019)</ref>. If the linear regression model can replicate the predictions from RoBERTa well, then you can draw conclusions with some confidence about the RoBERTa model by interpreting the surrogate linear regression model. It is important to point out that, a global surrogate is built on the predictions of another model (𝑌𝑌 � , or predicted Y), not the actual true outcomes (actual Y). Therefore, conclusions from global surrogate models are limited to the to-be-explained, original model, not the data.To summarize, the three model-agnostic methods outlined above all target model posthoc global interpretability by offering explanations on predictions from a trained NLP model.We recommend using permutation feature importance and/or PDPs if the goal is to interpret a model via its features, namely to better understand a given trained model by understanding the impact of the features on the predicted outcomes from the trained model. On the other hand, if one intends to replicate the predictions from a given trained model by using a more intrinsically explainable model, developing a global surrogate model is the way to go. Model post-hoc local interpretability. Model post-hoc local interpretability is concerned with how individual predictions can be explained. Different from model post-hoc global interpretability that focuses holistically on all predictions from a trained model, we are "zooming in" here to try to explain how a single prediction is derived from a trained model. Therefore, while global interpretability is at the model level and does not vary across individual predictions, local interpretability is at the prediction level and is expected to vary across predictions. Establishing model post-hoc local interpretability is important for detecting and mitigating biases (e.g., in-depth analysis on individual cases showing biases), as well as fostering user trust and adoption (e.g., providing rationale for predictions to individual consumers). We outline two methods to establish model-agnostic local interpretations, namely local surrogate model and the Shapley value/SHAP (SHapley Additive exPlanation). Local surrogate model. A local surrogate model is an approximation model used to explain individual predictions of a model. For instance, you can train a linear regression model on a single, local prediction from Llama2 (Large Language Model Meta AI 2; Touvron et al., 2023). If the linear regression model can replicate this prediction from Llama2 well, then you can leverage the interpretability of the linear regression model to explain this prediction from Llama2. Distinct from a global surrogate model that approximates the entire predictions of a trained model, a local surrogate model focuses on a single prediction at a time and tries to replicate this prediction via a more intrinsically interpretable surrogate model. The most widely adopted implementation of local surrogate models is Local Interpretable Model-agnostic Explanations (LIME; Ribeiro et al., 2016b), a model-agnostic method that aims to identify a highly interpretable model that is locally faithful to the original model. To ensure both interpretability and local fidelity (i.e., the extent to a local prediction is approximated), one must (a) ensure high interpretability of the surrogate model 𝑔𝑔 (i.e., keeping model complexity Ω(𝑔𝑔) low), and (b) minimize loss ℒ(𝑓𝑓, 𝑔𝑔, 𝜋𝜋 𝑥𝑥 ), which measures how unfaithful (i.e., distant) a chosen surrogate model 𝑔𝑔 is approximating the original model 𝑓𝑓 in predicting samples around a chosen instance 𝑥𝑥. In practice, LIME only optimizes part (b) local fidelity, while the researcher needs to determine the surrogate model 𝑔𝑔 a priori.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><figDesc>(a) Efficiency (or Pareto Optimality): The sum of Shapley values equals the grand coalitions (sets) of all features; (b) Symmetry (or Equal Treatment): If two features are substitutes (i.e., they contribute equally to all possible coalitions), then their Shapley values are equal; (c) Linearity (or Additivity): In an ensemble model (e.g., random forest), a feature's total Shapley value equals the linear combination of its Shapley values across models; and (d) Dummy (or Null): A feature's Shapley value is zero (i.e., null) if coalitions containing this feature never change. Combining global and local interpretability: SHAP. Lundberg and Lee (2017) proposed a unified framework for interpreting machine learning predictions: SHAP (SHapley Additive exPlanation). Lundberg and Lee posit that the best explanation of a model should be the model itself; when a model (𝑓𝑓) is complex, a simpler, more interpretable explanation model (𝑔𝑔) can be created to approximate the original model. With this, they defined the class of additive feature attribution methods as having an explanation model that is a linear function of binary variables, which allowed them to connect global interpretability methods (e.g., LIME) and local interpretability methods (e.g., Shapley values) that satisfy this definition. As such, SHAP enables one to derive consistent local and global explanations (since they are all based on Shapley values fundamentally), an advantage over using separate global and local interpretability methods outlined above. On local interpretability, SHAP introduces a novel method, Kernal SHAP, that combines linear LIME and Shapley values to improve the sample efficiency of model-agnostic estimations of SHAP values (compared to computing Shapley values). On global interpretability, SHAP leverages the collective Shapley values to provide insights on both feature importance and feature dependence. For feature importance, SHAP averages the absolute Shapley values per feature across the data to provide an estimation of feature importance globally (an alternative to permutation feature importance). Combining feature importance with feature effects, SHAP also provides SHAP Summary Plot, a visualization that depicts both the magnitude and direction of the features' impact on model output. For feature dependence, SHAP offers SHAP Dependence Plots, an alternative to PDPs, that visualizes the marginal impact of a chosen feature on the outcome.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Sample.</head><figDesc>The data for this study comes from the SIOP 2023 Machine Learning Competition, which focused on predicting rater scores for text-based responses to AC simulations. The total sample size for this study comprises 1,466 responses in the training dataset and 487 responses in the development dataset. We have focused solely on analyzing the training dataset for this tutorial. These responses were gathered from real job applicants who participated in a series of in-basket email exercises as part of a leadership simulation. The absence of explicit demographic details in the dataset limits the ability to describe the participants' age, gender, or other demographic characteristics. Nevertheless, the responses represent a diverse range of realworld decision-making scenarios encountered in organizational settings, making the dataset valuable for developing and evaluating NLP models.Measures. The measures in this dataset assess multiple facets of decision-making competency through six key indicators. Raters evaluated candidates' responses to a variety of exercises using the following criteria: (1) Chooses Appropriate Action: The extent to which the candidate selects suitable actions in response to given scenarios; (2) Commits to Action: The candidate's ability to confidently follow through with decisions; (3) Gathers Information: The thoroughness of information collection to inform decision-making; (4) Identifies Issues and</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>)</head><figDesc>Theft of company information: Handling a situation where an employee is suspected of stealing confidential information; (8) Turntable proposal: Evaluating a new design proposal for production processes; (9) Upgrades to robot software: Deciding on IT's proposed software rollout plan; (10) Victory lunch: Managing a reward system for group leaders based on performance survey results; (11) Customer satisfaction insights: Reviewing and reacting to research on customer satisfaction; (12) Promotion: Making a decision about promoting a parttime employee to a full-time position; (13) Weedler Contracting: Addressing a situation where a customer is suspected of abusing company replacement policies; (14) Eluto Caplanu: Investigating an incident where an offensive message was left for an employee; (15) Effective mentoring pays dividends: Reviewing the impact of a mentoring program within the organization; and (16) Bench strength: Ensuring that representatives are signed up for mandatory training per company policy. These exercises provided a diverse range of scenarios, allowing raters to assess candidates' decision-making skills comprehensively across different organizational contexts. By using open-ended responses in realistic simulations, the dataset captures the complexity of naturally unfolding text in decision-making situations, providing a rich source for evaluating NLP models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><figDesc>DistilBERT interpretations. DistilBERT is a deep-learning model based on the Transformer architecture. Because tokens (words) are first transformed into embeddings, high such as you, thank, and great, e.g., "Thank you I see something I can do. Thank You Jamie Pace."</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><figDesc>contrast, in high-stakes decision-making situations such as personnel selection, one might weigh intrinsic interpretability over prediction optimization and choose an NLP model that can be easily explained and understood by the stakeholders. In this paper, we illustrated different methods to provide model post-hoc interpretability evidence, including global (e.g., permutation feature importance, PDP, and global surrogate model) and local (e.g., SHAP, local surrogate model). The former focuses on understanding the general patterns of the model behavior as a whole, whereas the latter focuses on understanding how a specific individual prediction is derived. While global and local interpretability methods serve distinct purposes, they often converge meaningfully. Global methods, such as permutation feature importance and PDPs, provide an overarching view of how different features influence the model's predictions as a whole. Conversely, local methods, like SHAP values and LIME, offer detailed insights into how individual predictions are derived. Despite these differences in focus, both types of interpretability methods can highlight consistent patterns in the model's decision-making process. For example, features identified as most important by global methods frequently emerge as key drivers in local interpretations. If a feature like "data" is of high importance globally, it is often found to influence specific predictions at the local level, as we have demonstrated through our examples above. This convergence is reassuring because it suggests that the model's decision-making process is coherent and aligns across different levels of analysis. Additionally, the agreement between global and local methods can serve as a validation mechanism, increasing confidence in the model's interpretability and its underlying logic. By leveraging both global and local interpretability, researchers and practitioners gain a more comprehensive understanding of the model. Global methods help identify broad patterns, while local methods allow for case-by-case analysis, illustrating how the model applies these patterns in practice. Together, these methods create a multifaceted view of the model's behavior, enhancing its transparency and usability for various stakeholders in organizational research.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Feature</head><figDesc>Figure 2.</figDesc><graphic coords="56,72.00,127.20,468.00,363.30" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="57,72.00,140.99,468.00,279.65" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="58,72.00,127.20,468.00,279.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="59,72.00,127.20,468.00,364.95" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="61,72.00,127.20,468.00,310.10" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="62,72.00,127.20,344.88,246.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="63,72.00,127.20,341.20,243.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="66,72.00,127.20,468.00,307.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="67,72.00,127.20,468.00,294.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="68,72.00,127.20,468.00,305.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>A "Cheat Sheet" of AI-related Terminologies</figDesc><table><row><cell>Definition</cell><cell>Also Known</cell></row><row><cell></cell><cell>As…</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 4 .</head><label>4</label><figDesc>GPT o1 PromptDefine the roleYou are an expert assessment center assessor. You are evaluating responses to assessment center simulations to determine a job candidate's level of decisionmaking skills. The assessment center consists of various in-basket exercises simulating on-the-job scenarios. These simulations aim to elicit behaviors associated with decision-making. You goal is to classify whether or not the candidate's responses demonstrate effective or ineffective decision-making.Define the taskYou will receive the job candidate's responses to the simulations enclosed in &lt;responses&gt;&lt;/responses &gt; XML tags. You will not receive the exercises; they are the same for every job candidate.Review the candidate's responses. Extract the six types of behaviors that demonstrate effective decision-making, including chooses appropriate actions, commits to action, gathers information, identifies issues and opportunities, interprets information, and involves others. 2. Classify whether the candidate's responses as a whole demonstrate effective (1) or ineffective (0) decision-making. Effective decisionmaking means the six decision-making behaviors were displayed or excellently displayed. Ineffective decision-making means the six decision-making behaviors were not adequately displayed or the displayed behaviors were counterproductive. 3. Output the classification score 0 or 1. Share your rationale.</figDesc><table><row><cell>Specify the</cell><cell>To do this task, you should:</cell></row><row><cell cols="2">task details 1. Specify the &lt;responses&gt;</cell></row><row><cell>format</cell><cell>{CANDIDATE_RESPONSES}</cell></row><row><cell>details</cell><cell>&lt;/responses&gt;</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 5 .</head><label>5</label><figDesc>NLP Model Prediction Results</figDesc><table><row><cell>Model</cell><cell>ROC-AUC</cell><cell>Precision</cell><cell>Recall</cell><cell>r</cell></row><row><cell>Logistic</cell><cell>0.78</cell><cell>0.68</cell><cell>0.61</cell><cell>0.48</cell></row><row><cell>Regression</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>XGBoost</cell><cell>0.72</cell><cell>0.69</cell><cell>0.59</cell><cell>0.38</cell></row><row><cell>BERT</cell><cell>0.71</cell><cell>0.64</cell><cell>0.60</cell><cell>0.34</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>dimensional vectors representing the tokens, before they are processed by the model, some explainability methods such as permutation feature importance and PDP are not optimal for understanding the BERT model family and are rarely used. Therefore, we trained a logistic regression as a global surrogate model to try to approximate the predictions of the fine-tuned DistilBERT model. To develop the surrogate model, we used the training data to train a logistic regression model to predict the predictions from the DistilBERT model. The logistic regression model showed adequate accuracy in replicating the predictions from the BERT model, ROC-AUC = 0.74, precision = 0.67, recall = 0.55, r = 0.41. Therefore, we moved forward with interpreting the logistic regression model to understand the DistilBERT model. As Figure <ref type="figure">12</ref> demonstrates, data (1.53), work (1.50), and team (1.47) had the largest positive impact on predicting decision making, whereas thanks (-2.40), april <ref type="bibr">(-1.34)</ref>, and jamie (-1.26) had the largest negative impact.</p><p>After establishing global interpretations of the DistilBERT model, we then turned to model post-hoc local interpretability to understand how predictions on individual cases can be explained, using both SHAP and local surrogate model. We picked two example cases: Case 1167 with a relatively high predicted decision-making of 0.90 and Case 332 with a relatively low predicted decision-making of 0.25. Using SHAP, we computed how features in the trained DistilBERT model contributed to the predictions of these two cases. Figure <ref type="figure">13</ref> shows that characters, such as byy (parts of a key employee's name Debby), we, and need, drove the high prediction on decision making, e.g., "We need Debby to understand that she is valued member of the team and we want her and the team to be successful. I will schedule a meeting with Debby to discuss your concerns and get a better understanding of why absenteeism is a problem." For Case 332 (Figure <ref type="figure">14</ref>), the low prediction on decision-making was mainly driven by features </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Both Speech recognition</head><p>Table <ref type="table">3</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sources of Interpretability Evidence and Common Use Cases</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sources of</head><p>Higher 𝐼𝐼�𝑋𝑋 𝑗𝑗 � value indicates greater reliance of 𝑓𝑓 on 𝑋𝑋 𝑗𝑗 (i.e., greater feature importance of 𝑋𝑋 𝑗𝑗 ).</p><p>c. Repeat steps a-b n times to compute an average feature importance of 𝑋𝑋 𝑗𝑗 (𝐼𝐼�𝑋𝑋 𝚥𝚥 � ������� ):</p><p>3. After obtaining permutation feature importance on all k features {𝐼𝐼(𝑋𝑋 1 ) ������� , … , 𝐼𝐼(𝑋𝑋 𝑘𝑘 ) ������� }, one can compare and determine relative feature importance in a machine learning model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Partial dependence plot</head><p>Let S be a subset of k features, 𝑆𝑆 ∈ {𝑋𝑋 1 , … , 𝑋𝑋 𝑘𝑘 }, and C be a complement to S, 𝑆𝑆 ∪ 𝐶𝐶 = {𝑋𝑋 1 , … , 𝑋𝑋 𝑘𝑘 }. The partial dependence of the S features on model 𝑓𝑓 (trained based on all k features) is defined as</p><p>Given that there are multiple observations in the data on 𝑋𝑋 𝐶𝐶 , the partial dependence of a given variable needs to be computed via the following steps:</p><p>1. For each feature 𝑋𝑋 𝐶𝐶𝑜𝑜 ,  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Local Interpretable Model-agnostic Explanations (LIME)</head><p>The explanation obtained by LIME (𝜉𝜉(𝑥𝑥)) is expressed by the following:</p><p>The following steps depict how to obtain a local surrogate model via LIME:</p><p>1. Select a highly intrinsically interpretable model to be the local surrogate model (𝑔𝑔 𝑠𝑠𝑠𝑠𝑜𝑜 ).</p><p>2. Select an instance 𝑥𝑥 for which you want to have an explanation of its original machine learning model. </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Methodological Wishes for the Next Decade and How to Make Wishes Come True</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Aguinis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Edwards</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/joms.12058</idno>
+		<ptr target="https://doi.org/10.1111/joms.12058" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Management Studies</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="143" to="174" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Standards for educational and psychological testing</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>American Educational Research Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Man is to computer programmer as woman is to homemaker? debiasing word embeddings</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bolukbasi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Saligrama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">T</forename><surname>Kalai</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1607.06520</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of Advances in Neural Information Processing Systems 29 (NIPS2016)</title>
+		<meeting>Advances in Neural Information Processing Systems 29 (NIPS2016)</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Random forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1010933404324</idno>
+		<ptr target="https://doi.org/10.1023/A:1010933404324" />
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Machine learning applications to personnel selection: Current illustrations, lessons learned, and future research</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Campion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Campion</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="993" to="1009" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Initial investigation into computer scoring of candidate essays for personnel selection</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Campion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Campion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Campion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Reider</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Psychology</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="958" to="975" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A practical guide to big data research in psychology</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">E</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Wojcik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="458" to="474" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Xgboost: A scalable tree boosting system</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guestrin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<meeting>the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="785" to="794" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Deep reinforcement learning from human preferences</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Christiano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Leike</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Martic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Legg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Amodei</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1706.03741</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Assessing vocational interests through chat: Development and validation of the career guidance chatbot</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rounds</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/upx5q</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/upx5q" />
+	</analytic>
+	<monogr>
+		<title level="m">CGC-bot)</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">What is organizational justice? A historical overview</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Colquitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Greenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Zapata-Phelan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Handbook of Organizational Justice</title>
+		<imprint>
+			<publisher>Psychology Press</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="3" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Bert: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Devlin</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of NAACL-HLT 2019</title>
+		<meeting>NAACL-HLT 2019</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="4171" to="4186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Towards a rigorous science of interpretable machine learning</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Doshi-Velez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1702.08608</idno>
+		<imprint>
+			<date type="published" when="2016">2017. 2016</date>
+			<publisher>The European Union General Data Protection Regulation</publisher>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+	<note>The European Parliament and the Council of the European Union</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">How well can an AI chatbot infer personality? Examining psychometric properties of machineinferred personality scores</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Glorioso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hack</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/apl0001082</idno>
+		<ptr target="https://doi.org/10.1037/apl0001082" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Psychology</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1277" to="1299" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Switch transformers: Scaling to trillion parameter models with simple and efficient sparsity</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Fedus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Shazeer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2101.03961</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">120</biblScope>
+			<biblScope unit="page" from="1" to="39" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Greedy function approximation: a gradient boosting machine</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Friedman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annals of Statistics</title>
+		<imprint>
+			<biblScope unit="page" from="1189" to="1232" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Organizational justice: Yesterday, today, and tomorrow</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Greenberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Management</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="399" to="432" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">A broad-bandwidth, public domain, personality inventory measuring the lower-level facets of several five-factor models</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Goldberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Personality Psychology in Europe</title>
+		<editor>
+			<persName><forename type="first">I</forename><surname>Mervielde</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><surname>Deary</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">F</forename><forename type="middle">De</forename><surname>Fruyt</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">&amp;</forename><forename type="middle">F</forename><surname>Ostendorf</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Tilburg, The Netherlands</addrLine></address></meeting>
+		<imprint>
+			<publisher>Tilburg University Press</publisher>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="7" to="28" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">Faxman</forename><surname>Goodman</surname></persName>
+		</author>
+		<ptr target="https://www.aaai.org/ojs/index.php/aimagazine/article/view/2741" />
+		<title level="m">European Union Regulations on Algorithmic Decision-Making and a &quot;Right to Explanation</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Pseudo Factor Analysis of Language Embedding Similarity Matrices: New Ways to Model Latent Constructs</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Guenole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>D'urso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Samo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/vf3se</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/vf3se" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Smarter people analytics with organizational text data: Demonstrations using classic and advanced NLP models</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Gallagher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tavoosi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Min</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/1748-8583.12426</idno>
+		<ptr target="https://doi.org/10.1111/1748-8583.12426" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Resource Management Journal</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="39" to="54" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Exploratory data analysis</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Hartwig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Dearing</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1979">1979</date>
+			<publisher>Sage</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">The elements of statistical learning: Data mining, inference, and prediction</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Friedman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>Springer</publisher>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1" to="758" />
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Interpretable machine learning for psychological research: Opportunities and pitfalls</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Henninger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Debelak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Rothacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Strobl</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/met0000560</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">The weirdest people in the world?</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Henrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Heine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Norenzayan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behavioral and Brain Sciences</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2-3</biblScope>
+			<biblScope unit="page" from="61" to="83" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Automated video interview personality assessments: Reliability, validity, and generalizability investigations</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hickman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bosch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Saef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Woo</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/apl0000695</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Psychology</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1323" to="1351" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Logistic regresion for correlated data: GEE. Logistic regression: A self-learning text</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Kleinbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Klein</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<biblScope unit="page" from="327" to="375" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Improving measurement and prediction in personnel selection through the application of machine learning</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Koenig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tonidandel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Albritton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Koohifar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yankov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Speer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hardy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gibson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Frost</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mcneney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Capman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Lowery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kitching</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nimbkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Boyce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Min</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lebanoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Newton</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/peps.12608</idno>
+		<ptr target="https://doi.org/10.1111/peps.12608" />
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1061" to="1123" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Adaptive call center workforce management with deep neural network and reinforcement learning</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Kumwilaisak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Phikulngoen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Piriyataravet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Thatphithakkul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hansakunbuntheung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="35712" to="35724" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A primer on theorydriven web scraping: Automatic extraction of big data from the Internet for use in psychological research</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">N</forename><surname>Landers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Brusso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Cavanaugh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Collmus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Methods</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="475" to="492" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">The doctor just won&apos;t accept that! The 31st Conference on Neural Information Processing Systems</title>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">C</forename><surname>Lipton</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1711.08037</idno>
+	</analytic>
+	<monogr>
+		<title level="m">NIPS 2017)</title>
+		<meeting><address><addrLine>Long Beach, CA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">RoBERTa: A robustly optimized BERT pretraining approach</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Joshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zettlemoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Stoyanov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.11692</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lundberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1705.07874</idno>
+		<title level="m">A unified approach to interpreting model predictions</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Foundations of statistical natural language processing</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+			<publisher>The MIT Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Ensuring Transparency and Trust in Supervised Machine Learning Studies: A Checklist for Organizational Researchers</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Min</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Oswald</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/vukxp</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/vukxp" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Machine learning</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Mitchell</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1997">1997</date>
+			<publisher>McGraw-Hill Education</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Molnar</surname></persName>
+		</author>
+		<ptr target="https://openai.com/o1/" />
+		<imprint>
+			<date type="published" when="2022">2022. 2024. 2024b</date>
+		</imprint>
+	</monogr>
+	<note>2nd ed.). Leanpub</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Evaluating a natural language processing approach to estimating KSA and interest job analysis ratings</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Putka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Oswald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">N</forename><surname>Landers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Beatty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Mccloy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Business and Psychology</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="385" to="410" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">From Variability Tolerance to Approximate Computing in Parallel Integrated Architectures and Accelerators</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rahimi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Benini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Gupta</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Springer International Publishing</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Model-agnostic interpretability of machine learning</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Ribeiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guestrin</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1606.05386</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Why should I trust you?: Explaining the predictions of any classifier</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Ribeiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guestrin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd ACM SIGKDD international conference on knowledge discovery and data mining</title>
+		<meeting>the 22nd ACM SIGKDD international conference on knowledge discovery and data mining</meeting>
+		<imprint>
+			<date type="published" when="2016">2016b</date>
+			<biblScope unit="page" from="1135" to="1144" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rudin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Machine Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="206" to="215" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><surname>Sanh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.01108</idno>
+		<title level="m">DistilBERT, A Distilled Version of BERT: Smaller, Faster, Cheaper and Lighter</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Proxima Centauri as a flare star</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shapley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="15" to="18" />
+			<date type="published" when="1951">1951</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Stochastic games</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">S</forename><surname>Shapley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the national academy of sciences</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1095" to="1100" />
+			<date type="published" when="1953">1953</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Principles for the Validation and Use of Personnel Selection Procedures in Industrial and Organizational Psychology</title>
+		<idno type="DOI">10.1017/iop.2018.195</idno>
+		<ptr target="https://doi.org/10.1017/iop.2018.195" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Science and Practice</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="2" to="97" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note>The Society for Industrial and Organizational Psychology Supl</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Quantifying with words: An investigation of the validity of narrativederived performance scores</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Speer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="299" to="333" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Survey on web spam detection: principles and algorithms</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Spirin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Han</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM SIGKDD explorations newsletter</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="50" to="64" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Dropout: a simple way to prevent neural networks from overfitting</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1929" to="1958" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Development and validation of an artificial intelligence chatbot to assess personality</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Drasgow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">X</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/ahtr9</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/ahtr9" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Scientific, legal, and ethical concerns about AI-based personnel selection tools: a call to action</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">T</forename><surname>Tippins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Oswald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Mcphail</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Assessment and Decisions</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Using structural topic modeling to gain insight into challenges faced by leaders</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tonidandel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Summerville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Gentry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">F</forename><surname>Young</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Leadership Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">101576</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Stone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Albert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Almahairi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Babaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Scialom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.09288</idno>
+		<title level="m">Llama 2: Open foundation and fine-tuned chat models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Exploratory data analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Tukey</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1977">1977</date>
+			<publisher>Addison-wesley</publisher>
+			<pubPlace>Reading, MA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vaswani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<meeting><address><addrLine>Long Beach, CA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="5998" to="6008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Why a Right to Explanation of Automated Decision-Making Does Not Exist in the General Data Protection Regulation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wachter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Mittelstadt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Floridi</surname></persName>
+		</author>
+		<ptr target="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2903469" />
+	</analytic>
+	<monogr>
+		<title level="j">International Data Privacy Law</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">On putting the horse (raters and criteria) before the cart (variance components in ratings)</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Myeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Oswald</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/iop.2024.16</idno>
+		<ptr target="https://doi.org/10.1017/iop.2024" />
+	</analytic>
+	<monogr>
+		<title level="j">Industrial and Organizational Psychology</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Will the real Linda please stand up… To large language models? Examining the representativeness heuristic in LLMs</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Oswald</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arxiv.2404.01461</idno>
+		<ptr target="https://doi.org/10.48550/arxiv.2404.01461" />
+	</analytic>
+	<monogr>
+		<title level="m">The Conference on Language Modeling</title>
+		<meeting><address><addrLine>COLM</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2024">2024. 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Not Yet: Large Language Models Cannot Replace Human Respondents for Psychometric Research</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.31219/osf.io/rwy9b</idno>
+		<ptr target="https://doi.org/10.31219/osf.io/rwy9b" />
+	</analytic>
+	<monogr>
+		<title level="j">OSF</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Chain-ofthought prompting elicits reasoning in large language models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Schuurmans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bosma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Chi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="24824" to="24837" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Artificial intelligence, machine learning, and big data: Improvements to the science of people at work and applications to practice</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Oswald</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/peps.12643</idno>
+		<ptr target="https://doi.org/10.1111/peps.12643" />
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Perception is reality? Understanding user perceptions of chatbot-inferred versus self-reported personality traits</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">I</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Dennis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">X</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chbah.2024.100057</idno>
+		<ptr target="https://doi.org/10.1016/j.chbah.2024.100057" />
+	</analytic>
+	<monogr>
+		<title level="j">Computers in Human Behavior: Artificial Humans</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

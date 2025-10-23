@@ -105,7 +105,7 @@ services:
         condition: service_healthy
 
   grobid:
-    image: lfoppiano/grobid:0.8.0
+    image: grobid/grobid:0.8.2-full
     restart: unless-stopped
     # (ports are optional — only needed if you want to hit it from your host)
     ports:
@@ -113,6 +113,7 @@ services:
     environment:
       GROBID_MAX_CONCURRENT: "1"
       JAVA_OPTS: "-Xms512m -Xmx2g -Djava.awt.headless=true"
+    runtime: nvidia
 
   celery-grobid:
     image: osf-sync-app:latest
