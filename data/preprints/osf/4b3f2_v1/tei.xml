@@ -1,0 +1,1743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Personalized neural state segmentation: validating the GSBS algorithm for individuallevel fMRI data</title>
+				<funder ref="#_WsXeX4d #_9DsReGG #_9ErG8FW">
+					<orgName type="full">NSERC</orgName>
+				</funder>
+				<funder ref="#_w5euxjT #_nPxwh8B">
+					<orgName type="full">unknown</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of Toronto</orgName>
+								<address>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of Chicago</orgName>
+								<address>
+									<country key="US">U.S.A</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Finn</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of Toronto</orgName>
+								<address>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">K</forename><surname>Duncan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">University of Toronto</orgName>
+								<address>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="institution">Sydney</orgName>
+								<address>
+									<addrLine>Smith Hall 100 St George St Room 4020</addrLine>
+									<postCode>M5S 2E5.</postCode>
+									<settlement>Toronto</settlement>
+									<region>ON</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Personalized neural state segmentation: validating the GSBS algorithm for individuallevel fMRI data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">DEAAF8BE6C6E963E089B0728CE146810</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:36+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Humans segment experience into a nested series of discrete events, separated by neural state transitions that can be identified in fMRI data collected during passive movie viewing. Current neural state segmentation techniques manage the noisiness of fMRI data by modelling groups of participants at once. However, the perception of event boundaries is itself idiosyncratic. As such, we developed a novel denoising pipeline to separate meaningful signal from noise and validated the Greedy State Boundary Search (GSBS) algorithm for use in individual participants. We applied the GSBS to publicly available (1) young adult (YA) and (2) developmental fMRI datasets. After extensive denoising, we confirmed that personalized YA neural state transitions exhibited a canonical temporal cortical hierarchy and were related to normative behavioural boundaries across time in key regions such as the posterior parietal cortex. Further, we used machine learning to show that the strongest neural transitions could be used to predict the timing of normative boundary judgements. Results from the developmental dataset also demonstrated important boundary conditions for estimating personalized neural state transitions. Nonetheless, some brain-behaviour relations were still apparent in individually modelled developmental data. These validations pave the way for applying personalized fMRI modelling to the study of event segmentation; what meaningful insights could we be missing when we average away what makes each of us unique?</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>To manage the deluge of unfolding information in our daily lives, we carve up our continuous experience into meaningful events, a process referred to as event segmentation <ref type="bibr" target="#b9">(Carroll &amp; Bever, 1976;</ref><ref type="bibr" target="#b33">Newtson, 1973;</ref><ref type="bibr">Zacks et al., 2001)</ref>. This segmentation prioritizes which information we have access to in any given moment <ref type="bibr" target="#b9">(Carroll &amp; Bever, 1976;</ref><ref type="bibr" target="#b35">Ren et al., 2021;</ref><ref type="bibr" target="#b43">Swallow et al., 2009)</ref>, determines what we attend to <ref type="bibr" target="#b1">(Bailey et al., 2017)</ref>, and shapes the organization of our memories <ref type="bibr" target="#b4">(Bein &amp; Davachi, 2024;</ref><ref type="bibr" target="#b13">Clewett &amp; Davachi, 2017;</ref><ref type="bibr" target="#b15">Davachi &amp; DuBrow, 2015;</ref><ref type="bibr" target="#b17">DuBrow &amp; Davachi, 2013;</ref><ref type="bibr" target="#b18">Ezzyat &amp; Davachi, 2014;</ref><ref type="bibr" target="#b26">Horner et al., 2016;</ref><ref type="bibr" target="#b38">Shin &amp; DuBrow, 2021;</ref><ref type="bibr" target="#b47">Zacks et al., 2007)</ref>. Judgments about where to place these boundaries (hereafter, behavioural event boundaries) are consistent across individuals (statistically, e.g., <ref type="bibr">Zacks et al., 2001;</ref><ref type="bibr" target="#b47">Zacks et al., 2007)</ref>, but the emphasis on this consistency belies pervasive individual differences in event segmentation. Even in seminal work, at best, 30% of young adults agree on the timing of each event boundary <ref type="bibr">(Zacks et al., 2001)</ref>. These individual differences in the timing of behavioural boundaries are stable across retesting <ref type="bibr" target="#b41">(Speer et al., 2003)</ref>, and they are more variable in older adults <ref type="bibr" target="#b48">(Zacks et al., 2006)</ref> and children <ref type="bibr" target="#b22">(Glebkin et al., 2019;</ref><ref type="bibr" target="#b35">Ren et al., 2021;</ref><ref type="bibr" target="#b51">Zheng et al., 2020)</ref>. People also differ in the duration of their perceived eventsvarying from many (fine granularity) to few boundaries (coarse granularity; <ref type="bibr" target="#b47">Zacks et al., 2007)</ref>. Individual differences in this granularity correlate with their memory <ref type="bibr" target="#b1">(Bailey et al., 2017;</ref><ref type="bibr" target="#b27">Jafarpour et al., 2022;</ref><ref type="bibr" target="#b36">Sargent et al., 2013;</ref><ref type="bibr" target="#b48">Zacks et al., 2006)</ref>. Unfortunately, this meaningful idiosyncrasy in event segmentation cannot be explored in the brain because of tool limitations. State segmentation tools <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021)</ref> have shown that patterns of fMRI activity are relatively stable within events, punctuated by sharp shifts (hereafter, neural state transitions) that tend to co-occur with boundaries between events <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr">Benear et al., 2023;</ref><ref type="bibr" target="#b14">Cohen et al., 2022;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr" target="#b20">Geerligs et al., , 2022;;</ref><ref type="bibr" target="#b29">Lee et al., 2021)</ref>. However, these tools require users to aggregate participants' fMRI data and, therefore, only consider neural state transitions that are shared across people <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021)</ref>. Here, we validate the modelling of personalized neural state transitions, providing a critical tool that bring us closer to understanding what makes each of us uniquely carve up our experience into discrete events.</p><p>Obtaining personalized estimates of neural state transitions is also important to avoid potential distortions that can arise from averaging inherently idiosyncratic signals. Individual differences in the placement of boundaries can inflate the apparent coarseness of segmentation at the group level. When there is greater mismatch between the timing of the boundaries, this decreases evidence for a group-level boundary, giving the appearance of coarser segmentation in the group. This problem could mislead our thinking about event segmentation in at least two significant ways. The first pertains to development: young children's data tend to be noisier and more variable than their older counterparts <ref type="bibr" target="#b22">(Glebkin et al., 2019;</ref><ref type="bibr" target="#b35">Ren et al., 2021;</ref><ref type="bibr" target="#b51">Zheng et al., 2020)</ref>. Greater variability in the perception of boundaries could make it seem like segmentation is coarser in younger children and becomes finer with development. Second, distortions caused by aggregating across individuals could also be problematic for the "temporal cortical hierarchy": one of the most discussed aspects of event perception. Group-modelled fMRI data consistently reveals that sensory regions have finer temporal segmentation than association cortex <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b14">Cohen et al., 2022;</ref><ref type="bibr" target="#b20">Geerligs et al., 2022;</ref><ref type="bibr" target="#b46">Yates et al., 2022)</ref>. Given that sensory cortex activation is strongly yoked to sensory experiences that are shared during movie watching, the timing of its state transitions will likely be more consistent than in the association cortex, where greater idiosyncrasy could inflate the coarseness of transitions. In short, estimating fully personalized neural state transitions is not just a methodological curiositya nerdy problem, as it were-it is needed to understand event cognition.</p><p>In recognition of this need, researchers have attempted to measure personalized neural state transitions, but with limitations. A notable attempt <ref type="bibr">(Sava-Segal et al., 2023)</ref> leveraged the Hidden Markov Modeling (HMM) approach developed by <ref type="bibr" target="#b2">Baldassano et al., (2017)</ref>. While this method is quite powerful when characterizing groups <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b14">Cohen et al., 2022;</ref><ref type="bibr" target="#b46">Yates et al., 2022)</ref>, it determines the optimal number of states for each brain region with a cross-validation procedure. Consequently, the granularity of segmentation is determined by the group data, once more, obscuring personalized neural state transitions. Even with this limitation, Sava-Segal et al. ( <ref type="formula">2023</ref>) highlighted that inter-individual variability in the timing of transitions is pronounced, differs across brain networks, and is related to subsequent memory of movies. Nevertheless, variability in granularity cannot be estimated with this method, running the risk of distorting neural state timescales as described above.</p><p>Fortunately, the Greedy State Boundary Search (GSBS) algorithm, recently developed by Linda <ref type="bibr">Geerligs and colleagues (2021)</ref>, can simultaneously determine the optimal granularity of neural state transitions and their timing within individual participants. But, to date, it has been applied to group-averaged brains because validations cautioned against modelling individual participants' data due to noise. Specifically, this validation assessed the impact of averaging fMRI data before performing state segmentation. To do this, they ran the GSBS algorithm on individual brains along with brains averaged across groups of various sizes. They then compared the resulting neural state time courses to one obtained by modelling the average of held-out participants. The correspondence to held-out data dropped steeply as group sizes went down, with very low correspondence between each individual's time course and the group's (Figure <ref type="figure">1a</ref>). The authors reasonably interpreted the drop-off as an unavoidable consequence of known sources of noise that limit fMRI data quality. Most notably, sudden motion wreaks havoc on fMRI time series by creating precisely the types of discontinuities in activity patterns that the GSBS algorithm is designed to detect. Since participants are likely to move at different times,</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1. Similar reliability curves are found in the brain and behaviour.</head><p>Reliability curve for neural state transitions (a) (adapted from <ref type="bibr" target="#b21">Geerligs et al., 2021)</ref> demonstrating that, across multiple key regions, neural state transitions look more like the group-modelled transitions the more participants you average across. Reliability curve for behavioural boundary judgements (b) (data from <ref type="bibr" target="#b14">Cohen et al., 2022)</ref> demonstrating that when behaviourally meaningful idiosyncrasies are averaged, a similar reliability curve is found. V1 and V5 = visual regions; IT = inferior temporal cortex; AG = angular gyrus; mPFC = medial prefrontal cortex.</p><p>averaging across enough people's data should reduce the influence of these artifacts while preserving shared state transitions related to event processing.</p><p>What this reasoning does not consider, though, is the (likely) possibility that idiosyncrasy in neural event segmentation is meaningful. Consider what happens when the same validation is performed on the time series of behavioural event boundaries (Figure <ref type="figure">1b</ref>). Since the timing of behavioural boundaries varies, the average of the held-out participants' time series reflects only the most agreed-upon boundaries, and therefore, the more idiosyncratic boundaries are lost. Thus, each individual's time series may have relatively low correspondence with this group average, but as more individuals are added, the resulting average increasingly reflects group consensus. In other words, groups are more like other groups than their constituent individuals. Indeed, when we performed this analysis with a behavioural event segmentation dataset (N = 36), we found a correspondence curve that mirrors that observed in <ref type="bibr">Geerligs et al.'s (2021)</ref> GSBS validation (Figure <ref type="figure">1b</ref>). This raises the hopeful possibility that the apparent poor performance of the GSBS algorithm on individual brains might have, in part, reflected meaningful idiosyncrasy in how brains segment experience.</p><p>Accordingly, here, we aim to evaluate the degree to which the apparent unreliability of personalized state transitions reflects meaningful idiosyncrasy vs. fMRI artifacts like those caused by motion. We applied a multi-step approach to answer this question in two open datasets: (1) the Sherlock young adults (hereafter, YA) dataset (N = 16; <ref type="bibr" target="#b10">Chen et al., 2017)</ref>, which has been frequently used in the event segmentation literature <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b31">Liu et al., 2022;</ref><ref type="bibr" target="#b40">Song et al., 2021)</ref>, and (2) a subset of the Child Mind Institute's Healthy Brain Network (hereafter, developmental dataset) project (N = 70; <ref type="bibr" target="#b0">Alexander et al., 2017)</ref>. We used the YA dataset to validate personalized segmentation under typical conditions, whereas we used the developmental dataset to assess boundary conditions in our application of the GSBS, as children produce notoriously high motion profiles (Figure <ref type="figure" target="#fig_0">2</ref>).</p><p>We first developed an extensive denoising pipeline to minimize motion-related artifacts by integrating multiple recommended approaches (e.g., <ref type="bibr" target="#b12">Ciric et al., 2018;</ref><ref type="bibr" target="#b24">Gratton et al., 2020)</ref>. Then, we confirmed that our denoising procedure effectively mitigates GSBS's problematic placement of neural state transitions at moments of high motion. Next, we determined whether individually-modelled neural state time series are meaningful. Specifically, we assessed whether individually-modelled data contained patterns emblematic of group-modelled event segmentation, including the temporal cortical hierarchy and relationships to normative behavioural boundaries. To do so, we compared averages of personalized state transition time series to group-modelled data. We reasoned that, if individually-modelled transitions only contain noise, then their average should bear little resemblance to the group-modelled transitions. By contrast, if the resulting time series reflect meaningful-but idiosyncratic-neural transitions, then their average should capture high-consensus transitions, like group-modelled data. We believe that this validation is a fairer test than in <ref type="bibr" target="#b21">Geerligs et al. (2021)</ref> since we do not assume that even perfect estimates of each individual's neural segmentation should match that of the group. By validating this new approach, we pave the way to tackling previously elusive questions about individual differences in neural segmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ethics authorization</head><p>All data was deidentified and sourced from publicly available repositories. All data storage and analysis procedures fall under protocols approved by the University of Toronto Human Research Ethics Board.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>fMRI datasets</head><p>Young adult dataset. We used the widely-studied Sherlock dataset <ref type="bibr" target="#b11">(Chen et al., 2019;</ref><ref type="bibr"></ref> retrieved from <ref type="url" target="https://gin.g-node.org/ljchang/Sherlock/src/master">https://gin.g-node.org/ljchang/Sherlock/src/master</ref>) to validate the use of GSBS in individual YA participants. We reasoned that, since this dataset was used to first demonstrate the neural segmentation of events <ref type="bibr" target="#b2">(Baldassano et al., 2017)</ref>, replicating its key findings with individually-modelled data would be a strong test of the approach.</p><p>Participants. The retrieved public dataset includes data from 16 of the 22 individuals who originally participated in <ref type="bibr" target="#b10">Chen et al. (2017;</ref><ref type="bibr"></ref> 12 male, 10 female; ages 18-26; M = 20.8). The original authors excluded six participants based on excessive motion, data loss, and lack of engagement with the task. This dataset has been used frequently in the literature (e.g., <ref type="bibr" target="#b2">Baldassano et al., 2017;</ref><ref type="bibr" target="#b10">Chen et al., 2017;</ref><ref type="bibr" target="#b31">Liu et al., 2022;</ref><ref type="bibr" target="#b40">Song et al., 2021)</ref> and therefore, this sample size is consistent with past literature in this area.</p><p>Stimulus &amp; task. Participants passively viewed the first 48 minutes of the first episode of BBC's Sherlock television show while undergoing functional MRI scanning across two runs (23 and 25 min long). We used the first functional run for our analyses.</p><p>Image acquisition. T1 anatomical and T2*-weighted echo planar imaging (EPI) pulse functional data were collected on a Siemens Skyra 3T full-body scanner with a 20-channel head coil. Full imaging details can be found in <ref type="bibr" target="#b10">Chen et al. (2017)</ref>, but the following are parameters of note for the functional sequence: TR = 1500 ms; TE = 28 ms; flip angle = 64°; number of slices = 27; volumes = 972; slice thickness = 4 mm; in-plane resolution: 3 x 3 mm.</p><p>Preprocessing. The retrieved data had been preprocessed using fMRIPrep 20.0.6 <ref type="bibr">(Esteban, Blair, et al., 2019;</ref><ref type="bibr">Esteban, Markiewicz, et al., 2019;</ref><ref type="bibr">RRID:SCR_016216)</ref>, which is based on Nipype 1.4.2 <ref type="bibr">(Gorgolewski et al., 2011;</ref><ref type="bibr" target="#b23">Gorgolewski et al. 2018</ref>; RRID:SCR_002502) using the default parameters. We created our own spike regressors in our custom extensive denoising pipeline (see below, Methods, Extensively denoised pipeline). We cropped the beginning and end of the functional data according to the specifications by <ref type="bibr" target="#b11">Chen et al. (2019)</ref>. This cropping included adjustments to account for the timing of the hemodynamic response function (HRF) by shifting the functional data back in time by 4.5 seconds. In addition to these specifications, we cropped 30 TRs from the beginning of the run to remove strong BOLD responses to the onset of the video. Lastly, we cropped an additional 300 TRs from the end of the first run at a major scene change (final length = 617 TRs) to improve the run time of the GSBS algorithm, which increases exponentially with time series length.</p><p>Behavioural boundary ratings. We used the binary behavioural boundaries collected by <ref type="bibr" target="#b2">Baldassano et al. (2017)</ref> as our normative measure of behavioural event segmentation for the YA dataset. Four independent (non-scanned) human raters watched the Sherlock episode and were asked to indicate when one scene ended, and another began (~10 sec to 3 min long). A binary boundary was placed when at least two out of the four raters agreed on a boundary. This procedure resulted in a normative boundary time series with 54 boundaries coded as "1" and the non-boundary time points coded as "0". Developmental dataset. Our developmental dataset included a subset of the Child Mind Institute's Healthy Brain Network project <ref type="bibr" target="#b0">(Alexander et al., 2017)</ref>, retrieved when 775 fMRI datasets were available (data release 2.1). Participants in this dataset were recruited based on perceived clinical concerns; to reduce sources of inter-individual differences beyond age, our validation analyses only included participants whose only clinical diagnosis was anxiety. We chose this clinical subset instead of the typically developing one to hold out the latter for future hypothesis testing. We also required that participants had completed the relevant functional and anatomical scans to be included in our analyses.</p><p>Participants. Seventy participants (34 females, 36 males; ages 5-20, M = 11.25) had imaging data that met our inclusion criteria; all were included in analyses assessing the impact of motion on GSBS performance. Subsequent analyses included exclusions for high motion (criterion: &gt;= 30% TRs flagged for scrubbing by fMRIPrep, see below), resulting in a final sample of N = 62 (29 females, 33 males; age range 5 yo to 20 yo; M = 11.47). This sample size is much larger than the YA dataset, the latter of which has been consistently used in the literature (e.g., <ref type="bibr" target="#b2">Baldassano et al., 2017;</ref><ref type="bibr" target="#b31">Liu et al., 2022;</ref><ref type="bibr" target="#b40">Song et al., 2021)</ref>. See Figure <ref type="figure" target="#fig_0">2</ref> for a plot of motion profiles across both datasets.</p><p>Stimulus &amp; task. The participants included in our current sample watched a 10-minute clip of Despicable Me as part of a larger protocol (see <ref type="url" target="https://fcon_1000.projects.nitrc.org/indi/cmi_healthy_brain_network/MRI_Protocol.html#Movies">https://fcon_1000.projects.nitrc.org/indi/cmi_healthy_brain_network/MRI_Protocol.html#Movies</ref> for details about the movie protocol).</p><p>Image acquisition. T1 anatomical and T2*-weighted EPI functional data were collected on Siemens Prisma and Trio Tim 3T scanners across two sites. The following are parameters of note for the EPI sequence: TR = 800ms; TE = 30ms; number of slices = 60; flip angle = 31°; number of volumes = 750; voxel size = 2.4 mm isotropic; multiband acceleration factor = 6. Full details can be found in <ref type="bibr" target="#b0">Alexander et al. (2017)</ref>.</p><p>Preprocessing. We preprocessed retrieved data using default parameters of fMRIPrep 20. <ref type="bibr">0.7 (Esteban, Markiewicz, et al., 2018;</ref><ref type="bibr">Esteban, Blair, et al., 2018</ref>; RRID:SCR_016216), which is based on Nipype 1.4.2 <ref type="bibr">(Gorgolewski et al., 2011;</ref><ref type="bibr" target="#b23">Gorgolewski et al., 2018;</ref><ref type="bibr">RRID:SCR_002502)</ref>. Frames that exceeded a threshold of 0.5 mm framewise displacement (FWD) or 1.5 standardized DVARS (stdDVARS) were annotated as motion outliers for the purposes of determining participant inclusion. Like in the YA dataset, we created our own spike regressors in our custom denoising pipeline (see below, Methods, Extensively denoised pipeline). We then adjusted the developmental dataset to speed up computational time; since the original TR was 800ms (under half the duration of the YA data), we decided to down-sample the TRs by removing every other TR, resulting in a final time course of 355 TRs.</p><p>Behavioural boundary ratings. We used the behavioural boundaries collected by <ref type="bibr" target="#b14">Cohen et al. (2022)</ref> as our normative measure of behavioural event segmentation (see paper for details). We took each of the N = 21 participants' boundary judgment time series, smoothed them using a Gaussian filter (R smth function; window = 9.6 seconds), and averaged across the full sample to create a normative boundary confidence time series to compare to the neural state transitions. Finally, we adjusted this normative boundary time series by 5.6 seconds in order to adjust for the timing of the HRF in fMRI data. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Custom denoising pipelines</head><p>We created two custom denoising pipelines, one minimal and one extensive, to explore the effect of denoising on the GSBS algorithm performance. We used the same pipelines for both the YA and developmental datasets.</p><p>Minimally denoised pipeline. For the minimally denoised pipeline, we applied a highpass filter (Butterworth filter; &gt;0.006Hz) to the preprocessed BOLD data using SciPy's filtfilt function from its signal processing package. This removed scanner drift and any fluctuations in signal greater than the maximum length of events of interest (i.e., events lasting more than ~160s, which was the maximum event length in the behavioural boundaries reported in <ref type="bibr" target="#b2">Baldassano et al., 2017)</ref>. For the minimally denoised pipeline, we performed no further denoising because (a) this was the extent of denoising in <ref type="bibr" target="#b2">Baldassano et al. (2017)</ref>, and (b) we wanted to explore the GSBS algorithm's performance in the context of high noise.</p><p>Extensively denoised pipeline. For the extensively denoised pipeline, we created a custom pipeline by combining elements of field gold standards (e.g., <ref type="bibr">Grattan et al., 2020;</ref><ref type="bibr" target="#b12">Ciric et al., 2018)</ref>.</p><p>Filtering. Using AFNI's 3dBandpass function, we band-pass filtered (0.22 Hz &lt; 0.006 Hz) both the preprocessed fMRI data and the portion of the confound regressor matrix outputted by fMRIprep that we planned to use in our confound regression (excluding the spike regressors). The high-pass component was the same as in the minimally-denoised pipeline (&gt; 0.006 Hz). We added the low-pass component based on Grattan et al.'s (2020) recommendations for cleaning resting state fMRI data. Low-pass filtering removes highfrequency noise, like that introduced by sudden motion or mechanical issues. Grattan et al. (2020) recommended using a low-pass component with a 0.1 Hz threshold; however, we used a more lenient 0.22 Hz threshold instead because the shortest event judged by raters in the YA dataset was ~10 seconds (i.e., 0.1 Hz). Therefore, if we were to use the recommended lowpass threshold, we would risk removing important high-frequency signals associated with those short events; as such, we allowed more high-frequency signals to pass, i.e., fluctuations greater or equal to ~4.5 seconds (i.e., 0.22Hz). We then used band-pass filtered FWD and stdDVARS regressors to flag TRs as motion outliers for spike regression (FWD &gt;= 0.1 mm, following <ref type="bibr">Grattan et al. (2020)</ref>; stdDVARS &gt;= 1.5). This procedure yielded fewer flagged TRs and, therefore, resulted in less scrubbing than using unfiltered data to identify outliers, while still effectively removing the noise. Since scrubbing can disrupt the auto-correlative structure of time series by introducing discontinuities, by reducing its necessity, our pipeline is ideal for time series analyses.</p><p>Confound regression. We then regressed the band-pass filtered confound time series, including the new spike regressors, from the band-pass filtered fMRI data with AFNI's 3dTproject function. We included the following regressors from the default fMRIPrep pipeline: (a) the first 10 components of aCompcor, (b) cerebral spinal fluid, (c) white matter, (d) global signal, and (e) an 18-expansion of the 6 motion estimates <ref type="bibr">(x, y, z, pitch, yaw, roll)</ref>. We also included our custom spike regressors. For the developmental data, we also included stdDVARS and FWD as regressors. The residuals from this regression were used for subsequent analyses.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GSBS modelling</head><p>Overview. The output from both the minimally and extensively denoised pipelines were both group-and individually-modelled using the GSBS algorithm, leading to four separate types of neural boundary time series for each dataset: (1) individually-modelled, minimally denoised;</p><p>(2) group-modelled, minimally denoised; (3) individually-modelled, extensively denoised; and (4) group-modelled, extensively denoised. This way, we were able to separately explore the effect of (a) denoising, and (b) group-averaging the data.</p><p>GSBS algorithm description. The GSBS algorithm segments multi-voxel data into discrete neural states, where a neural state is defined as a pattern of activity that is relatively stable over time (i.e., that is more similar within vs. between states). The algorithm iteratively runs through k = 2 to k = n states, where n is the maximum number of allowable states. The optimal segmentation is the one where the difference in between vs. within state similarity is maximized. To model our data, we used the GSBS function from the statesegmentation Python package (0.0.4; <ref type="url" target="https://pypi.org/project/statesegmentation/0.0.4/">https://pypi.org/project/statesegmentation/0.0.4/</ref>). We used the following parameters for both datasets: max events = 140; finetune = 1; blocksize = 25. We parcellated all functional data using the Schaefer 2018 atlas (7 networks, 100 ROIs; <ref type="bibr" target="#b37">Schaefer et al., 2018)</ref> and then applied the algorithm to each ROI using custom Python scripts (version 3.7.16) based on the Naturalist Data Analysis tutorial <ref type="bibr">(Baldassano, Fleetwood, &amp; Geerligs, retrieved Sept 2022)</ref>.</p><p>Group vs. individual modelling. The key difference between group-and individuallymodelled results is the fMRI data to which we applied the algorithm. For group-modelled results, GSBS was applied to group-averaged fMRI data for each dataset (i.e., we averaged the fMRI data across participants in each sample, for each voxel). Whereas, for the individually-modeIled results, GSBS was applied to each individual participant's fMRI data, and the resulting state transition time series were averaged for comparison with the group-modelled results. For the developmental dataset, we also group-modelled the data for 4 age groups: early childhood (5-7 yo; N = 14), late childhood (8-10 yo; N = 21), early adolescence (11-14 yo; N = 17), and late adolescence (15-20 yo; N = 15). We chose these four groups because (a) they are consistent with age ranges used in related work (e.g., <ref type="bibr" target="#b14">Cohen et al., 2022</ref>) (b) they resulted in relatively similar sample sizes across groups.</p><p>Final model output. After determining the optimal segmentation of brain states, statesegmentation provides indices, listing the TRs at which transitions between states are most likely, along with the algorithm's evidence for each transition (i.e., its strength; a value between 0 and 2). We used custom Python scripts <ref type="bibr">(version 3.7.16</ref>) to transform the model output from transition indices into neural transition time series, in which transitions were coded with their transition strength, and zeros marked all non-transition time points. The resulting outputs were group-and individually-modelled neural transition time series for each ROI in the Schaefer atlas, for each dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Validation analyses</head><p>We analysed each combination of pipeline and dataset in R (version 4.3.1) for all subsequent analyses. Since both the YA neural transition strength and binary behavioural boundary time series were sparse and could be slightly offset in time, we applied a Gaussian smoothing kernel (R's smth function; window = 9 seconds). For the developmental dataset, we only smoothed the neural strength time series since the normative behavioural one was composed of previouslysmoothed time series (see above). All brain-wide analyses were visualized using R's ggseg and ggSchaefer packages, and all thresholded maps use false discovery rate (FDR) corrections with an alpha of p = .05.</p><p>Motion investigation. We aimed to characterise the effect of motion on GSBS performance and assess how our extensive denoising pipeline mitigates the issue. We used the participants' FWD time series to quantify their movement across time (filtered FWD to compare to the extensively denoised data; unfiltered FWD to compare to the minimally denoised data). For each individually-modelled pipeline (minimally and extensively denoised), we correlated participants' smoothed motion with (a) their smoothed neural transition strength time series and (b) the normative behavioural boundary time series using Kendall's tau rank correlation. We chose Kendall's tau because the sparseness of our time series (even after smoothing) could artifactually inflate a Pearson's correlation. We Fisher Z transformed the correlation values before testing for significant differences between the minimally and extensively denoised pipeline motion-neural transition correlations across the cortex using a repeated-measures Ttest. Lastly, we assessed how motion influenced the granularity of neural state transitions, by correlating (Pearson's) the number of neural transitions (averaged across regions) and the number of TRs flagged for high motion across participants. The distributions of outlying TRs were highly skewed (Figure <ref type="figure" target="#fig_0">2</ref>), so we transformed them to create more normal distributions (log for YA; square root for developmental data sets). We performed the same transformation on each group's distribution of neural state transitions. Note, since one of our main aims was to characterize the effect of motion on algorithm performance, we used the full developmental sample for these analyses (N = 70), including those participants with greater than 30% of TRs flagged.</p><p>Replicating patterns emblematic of event processing. To fairly determine whether individually-modelled state transitions contained meaningful information, we averaged the individually-modelled transitions. Our logic was that if individual fMRI data is too noisy to model, the results would largely reflect this noise, yielding no meaningful patterns at the group-level. On the other hand, if individually-modelled transitions are meaningful (but somewhat idiosyncratic), then their average should contain patterns that are shared across people and mirror groupmodelled results.</p><p>Temporal hierarchy analyses. We assessed temporal cortical hierarchies by measuring the number of transitions detected in each ROI (i.e., segmentation granularity) for each pipeline. Note that regions with more transitions have shorter state durations. We compared the average number of individually-modelled transitions to the number of groupmodelled transitions. Specifically, we used the YA group-modelled map as a template cortical hierarchy and correlated the number of transitions in this map across regions with those of the individually-modelled YA and developmental maps.</p><p>Brain-behaviour correspondence. We correlated both the group-modelled and the aggregated individually-modelled neural transitions with the normative behavioural boundaries (for each ROI, and each dataset). We defined three a priori ROIs using the Schaefer parcellation: early visual (Vis; formed from LH_Vis_4, LH_Vis_5, RH_Vis_4, and RH_Vis_5 regions), default temporal cortex (DTC; formed from LH_Default_Temp_1, LH_Default_Temp_2, RH_Default_Temp_1, RH_Default_Temp_2, and RH_Default_Temp_3 regions), and posterior parietal cortex (PPC; formed from LH_Default_pCunPCC_1, LH_Default_pCunPCC_2, RH_Default_pCunPCC_1, and RH_Default_pCunPCC_2 regions). We chose these regions because their neural state transitions consistently relate to behavioural boundary timing (e.g., <ref type="bibr" target="#b2">Baldassano et al., 2017</ref><ref type="bibr" target="#b3">Baldassano et al., , 2022;;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr">Geerligs et al., , 2023))</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Machine learning analysis.</head><p>Using custom Python scripts (version 3.11.0), we performed two analyses to determine how well coherent neural transitions across the brain predict normative behavioural boundaries in the YA data. The first involved a combination of data dimensionality reduction and machine learning (ML), and the second simply involved averaging evidence for neural transitions across regions. In both analyses, we defined behavioural boundaries using the unsmoothed Baldassano et al. (2017) norms as described above, and we defined evidence for neural transitions as the individually-modelled neural state transition time series, smoothed with a Gaussian kernel (scipy's gaussian_filter1d function; fullwidth half-maximum (FWHM) of 3 TRs).</p><p>Predictions using machine learning. We first compressed the 100 ROI neural transition time series using a temporal principal component analysis (PCA; sklearn's PCA function, 30 components). This resulted in 30 time series that were the same length as those obtained from individual ROIs to serve as features in the ML model. We further reduced these features to those with the strongest correspondence to behavioural boundaries. Specifically, we ran a logistic regression across participants that predicted behavioural boundaries using the 30 components along with their temporally shifted copies (2 TRs later, to allow for delayed neural responses). We then selected the 10 components that had the strongest relation to behaviour (absolute z-stat value). Lastly, we entered these ten independent sources of neural evidence for behavioural boundaries and their exhaustive interaction terms (generated with sklearn's PolynomialFeatures function) in a cross-validated K Nearest Neighbors (NN) classification analysis (sklearn's KNeighborsClassifier function; neighbours = 120; weights = distance; metric = euclidean; all optimized using sklean's GridSearchCV before model fitting) to derive personalized predictions of perceived event transitions. We chose NN over ridge regression and support vector classifiers because initial testing showed it had the best cross-validated performance.</p><p>For each cross-validation fold, we held out one participant while training the model. To avoid bias from having such a small proportion of TRs labelled as behavioural boundaries, we used imblearn's RandomUnderSampler to sample an equal number of behavioural boundary and non-boundary TRs during training. We then tested the model with the withheld participant's neural features to generate a personalized time series of their probability of having experienced an event transition at each TR. We assessed the statistical significance of prediction accuracy by circularly shifting each participant's boundary prediction time series by a random number of TRs 500 times to derive a null distribution of prediction-behavioural boundary correspondence (defined as occurring with 2 TRs of each other).</p><p>Predictions using averaging. To assess the added value of ML, we compared the accuracy of the above predictions to those generated by averaging smoothed neural transition evidence across regions to create a single time series of boundary evidence per participant. We then assessed how often behavioural boundaries occurred within 2 TRs of predicted boundaries (defined as being at or above the 99th, 97.5th, 95th, 90th, 80th, or 50th percentiles of boundary evidence). Like in the machine learning analysis, we determined the statistical significance of prediction accuracy by randomly circularly shifting neural predictions for each participant 500 times. Precision was defined as the number of hits (true positives) plus the number of false alarms (false positives) divided by the total number of positives.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The effects of participant motion on the GSBS algorithm performance.</head><p>Participant motion is a major source of noise in fMRI. It creates high-amplitude spikes in the signal observed across the brain, with effects that can linger for several TRs <ref type="bibr">(Power et al., 2014;</ref><ref type="bibr">Satterthwaite et al., 2012;</ref><ref type="bibr">Van Dijk et al., 2012)</ref>. Since the GSBS algorithm places neural transitions at moments of widespread signal change, we asked if it tends to place transitions at moments of high motion. We then determined if extensive denoising could effectively resolve the issue: a prerequisite to extracting behaviourally meaningful idiosyncrasies in neural event segmentation. Lastly, we characterized motion confounds' impact on estimating individual differences in state transition granularity.</p><p>Motion-neural state transition correspondence is mitigated with extensive denoising in adult data. To assess the impact of participant motion on the placement of neural state transitions, we calculated the correlation (Kendall's tau) between each participant's smoothed FWD (hereafter referred to as motion) time series and neural state transition time series. We calculated this correlation for both (a) minimally denoised data (to observe the possible effect of motion) and, (b) the extensively denoised data (to observe the impact of denoising on this relationship; see Methods for a full description of the denoising pipelines).</p><p>As expected, motion was positively correlated with neural transition placement across much of the cortex in the minimally denoised YA data (Figure <ref type="figure" target="#fig_1">3</ref>, top panel; gold = positively correlated, white = not correlated, blue = negatively correlated). This result confirmed that, indeed, the GSBS algorithm places neural transitions at moments of high motion. Promisingly, motion was only weakly correlated with neural transition placement after extensively denoising the YA data, (Figure <ref type="figure" target="#fig_1">3</ref>, middle panel). Indeed, extensive denoising significantly reduced the relation in many cortical regions (Figure <ref type="figure" target="#fig_1">3</ref>, bottom panel).</p><p>However, the story is more complicated for the developmental dataset. Like in the YA dataset, we found that motion and neural transition placement were positively correlated in all four age groups' minimally denoised data (Figure <ref type="figure">4a-d</ref>, top panels). The denoising protocol effectively reduced the influence of motion on neural transition placement in the early and late adolescent groups (Figure <ref type="figure">4c</ref> and Figure <ref type="figure">4d</ref> bottom panels; see middle panels for correlations in extensively denoised data), much like it did in the YA dataset. However, the denoising introduced other artifacts in early and late childhood. Specifically, while the denoising did reduce correlation values in the younger age groups (Figure <ref type="figure">4a</ref> and 4b, bottom panels), it may have overcorrected for the problem, leaving neural transitions and motion anticorrelated across much of the cortex (Figure <ref type="figure">4a</ref> and 4b, middle panels). The issue may be related to younger children's Unthresholded average correlation between motion and neural state transitions in minimally denoised data (top panel). Participant motion tended to be positively correlated in time (gold), reflecting the GSBS algorithm's tendency to place neural transitions at moments of participant motion in minimally denoised data. Average correlation between neural transition placement and motion is close to zero (white) across many cortical regions after adequate denoising of the fMRI data (middle panel; unthresholded). Motion-neural transition correspondence is significantly lower in extensively denoised data compared to that in the minimally denoised data across many cortical regions (bottom panel; FDR corrected; pcorrected &lt; .05). Note regions that do not show a significant reduction in motion artifacts are often those that tended to have lower correlations with motion in minimally denoised data (top panel), leaving little for the denoising process to change. motion profiles being too severe (median proportion of TRs flagged for scrubbing: early childhood = 12.27%; late childhood = 6.40%; early adolescence = 3.07%; late adolescence = 1.50%). It is an especially problematic issue because, unlike the YA sample (μ ≠ 0, t(15) = -0.22, p = .83), the developmental sample tended to move at behavioural boundaries (μ ≠ 0, t(66) = 2.25, p = .03). Therefore, our denoising could mask brain-behaviour relations in participants who move at meaningful times. In sum, our denoising pipeline was not effective in groups with high motion profiles; accordingly, we removed participants with &gt;30% of TRs flagged as outliers for subsequent analyses.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 4. Extensive denoising effectively reduces motion's influence in adolescents but overcorrects in children.</head><p>GSBS transition placement is positively correlated (gold) with participant motion in minimally denoised data across all four age groups (all top panels), but extensive denoising significantly reduces the correlation values across the cortex (all bottom panels). Whereas this relationship is close to zero in early (c) and late (d) adolescence, the denoising introduces negative correlations across much of the cortex in early (a) and late (b) childhood (middle panels). Top and middle panels are unthresholded; bottom panels are thresholded with FDR correction (p corrected &lt; .05).</p><p>Motion leads to artifactually coarser neural state transitions. Next, we investigated how motion influences neural transition placement. Since motion resulted in artifactual transitions, we suspected that participants with more high-motion time points would have more neural state transitions detected. But we found the opposite pattern in minimally denoised data. GSBS detected fewer transitions in participants with higher motion in both the YA (r(14) = -0.8, p &lt; .001; Figure <ref type="figure" target="#fig_2">5a</ref>) and developmental (r(65) = -0.36, p = .003; Figure <ref type="figure" target="#fig_2">5c</ref>) datasets. Perhaps this pattern reflects how motion artifacts overshadowed more subtle state transitions. This effect of motion on segmentation granularity was no longer significant in the YA extensively denoised pipeline (r(14) = -0.38, p = .15; Figure <ref type="figure" target="#fig_2">5b</ref>), further building confidence in our pipeline's effectiveness in dealing with motion confounds. However, motion was still significantly negatively correlated with segmentation granularity in the developmental dataset after extensive denoising (r(65) = -0.38, p = .001; Figure <ref type="figure" target="#fig_2">5d</ref>). We next explored whether this persistent correlation was related to participants' age, since age and motion are tightly linked. Specifically, we ran a mixed effect model (using R's lme4 package; version 4.3.1) to predict the number of neural transitions in the extensively denoised developmental data with participants' age and mean FWD, excluding participants with &gt;30% of TRs flagged as motion outliers. The model also included a random intercept for ROI. We found that motion continued to be negatively related to granularity when controlling for participant age (b = -8.11, SE = 0.53, t(6098) = -16.27, p &lt; .001), consistent with the limitations that we've observed in our extensive denoising for highmotion samples. Notably, age was not significantly related to granularity in the model (b = -0.12, SE = 0.14, t(6098) = -0.80, p = .43), unlike in <ref type="bibr" target="#b14">Cohen et al. (2022)</ref>. We caution against the over-interpretation of the null relation, however, since the persistent confound of motion may obscure meaningful relations with age.</p><p>In summary, we confirmed that the GSBS algorithm tends to place transitions at moments of high motion, but that our extensive denoising mitigates this artifact in groups with moderate motion profiles. However, our denoising pipeline was less effective in samples with high motion, artifactually decreasing the chance of GSBS detecting neural state transitions during periods of high motion. Further, in higher-motion samples, our denoising pipeline was not able to remove motion's effect on the granularity of neural transitions. However, it removed this effect in the YA data, potentially uncovering more subtle but behaviourally-meaningful neural state transitions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Meaningful neural state transition structure can be preserved in individually-modelled data.</head><p>Are individually-modelled neural state transitions meaningful? To answer this question, we assessed whether two patterns that have become emblematic of group-modelled movie-viewing data hold for individually-modelled state transitions: (1) do they share the features of the temporal cortical hierarchy found in <ref type="bibr" target="#b2">Baldassano et al. (2017)</ref> and replicated in <ref type="bibr" target="#b21">Geerligs et al. (2021)</ref>, and (2) are they related to behavioural event boundaries (e.g., <ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr">Geerligs et al., , 2023))</ref>? We contrasted individually-modelled neural state transitions in extensively denoised data (i.e., the data with minimal motion artifacts) to those detected in minimally denoised groupaveraged fMRI data (i.e., what is typically done). As a reminder, to draw meaningful comparisons, we averaged the individually-modelled transitions, reasoning that they should contain shared behaviourally-meaningful information.</p><p>Temporal Cortical Hierarchies. <ref type="bibr" target="#b2">Baldassano et al. (2017)</ref> found a hierarchy in neural transition timescales across the cortex, in which early sensory regions transitioned between states more rapidly than association areas. We observed a similar pattern in the YA dataset when visualizing the granularity of group-modelled neural state transitions (Figure <ref type="figure" target="#fig_3">6a</ref>, top panel). Note how colours shift from purple (fine segmentation) in more posterior regions to more orange (coarse segmentation) in more anterior regions. Critically, we also found this quintessential temporal hierarchy in the YA individually-modelled neural transitions (Figure <ref type="figure" target="#fig_3">6</ref>, bottom left panel). The similarity of these two granularity maps was reflected in their strong positive correlation across ROIs (r(98) = 0.49, p &lt; .001; Figure <ref type="figure" target="#fig_3">6</ref>, right). This correspondence demonstrates that individually-modelled neural state transitions also follow a temporal hierarchy structure during movie viewing.</p><p>Assessing the temporal cortical hierarchy in the developmental dataset was more challenging. We did not observe a clear temporal cortical hierarchy in group-modelled data when averaging across all ages (Figure <ref type="figure">7</ref>, top panel) nor when separately averaging within each age group (Figure <ref type="figure">7</ref>, 3rd panel for late adolescence; other groups not shown). We were, however, able to observe some signatures of the hierarchy when considering individuallymodelled transitions across all ages (Figure <ref type="figure">7</ref>, second panel), and especially when focussing on the late adolescent group (Figure <ref type="figure">7</ref>, bottom panel; we see numerically more transitions in late adolescents' early visual region (83) and fewer (72) in their default temporal cortex). However, when we correlated individually-modelled maps with the YA group-modelled hierarchy map (our template of the temporal cortical hierarchy), we did not find significant relationships (all-ages correlation: r(98) = -0.05, p = .59; late adolescent correlation: r(98) = -0.05, p = .59).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 7. Assessing the temporal cortical hierarchy in developmental data.</head><p>There is no evidence for the temporal cortical hierarchy in the group-modelled all-ages sample (i.e., no visible posterior-anterior gradient in transition granularity; purple-gold) (top panel). The granularity of individually-modelled data (2 nd panel) across all ages is more variable across the cortex than in group-modelled data (top panel), but still does not significantly correlate with the granularity patterns observed in the YA data set. In the late adolescent group-modelled data (3 rd panel), there is no evidence for a temporal hierarchy (i.e., map is dominantly gold, indicating coarse granularity). The granularity of late-adolescent individually modelled data (bottom panel) is more variable across the cortex than in group-modelled data (3 rd panel) but is still not correlated with the patterns observed in the YA dataset.</p><p>Notably, <ref type="bibr" target="#b14">Cohen et al. (2022)</ref> observed evidence for a temporal cortical hierarchy when using a larger portion of the same public data set as we analysed here. There are several possible reasons for the difference in findings. It could be that our subset is either too small to detect this group-level pattern, and/or is different from the superset in relevant ways. In addition, our denoising pipeline may have been too aggressive for the movement profiles of developmental data. Regardless, the above analyses demonstrate that meaningful information about neural state transition timescales can be found in individually-modelled dataespecially in YA populations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Brain-Behaviour Correspondence.</head><p>Having demonstrated that YA individually-modelled neural state transitions operate within a characteristic temporal hierarchy during movie viewing, we next asked if they also tended to occur at event boundaries. Replicating past research <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr">Geerligs et al., 2023)</ref>, we found significant correlations between the timing of normative behavioural boundaries and group-modelled neural state transitions across key regions of the cortex (Figure <ref type="figure" target="#fig_4">8a</ref>, top panel). Critically, we also found a similar pattern of brain-behaviour relationships in individually-modelled fMRI data (Figure <ref type="figure" target="#fig_4">8a</ref>, bottom panel). To more closely compare findings across modelling techniques, we separately tested the brainbehaviour relationship in three ROIs that we selected a priori based on the literature <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021)</ref>: the default temporal cortex (DTC), the posterior parietal cortex (PPC), and early visual cortex (Vis). In YA group-modelled data, all three regions showed significant correlations between behavioural boundaries and neural transitions (Figure <ref type="figure" target="#fig_4">8b</ref>, left; DTC, τ = 0.18, p &lt; .001; PPC, τ = 0.16, p &lt; .001; Vis, τ = 0.11, p &lt; .001). In the YA individually-modelled data, we also found significant brain-behaviour relationships in the DTC (τ = 0.16, p &lt; .001), and PPC, (τ = 0.09, p = .004), but not in Vis, (τ = 0.01, p = .70; Figure <ref type="figure" target="#fig_4">8b</ref>, right). In summary, YA individually-modelled state transitions tend to correspond to normative event boundaries, though the relations may be less robust than those observed in groupmodelled data.</p><p>As with the temporal hierarchy, the brain-behaviour relations in the developmental dataset were less robust. The group-modelled transitions in the developmental sample (Figure <ref type="figure" target="#fig_5">9a</ref>, top panel) were significantly correlated with behavioural boundary timing in several regions, including in the bilateral DTC, similar to <ref type="bibr" target="#b14">Cohen et al. (2022)</ref>. Indeed, our ROI analysis found significant positive correlation in the group-modelled DTC (τ = 0.08, p = .005; Figure <ref type="figure" target="#fig_5">9b</ref>, <ref type="figure">left</ref>). We replicated this positive correlation in the DTC in our individually-modelled data (τ = 0.10, p = .01; Figure <ref type="figure" target="#fig_5">9b</ref>, right). However, individually-modelled brain-behaviour relations departed from the group-modelled pattern in notable ways. First, transitions in the PPC ROI were negatively correlated with behavioural boundaries (τ = -0.09, p = .03; Figure <ref type="figure" target="#fig_5">9b</ref>, right). Our denoising could significant be the culprit: recall, our pipeline created artifactual negative correlations between motion and neural transitions in children (see Figure <ref type="figure">4 a-b</ref>), and the current sample tended to move around behavioural boundaries. Second, compared to group-modelled data, fewer individually-modelled regions correlated with behavioural boundaries across the cortex (Figure <ref type="figure" target="#fig_5">9a</ref>, bottom panel). This weak correspondence may reflect the inclusion of younger participants with challenging motion profiles and still developing event segmentation abilities. Or our low sensitivity to brain-behaviour relationships in the developmental dataset could be due to our smaller sample (N = 62) compared to previous work by <ref type="bibr" target="#b14">Cohen et al. (2022;</ref><ref type="bibr">N = 426)</ref>.</p><p>Machine learning can predict behavioural boundaries by aggregating YA state transition evidence across the brain. Above, we demonstrated that group-modelled brain-behaviour relations are largely preserved, albeit slightly less robust, in individually-modelled YA data. We next asked if combining signals across a participant's brain could more powerfully predict behavioural boundaries. Specifically, we trained machine learning models to predict which TRs corresponded to behavioural boundaries and iteratively tested the generalizability of these models in held-out participants. Critically, this approach results in a single time series per participant that best predicts their personal perception of a narrative shift. If predictions have high accuracy, they could be used as a personalized proxy for behavioural boundaries.</p><p>We ran a K-nearest neighbours classifier on a dimensionality-reduced (PCA) version of the neural transitions to generate personalized predictions of behavioural boundaries (see Methods for modelling details). We found that the model's most confident predictions were also the most precise. For example, if we only labelled TRs as predicted boundaries when they were among that participant's top 1% of evidence, 37% of the predicted TRs corresponded to a normative behavioural boundary, and a further 22% were also predicted to be boundaries in at least three other participants (Figure <ref type="figure">10a</ref>). As we lowered the confidence threshold, the proportions decreased such that only 44% of predicted boundaries corresponded to behavioural boundaries or other brains. Critically, regardless of the threshold, the model predicted behavioural boundaries across the group better than all random simulations (ps = 0; Figure <ref type="figure">10b</ref>). We could even significantly predict behavioural boundaries using neural transitions in as many as nine out of 16 of the participants (see Table <ref type="table">1</ref>). Lastly, to assess the value added by our machine learning procedures, we used a similar procedure to predict behavioural boundaries based on the average evidence for neural state transitions observed across the brain. This computationally simpler approach did not perform as well as machine learning (Figure <ref type="figure">10c</ref> and <ref type="figure">10d</ref>). For example, 34% of predicted TRs (at the 99th percentile of evidence) corresponded to behavioural boundaries and 16% to other participants (Figure <ref type="figure">10c</ref>). Its predictions for up to seven participants were statistically above chance (Table <ref type="table">1</ref>), as was its performance across the group at all confidence thresholds (ps &lt; 0.001; Figure <ref type="figure">10d</ref>). Together, the accuracy of whole-brain predictions holds promise for their use as proxies for event boundary judgments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 10. Aggregated neural transitions reliably predict behavioural boundaries</head><p>Proportion of predicted behavioural boundaries from ML (a) and averaging approaches (c) that correspond to meaningful events. Specifically, it plots those that occurred during normative boundaries (blue), at least 3 other participants' neural transitions (orange), or neither (green) when predictions were set at different thresholds of evidence (x-axis). ROC curves for average model performance (b: ML; d: averaging) plot hit rate (y-axis) against false alarm rate (x-axis) for predictions thresholded at different levels of confidence (same percentiles used as in panels a and c). Deflections in model performance (blue curve) above the diagonal (identity) and orange (random simulations) lines reflect reliable predictions. The ribbon around the orange line marks the 95th and 5th percentiles of performance in random simulations. Note that model performance always exceeds the 95th percentile of this null distribution.</p><p>Table <ref type="table">1</ref>. More participants' neural transitions predict behaviour when using ML approach. Count of the number of participants whose whole-brain aggregated boundaries significantly predict behavioural boundary timing (using precision as a metric). Boundaries aggregated with our ML approach predicted behaviour numerically more often than those aggregated through averaging across the brain.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Prior research has demonstrated that our brains undergo sharp state transitions at boundaries between meaningful events <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr" target="#b20">Geerligs et al., , 2022;;</ref><ref type="bibr" target="#b34">Oetringer et al., 2024)</ref>. But exploration of this exciting discovery has been limited by the available tools. This is because these tools require us to aggregate data across participants to determine neural state transition granularity and timing <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021)</ref>. Here, we present a method for overcoming this limitation, estimating fully personalized neural state transitions. First, we developed a novel pipeline to extensively denoise the individual participant fMRI data. Then, we applied the GSBS algorithm <ref type="bibr" target="#b21">(Geerligs et al., 2021)</ref> to two fMRI datasets collected while participants viewed movies <ref type="bibr" target="#b0">(Alexander et al., 2017;</ref><ref type="bibr" target="#b10">Chen et al., 2017)</ref>. Personalized neural state transitions in the YA dataset were structured in a temporal cortical hierarchy characteristic of event processing <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr" target="#b20">Geerligs et al., , 2022) )</ref> and co-occurred with behavioural event boundaries in key regions (e.g., the DTC and PPC). Further, brain-behaviour relations were so robust that the strongest personalized neural</p><p>percentile number of significant participants (precision) machine learning averaging 50 4 6 80 9 5 90 7 7 95 7 3 97.5 7 4 99 8</p><p>transitions could be used to predict normative behavioural boundaries and even other participants' neural transitions. Results from the developmental dataset provide useful insights into the boundary conditions for personalized GSBS applications. Overall, we extend the GSBS-a critical tool for studying neural segmentation <ref type="bibr" target="#b21">(Geerligs et al., 2021)</ref>-to provide fully individualized neural state transition estimates.</p><p>Our validation also extends recent work that used the HMM technique to obtain partially personalized boundary estimates <ref type="bibr">(Seva-Segal et al., 2023)</ref>. Critically, this application of HMM only allowed the timing, but not the granularity, of state transitions to vary across individuals. By using the GSBS algorithm-which can simultaneously fit the timing and granularity of neural state transitions-we estimated fully personalized neural state transitions. In so doing, we still found evidence for the temporal cortical hierarchy. This hierarchy has been observed in many group-modelled explorations of neural transition granularity <ref type="bibr" target="#b2">(Baldassano et al., 2017;</ref><ref type="bibr" target="#b21">Geerligs et al., 2021</ref><ref type="bibr">Geerligs et al., , 2022;;</ref><ref type="bibr" target="#b34">Oetringer et al., 2024)</ref> but verifying it with personalized estimates was important. As we unpacked in the introduction, the aggregation inherent to group-modelling runs the risk of exaggerating the grain of segmentation because only shared transitions are observable. Indeed, <ref type="bibr">Seva-Segal et al. (2023)</ref> found that the timing of state transitions in association cortex is more variable than in sensory regions, raising concerns that groupmodelling inflates evidence for cortical hierarchies. Our results quell these concerns since we nonetheless observe the cortical hierarchy at the group level when estimating granularity at the individual level.</p><p>Our work also highlights the importance of extensively cleaning motion-related noise when attempting to estimate personalized neural transitions. We explicitly tested the degree to which motion artifacts impact GSBS's detection of neural state transitions, and we characterized how participant motion affects neural state transition placement. Specifically, we showed that spikes in the signal created by sudden movement drive the erroneous placement of state transitions, biasing the algorithm to segment the signal at a coarser grain. We speculate that this seemingly paradoxical pattern arises because the GSBS algorithm places transitions where there is the greatest evidence for widespread shifts in the signal. Since the signal shifts caused by motion are so pronounced, they may overshadow many of the more subtle-but meaningfulneural state transitions. Importantly, we showed that our extensive denoising pipeline can effectively deal with this problem in datasets with reasonable motion profiles, uncovering these subtle shifts between brain states. However, our analysis of developmental data also showed the limits of our data-cleaning approach. In particular, while we could reduce the artifactual placement of neural transitions at moments of high motion, higher motion profiles continued to result in courser neural state granularity even after denoising. Further, since the developmental sample tended to move during event boundaries, scrubbing could have influenced the correspondence between neural transitions and behavioural boundaries in this sample. Accordingly, we recommend assessing the motion profiles of your participants before running the algorithm on your sample and setting strict thresholds for participant inclusion. We also recommend that future work combines our denoising protocol with other measures to remove noise, such as ICA denoising of multi-echo data <ref type="bibr" target="#b42">(Steel et al., 2022)</ref>, or tools to remove physiological sources of noise <ref type="bibr" target="#b28">(Kasper et al., 2017)</ref>.</p><p>On a more theoretical note, our results also show that all neural transitions do not necessarily reflect event boundaries. For example, our machine learning analysis revealed that while many high-confidence neural state transitions occurred near event boundaries, a sizable portion of these neural transitions did not. Future work could explore whether these "unexplained" transitions might also be tied to event segmentation but reflect more subtle shifts that are the most idiosyncratic. Consistent with this possibility, highly agreed-upon event boundaries solicit stronger and more consistent activity changes across the cortical hierarchy than more idiosyncratically endorsed boundaries (Y. <ref type="bibr" target="#b30">Lee &amp; Chen, 2024)</ref>. Alternatively, the "unexplained" transitions may have a more endogenous source. For example, spikes in norepinephrine (NE) are thought to trigger sudden shifts in network configurations and disruptions to ongoing processing <ref type="bibr" target="#b6">(Bouret &amp; Sara, 2005)</ref>. Relatedly, <ref type="bibr" target="#b32">Munn et al. (2021)</ref> found that increased activation of the locus coeruleus-the brain's source of norepinephrine-primes the brain for large-scale state shifts during rest. From this perspective, the idiosyncratic state transitions reported here may be instances of more general-purpose neural "motifs" relevant to a variety of cognitive processes <ref type="bibr" target="#b7">(Breakspear, 2017;</ref><ref type="bibr" target="#b32">Munn et al., 2021;</ref><ref type="bibr" target="#b39">Shine et al., 2018;</ref><ref type="bibr" target="#b44">Taylor et al., 2024;</ref><ref type="bibr" target="#b45">Tognoli &amp; Kelso, 2014)</ref>. Our work lays the groundwork for better uncovering the broader role of neural state transitions in cognition by validating tools that can link state transitions to people's unique mental experiences.</p><p>The extraordinary promise of this technique aside, it's important to consider several limits to the application of our validation. First, individually-modelling data using GSBS is computationally time-consuming. In particular, our initial testing showed that processing time exponentially increases with the number of TRs. With that in mind, we recommend only individually modelling data when the question demands it, and to consider using datasets with shorter movies (or cropping at scene changes). Relatedly, we caution against directly comparing the sensitivity of group-and individually-modelled data in our validation as the sensitivity of our group-modelling is limited by our decision not to hyperalign <ref type="bibr" target="#b25">(Haxby et al., 2020)</ref> brains before averaging participants' BOLD signals. This advanced registration technique is increasingly used in movie viewing studies to amplify shared signals (e.g., <ref type="bibr" target="#b21">Geerligs et al., 2021;</ref><ref type="bibr" target="#b34">Oetringer et al., 2024)</ref>. We chose not to use hyperalignment because it might remove idiosyncratic signals, reducing our ability to characterize individual differences in individuallymodelled neural state transitions. Since group-modelled data was only used to compare to these individually-modelled results, it would be problematic to use a different registration technique in this pipeline. Additionally, because participants did not actively make segmentation judgments in the scanner, it is hard to validate that differences in neural state transitions really reflect differences in event segmentation. Here, too, the limitation reflects the management of trade-offs; active segmentation engages additional cognitive processes, such as decisionmaking and motor planning, which could create spurious signals at event boundaries. Indeed, this potential confound is why most related work also uses passive watching paradigms (e.g., <ref type="bibr" target="#b2">Baldassano et al., 2017;</ref><ref type="bibr" target="#b14">Cohen et al., 2022;</ref><ref type="bibr" target="#b20">Geerligs et al., 2022;</ref><ref type="bibr" target="#b46">Yates et al., 2022)</ref>. Future work could have the same participants segment other videos outside the scanner to test if people who tend toward coarse segmentation judgements also exhibit longer brain state timescales.</p><p>These limitations aside, the method we present here aligns nicely with broader practices in cognitive neuroscience. For example, event-related modelling of task-based data is first done at the individual participant level before drawing higher-level inferences, in part to leverage idiosyncratic performance across trials. Indeed, the inability of block designs to incorporate participants' unique performance timecourses was a major hurdle in fMRI research before the development of event-related methods <ref type="bibr">(Dale, 1999;</ref><ref type="bibr">Huettel, 2012)</ref>. The practice of averaging fMRI timecourses is even more limited; not only does it prevent researchers from uncovering brain-behaviour relationships within participants, but it also restricts exploring these links across participants. Thus, personalized state transitions could significantly advance our ability to understand event cognition.</p><p>To summarise, we find that behaviourally-meaningful personalized neural state transitions can be accurately estimated using the GSBS. This advance is important given our broader understanding of individual differences in humans and their segmentation of events. We know that individual variation matters! This is why our tacit (and occasionally even explicit) practice of aggregating across people when identifying movie-related state transitions is so problematic: it assumes that what is shared is meaningful for event perception, and that which is idiosyncratic is noise. With the presented methods, we no longer have to make these assumptions and can begin to unravel pressing questions for the field. These questions include-but are not limited to-how neural state transitions relate to the perception of events and their representation in memory, the outcome of having more-or-less typical neural segmentation of experience for a person's understanding of and memory for the experience, and possible shifts in neural state segmentation with ageing and development. Beyond these pressing questions for the field, this analytical technique allows us to spotlight the individual, something that matters both biologically and theoretically <ref type="bibr">(Gomez-Marin &amp; Ghazanfar, 2019)</ref>. Afterall, there is no such thing as an average person. Having a method that now allows us to tease apart idiosyncrasy from noise, enables our exploration of these pressing questions in earnest.</p><p>generously publicly sharing the Sherlock dataset and its associated resources, and the Child Mind Institute for making the HBN dataset available.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Motion Profiles across ages. Plot showing the motion profiles of the age groups included in the manuscript. Early child (red), late child (gold), early adolescent (green), and late adolescent (blue) groups are from the developmental dataset; the adult group (purple) is from the YA dataset. Proportion of TRs flagged was calculated for each participant by dividing their number of motion outliers by the total number of TRs in each respective dataset. Dotted horizontal line denotes exclusion criterion cut-off; dots signify participants, colours denote different age groups.</figDesc><graphic coords="8,92.40,238.61,394.20,280.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Extensive denoising reduces motion artifacts in neural transition placement in the YA dataset.Unthresholded average correlation between motion and neural state transitions in minimally denoised data (top panel). Participant motion tended to be positively correlated in time (gold), reflecting the GSBS algorithm's tendency to place neural transitions at moments of participant motion in minimally denoised data. Average correlation between neural transition placement and motion is close to zero (white) across many cortical regions after adequate denoising of the fMRI data (middle panel; unthresholded). Motion-neural transition correspondence is significantly lower in extensively denoised data compared to that in the minimally denoised data across many cortical regions (bottom panel; FDR corrected; pcorrected &lt; .05). Note regions that do not show a significant reduction in motion artifacts are often those that tended to have lower correlations with motion in minimally denoised data (top panel), leaving little for the denoising process to change.</figDesc><graphic coords="14,111.30,86.55,391.80,286.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Motion drives artifactually fewer neural state transitions. In minimally denoised data, the number of TRs flagged for high motion (x-axis) is negatively associated with the number of neural transitions (y-axis) for both YA (a) and developmental (c) data sets. In the extensively denoised YA data (b), the number of TRs flagged for motion no longer significantly relates to the number of neural state transitions. However, regardless of extensive denoising, the negative relationship between motion and number of transitions remains in the developmental dataset (d). Each dot represents a participant, coloured lines depict the regression line of best fit, and ribbons reflect standard error of the mean. *** = p &lt; .001; ** = p &lt; .01; ns = not significant.</figDesc><graphic coords="16,114.05,144.64,357.45,368.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. The canonical temporal hierarchy is preserved in individually-modelled YA data. (left) Top panel displays the map of neural transition granularity for group-modelled data, where purple signifies finer segmentation and gold signifies coarser. There is a posterior to anterior gradient of transition granularity, similar to Baldassano et al.'s (2017) temporal cortical hierarchy. The bottom panel shows individually-modelled transition granularity for extensively denoised data, demonstrating a similar pattern as the group-modelled results. (right) Groupmodelled transition granularity is strongly positively correlated with the average granularity of individually-modelled data across ROIs, p &lt; .0001. The purple line depicts the regression line of best fit, the ribbon standard error of the mean, and dots represent brain regions.</figDesc><graphic coords="18,29.00,72.15,554.00,219.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. Key brain-behaviour relationships are largely preserved in individuallymodelled YA data. a. Correlation between normative behavioural boundaries and group-modelled neural state transitions (top panel; similar to Baldassano et al., 2017), as well as the correlation between normative behavioural boundaries and individually-modelled neural state transitions (bottom panel) YA data (pcorrected &lt; .05). b. (left) Group-modelled transitions were significantly correlated with behavioural boundaries in three ROIs previously shown to be related to behaviour (DTC, PPC, and Vis); (right) individually-modelled transitions were significantly correlated with behaviour in two of the three ROIs (DTC and PPC). DTC = default temporal cortex; PPC = posterior parietal cortex; Vis = early visual cortex. *** = p &lt; .001; ** = p &lt; .01; * = p &lt; .05; ns = not significant.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 9 .</head><label>9</label><figDesc>Figure 9. Brain-behaviour relationships partially preserved in individually-modelled developmental data. a. Correlation (Kendall's tau) between neural state transitions and normative behavioural boundaries for the group-modelled (top) and individually modelled (bottom) data, across all ages. Red = strong correlation, white = no correlation, blue = negative correlation, FDR corrected at p corrected &lt; .05, for all maps. b. Behavioural boundaries were significantly correlated in the DTC with both the group-modelled (left) and individually-modelled (right) neural transitions. The individually-modelled PPC neural transitions were negatively correlated with behaviour (right). No other a priori ROIs reached significance in either modelling approach (ps &gt; .09). ** = p &lt; .01; * = p &lt; .05</figDesc><graphic coords="22,82.80,72.00,438.00,444.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="4,98.10,524.74,415.80,194.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="19,115.20,72.00,364.50,335.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="23,72.00,422.07,468.00,297.55" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>We would like to thank <rs type="person">Dirk Bernhardt-Walther</rs>, <rs type="person">Alexander Barnett</rs>, <rs type="person">Michael Mack</rs>, and <rs type="person">Meg Schlichting</rs> for their helpful comments on the analysis approach during department meetings. We would also like to thank the members of the <rs type="institution">Duncan Lab</rs>: <rs type="person">Thomas Biba</rs>, <rs type="person">Catalina Yang</rs>, <rs type="person">Ariana Youm</rs>, and <rs type="person">Matthew Dougherty</rs> for their helpful feedback on different stages of the project during lab meetings. Finally, we would like to thank <rs type="person">Janice Chen</rs> and colleagues for</p></div>
+			</div>
+			<div type="funding">
+<div><head>Funding Information</head><p>This research was funded by: <rs type="funder">NSERC</rs> <rs type="grantNumber">RGPIN-2023-04231</rs>, <rs type="grantNumber">CRC-2019-00107</rs>, and <rs type="grantNumber">CFI/ORF-2014-34479</rs> awarded to K.D.; <rs type="funder">NSERC</rs> <rs type="grantNumber">RGPIN-2023-05054</rs> awarded to A.S.F; OGS-2022 and <rs type="funder">NSERC</rs> <rs type="grantNumber">CGS-D-589163-2024</rs> to awarded to R.E.W.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_WsXeX4d">
+					<idno type="grant-number">RGPIN-2023-04231</idno>
+				</org>
+				<org type="funding" xml:id="_w5euxjT">
+					<idno type="grant-number">CRC-2019-00107</idno>
+				</org>
+				<org type="funding" xml:id="_9DsReGG">
+					<idno type="grant-number">CFI/ORF-2014-34479</idno>
+				</org>
+				<org type="funding" xml:id="_9ErG8FW">
+					<idno type="grant-number">RGPIN-2023-05054</idno>
+				</org>
+				<org type="funding" xml:id="_nPxwh8B">
+					<idno type="grant-number">CGS-D-589163-2024</idno>
+				</org>
+			</listOrg>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Availability</head><p>All code and data are available upon request of corresponding author.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An open resource for transdiagnostic research in pediatric mental health and learning disorders</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Escalera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Andreotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Febre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mangone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Vega-Potler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Langer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kovacs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Litke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>O'hagan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Andersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bronstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bushey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Butler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Castagna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Camacho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Milham</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/sdata.2017.181</idno>
+		<ptr target="https://doi.org/10.1038/sdata.2017.181" />
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Data</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">170181</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Attentional focus affects how events are segmented and updated in narrative reading</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Bailey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Kurby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Q</forename><surname>Sargent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13421-017-0707-2</idno>
+		<ptr target="https://doi.org/10.3758/s13421-017-0707-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Memory &amp; Cognition</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="940" to="955" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Discovering Event Structure in Continuous Narrative Perception and Memory</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zadbood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Pillow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Hasson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Norman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2017.06.041</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2017.06.041" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="709" to="721" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Naturalistic Data Analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fleetwood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Geerligs</surname></persName>
+		</author>
+		<ptr target="https://naturalistic-data.org/content/Event_Segmentation.html" />
+		<imprint>
+			<date type="published" when="2022-09">September 2022</date>
+		</imprint>
+	</monogr>
+	<note>Event Segmentation</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Event Integration and Temporal Differentiation: How Hierarchical Knowledge Emerges in Hippocampal Subfields through Learning</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Bein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davachi</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/JNEUROSCI.0627-23.2023</idno>
+		<ptr target="https://doi.org/10.1523/JNEUROSCI.0627-23.2023" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Setting boundaries: Development of neural and behavioral event cognition in early childhood</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Benear</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Popal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tanrıverdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">P</forename><surname>Murty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Perlman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">R</forename><surname>Olson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">S</forename><surname>Newcombe</surname></persName>
+		</author>
+		<author>
+			<persName><surname>(n.D</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/desc.13409</idno>
+		<ptr target="https://doi.org/10.1111/desc.13409" />
+	</analytic>
+	<monogr>
+		<title level="j">Developmental Science</title>
+		<imprint>
+			<biblScope unit="page">13409</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Network reset: A simplified overarching theory of locus coeruleus noradrenaline function</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bouret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sara</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tins.2005.09.002</idno>
+		<ptr target="https://doi.org/10.1016/j.tins.2005.09.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Neurosciences</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="574" to="582" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Dynamic models of large-scale brain activity</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Breakspear</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nn.4497</idno>
+		<ptr target="https://doi.org/10.1038/nn.4497" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="340" to="352" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A boon and a bane: Comparing the effects of prior knowledge on memory across the lifespan</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Brod</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">L</forename><surname>Shing</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/dev0000712</idno>
+		<ptr target="https://doi.org/10.1037/dev0000712" />
+	</analytic>
+	<monogr>
+		<title level="j">Developmental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1326" to="1337" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Segmentation in Cinema Perception</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Carroll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">G</forename><surname>Bever</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1251216</idno>
+		<ptr target="https://doi.org/10.1126/science.1251216" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">191</biblScope>
+			<biblScope unit="issue">4231</biblScope>
+			<biblScope unit="page" from="1053" to="1055" />
+			<date type="published" when="1976">1976</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Shared memories reveal shared structure in neural activity across individuals</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">C</forename><surname>Leong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Honey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Yong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Norman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Hasson</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nn.4450</idno>
+		<ptr target="https://doi.org/10.1038/nn.4450" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Sherlock. OpenNeuro</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">C</forename><surname>Leong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Honey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Yong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Norman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Hasson</surname></persName>
+		</author>
+		<idno type="DOI">10.18112/openneuro.ds001132.v1.0.0</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Mitigating head motion artifact in functional connectivity MRI</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ciric</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F G</forename><surname>Rosen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Erus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cieslak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Adebimpe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Cook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Bassett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Davatzikos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">H</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">D</forename><surname>Satterthwaite</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41596-018-0065-y</idno>
+		<ptr target="https://doi.org/10.1038/s41596-018-0065-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Protocols</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The ebb and flow of experience determines the temporal structure of memory</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Clewett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davachi</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cobeha.2017.08.013</idno>
+		<ptr target="https://doi.org/10.1016/j.cobeha.2017.08.013" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Opinion in Behavioral Sciences</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="186" to="193" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Developmental changes in story-evoked responses in the neocortex and hippocampus</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Tottenham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassano</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.69430</idno>
+		<ptr target="https://doi.org/10.7554/eLife.69430" />
+	</analytic>
+	<monogr>
+		<title level="j">eLife</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">69430</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">How the hippocampus preserves order: The role of prediction and context</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davachi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dubrow</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2014.12.004</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2014.12.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="92" to="99" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The Role of Schemata in Children&apos;s Memory</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Davidson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0065-2407(08)60505-4</idno>
+		<ptr target="https://doi.org/10.1016/S0065-2407(08)60505-4" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Child Development and Behavior</title>
+		<editor>
+			<persName><forename type="first">H</forename><forename type="middle">W</forename><surname>Reese</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="35" to="58" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">The influence of context boundaries on memory for the sequential order of events</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dubrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davachi</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0034024</idno>
+		<ptr target="https://doi.org/10.1037/a0034024" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1277" to="1286" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Similarity Breeds Proximity: Pattern Similarity within and across Contexts Is Related to Later Mnemonic Judgments of Temporal Proximity</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ezzyat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davachi</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2014.01.042</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2014.01.042" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1179" to="1189" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">The Structure of Working Memory From 4 to 15 Years of Age</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Gathercole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Pickering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ambridge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wearing</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0012-1649.40.2.177</idno>
+		<ptr target="https://doi.org/10.1037/0012-1649.40.2.177" />
+	</analytic>
+	<monogr>
+		<title level="j">Developmental Psychology</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="177" to="190" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">A partially nested cortical hierarchy of neural states underlies event segmentation in the human brain</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Geerligs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gözükara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Oetringer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Gerven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Güçlü</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.77430</idno>
+		<ptr target="https://doi.org/10.7554/eLife.77430" />
+	</analytic>
+	<monogr>
+		<title level="j">eLife</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">77430</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Detecting neural state transitions underlying event segmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Geerligs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Gerven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Güçlü</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2021.118085</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2021.118085" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">236</biblScope>
+			<biblScope unit="page">118085</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Event cognition from the perspective of cognitive development</title>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">V</forename><surname>Glebkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">O</forename><surname>Olenina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Safronov</surname></persName>
+		</author>
+		<ptr target="https://escholarship.org/uc/item/7f2348jp" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Annual Meeting of the Cognitive Science Society</title>
+		<meeting>the Annual Meeting of the Cognitive Science Society</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">41</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Gorgolewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Esteban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Markiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ziegler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Notter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Perkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">N</forename></persName>
+		</author>
+		<idno type="DOI">10.5281/zenodo.596855</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nipype. Software</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Removal of high frequency contamination from motion estimates in singleband fMRI saves data without biasing functional connectivity</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gratton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dworetsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Coalson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Adeyemo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">O</forename><surname>Laumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Wig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gratton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fabiani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Barch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tranel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Miranda-Dominguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Fair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">U F</forename><surname>Dosenbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Z</forename><surname>Snyder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Perlmutter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Petersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Campbell</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2020.116866</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2020.116866" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">217</biblScope>
+			<biblScope unit="page">116866</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Hyperalignment: Modeling shared information encoded in idiosyncratic cortical topographies</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">V</forename><surname>Haxby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Guntupalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Nastase</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Feilong</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.56601</idno>
+		<ptr target="https://doi.org/10.7554/eLife.56601" />
+	</analytic>
+	<monogr>
+		<title level="j">eLife</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">56601</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">The role of spatial boundaries in shaping long-term event representations</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Horner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Bisby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bogus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Burgess</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2016.05.013</idno>
+		<ptr target="https://doi.org/10.1016/j.cognition.2016.05.013" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">154</biblScope>
+			<biblScope unit="page" from="151" to="164" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Event segmentation reveals working memory forgetting rate</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jafarpour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Buffalo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">T</forename><surname>Knight</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G E</forename><surname>Collins</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.isci.2022.103902</idno>
+		<ptr target="https://doi.org/10.1016/j.isci.2022.103902" />
+	</analytic>
+	<monogr>
+		<title level="j">iScience</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kasper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bollmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">O</forename><surname>Diaconescu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Heinzle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Iglesias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">U</forename><surname>Hauser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sebold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z.-M</forename><surname>Manjaly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">P</forename><surname>Pruessmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jneumeth.2016.10.019</idno>
+		<ptr target="https://doi.org/10.1016/j.jneumeth.2016.10.019" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience Methods</title>
+		<imprint>
+			<biblScope unit="volume">276</biblScope>
+			<biblScope unit="page" from="56" to="72" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Anticipation of temporally structured events in the brain</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Aly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassano</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.64972</idno>
+		<ptr target="https://doi.org/10.7554/eLife.64972" />
+	</analytic>
+	<monogr>
+		<title level="j">eLife</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">64972</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">The relationship between event boundary strength and pattern shifts across the cortical hierarchy during naturalistic movie-viewing</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/2024.04.10.588931</idno>
+		<ptr target="https://doi.org/10.1101/2024.04.10.588931" />
+	</analytic>
+	<monogr>
+		<title level="j">bioRxiv</title>
+		<imprint>
+			<biblScope unit="volume">04</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">588931</biblScope>
+			<date type="published" when="2024">2024. 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Hippocampal-Medial Prefrontal Event Segmentation and Integration Contribute to Episodic Memory Formation</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Cousins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kohn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fernández</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/cercor/bhab258</idno>
+		<ptr target="https://doi.org/10.1093/cercor/bhab258" />
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral Cortex</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="949" to="969" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The ascending arousal system shapes neural dynamics to mediate awareness of cognitive states</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Munn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Wainstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Shine</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41467-021-26268-x</idno>
+		<ptr target="https://doi.org/10.1038/s41467-021-26268-x" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Communications</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">6016</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Attribution and the unit of perception of ongoing behavior</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Newtson</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0035584</idno>
+		<ptr target="https://doi.org/10.1037/h0035584" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Personality and Social Psychology</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="28" to="38" />
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">The Neural Basis of Event Segmentation: Stable Features in the Environment are Reflected by Neural States</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Oetringer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gözükara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Güçlü</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Geerligs</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/2024.01.26.577369</idno>
+		<ptr target="https://doi.org/10.1101/2024.01.26.577369" />
+		<imprint>
+			<date type="published" when="2024">2024. 2024</date>
+			<biblScope unit="page">577369</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Events structure information accessibility less in children than adults</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wharton-Shukster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Duncan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Finn</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2021.104878</idno>
+		<ptr target="https://doi.org/10.1016/j.cognition.2021.104878" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">217</biblScope>
+			<biblScope unit="page">104878</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Event segmentation ability uniquely predicts event memory</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Q</forename><surname>Sargent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Z</forename><surname>Hambrick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">T</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Kurby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Bailey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Eisenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Beck</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2013.07.002</idno>
+		<ptr target="https://doi.org/10.1016/j.cognition.2013.07.002" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="241" to="255" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Local-Global Parcellation of the Human Cerebral Cortex from Intrinsic Functional Connectivity MRI</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schaefer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">O</forename><surname>Laumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X.-N</forename><surname>Zuo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Eickhoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">T T</forename><surname>Yeo</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/cercor/bhx179</idno>
+		<ptr target="https://doi.org/10.1093/cercor/bhx179" />
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral Cortex</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="3095" to="3114" />
+			<date type="published" when="2018">2018</date>
+			<pubPlace>New York, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Structuring Memory Through Inference-Based Event Segmentation</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dubrow</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/tops.12505</idno>
+		<ptr target="https://doi.org/10.1111/tops.12505" />
+	</analytic>
+	<monogr>
+		<title level="j">Topics in Cognitive Science</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="106" to="127" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">The modulation of neural gain facilitates a transition between functional segregation and integration in the brain</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Shine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Aburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Breakspear</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Poldrack</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.31130</idno>
+		<ptr target="https://doi.org/10.7554/eLife.31130" />
+	</analytic>
+	<monogr>
+		<title level="j">eLife</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">31130</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Neural signatures of attentional engagement during narratives and its consequences for event memory</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Finn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2021905118</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2021905118" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="issue">33</biblScope>
+			<biblScope unit="page">2021905118</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Activation of human motion processing areas during event perception</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Speer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Swallow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/CABN.3.4.335</idno>
+		<ptr target="https://doi.org/10.3758/CABN.3.4.335" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive, Affective, &amp; Behavioral Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="335" to="345" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Evaluating the efficacy of multi-echo ICA denoising on model-based fMRI</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Steel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">D</forename><surname>Garcia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">H</forename><surname>Silson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">E</forename><surname>Robertson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2022.119723</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2022.119723" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">264</biblScope>
+			<biblScope unit="page">119723</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Event boundaries in perception affect memory encoding and updating</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Swallow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Abrams</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/a0015631</idno>
+		<ptr target="https://doi.org/10.1037/a0015631" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">138</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="236" to="257" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Causal evidence for cholinergic stabilization of attractor landscape dynamics</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">L</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Whyte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Munn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Lizier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Leopold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Turchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zaborszky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Műller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Shine</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.celrep.2024.114359</idno>
+		<ptr target="https://doi.org/10.1016/j.celrep.2024.114359" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell Reports</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">The Metastable Brain</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tognoli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A S</forename><surname>Kelso</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2013.12.022</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2013.12.022" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="35" to="48" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Neural event segmentation of continuous experience in human infants</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Yates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Skalaban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">T</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Bracher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">B</forename><surname>Turk-Browne</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2200257119</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2200257119" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="issue">43</biblScope>
+			<biblScope unit="page">2200257119</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Event perception: A mind-brain perspective</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Speer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Swallow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Braver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Reynolds</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-2909.133.2.273</idno>
+		<ptr target="https://doi.org/10.1037/0033-2909.133.2.273" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">133</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="273" to="293" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Event understanding and memory in healthy aging and dementia of the Alzheimer type</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Speer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Vettel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Jacoby</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0882-7974.21.3.466</idno>
+		<ptr target="https://doi.org/10.1037/0882-7974.21.3.466" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychology and Aging</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="466" to="482" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Event structure in perception and conception</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tversky</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-2909.127.1</idno>
+		<ptr target="https://doi.org/10.1037/0033-2909.127.1" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="page" from="3" to="21" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Perceiving, remembering, and communicating structure in events</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tversky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Iyer</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0096-3445.130.1.29</idno>
+		<ptr target="https://doi.org/10.1037/0096-3445.130.1.29" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="58" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The development of event perception and memory</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Zacks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Markson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cogdev.2020.100848</idno>
+		<ptr target="https://doi.org/10.1016/j.cogdev.2020.100848" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Development</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page">100848</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

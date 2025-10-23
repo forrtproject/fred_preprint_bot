@@ -10,21 +10,23 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			</titleStmt>
 			<publicationStmt>
 				<publisher/>
-				<availability status="unknown"><licence/></availability>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
 				<date type="published" when="2024-06-27">June 27, 2024</date>
 			</publicationStmt>
 			<sourceDesc>
 				<biblStruct>
 					<analytic>
-						<author role="corresp">
+						<author>
 							<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
-							<email>kikuchi@gakushikai.jp</email>
 							<affiliation key="aff0">
-								<orgName type="department">Internationales Forschungszentrum für Quantentechnik</orgName>
+								<orgName type="institution">Internationales Forschungszentrum für Quantentechnik</orgName>
 							</affiliation>
 						</author>
-						<author>
+						<author role="corresp">
 							<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
+							<email>akihitokikuchi@gakushikai.jp</email>
 							<affiliation key="aff1">
 								<orgName type="department">International Research Center for Quantum Technology</orgName>
 								<address>
@@ -45,8 +47,10 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</fileDesc>
 		<encodingDesc>
 			<appInfo>
-				<application version="0.8.0" ident="GROBID" when="2025-10-22T02:30+0000">
+				<application version="0.8.2" ident="GROBID" when="2025-10-23T05:48+0000">
 					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
 					<ref target="https://github.com/kermitt2/grobid"/>
 				</application>
 			</appInfo>
@@ -63,20 +67,19 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1">Model description</head><p>Let us compute a simple toy model, where the secular equation is given by</p><formula xml:id="formula_7">V (x, y) -1 -1 V (x, y) x y = e x y<label>(7)</label></formula><p>along with the normalization condition x 2 + y 2 = 1. The variables (x, y) are the wavefunction amplitudes and e is the orbital energy. V (x, y) is the on-site potential that is the function of the amplitude of the wavefunction. We assume that the roots are real.</p><p>The polynomial ideal that represents the secular equation is given by</p><formula xml:id="formula_8">I = (xV (x, y) -y -e x, yV (x, y) -x -e y, x 2 + y 2 -1)<label>(8)</label></formula><p>In the case of V (x, y) = 0, the Gröbner basis is given by</p><formula xml:id="formula_9">I std = (e 2 -1, 2y 2 -1, x + ye)<label>(9)</label></formula><p>The roots of the set of polynomial equations are given by</p><formula xml:id="formula_10">(x, y, e) = ± 1 √ 2 , ± 1 √ 2 , -1 , ± 1 √ 2 , ∓ 1 √ 2 , 1<label>(10)</label></formula><p>The entries in the quotient ring Q(x, y, e)/I are the linear combinations of the monomial basis b = (ye, y, e, 1).</p><p>In the quotient ring, the multiplications of the entries of the basis b by x, y, and e are represented by the transformation matrices: b</p><formula xml:id="formula_11">•p = b•m p for p = x, y, e. m x =       0 0 0 -1 0 0 -1 0 0 -0.5 0 0 -0.5 0 0 0      <label>(11)</label></formula><formula xml:id="formula_12">m y =       0 0 1 0 0 0 0 1 0.5 0 0 0 0 0.5 0 0      <label>(12</label></formula><p>)</p><formula xml:id="formula_13">m e =       0 1 0 1 0 0 0 0 0 0 1 0 0 1 0      <label>(13)</label></formula><p>The related properties are listed in Table <ref type="table">1</ref>, which covers all the solutions of the secular equation.</p><formula xml:id="formula_14">v (vm x , v) (vm y , v) (vm e , v) (-1 √ 2 , 1 √ 2 , -1, 1) 1 √ 2 1 √ 2 -1 ( 1 √ 2 , -1 √ 2 , -1, 1) -1 √ 2 -1 √ 2 -1 ( 1 √ 2 , 1 √ 2 , 1, 1) -1 √ 2 1 √ 2 1 (-1 √ 2 , -1 √ 2 , 1, 1) 1 √ 2 -1 √ 2 1 Table 1:</formula><p>The solutions of the model. The eigenvectors and the corresponding expectation values for the matrices m x , m y , and m e are shown.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.2">Result of VQE</head><p>In this article, we conduct the numerical experiment of VQE and discuss a point to achieve accurate computation.</p><p>We use the following objective function:</p><formula xml:id="formula_15">f obj (p, E y ) = ⟨v 0 |U † (p)m e U(p)|v 0 ⟩ + |⟨v 0 |U † (p)(m y -E y )U(p)|v 0 ⟩| 2 . (<label>14</label></formula><formula xml:id="formula_16">)</formula><p>In the above, the trial vector is given by U (p)|v 0 ⟩, generated from an initial vector |v 0 ⟩ by the unitary transformation U (p) with a parameter set p. The objective function includes an extra parameter E y .</p><p>As the solution in this case is real, we construct the unitary transformation as follows:</p><formula xml:id="formula_17">U(p) = exp (p 1 • T(1, 2) + p 2 • T(2, 3) + • • • + p N-1 • T(N -1, N) + p N • T(N, 1)) ,<label>(15)</label></formula><p>where N is the matrix dimension. In this section, we set N = 4. The generators of the unitary transformation are given by</p><formula xml:id="formula_18">T(j, k) = E j,k -E k,j<label>(16)</label></formula><p>where E j,k is the matrix such that 1 lies in the (j, k)-th entry and 0 elsewhere.</p><p>The role of the second term on the right-hand side of the objective function is to ensure that the optimum vector is the eigenvector of the matrix m y . If this is the case, the solution vector is uniquely determined at either of two vectors</p><formula xml:id="formula_19">(v 1 = (-1 √ 2 , 1 √ 2 , -1, 1) or v 2 = (-1 √ 2 , 1 √ 2 , -1, 1)</formula><p>. Without this constraint term, the calculation would arrive at a vector in a subspace sv 1 + tv 2 . The vectors in this subspace yield the orbital energy e = -1, but they do not represent the solution for the variables x and y in general.</p><p>A numerical experiment (by the simplex method) obtained the following optimum:</p><p>(p 1 , p 2 , p 3 , p 4 ) = (1.4576, 2.1588, 2.0675, 0.1027, 0.7072) and</p><formula xml:id="formula_20">f opt = -1.0000.</formula><p>This optimum yields the following solution:</p><p>(x, y, e) = (0.7071, 0.7071, -1.0000).</p><p>It corresponds to the solution in the second line in Table <ref type="table">1</ref>.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Computation for Hartree-Fock model</head></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1">Model description</head><p>In this section, the restricted Hartree-Fock computation of a realistic molecule HeH + is studied. This molecule is the simplest heteronuclear molecule and is used as a benchmark problem for the solving of the Hartree-Fock model <ref type="bibr" target="#b20">[21]</ref>. We compute the total energy functional of the RHF model of the molecule through STO-3g basis set <ref type="bibr" target="#b21">[22]</ref>. The total energy functional is a function of the LCAO coefficients (x, y), the orbital energy e, and the interatomic distance R, as defined in the following.</p><formula xml:id="formula_21">E HF = i ⟨i|h|i⟩ + 1 2 ij ([ii|jj] -[ij|ji])<label>(17)</label></formula><formula xml:id="formula_22">⟨i|h|i⟩ = dx 1 χ * i (x 1 )h(r 1 )χ j (x 1 )<label>(18)</label></formula><p>[ij|kl] = dx</p><formula xml:id="formula_23">1 dx 2 χ * i (x 1 )χ j (x 1 ) 1 r 12 χ * i (x 2 )χ j (x 2 ) (<label>19</label></formula><formula xml:id="formula_24">)</formula><formula xml:id="formula_25">χ i (x) = (x ϕ 1s,He (r -R He ) + y ϕ 1s,H (r -R H )) σ i<label>(20)</label></formula><p>σ i : spin function ( <ref type="formula">21</ref>)</p><formula xml:id="formula_26">ϕ ST O-3G 1s (r) = 3 i=1 c(i) exp(-z(i)r 2 ) (22)</formula><p>In the computation of HeH + , we use two spin orbitals.</p><formula xml:id="formula_27">i = α, β<label>(23)</label></formula><p>The total energy in the restricted Hartree-Fock model is given by</p><formula xml:id="formula_28">h(r) = - 1 2 ∇ 2 - Z He |r -R He | -- Z H |r -R H | (24) R = |R He -R H |, Z He = 2, Z H = 1 (25) E total (x, y, e, R) = E HF (x, y, R) -e i (⟨χ i |χ j ⟩ -1) + Z He Z H R<label>(26)</label></formula><p>• The numerical coefficients in the objective function are approximated by fractional numbers so that the objective function, multiplicated by the powers of ten, is given by a polynomial with integer coefficients. To this end, we approximate the numerical coefficient C by rounding 10 n C to the nearest integer N c and get N c /10 n . We use the polynomial with integer coefficients as the objective function. For simplicity, we fix the interatomic distance R at 1.46 a B . However, in general, using Taylor expansion, we could include R in the system of polynomial equations. Namely, we could determine the wave function and the atomic positions simultaneously.</p><p>• A system of polynomial equations is derived by the partial differentiation with respect to (x, y) and e so that the roots of those equations give the optima of the objective function.</p><p>• In algebraic symbolic computation, we use the ring Q[x, y, e] (a ring over the field of rational numbers Q) with the degree reverse lexicographic monomial ordering, such that x &gt; y &gt; e. The generators of the set of polynomial equations compose an ideal I. We compute the Gröbner basis of I, by which the quotient ring Q[x, y, e]/I is defined.</p><p>• As a reference, the result of the Hartree-Fock computation by the standard self-consistent method is shown in Table <ref type="table">2</ref>.</p><p>x y e Total Energy (Hartree) STO-3G 0.801918 0.336800 -1.597448 -2.860662</p><p>Table <ref type="table">2</ref>: The result of the Hartree-Fock computation of HeH + by the standard self-consistent method with STO-3g basis set, at the interatomic distance R = 1.4632.</p><p>• The polynomial approximation of the objective function E total is computed as follows. The transformation matrices (m x , m y , and m e ) for three variables (x,y, e) are given in the appendix.</p><p>• The solutions obtained from the symbolic-numeric method are shown in Table <ref type="table">3</ref>. We use the normalized right eigenvectors |i) of m T X and compute the expectation values (i|...|i) for m T y and m T e . The solutions at the rows (i=2 and 7) correspond to the ground state in the reference data in Table <ref type="table">2</ref>. Those results are quantitatively satisfactory. The solutions at the rows (i=3 and i=6) correspond to an excited state. The other solutions are meaningless since they are complex. 6 -0.6021+0.0000j 1.1147+0.0000j -0.5380+0.0000j -0.4762+0.0000j 7 -0.8019+0.0000j -0.3368+0.0000j -1.5976+0.0000j -2.8609+0.0000j</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>i (i|m</head><p>Table <ref type="table">3</ref>: The result of the Hartree-Fock computation of HeH + by the symbolic numeric method. i-th row in the table shows the expectation values of the transformation matrices and the total energy, computed from the normalized right eigenvectors {|i)} i=0,...,7 of m T x . Some entries are complex and the imaginary unit is represented by j.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1">Model description</head><p>In this section, the restricted Hartree-Fock computation of a realistic molecule HeH + is studied. This molecule is the simplest heteronuclear molecule and is used as a benchmark problem for the solving of the Hartree-Fock model <ref type="bibr" target="#b20">[21]</ref>. We compute the total energy functional of the RHF model of the molecule through STO-3g basis set <ref type="bibr" target="#b21">[22]</ref>. The total energy functional is a function of the LCAO coefficients (x, y), the orbital energy e, and the interatomic distance R, as defined in the following.</p><formula xml:id="formula_21">E HF = i ⟨i|h|i⟩ + 1 2 ij ([ii|jj] -[ij|ji])<label>(17)</label></formula><formula xml:id="formula_22">⟨i|h|i⟩ = dx 1 χ * i (x 1 )h(r 1 )χ j (x 1 )<label>(18)</label></formula><p>[ij|kl] = dx</p><formula xml:id="formula_23">1 dx 2 χ * i (x 1 )χ j (x 1 ) 1 r 12 χ * i (x 2 )χ j (x 2 ) (<label>19</label></formula><formula xml:id="formula_24">)</formula><formula xml:id="formula_25">χ i (x) = (x ϕ 1s,He (r -R He ) + y ϕ 1s,H (r -R H )) σ i<label>(20)</label></formula><p>σ i : spin function ( <ref type="formula">21</ref>)</p><formula xml:id="formula_26">ϕ ST O-3G 1s (r) = 3 i=1 c(i) exp(-z(i)r 2 ) (22)</formula><p>In the computation of HeH + , we use two spin orbitals.</p><formula xml:id="formula_27">i = α, β<label>(23)</label></formula><p>The total energy in the restricted Hartree-Fock model is given by</p><formula xml:id="formula_28">h(r) = - 1 2 ∇ 2 - Z He |r -R He | -- Z H |r -R H | (24) R = |R He -R H |, Z He = 2, Z H = 1 (25) E total (x, y, e, R) = E HF (x, y, R) -e i (⟨χ i |χ j ⟩ -1) + Z He Z H R<label>(26)</label></formula><p>• The numerical coefficients in the objective function are approximated by fractional numbers so that the objective function, multiplicated by the powers of ten, is given by a polynomial with integer coefficients. To this end, we approximate the numerical coefficient C by rounding 10 n C to the nearest integer N c and get N c /10 n . We use the polynomial with integer coefficients as the objective function. For simplicity, we fix the interatomic distance R at 1.46 a B . However, in general, using Taylor expansion, we could include R in the system of polynomial equations. Namely, we could determine the wave function and the atomic positions simultaneously.</p><p>• A system of polynomial equations is derived by the partial differentiation with respect to (x, y) and e so that the roots of those equations give the optima of the objective function.</p><p>• In algebraic symbolic computation, we use the ring Q[x, y, e] (a ring over the field of rational numbers Q) with the degree reverse lexicographic monomial ordering, such that x &gt; y &gt; e. The generators of the set of polynomial equations compose an ideal I. We compute the Gröbner basis of I, by which the quotient ring Q[x, y, e]/I is defined.</p><p>• As a reference, the result of the Hartree-Fock computation by the standard self-consistent method is shown in Table <ref type="table">2</ref>.</p><p>x y e Total Energy (Hartree) STO-3G 0.801918 0.336800 -1.597448 -2.860662</p><p>Table <ref type="table">2</ref>: The result of the Hartree-Fock computation of HeH + by the standard self-consistent method with STO-3g basis set, at the interatomic distance R = 1.4632.</p><p>• The polynomial approximation of the objective function E total is computed as follows. The transformation matrices (m x , m y , and m e ) for three variables (x,y, e) are given in the appendix.</p><p>• The solutions obtained from the symbolic-numeric method are shown in Table <ref type="table">3</ref>. We use the normalized right eigenvectors |i) of m T X and compute the expectation values (i|...|i) for m T y and m T e . The solutions at the rows (i=2 and 7) correspond to the ground state in the reference data in Table <ref type="table">2</ref>. Those results are quantitatively satisfactory. The solutions at the rows (i=3 and i=6) correspond to an excited state. The other solutions are meaningless since they are complex.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>i (i|m</head><p>T x |i) (i|m T y |i) (i|m T e |i) Total Energy (Hartree) 0 1.4398+0.1765j -0.8934+0.7491j -0.7682+0.3604j -1.4056-1.1513j 1 1.4398-0.1765j -0.8934-0.7491j -0.7682-0.3604j -1.4056+1.1513j 2 0.8019+0.0000j 0.3368+0.0000j -1.5976+0.0000j -2.8609+0.0000j 3 0.6021+0.0000j -1.1147+0.0000j -0.5380+0.0000j -0.4762+0.0000j 4 -1.4398+0.1765j 0.8934+0.7491j -0.7682-0.3604j -1.4056+1.1513j 5 -1.4398-0.1765j 0.8934-0.7491j -0.7682+0.3604j -1.4056-1.1513j</p><p>6 -0.6021+0.0000j 1.1147+0.0000j -0.5380+0.0000j -0.4762+0.0000j 7 -0.8019+0.0000j -0.3368+0.0000j -1.5976+0.0000j -2.8609+0.0000j</p><p>Table <ref type="table">3</ref>: The result of the Hartree-Fock computation of HeH + by the symbolic numeric method. i-th row in the table shows the expectation values of the transformation matrices and the total energy, computed from the normalized right eigenvectors {|i)} i=0,...,7 of m T x . Some entries are complex and the imaginary unit is represented by j.</p></div>
 <div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.2">Result of VQE</head><p>In this section, we conduct the numerical experiment for VQE and assert that it works well. We use a similar scheme of numerical variation as in the previous section. The dimension of the transformation is 8×8, and we use eight variational parameters p = (p 1 , p 2 , ..., p 8 ) with eight generators T (1, 2), T (2, 3), ..., T (7, 8), T (8, 1) in the unitary transformation U (p). We could use the following objective function.</p><formula xml:id="formula_29">g obj (p) = w={x,y,e} ⟨v 0 | U † (p) ∂E total (x, y, e) ∂w U(p) |v 0 ⟩ 2 .<label>(28)</label></formula><p>A numerical experiment arrived at the following optimum:</p><p>p opt = (-0.7784, 0.3236, 1.7828, 0.6409, 0.0327, -0.1410, -0.2723, 0.0606)</p><p>This optimum yields the solution given in Table <ref type="table">4</ref>. It is a satisfactory result for the ground state computation.</p><p>x y e Total Energy (Hartree) -0.8019 -0.3367 -1.5976 -2.8609 Table <ref type="table">4</ref>: The solution of the Hartree-Fock equation computed by VQE. The wavefunction (x, y), the orbital energy e, and the total energy are shown.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Discussion</head><p>In this section, we discuss several things omitted in the previous parts of this article.</p><p>The first is how to construct the quantum circuit. The numerical experiments in the preceding sections show that the algorithm would work well, at least in simple cases. However, they are only the emulation of VQE by classical computers. The actual computation should be conducted in quantum processors.</p><p>The important matter is that the unitary transformation on the initial input vector should be achieved properly in the quantum circuit. In the numerical experiment, we use the anti-symmetric matrices T (i, j) as the generators of the unitary transformation U (p) over a numerical vector v = (v 0 , v 1 , ..., v N -1 ). In the quantum circuit, such a vector should be encoded by a state vector</p><formula xml:id="formula_30">V = v 0 |0...00⟩ + v 1 |0...10⟩ + • • • + v N -1 |1....11⟩.</formula><p>This state vector should be prepared in m-qubits system such that 2 m = N .</p><p>Then the unitary operation should be constructed by the sequence of gate operations. For example, the unitary transformation to solve the Hartree-Fock equation (in Section 2.2) is illustrated in Figure <ref type="figure" target="#fig_2">1</ref>. The third is how to realize efficient optimization. The numerical experiments in this article used the simplex method, but it is not effective. Instead, we could use the derivative of the total energy with respect to variational parameters.</p><p>The necessary formulas are computed analytically and could be used in the optimization.</p><p>The fourth is the feasibility of computing the excited states. </p><formula xml:id="formula_31">+ λ |(x 0 , y 0 |S|x 1 , y 1 )| 2 ,</formula><p>where (x 0 , y 0 ) and (x 1 , y 1 ) stand for the normalized wavefunctions in the ground and excited states, respectively. The second term curbs the path of the optimization by the strength parameter λ so that it shall not arrive at the ground state. This term might remain non-zero at the optima because the excited state is not the virtual orbital orthogonal to the ground state. For the case of HeH + , one can obtain the excited state using this objective function.</p><p>The version of VQE proposed in the present article can be used to prepare the input state vector for QPE to record the solutions of the equation in quantum states, if one applies the QPE algorithm given in <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b4">5]</ref>. According to the construction of that style of QPE, the solutions (such as wavefunctions, orbital energies, atomic coordinates, and so on) are encoded in quantum state vectors.</p><p>Note that it is not an obligation to find the minimum of the total energy. In- </p><p>Then the final measurement gets two distinct solutions (e, x, y) and (e, -x, -y).</p><p>As for more complicated systems, this trick will be useful.</p></div>
-<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Summary and conclusion</head><p>In this article, we demonstrated a method to encode the variables in the equation into a set of matrices using an algebraic method. Subsequently, the total energy itself is represented by a function composed of the eigenvalues of those matrices, and the minimization of the total energy, conducted by VQE, yields the ground state solution. We have checked that this scheme would work well, at least for small models. In addition, we have discussed some further applications of the algorithm, such as the evaluation of excited states and the connection between VQE and QPE.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>those transformation matrices share common eigenvectors {v j |j = 1, ..., M }, where M is size of the monomial basis b. Note that those matrices are not Hermitian in general.</figDesc></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>→•</head><label></label><figDesc>10000 * E_total=-2*e*(10000*x**2 + 9016*x*y + 10000*y**2 -10000) + 13071*x**4 + 17494*x**3*y + 19208*x**2*y**2 -53057*x**2 + 12474*x*y**3 -53899*x*y + 7746*y**4 -34640*y**2 + 13670 → → We use the objective function f obj = 10000 E total . • The ideal that gives the optima of the objective function is composed of the following components: The quotient ring Q[x, y, e]/I has the monomial basis b = (y 2 , xe, ye, e 2 , x, y, e, 1).</figDesc></figure>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Discussion</head><p>In this section, we discuss several things omitted in the previous parts of this article.</p><p>The first is how to construct the quantum circuit. The numerical experiments in the preceding sections show that the algorithm would work well, at least in simple cases. However, they are only the emulation of VQE by classical computers. The actual computation should be conducted in quantum processors.</p><p>The important matter is that the unitary transformation on the initial input vector should be achieved properly in the quantum circuit. In the numerical experiment, we use the anti-symmetric matrices T (i, j) as the generators of the unitary transformation U (p) over a numerical vector v = (v 0 , v 1 , ..., v N -1 ). In the quantum circuit, such a vector should be encoded by a state vector</p><formula xml:id="formula_30">V = v 0 |0...00⟩ + v 1 |0...10⟩ + • • • + v N -1 |1....11⟩.</formula><p>This state vector should be prepared in m-qubits system such that 2 m = N .</p><p>Then the unitary operation should be constructed by the sequence of gate operations. For example, the unitary transformation to solve the Hartree-Fock equation (in Section 2.2) is illustrated in Figure <ref type="figure" target="#fig_2">1</ref>. The second is how to evaluate the objective function. What we have to compute are the expectation values of the transformation matrices by the state vector generated by the quantum circuit. We should rewrite them as the linear combination of Pauli strings, and by measuring the Pauli strings we could compute the expectation values.</p><p>The third is how to realize efficient optimization. The numerical experiments in this article used the simplex method, but it is not effective. Instead, we could use the derivative of the total energy with respect to variational parameters.</p><p>The necessary formulas are computed analytically and could be used in the optimization.</p><p>The fourth is the feasibility of computing the excited states.</p><p>To this end, several techniques developed by conventional VQE would be useful. For example, one can add an extra term to the objective function so that the path of the optimization shall avoid the ground state. The modified objective function in the case of the Hartree-Fock computation is given by: p=x,y,e ∂E total (x, y, e) ∂p 2 x=x 1 ,y=y 1 ,e=e 1</p><formula xml:id="formula_31">+ λ |(x 0 , y 0 |S|x 1 , y 1 )| 2 ,</formula><p>where (x 0 , y 0 ) and (x 1 , y 1 ) stand for the normalized wavefunctions in the ground and excited states, respectively. The second term curbs the path of the optimization by the strength parameter λ so that it shall not arrive at the ground state. This term might remain non-zero at the optima because the excited state is not the virtual orbital orthogonal to the ground state. For the case of HeH + , one can obtain the excited state using this objective function.</p><p>The version of VQE proposed in the present article can be used to prepare the input state vector for QPE to record the solutions of the equation in quantum states, if one applies the QPE algorithm given in <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b4">5]</ref>. According to the construction of that style of QPE, the solutions (such as wavefunctions, orbital energies, atomic coordinates, and so on) are encoded in quantum state vectors.</p><p>Note that it is not an obligation to find the minimum of the total energy. In- </p><p>Then the final measurement gets two distinct solutions (e, x, y) and (e, -x, -y).</p><p>As for more complicated systems, this trick will be useful.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Summary and conclusion</head><p>In this article, we demonstrated a method to encode the variables in the equation into a set of matrices using an algebraic method. Subsequently, the total energy itself is represented by a function composed of the eigenvalues of those matrices, and the minimization of the total energy, conducted by VQE, yields the ground state solution. We have checked that this scheme would work well, at least for small models. In addition, we have discussed some further applications of the algorithm, such as the evaluation of excited states and the connection between VQE and QPE.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><figDesc>those transformation matrices share common eigenvectors {v j |j = 1, ..., M }, where M is size of the monomial basis b. Note that those matrices are not Hermitian in general.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>•</head><figDesc>10000 * E_total=-2*e*(10000*x**2 + 9016*x*y + 10000*y**2 -10000) + 13071*x**4 + 17494*x**3*y + 19208*x**2*y**2 -53057*x**2 + 12474*x*y**3 -53899*x*y + 7746*y**4 -34640*y**2 + 13670 ↩→ ↩→ ↩→ We use the objective function f obj = 10000 E total . • The ideal that gives the optima of the objective function is composed of the following components: The quotient ring Q[x, y, e]/I has the monomial basis b = (y 2 , xe, ye, e 2 , x, y, e, 1).</figDesc></figure>
 <figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: The quantum circuit that yields the excited state of the Hartee-Fock computation of HeH + .</figDesc><graphic coords="10,142.66,550.77,309.96,137.16" type="bitmap" /></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>stead, one might evaluate the minimum orbital energy to get the eigenvector of the corresponding transformation matrix. If that eigenvector is obtained, the other variables in the equation are also determined through the successive operations of VQE for corresponding transformation matrices. For example, in the simple toy model investigated in the previous section, the minimum orbital energy is yielded from the subspace spanned by two different eigenvectors of the transformation matrix m e . The successive VQE operations for m x and m y , being applied to that eigenvector, generate the following state: (α |v 1 ⟩ + β |v 2 ⟩) |Ancilla⟩ → α |v 1 ⟩ |e, x, y⟩ + α |v 2 ⟩ |e, -x, -y⟩</figDesc></figure>
-<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>To this end, several techniques developed by conventional VQE would be useful. For example, one can add an extra term to the objective function so that the path of the optimization shall avoid the ground state. The modified objective function in the case of the Hartree-Fock computation is given by:</figDesc><table /><note><p>p=x,y,e ∂E total (x, y, e) ∂p 2 x=x 1 ,y=y 1 ,e=e 1</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><figDesc>stead, one might evaluate the minimum orbital energy to get the eigenvector of the corresponding transformation matrix. If that eigenvector is obtained, the other variables in the equation are also determined through the successive operations of VQE for corresponding transformation matrices. For example, in the simple toy model investigated in the previous section, the minimum orbital energy is yielded from the subspace spanned by two different eigenvectors of the transformation matrix m e . The successive VQE operations for m x and m y , being applied to that eigenvector, generate the following state: (α |v 1 ⟩ + β |v 2 ⟩) |Ancilla⟩ → α |v 1 ⟩ |e, x, y⟩ + α |v 2 ⟩ |e, -x, -y⟩</figDesc></figure>
 		</body>
 		<back>
 
 			<div type="availability">
-<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Data Availability</head><p>The small programs and the matrix data in this study are available at https://github.com/kikuchiichio/20240701/</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Data Availability</head><p>The small programs and the matrix data in this study are available at <ref type="url" target="https://github.com/kikuchiichio/20240701/">https://github.com/kikuchiichio/20240701/</ref> </p></div>
 			</div>
 
 			<div type="annex">
@@ -97,7 +100,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 	<monogr>
 		<title level="j">QScience Connect</title>
 		<imprint>
-			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page">14</biblScope>
 			<date type="published" when="2013">2013. 2013</date>
 		</imprint>
 	</monogr>
@@ -125,8 +128,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 </biblStruct>
 
 <biblStruct xml:id="b2">
-	<monogr>
-		<title level="m" type="main">Molecular Algebraic Geometry: Electronic Structure of H3+ as Algebraic Variety. OSF Preprints</title>
+	<analytic>
+		<title level="a" type="main">Molecular Algebraic Geometry: Electronic Structure of H3+ as Algebraic Variety</title>
 		<author>
 			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
 		</author>
@@ -134,6 +137,9 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
 		</author>
 		<ptr target="https://osf.io/preprints/osf/2crxp" />
+	</analytic>
+	<monogr>
+		<title level="j">OSF Preprints</title>
 		<imprint>
 			<date type="published" when="2023">2023</date>
 		</imprint>
@@ -142,7 +148,6 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 
 <biblStruct xml:id="b3">
 	<monogr>
-		<title level="m" type="main">Symbolic, numeric and quantum computation of Hartree-Fock equation</title>
 		<author>
 			<persName><forename type="first">Ichio</forename><surname>Kikuchi</surname></persName>
 		</author>
@@ -150,6 +155,7 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 			<persName><forename type="first">Akihito</forename><surname>Kikuchi</surname></persName>
 		</author>
 		<idno type="arXiv">arXiv:2401.00019</idno>
+		<title level="m">Symbolic, numeric and quantum computation of Hartree-Fock equation</title>
 		<imprint>
 			<date type="published" when="2024">2024</date>
 		</imprint>
@@ -201,10 +207,11 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</author>
 	</analytic>
 	<monogr>
-		<title level="m">Computations in algebraic geometry with Macaulay 2</title>
+		<title level="m">Computations in algebraic geometry with Macaulay</title>
 		<imprint>
 			<publisher>Springer</publisher>
 			<date type="published" when="2001">2001</date>
+			<biblScope unit="volume">2</biblScope>
 			<biblScope unit="page" from="101" to="130" />
 		</imprint>
 	</monogr>
@@ -336,11 +343,12 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</author>
 	</analytic>
 	<monogr>
-		<title level="m">Applicable Algebra in Engineering, Communication and Computing</title>
+		<title level="j">Applicable Algebra in Engineering, Communication and Computing</title>
 		<imprint>
-			<date type="published" when="1993">1993</date>
 			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">4</biblScope>
 			<biblScope unit="page" from="217" to="230" />
+			<date type="published" when="1993">1993</date>
 		</imprint>
 	</monogr>
 </biblStruct>
@@ -391,18 +399,19 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</author>
 	</analytic>
 	<monogr>
-		<title level="m">Computations in algebraic geometry with Macaulay 2</title>
+		<title level="m">Computations in algebraic geometry with Macaulay</title>
 		<imprint>
 			<publisher>Springer</publisher>
 			<date type="published" when="2002">2002</date>
+			<biblScope unit="volume">2</biblScope>
 			<biblScope unit="page" from="101" to="129" />
 		</imprint>
 	</monogr>
 </biblStruct>
 
 <biblStruct xml:id="b17">
-	<monogr>
-		<title level="m" type="main">A universal quantum circuit scheme for finding complex eigenvalues. Quantum information processing</title>
+	<analytic>
+		<title level="a" type="main">A universal quantum circuit scheme for finding complex eigenvalues</title>
 		<author>
 			<persName><forename type="first">Anmer</forename><surname>Daskin</surname></persName>
 		</author>
@@ -412,10 +421,13 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		<author>
 			<persName><forename type="first">Sabre</forename><surname>Kais</surname></persName>
 		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Quantum information processing</title>
 		<imprint>
-			<date type="published" when="2014">2014</date>
 			<biblScope unit="volume">13</biblScope>
 			<biblScope unit="page" from="333" to="353" />
+			<date type="published" when="2014">2014</date>
 		</imprint>
 	</monogr>
 </biblStruct>
@@ -474,10 +486,8 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.co
 		</author>
 		<imprint>
 			<date type="published" when="2012">2012</date>
+			<publisher>Courier Corporation</publisher>
 		</imprint>
-		<respStmt>
-			<orgName>Courier Corporation</orgName>
-		</respStmt>
 	</monogr>
 </biblStruct>
 

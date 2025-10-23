@@ -14,10 +14,10 @@ from .db import engine, init_db
 from .upsert import upsert_batch
 from .iter_preprints import iter_preprints_batches, iter_preprints_range
 from celery import chain
-from .pdf import mark_downloaded
+from .pdf import mark_downloaded, ensure_pdf_available_or_delete
 from .grobid import process_pdf_to_tei, mark_tei
 
-from .pdf import ensure_pdf_available_or_delete, mark_downloaded
+from .fetch_one import fetch_preprint_by_id, fetch_preprint_by_doi, upsert_one_preprint
 
 PDF_DEST_ROOT = os.environ.get("PDF_DEST_ROOT", "/data/preprints")
 
@@ -27,6 +27,15 @@ SOURCE_KEY_ALL = "osf:all"
 # -------------------------------
 # Helpers: cursor state in Postgres
 # -------------------------------
+
+def _coerce_osf_id(x):
+    if isinstance(x, str):
+        return x
+    if isinstance(x, dict):
+        # download_single_pdf returns {"osf_id": "...", ...}
+        return x.get("osf_id") or x.get("id")
+    raise ValueError(f"Unsupported argument for osf_id: {type(x)}")
+
 
 def _get_cursor(source_key: str) -> Optional[dt.datetime]:
     """
@@ -228,14 +237,20 @@ def enqueue_pdf_downloads(self, limit: int = 100):
     chain(*sigs).apply_async()
     return {"queued": len(ids)}
 
-@app.task(bind=True, queue="grobid", autoretry_for=(RequestException,), retry_backoff=30, retry_jitter=True, retry_kwargs={"max_retries": 3})
-def grobid_single(self, osf_id: str):
+@app.task(bind=True, queue="grobid", autoretry_for=(RequestException,), retry_backoff=30,
+          retry_jitter=True, retry_kwargs={"max_retries": 3})
+def grobid_single(self, osf_id_or_result):
+    osf_id = _coerce_osf_id(osf_id_or_result)
+    if not osf_id:
+        return {"ok": False, "error": "missing osf_id in previous result"}
+
     sql = text("""
         SELECT osf_id, provider_id, pdf_downloaded, tei_generated
         FROM preprints
         WHERE osf_id = :id
         LIMIT 1
     """)
+
     with engine.begin() as conn:
         row = conn.execute(sql, {"id": osf_id}).mappings().one_or_none()
 
@@ -273,3 +288,38 @@ def enqueue_grobid(self, limit: int = 50):
     sigs = [grobid_single.si(i).set(queue="grobid") for i in ids]  # use .si to avoid passing previous result
     chain(*sigs).apply_async()
     return {"queued": len(ids)}
+
+@app.task(name="osf_sync.tasks.sync_one_by_id", bind=True)
+def sync_one_by_id(self, osf_id: str, run_pdf_and_grobid: bool = True):
+    data = fetch_preprint_by_id(osf_id)
+    if not data:
+        return {"ok": False, "reason": "not found", "osf_id": osf_id}
+    upserted = upsert_one_preprint(data)
+    result = {"ok": True, "osf_id": data["id"], "upserted": upserted}
+
+    if run_pdf_and_grobid:
+        # Chain: download → grobid
+        ch = chain(
+            download_single_pdf.s(data["id"]),
+            grobid_single.s()
+        )
+        async_res = ch.apply_async()
+        result["chain_id"] = async_res.id
+    return result
+
+@app.task(name="osf_sync.tasks.sync_one_by_doi", bind=True)
+def sync_one_by_doi(self, doi_or_url: str, run_pdf_and_grobid: bool = True):
+    data = fetch_preprint_by_doi(doi_or_url)
+    if not data:
+        return {"ok": False, "reason": "not found", "doi": doi_or_url}
+    upserted = upsert_one_preprint(data)
+    result = {"ok": True, "osf_id": data["id"], "upserted": upserted}
+
+    if run_pdf_and_grobid:
+        ch = chain(
+            download_single_pdf.s(data["id"]),
+            grobid_single.s()
+        )
+        async_res = ch.apply_async()
+        result["chain_id"] = async_res.id
+    return result

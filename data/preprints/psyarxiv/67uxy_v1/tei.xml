@@ -1,0 +1,1862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting behavioral competencies automatically from facial expressions in real-time video-recorded interviews</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>Springer Science and Business Media LLC</publisher>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2021-01-27">2021-01-27</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Yu-Sheng</forename><surname>Su</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Hung-Yue</forename><surname>Suen</surname></persName>
+							<idno type="ORCID">0000-0002-6796-2031</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Kuo-En</forename><surname>Hung</surname></persName>
+						</author>
+						<title level="a" type="main">Predicting behavioral competencies automatically from facial expressions in real-time video-recorded interviews</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Journal of Real-Time Image Processing</title>
+						<title level="j" type="abbrev">J Real-Time Image Proc</title>
+						<idno type="ISSN">1861-8200</idno>
+						<idno type="eISSN">1861-8219</idno>
+						<imprint>
+							<publisher>Springer Science and Business Media LLC</publisher>
+							<biblScope unit="volume">18</biblScope>
+							<biblScope unit="issue">4</biblScope>
+							<biblScope unit="page" from="1011" to="1021"/>
+							<date type="published" when="2021-01-27" />
+						</imprint>
+					</monogr>
+					<idno type="MD5">338A054342D9EB573E521C0D365EDDD5</idno>
+					<idno type="DOI">10.1007/s11554-021-01071-5</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:15+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Behavioral Ecology View of Facial Displays (BECV)</term>
+					<term>Convolutional Neural Network (CNN)</term>
+					<term>Employment Selection</term>
+					<term>Histogram of Oriented Gradients (HOG)</term>
+					<term>Real-time Image and Video Processing</term>
+					<term>Support</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This work aims to develop a real-time image and video processor enabled with an artificial intelligence (AI) agent that can predict a job candidate's behavioral competencies according to his or her facial expressions. This is accomplished using a real-time video-recorded interview with a histogram of oriented gradients and support vector machine (HOG-SVM) plus convolutional neural network (CNN) recognition. Different from the classical view of recognizing emotional states, this prototype system was developed to automatically decode a job candidate's behaviors by their microexpressions based on the behavioral ecology view of facial displays (BECV) in the context of employment interviews using a real-time videorecorded interview. An experiment was conducted at a Fortune 500 company, and the video records and competency scores were collected from the company's employees and hiring managers. The results indicated that our proposed system can provide better predictive power than can human-structured interviews, personality inventories, occupation interest testing, and assessment centers. As such, our proposed approach can be utilized as an effective screening method using a personalvalue-based competency model.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Competency refers to "a set of behavior patterns that the incumbent needs to bring to a position in order to perform its tasks and functions" <ref type="bibr" target="#b0">[1]</ref>. This can help to predict how a job candidate will perform or behave at a specific job for which he or she is applying <ref type="bibr" target="#b1">[2]</ref>. Therefore, competency is also called behavioral competencies that reflect the attributes underpinning a behavior, including knowledge, skills, abilities, and other characteristics (KSAOs) associated with successful performance in an area of work <ref type="bibr" target="#b2">[3]</ref>. Simply put, behavioral competencies are any observable characteristics that can distinguish higher performers from others in an organization <ref type="bibr" target="#b3">[4]</ref>. Some underlying characteristics, such as personality traits and values, play more important roles in success than technical knowledge and skills <ref type="bibr" target="#b4">[5]</ref>.</p><p>There are different approaches for developing competency models in human resource management <ref type="bibr" target="#b5">[6]</ref>: the job-based approach, the future-based approach, the person-based approach, and the value-based approach.</p><p>Job-based competency defines what should be done for a specific job and role and is commonly adopted with a static context with specific job duties and requirements. Future-based competency defines what will be done in an organization in the future and requires a clear organizational vision, roadmap, and expected behaviors based on existing culture. Person-based competency defines which generic personal attributes are translated into behavioral patterns that can support the human capital advantage in an organization (not for a specific job), such as individual intelligence and growth mindset at Microsoft. This is suitable for organizations that focus on innovation and flexibility in the context of dynamic change. Value-based competency defines how things should be done by everyone in an organization and is useful when an organization wants to promote core values that may not gain a short-term advantage but can achieve sustainability. In a rapid change environment, an increasing number of organizations adopt person-based plus value-based competency models to lead organizational transformation.</p><p>When generic (person-based) and core (value-based) competencies can be identified successfully, the competency model can be applied to many organizational activities, especially personnel selection <ref type="bibr" target="#b6">[7]</ref>. To assess whether a job candidate's generic person-based or value-based competency is valid, human experts need to assign ratings <ref type="bibr" target="#b7">[8]</ref>, such as during employment interviews that are commonly used in personnel selection <ref type="bibr" target="#b8">[9]</ref>. The interview questions can focus specifically on experiences (e.g., what have you done?) or situations (e.g., what would you do?), or can focus more broadly on job-related KSAOs in both behavioral (e.g., tell me about your experience with…) or situational formats (e.g., tell me about your knowledge of…). The logic behind the employment interview is that a candidate's interview performance can predict his or her future behavior associated with prospective competencies <ref type="bibr" target="#b8">[9]</ref> according to the candidates' verbal and nonverbal responses <ref type="bibr" target="#b9">[10]</ref>.</p><p>However, it is not cost-effective to interview every job candidate <ref type="bibr" target="#b10">[11]</ref>, and predictive validity is concerned with the relationship between interview performance and actual competencies due to interviewer-respondent interactions <ref type="bibr" target="#b11">[12]</ref> and interviewees' fake behaviors <ref type="bibr" target="#b12">[13]</ref>. Some interdisciplinary scholars in the computer science and human resources fields have suggested that video-recorded interviews, also called asynchronous video interviews (AVIs), can be used as an alternative to synchronous interviews, including face-to-face interviews, phone interviews, and conferencing interviews that Yu-Sheng Su, Hung-Yue Suen, Ku-En Hung Predicting Behavioral Competencies Automatically from Facial Expressions in Real-Time Video-Recorded Interviews require both the interviewer and interviewee to be present at the same time. In an AVI, the interviewee can answer predefined text questions at his or her convenience, and then the recordings of these answers are evaluated by a human <ref type="bibr" target="#b13">[14]</ref>. Moreover, a job candidate's nonverbal responses, including facial expressions, are not easy to fake compared with verbal responses during an employment interview <ref type="bibr" target="#b9">[10]</ref>. Recordings of facial movement can be used as more reliable cues to predict a job candidate's emotional state <ref type="bibr" target="#b14">[15]</ref>, personality traits <ref type="bibr" target="#b15">[16]</ref>, and communication skills <ref type="bibr" target="#b16">[17]</ref> by computer vision enabled with deep learning. Hirevue.com is an example that combines artificial intelligence (AI, a deep-learning agent) and the Internet of Things (IoT: the AVI on mobile devices) to automatically predict a job interviewee's future performance according to his or her facial expressions <ref type="bibr" target="#b17">[18]</ref>.</p><p>A neuroscience study found that primates' (as well as humans') facial expressions are disclosed as a part of an embodied multimodal system (communication, emotional experience, and cognitive aspects that work together) that can predict the actor's likely future behavior <ref type="bibr" target="#b18">[19]</ref>. This is not limited to emotional states <ref type="bibr" target="#b19">[20]</ref> or social perception by observers <ref type="bibr" target="#b20">[21]</ref>. Therefore, a job candidate's facial expressions recorded by an AVI platform is a good indicator of his or her competencies.</p><p>The study aims to develop a deep-learning agent that can detect job candidates' facial expressions according to the interview records from an AVI interface, while the agent can utilize the cues to predict their generic and core competencies in real-time based on a person plus value-based competency model of a Fortune 500 computer company in 2020.</p><p>The rest of the paper is organized as follows: related works are reviewed in section 2; the experimental procedure, image processing, and modeling are proposed in section 3; and the results are presented in section 4. Finally, the discussion and conclusions are drawn in section 5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related works</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Decoding facial expressions</head><p>Research on human facial expressions has two different approaches <ref type="bibr" target="#b21">[22]</ref>: basic emotion theory (BET) and the behavioral ecology view of facial displays (BECV). BET is also known as the "common view" or "classic view" <ref type="bibr" target="#b22">[23]</ref> and assumes that human internal feelings and emotions are externalized by facial expressions at both the macro and micro levels <ref type="bibr" target="#b23">[24]</ref>. Macroexpressions can be subjectively identified by human observation and categorized into six universal basic emotions: happy, fear, sad, surprise, anger, and disgust. By comparison, microexpressions are provoked involuntarily in brief and short durations, and they are not easy to recognize by the human eye <ref type="bibr" target="#b24">[25]</ref>. Technically, the conceptual difference between macroand microexpressions is their duration, and the threshold is 1/5 of a second <ref type="bibr" target="#b64">[65]</ref> <ref type="bibr" target="#b65">[66]</ref>. From the perspective of BET, a person's emotional state can be recognized by his or her facial muscle movement <ref type="bibr" target="#b22">[23]</ref>. For example, smiling reveals happiness <ref type="bibr" target="#b21">[22]</ref>.</p><p>However, several studies have discovered that a person's facial expressions do not reflect his or her true feelings <ref type="bibr" target="#b25">[26]</ref>. Instead, a facial expression is a signal that reflects a person's behavioral intention toward any social interactants, including human or nonhuman objects, which is the other view of BECV <ref type="bibr" target="#b21">[22]</ref>. From the perspective of BECV, facial expressions are social tools that signal and predict what the sender wants to happen next but are not a mirror about himself or herself <ref type="bibr" target="#b26">[27]</ref>. For example, smiling is a tool used to influence interactants to play or affiliate and is not about happiness. A "disgusted" face may not indicate that you are disgusted with the interactant (e.g., an AVI interface or an AI agent), but it may signal that you want it to convey a different interaction <ref type="bibr" target="#b21">[22]</ref>. This is not to say that people always attempt to manipulate others with their facial expressions, but this may well be instinctive when an interactant is not physically near <ref type="bibr" target="#b14">[15]</ref> <ref type="bibr" target="#b27">[28]</ref> because people are nerve along psychologically <ref type="bibr" target="#b21">[22]</ref> <ref type="bibr" target="#b21">[22]</ref>.</p><p>In line with a competency model based on person-based plus value-based approaches <ref type="bibr" target="#b5">[6]</ref>, employers are more interested in predicting a job candidate's future behavior rather than his or her feelings during job interviews. Therefore, the BECV is more appropriate for recognizing facial expressions to predict the sender's behaviors in the context of an employment interview.</p><p>In the field of computer science, most related studies have been conducted based on BET to recognize a person's facial expressions and match or label them with a person's different emotional states from video datasets <ref type="bibr" target="#b14">[15]</ref>. In contrast, this study was conducted based on BECV to recognize job candidates' facial expressions and match and label them with their observable behaviors as consistent with the target company's core values on an individual basis. Thus, facial expressions are conceptualized as indicators of the actors' (such as the job candidates in a job interview) likely future behaviors <ref type="bibr" target="#b18">[19]</ref> in this study.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Recognizing facial expressions</head><p>Facial expression recognition can be divided into four major processes: face detection, preprocessing, feature extraction, and classification <ref type="bibr" target="#b14">[15]</ref>. Facial detection refers to identifying the region(s) of interest (ROIs) of the human face in the frames of large image sequences <ref type="bibr" target="#b27">[28]</ref>. Traditionally, the Viola-Jones object detection framework <ref type="bibr" target="#b28">[29]</ref> combined with Haar-like features, integral images, the AdaBoost algorithm, and Cascade classifier stages is commonly used to classify a human face and discard nonfaces quickly on mobile devices <ref type="bibr" target="#b29">[30]</ref>. This framework is also implemented to autodetect facial expressions in OpenCV, an open-source computer vision library <ref type="bibr" target="#b30">[31]</ref>.</p><p>Preprocessing aims to suppress unwanted distortions and enhances some features of facial expressions. Then, the facial images can be cropped using a bounding box and resized to allow for faster processing to obtain the feature descriptors <ref type="bibr" target="#b31">[32]</ref>. Moreover, using a grayscale model can reduce the effect of shooting conditions, cosmetics, and background noise <ref type="bibr" target="#b32">[33]</ref>.</p><p>Feature extraction is used to identify important features or data attributes, which is a vital process in facial expression recognition <ref type="bibr" target="#b33">[34]</ref>. Feature detection and feature extraction are two primary activities under facial feature extraction <ref type="bibr" target="#b14">[15]</ref>. Discriminative response map fitting (DRMF) is an oftperformed Holistic texture-based model for detecting facial features from each facial expression in a video clip. A total of 68 landmark points are annotated on the face <ref type="bibr" target="#b34">[35]</ref> and can serve as the input for the patterns of facial expression recognition <ref type="bibr" target="#b35">[36]</ref>.</p><p>To extract the features, each image is divided into small spatial regions, and then the gradients and orientation are calculated for every pixel in the image. The method of the feature extraction process is called a histogram of oriented gradients (HOG) <ref type="bibr" target="#b36">[37]</ref>. These features can be used to train machine learning algorithms such as linear support vector machines (SVMs) that can perform classification using a nonlinear decision boundary with a polynomial kernel <ref type="bibr" target="#b37">[38]</ref>. Dlib is a pretrained facial landmark detector and library based on HOG and SVM for automatically extracting facial features, and users can customize the model at their own discretion <ref type="bibr" target="#b38">[39,</ref><ref type="bibr" target="#b39">40]</ref>. Given recent advances in deep learning, robust facial landmark detectors have been developed based on convolutional neural networks (CNNs). These detectors include "Dlib CNN" and outperform handcrafted feature methods <ref type="bibr" target="#b40">[41]</ref>, such as "Dlib HOG-SVM." However, CNN-based methods require more memory power and are more time consuming in real-time feature extraction, whereas HOG-SVM-based methods can run faster with fewer memory resources and produce more accurate results for extracting nonocclusions and frontal facial landmarks <ref type="bibr" target="#b41">[42]</ref><ref type="bibr" target="#b42">[43]</ref><ref type="bibr" target="#b43">[44]</ref> in the context of AVI.</p><p>Classification refers to analyzing facial expression features and organizing the data into predefined categories <ref type="bibr" target="#b44">[45]</ref>. The CNN is a widely used, high-performance, and simple method for classifying facial movement features into different categories <ref type="bibr" target="#b45">[46]</ref>, primarily for emotional states based on either macro- <ref type="bibr" target="#b46">[47]</ref> or microexpressions <ref type="bibr" target="#b47">[48]</ref>. Other than emotional states, facial expressions have been used as clues for understanding human behavioral intentions by using a CNN from open-source image datasets <ref type="bibr" target="#b48">[49]</ref> or video frames of television series <ref type="bibr" target="#b49">[50]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Participants</head><p>To collect facial expression data in the context of AVI, we solicited a sponsoring organization that provided AVI records of new employees who passed their probationary period when provided with appropriate training. Additionally, included were their competency ratings (personal value-based) from their immediate supervisors. The organization is a global original design manufacturer providing services for information and communication technology products, including desktop systems, information appliances, handheld devices, storage and servers, networking and communication products, and notebook PCs. Its headquarters is located in Taiwan, and it does business in Asia, Europe, and North America. Its total revenue in 2020 was ranked on the list of global Fortune 500 companies <ref type="bibr" target="#b50">[51]</ref>. A total of 298 newly hired employees from different functions were asked by the company to participate as AVI interviewees in this study, and the interviewees' competency ratings were evaluated during their probation (training for six months) by their immediate supervisors (239 hiring managers). The newly hired employees' profiles are listed in Table <ref type="table" target="#tab_0">1</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Procedure</head><p>The participants were required to answer six core competency interview questions on mobile applications through an AVI platform developed by the authors before being hired as a permanent employee. The six behavioral-based structured interview questions were developed and used by the company to interview job candidates of different functions. These questions were asked when screening every full-time job candidate by the hiring managers to ensure that new hires had a certain level of generic (personal-based) core (value-based) competencies to fit the company's digital transformation. Each interviewee answered the same six questions in order, as listed in Table <ref type="table" target="#tab_1">2</ref>. The interviewees were invited by their HR department to sign up for the AVI on any Android or iOS mobile device, and the interviewees could decide when they were ready to start the interview within a week. The software guided them through the interview step by step, and the interviewees were informed that their answers would be used as a reference for the hiring manager's decision and that their facial expressions would be analyzed by an AI algorithm to predict the six competencies. The questions were displayed on the screen, and one minute was allowed to think after each question was announced. Audiovisual function was automatically started upon entering the answer screen. Three minutes were provided to answer each question. If an interviewee completed the question within three minutes, they could choose to skip to the next question, or the system would automatically move on to the next question after three minutes. The entire AVI process for each interviewee lasted approximately 15-18 minutes. In this study, we only collected records for the interviewees' facial expressions to predict their competencies. The interview ratings by the hiring manager were used only as a reference for the company's internal staffing decision. The ratings were not disclosed to the authors and were not used in this study.</p><p>After a three-month probationary period for the interviewees who were formally hired by the company, we collected the competency ratings evaluated by each interviewee's immediate supervisor regarding his or her observations toward the interviewee's six competencies based on the six competency behavioral incidents and rating scale without watching the video. The results are listed in Table <ref type="table">3</ref>. Every interviewee who passed the probationary period had their six competency ratings averaged by three to four items, as listed in Table <ref type="table">3</ref>. All the Cronbach's alpha (α) as Eq. ( <ref type="formula">1</ref>) of the six competency dimensions were acceptable (&gt;0.6), as shown in Table <ref type="table">3</ref>. This indicates that the items can be grouped within a specific dimension for the same construct <ref type="bibr" target="#b51">[52]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table 3 Competency Rating Scale</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Detection and preprocessing</head><p>In the stage of facial expression detection, we utilized OpenCV to detect each participant's facial expressions frame-by-frame from the AVI records at a frame rate of 20 images per second (FPS) <ref type="bibr" target="#b52">[53]</ref>. We resized all frame images at a fixed 640-pixel width to eliminate the variability in different image frames caused by rotation and shifting <ref type="bibr" target="#b52">[53]</ref>. Moreover, we located facial landmark points on each image, as shown in Fig. <ref type="figure">1</ref>, to capture the face ROI and facial deformations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 1 Facial landmark points</head><p>With regard to the rotation, we set the top landmark point at 8, the forehead and the bottom landmark at point 23, and the chin to calculate the angle to align the face for all images as Eq. ( <ref type="formula">2</ref>)-( <ref type="formula">7</ref> (6) Angle = acos ( XaXb+YaYb √Xa 2 +Ya 2 •√Xb 2 +Yb 2 ) • 180 π (7)</p><p>Afterward, the images were rotated and cropped to cover the entire face and transformed to grayscale with the purpose of reducing the noise (e.g., cosmetics, hair, and illumination) and normalizing the large-scale images <ref type="bibr" target="#b48">[49]</ref> for the preprocessing stage. This is shown in Fig. <ref type="figure">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 2 Detection and preprocessing of facial expression 3.4 Feature extraction</head><p>In the feature extraction stage, for better results, we located 86 landmark points, including the forehead region (more than 68 points were used in DRMF without the forehead region), in each image <ref type="bibr" target="#b53">[54]</ref>, as shown in Fig. <ref type="figure">1</ref>, by using Dlib HOG-SVM to capture the interviewees' microexpressions with a vector size of 4,096 values. This is shown in Fig. <ref type="figure" target="#fig_4">2</ref>.  <ref type="table" target="#tab_2">4</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>N=298</head><p>Every interviewee was assigned six competency scores, and we found that the interviewees' job function, gender, and age did not influence their six competency scores based on an analysis of variance (ANOVA) and Pearson correlation analysis. Afterward, we trained and tested the six competency models separately. We randomly split the 298 data points into a training set (148), testing set <ref type="bibr" target="#b74">(75)</ref>, and validation set (75) at a 50-25-25 ratio <ref type="bibr" target="#b54">[55]</ref>. The process aimed to build a model that can discriminate the six competency scores represented by the extracted facial expression features.</p><p>Our proposed models for the six competencies were conducted by TensorFlow CNN (version 1.15.2), as illustrated in Fig. <ref type="figure">3</ref>. The network consists of three convolutional layers followed by a max-pooling layer. A rectified nonlinear unit (ReLU) was used with convolution in the CNN models to decrease the vanishing gradient problem in a sigmoid function <ref type="bibr" target="#b55">[56]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 3 Proposed CNN models for classification</head><p>Conv layer filters the 640×640 input images. The conv layer reduced the image to 320×320×32. Conv_1 and conv_2 took the output of conv as input and scanned the images to create a feature map and reduce the image to 160×160×64. The pooling layer reduces the feature tensor obtained in conv_2 and reduces the image to 80×80×64. The same flow is output in conv_3 and conv_4 to pool_1 and pool_2 with a feature map and image size of 8×8×2048. The final convolution with a special 1×1 filter followed by average polling collected the facial information in a 1×1×4,096 feature map. The output of the final pool was passed to the softmax classifier for the classification of competency scores. The input block was used to save the weight for the next training step and the statistics. We split each output into 100 classes for the six competencies; therefore, the final layer of the model was a softmax layer with 600 (6 × 100) possible outputs.</p><p>A learning rate dropout (LRD) of 0.01 was applied to reduce overfitting. This was followed by a sequence of four convolutional layers. The first two had a filter size of 640 each and then downsized to 320, 160, 80, and 40 each. A single maxpooling layer followed these four layers with a dropout rate of 0.25. To convert the output into a single-dimensional vector, the output of the previous layers was flattened. A fully connected layer was subsequently used along with an additional dropout rate of 0.5. Eventually, a fully connected layer with a softmax activation function served as the output layer <ref type="bibr" target="#b56">[57]</ref>. Then, 4,000 training iterations were conducted with a 0.01 learning rate and 10 evaluation frequencies in this process. Moreover, we inserted batch normalization between the convolutions to normalize the inputs to layers within the network to prevent overfitting of the model <ref type="bibr" target="#b66">[67]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results</head><p>The proposed CNN models for the six competencies were trained for 256 epochs independently and reached 83%-85% validation accuracy based on our predictive scores (Xi) and the supervisors' rated scores (Yi) for the interviewees' six competencies in this field study. The training and validation loss and the validation accuracies for the six CNN-based models are shown in Fig. <ref type="figure" target="#fig_5">4</ref>. Competency prediction by facial expressions was performed using AVI plus CNN, and we followed <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b16">17]</ref> to present the accuracy, F1 score, Pearson correlation coefficient (R), explained variation (R 2 ), and mean square error (MSE) to measure the predictive validity of our proposed models. This is shown in Table <ref type="table" target="#tab_3">5</ref>.</p><p>The accuracy indicates the percentage of correct predictions as Eq. ( <ref type="formula" target="#formula_0">8</ref>): (</p><formula xml:id="formula_0">∑ 𝑑𝑖𝑎𝑔(𝑛) 𝑛 )<label>(8)</label></formula><p>The F1 score measures the overall model's accuracy and combines precision and recall as Eq. ( <ref type="formula" target="#formula_1">9</ref>):</p><formula xml:id="formula_1">( ∑ ∫ (𝑋 𝑖 1 ) n i=1 n ) (<label>9</label></formula><p>) R measures the strength of the association between the predictive scores of our modeling and the supervisors' rated scores as Eq. ( <ref type="formula" target="#formula_2">10</ref>):</p><formula xml:id="formula_2">( ∑ ( 𝑥 𝑖 -𝑥 ̅ ) 𝑖 √∑ ( 𝑥 𝑖 -𝑥 ̅ ) 2 𝑖 √∑ ( 𝑥 𝑖 -𝑥 ̅ ) 2 𝑖 )<label>(10)</label></formula><p>R 2 represents the proportion of the variance in the supervisors' rated scores that can be explained by the predictive scores from the facial expressions as Eq. ( <ref type="formula" target="#formula_3">11</ref>):</p><formula xml:id="formula_3">( ∑ ( 𝑥 𝑖 -𝑥 ̅ ) 𝑖 √∑ ( 𝑥 𝑖 -𝑥 ̅ ) 2 𝑖 √∑ ( 𝑥 𝑖 -𝑥 ̅ ) 2 𝑖 ) 2<label>(11)</label></formula><p>MSE calculates the sum of squared distances between the supervisors' rated scores and predicted scores. In contrast to the previous metrics, MSE is a risk factor. Thus, the smaller the MSE is, the better the model fits the supervisors' ratings, as shown in Eq. ( <ref type="formula">12</ref>):</p><formula xml:id="formula_4">( ∑(𝑌 ̂-𝑌) 2 n ) (12)</formula><p>The results in Table <ref type="table" target="#tab_3">5</ref> show that the facial expressions extracted by our model can predict an interviewee's six competencies as required by the Fortune 500 company. The measures of accuracy and F1 outperform the state-of-the-art methods of facial expression recognition and were between 60% and 80% <ref type="bibr" target="#b48">[49]</ref>. In terms of predictive power, our models can explain 65% to 74% of the supervisors' ratings toward their employees' competency scores. With regard to personnel selection, the correlations of our model achieved 0.81 to 0.87, which was far greater than the operational validities of structured employment interviews at 0.41, personality inventory at 0.14 to 0.25, occupational interest testing at 0.34, and assessment centers at 0.37 for training performance <ref type="bibr" target="#b57">[58]</ref>, similar to the probationary evaluation in this study. Moreover, the MSEs are all less than one SD for the six competency scores, which indicates that the risk of error is acceptable. Therefore, our proposed models can be considered alternatives to traditional selection tools for screening candidates and predicting their training performance after the probationary period. In addition, the cost of AVI plus an AI function is less than that of human-conducted selection tools, and human biases can be decreased by the AI function <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b16">17]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusions</head><p>In this study, we developed a prototype system that implements a HOG-SVM detection and feature extraction method of facial expressions plus a CNN classification architecture with fewer data <ref type="bibr" target="#b58">[59]</ref> to significantly predict the personal-and value-based competencies in a field environment. The interviewees' facial expressions were extracted by an AVI platform, and then they were analyzed by deep learning to successfully converge the patterns of facial expressions associated with the six competency scores evaluated by the employees' immediate supervisors.</p><p>The study results support and highlight the theory of BECV, which assumes that human facial expressions can reflect future behaviors <ref type="bibr" target="#b21">[22]</ref>. In addition, the novel system can automatically mark, detect, and extract an interviewee's microexpressions and output the predictive scores of different value-based personal competencies. This can replace human interviewers and traditional competency assessments in the stage of screening job candidates with higher predictive validity and lower selection cost.</p><p>To the best of our knowledge, there are no previous studies that used facial expressions (neither macro nor micro) as predictors to foresee personal-value-based competencies in the context of employment interviews. Therefore, our study proposed a state-of-the-art human resource selection and assessment method that can be used to predict behavioral competencies automatically from facial expressions in asynchronous video interviews.</p><p>Despite fewer data from a single company, the results achieved were promising. These results indicate that novel image processing combined with a deep-learning approach of such a framework can be a better method for producing a discriminative model for competency assessment based on facial expressions. This can be an indicator of future behavior within social interaction as opposed to the current emotional state alone, which is one of the current challenges in the field of AI applications of facial expressions <ref type="bibr" target="#b21">[22]</ref>. Simply put, AI can estimate how you will behave by reading your microexpressions <ref type="bibr" target="#b59">[60,</ref><ref type="bibr" target="#b60">61,</ref><ref type="bibr" target="#b67">[68]</ref><ref type="bibr" target="#b68">[69]</ref><ref type="bibr" target="#b69">[70]</ref><ref type="bibr" target="#b70">[71]</ref><ref type="bibr" target="#b71">[72]</ref><ref type="bibr" target="#b72">[73]</ref><ref type="bibr" target="#b73">[74]</ref><ref type="bibr" target="#b74">[75]</ref>.</p><p>The present study leaves a few intriguing questions open for future exploration. First, we focused on specific categories of a personal-value-based competency model that varied across organizations and industries. Future research can explore whether the effects described here also converge for other competency models, such as job-based or future-based competency approaches for knowledge, skills, or cognitive abilities.</p><p>Second, although our proposed system achieves better performance, the results are explored for a specific company and culture. Future work will be extended to other organizations in different sectors and countries.</p><p>Third, this study carried out a probationary evaluation to label competencies as criteria and achieved higher validity compared to the other selection tools. In the future, we will collect task performance records as criteria to examine criterion-related validity.</p><p>Finally, we utilized OpenCV and Dlib HOG-SVM to detect and extract frontal facial expressions. However, more challenging aspects of detecting and extracting facial expressions should be considered, including orientation variance and pose changes. Moreover, to achieve better performance, other detection and extraction methods can be implemented and evaluated, including the main directional mean optical flow (MDMO) <ref type="bibr" target="#b60">[61]</ref>, facial dynamics mapping (FDM) <ref type="bibr" target="#b61">[62]</ref>, local binary pattern-three orthogonal planes (LBP-TOP) <ref type="bibr" target="#b62">[63]</ref>, and the Gabor wavelet filter <ref type="bibr" target="#b63">[64]</ref>.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>5 : 3 :</head><label>53</label><figDesc>Demonstrates relevant behaviors accurately, consistently, and independently as a good example. 4: Demonstrates relevant behaviors accurately and consistently in most situations with minimal guidance.Demonstrates relevant behaviors accurately and consistently on familiar procedures and needs supervisor guidance. 2: Demonstrates relevant behaviors inconsistently, even with repeated instruction or guidance. 1: Fails to demonstrate relevant behaviors regardless of the guidance provided.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><figDesc>𝑁 * cv ̄+(𝑁-1) * c̄(1) N = the number of items c̄ = average covariance between item pairs v̄ = average variance</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><figDesc>): Vertical Line: (x1, y1) -(x1, y2) (2) Landmark Point 8 to 23: (x1, y1) -(x2, y2) (3) L1 = (Xa, Ya). Xa = 0, Ya = y2 -y1 (4) L2 = (Xb, Yb). Xb = x2 -x1, Yb = y2 -y1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 2</head><label>2</label><figDesc>Fig. 2 Feature extraction of facial expressions 3.5 Classification After collecting data as mentioned in section 3.2, we utilized a CNN in our proposed framework of different facial expressions to classify the six competency scores, including each mean score (mean), standard deviation (SD), maximum score (max), and minimum score (min), as shown in Table4.</figDesc><graphic coords="5,46.80,157.29,252.39,101.95" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 4</head><label>4</label><figDesc>Fig. 4 Accuracies of training and validation for the six CNNbased model</figDesc><graphic coords="6,46.80,201.75,250.95,124.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>Data Profile</figDesc><table><row><cell>Function</cell><cell>Gender</cell><cell>Average age</cell></row><row><cell>Research &amp; Development 158</cell><cell>Male 210</cell><cell>35.16</cell></row><row><cell>Engineering 40</cell><cell>Female 88</cell><cell>32.73</cell></row><row><cell>Sales 29</cell><cell></cell><cell></cell></row><row><cell>Marketing 33</cell><cell></cell><cell></cell></row><row><cell>Information System 29</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2</head><label>2</label><figDesc>Competency Interview Questions and Rating Scale</figDesc><table><row><cell cols="2">Competency Interview Questions</cell></row><row><cell cols="2">Perseverance Q1: What was the greatest obstacle you had</cell></row><row><cell></cell><cell>to overcome in the past? Please describe</cell></row><row><cell></cell><cell>the situation and how you handled it?</cell></row><row><cell>Openness</cell><cell>Q2: When you joined a new team, how did</cell></row><row><cell></cell><cell>you engage it?</cell></row><row><cell>Initiation</cell><cell>Q3: Tell me about a time when you took</cell></row><row><cell></cell><cell>initiative on a team, considering the</cell></row><row><cell></cell><cell>previous question.</cell></row><row><cell>Innovation</cell><cell>Q4: Explain a new digital tool (e.g.,</cell></row><row><cell></cell><cell>Microsoft Planner, Teams, Slack, RPA, or</cell></row><row><cell></cell><cell>Python) that you have tested. Describe how</cell></row><row><cell></cell><cell>you pitched it and what the results were.</cell></row><row><cell>Critical</cell><cell>Q5: Give me an example when you</cell></row><row><cell>thinking</cell><cell>determined that your manager or a</cell></row><row><cell></cell><cell>coworker made an incorrect decision. What</cell></row><row><cell></cell><cell>did you do?</cell></row><row><cell>Risk taking</cell><cell>Q6: How did you decide to proceed when</cell></row><row><cell></cell><cell>all conditions were variable in work</cell></row><row><cell></cell><cell>outcomes?</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 4</head><label>4</label><figDesc>Descriptive statistics of competency scores</figDesc><table><row><cell>Competency</cell><cell>Mean</cell><cell>SD</cell><cell>Max</cell><cell>Min</cell></row><row><cell>Risk taking</cell><cell>3.41</cell><cell>0.78</cell><cell>5.00</cell><cell>1.33</cell></row><row><cell>Perseverance</cell><cell>3.98</cell><cell>0.63</cell><cell>5.00</cell><cell>1.50</cell></row><row><cell>Openness</cell><cell>3.38</cell><cell>0.77</cell><cell>5.00</cell><cell>1.00</cell></row><row><cell>Initiation</cell><cell>3.60</cell><cell>0.78</cell><cell>5.00</cell><cell>1.25</cell></row><row><cell>Innovation</cell><cell>3.73</cell><cell>0.67</cell><cell>5.00</cell><cell>1.67</cell></row><row><cell>Critical thinking</cell><cell>3.33</cell><cell>0.65</cell><cell>5.00</cell><cell>1.50</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 5</head><label>5</label><figDesc>Metrics of Modeling Results</figDesc><table><row><cell>Competency</cell><cell>Accuracy</cell><cell>F1</cell><cell>R</cell><cell>R 2</cell><cell>MSE</cell></row><row><cell>Risk taking</cell><cell>85%</cell><cell>78%</cell><cell>82%</cell><cell>67%</cell><cell>0.11</cell></row><row><cell>Perseverance</cell><cell>83%</cell><cell>82%</cell><cell>81%</cell><cell>65%</cell><cell>0.13</cell></row><row><cell>Openness</cell><cell>83%</cell><cell>79%</cell><cell>87%</cell><cell>76%</cell><cell>0.04</cell></row><row><cell>Initiation</cell><cell>84%</cell><cell>78%</cell><cell>84%</cell><cell>71%</cell><cell>0.11</cell></row><row><cell>Innovation</cell><cell>83%</cell><cell>79%</cell><cell>81%</cell><cell>65%</cell><cell>0.12</cell></row><row><cell>Critical thinking</cell><cell>83%</cell><cell>83%</cell><cell>86%</cell><cell>74%</cell><cell>0.12</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">What is meant by competency?</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Woodruffe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Designing and Achieving Competency</title>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Boam</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">P</forename><surname>Sparrow</surname></persName>
+		</editor>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>McGraw-Hill</publisher>
+			<date type="published" when="1992">1992</date>
+			<biblScope unit="page" from="1" to="29" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Competencies: the right foundation the right foundation for effective human resources management</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Hofrichter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Spencer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Compens. Benefits Rev</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="21" to="26" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Competence, competency and competencies: performance assessment in organisations</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dainty</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Work Study</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="314" to="319" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Introduction to special issue on human resource competencies</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Kochanski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum. Resour. Manag</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="3" to="6" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Competence at Work: Models for Superior Performance</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Spencer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Spencer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1993">1993</date>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Competencies: alternative frameworks for competitive advantage</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Cardy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">T</forename><surname>Selvarajan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bus. Horiz</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page" from="235" to="245" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Using competencies in selection and recruitment</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Feltham</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Designing and Achieving Competency. A Competency-based Approach to Developing People and Organizations</title>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Boam</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">P</forename><surname>Sparrow</surname></persName>
+		</editor>
+		<meeting><address><addrLine>London</addrLine></address></meeting>
+		<imprint>
+			<publisher>McGraw-Hill</publisher>
+			<date type="published" when="1992">1992</date>
+			<biblScope unit="page" from="89" to="103" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The development and validation of a measure of generic work competencies</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Nikolaou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Test</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="309" to="319" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Are we asking the right questions? Predictive validity comparison of four structured interview question types</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Hartwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Posthuma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Bus. Res</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="page" from="122" to="129" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Can nonverbal cues be used to make meaningful personality attributions in employment interviews?</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Degroot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gooty</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Bus. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="179" to="192" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Personnel selection and personality</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Nikolaou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Foti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The SAGE Handbook of Personality and Individual Differences</title>
+		<editor>
+			<persName><forename type="first">V</forename><surname>Zeigler-Hill</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Shackelford</surname></persName>
+		</editor>
+		<meeting><address><addrLine>London</addrLine></address></meeting>
+		<imprint>
+			<publisher>Sage</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="659" to="677" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Understanding applicant behavior in employment interviews: a theoretical model of interviewee performance</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Huffcutt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Van Iddekinge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Roth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum. Resour. Manag. Rev</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="353" to="367" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A review of applicant faking in selection interviews</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">G</forename><surname>Melchers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Buehl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Sel. Assess</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="123" to="142" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Does the use of synchrony and artificial intelligence in video interviews affect interview ratings and applicant attitudes?</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">Y</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Y C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Hum. Behav</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="93" to="101" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A survey: facial microexpression recognition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Takalkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chaczko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multimed. Tools Appl</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="19301" to="19325" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">TensorFlow-based automatic personality recognition used in asynchronous video interviews</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="61018" to="61023" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Intelligent video interview agent used to predict communication skill and perceived personality traits</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">Y</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Hung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum.-Centric Comput. Inf. Sci</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Artificial intelligence: the robots are now hiring</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hilke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bellini</surname></persName>
+		</author>
+		<ptr target="https://www.wsj.com/articles/artificial-intelligence-the-robots-are-now-hiring-moving-upstream-1537435820" />
+	</analytic>
+	<monogr>
+		<title level="j">The Wall Street Journal</title>
+		<imprint>
+			<date type="published" when="2018-09-20">2018. 20 September 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Rethinking primate facial expression: a predictive framework</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Waller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Whitehouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Micheletta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurosci. Biobehav. Rev</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="page" from="13" to="21" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Human Facial Expression: An Evolutionary View</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Fridlund</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1994">1994</date>
+			<publisher>Academic Press</publisher>
+			<pubPlace>San Diego, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Facial expression predictions as drivers of social perception</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chanes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Wormwood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Betz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">F</forename><surname>Barrett</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Pers. Soc. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page" from="380" to="396" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Facial displays are tools for social influence</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Crivelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Fridlund</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends Cogn. Sci</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="388" to="399" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Emotional expressions reconsidered: challenges to inferring emotion from human facial movements</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">F</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Adolphs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Marsella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Martinez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Pollak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Sci. Public Interest</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="1" to="68" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">What scientists who study emotion agree about</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ekman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Perspect. Psychol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="31" to="34" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Nonverbal leakage and clues to deception</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ekman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">V</forename><surname>Friesen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psych</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="88" to="106" />
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Are smiles a sign of happiness? Spontaneous expressions of judo winners</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Crivelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Carrera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Ferná Ndez-Dols</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Evol. Hum. Behav</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="52" to="58" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">The behavioral ecology view of facial displays, 25 years later</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Fridlund</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Oxford Series in Social Cognition and Social Neuroscience. The Science of Facial Expression</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Ferná Ndez-Dols</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Russell</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Oxford, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="77" to="92" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Face detection and tracking using hybrid margin-based ROI techniques</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Rehman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Ong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C H</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">D</forename><surname>Ngo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Vis. Comput</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="633" to="647" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Rapid object detection using a boosted cascade of simple features</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Viola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jones</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition<address><addrLine>Kauai, HI, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2001">2001</date>
+			<biblScope unit="page" from="511" to="518" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Robust real-time face detection</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Viola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Jones</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vis</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="137" to="154" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Macro-and microexpression spotting in long videos using spatio-temporal strain</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Shreve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Godavarthy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Goldgof</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sarkar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Automatic Face &amp; Gesture Recognition and Workshops</title>
+		<meeting><address><addrLine>Santa Barbara, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="51" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Enhancing CNN with preprocessing stage in automatic emotion recognition</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Pitaloka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wulandari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Basaruddin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Y</forename><surname>Liliana</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Procedia Comput. Sci</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page" from="523" to="529" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The usage of grayscale or color images for facial expression recognition with deep neural networks</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Yudin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Dolzhenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">O</forename><surname>Kapustina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Computation, Machine Learning, and Cognitive Research III</title>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Kryzhanovsky</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">W</forename><surname>Dunin-Barkowski</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">V</forename><surname>Redko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Y</forename><surname>Tiumentsev</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="271" to="281" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Human vision inspired feature extraction for facial expression recognition</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sadeghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Raie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multimed. Tools Appl</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="page" from="30335" to="30353" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Robust discriminative response map fitting with constrained local models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Asthana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zafeiriou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pantic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<meeting><address><addrLine>Portland, OR, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="3444" to="3451" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Robust facial landmark detection via a fully-convolutional local-global context network</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Merget</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Rigoll</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting><address><addrLine>Salt Lake City, UT, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="781" to="790" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Histograms of oriented gradients for human detection</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dalal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Triggs</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR&apos;05)</title>
+		<meeting><address><addrLine>San Diego, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2005">2005</date>
+			<biblScope unit="page" from="886" to="893" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Facial expression recognition and histograms of oriented gradients: a comprehensive study</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Carcagnì</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Del Coco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Leo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Distante</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SpringerPlus</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">645</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Dlib-ml: A Machine Learning Toolkit</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>King</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Mach. Learn. Res</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1755" to="1758" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">PPCU sam: open-source face recognition framework</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Csaba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tamá S</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Horvá Th</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Olá H</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">Z</forename><surname>Reguly</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Procedia Comput. Sci</title>
+		<imprint>
+			<biblScope unit="volume">159</biblScope>
+			<biblScope unit="page" from="1947" to="1956" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Using neural networks to enhance the quality of ROIs for video based remote heart rate measurement from human faces</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Pursche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Clauß</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tibken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Möller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Consumer Electronics (ICCE)</title>
+		<meeting><address><addrLine>Las Vegas, NV, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">A review of image-based automatic facial landmark identification techniques</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Johnston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Chazal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EURASIP J. Image Video Process</title>
+		<imprint>
+			<biblScope unit="page">86</biblScope>
+			<date type="published" when="2018">2018. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">CNN and HOG based comparison study for complete occlusion handling in human tracking</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Aslan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Durdu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sabanci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Mutluer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Measurement</title>
+		<imprint>
+			<biblScope unit="volume">158</biblScope>
+			<biblScope unit="page">107704</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Comparison of Haar-like, HOG and LBP approaches for face detection in video sequences</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Adouani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M B</forename><surname>Henia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lachiri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">16th International Multi-Conference on Systems, Signals &amp; Devices (SSD)</title>
+		<meeting><address><addrLine>Istanbul, Turkey</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="266" to="271" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Facial expression classification: an approach based on the fusion of facial deformations using the transferable belief model</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Hammal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Couvreur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Caplier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rombaut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Approx. Reason</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page" from="542" to="567" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">A main directional mean optical flow feature for spontaneous micro-expression recognition</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Fu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affect. Comput</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="299" to="310" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Facial emotion recognition using convolutional neural networks (FERC)</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Mehendale</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SN Appl. Sci</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">446</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">A convolutional neural network for compound microexpression recognition</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page">5553</biblScope>
+			<date type="published" when="2019">2019</date>
+			<pubPlace>Basel, Switzerland</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Recognition of facial expressions based on CNN features</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Gonzá Lez-Lozoya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>De La Calleja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Pellegrin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Escalante</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Medina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Benitez-Ruiz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multimed. Tools Appl</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="13987" to="14007" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Human behavior understanding in big multimedia data using CNN based facial expression recognition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sajjad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zahir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ullah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Akhtar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Muhammad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mob. Netw. Appl</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="1611" to="1621" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title/>
+		<ptr target="https://fortune.com/fortune500/2020/" />
+	</analytic>
+	<monogr>
+		<title level="j">Fortune: Fortune</title>
+		<imprint>
+			<biblScope unit="volume">500</biblScope>
+			<date type="published" when="2020-08-11">2020. 2020. 11 August 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The use of Cronbach&apos;s Alpha when developing and reporting research instruments in science education</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">S</forename><surname>Taber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Res. Sci. Educ</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="1273" to="1296" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">A survey of automatic facial micro-expression analysis: databases, methods, and challenges</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>See</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Le Ngo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C W</forename><surname>Phan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">M</forename><surname>Baskaran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">1128</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Joint multi-view face alignment in the wild</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Trigeorgis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zafeiriou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Image Process</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Efficient deep features selections and classification for flower species recognition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cıbuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Budak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cevdet Ince</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sengur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Measurement</title>
+		<imprint>
+			<biblScope unit="volume">137</biblScope>
+			<biblScope unit="page" from="7" to="13" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Deep learning model for real-time image compression in Internet of Underwater Things (IoUT)</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Krishnaraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Elhoseny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Thenmozhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Selim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Shankar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Real-Time Image Process</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="2097" to="2111" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Facial emotion recognition using convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Saravanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Perichetla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">K S</forename><surname>Gayathri</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.05602</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">The Validity and Utility of Selection Methods in Personnel Psychology: Practical and Theoretical Implications of 100 Years of Research Findings (Fox School of Business Research Paper)</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Shaffer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>Temple University</publisher>
+			<pubPlace>Philadelphia, PA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Facial expression recognition with Convolutional Neural Networks: coping with few data and the training sample order</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">T</forename><surname>Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>De Aguiar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>De Souza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Oliveira-Santos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Pattern Recognit</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="610" to="628" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">You are what you will: Kant, schopenhauer, facial expression of emotion, and affective computing</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ger. Life Lett</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="466" to="477" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Predicting and recognizing human interactions in public spaces</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Poiesi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cavallaro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Real-Time Image Proc</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="785" to="803" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">DS-KCF: a real-time tracker for RGB-D data</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hannuna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Camplani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Real-Time Image Proc</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="1439" to="1458" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Evaluation of real-time LBP computing in multiple architectures</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bordallo López</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nieto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Boutellier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Real-Time Image Proc</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="375" to="396" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Fast Gabor texture feature extraction with separable filters using GPU</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Qin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Real-Time Image Proc</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="5" to="13" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Effects of the duration of expressions on the recognition of microexpressions</title>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">B</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">I</forename><surname>Fu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Zhejiang University SCIENCE B</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="221" to="230" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Investigating Macroexpressions and Microexpressions in Computer Graphics Animated Faces</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Queiroz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Musse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">I</forename><surname>Badler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>MIT Press</publisher>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="191" to="208" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Dropout vs. batch normalization: an empirical study of their impact to deep learning</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Garbin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Marques</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multimedia Tools and Applications</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="12777" to="12815" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Human Behavior Deep Recognition Architecture for Smart City Applications in the 5G Environment</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Network</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="206" to="211" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">A finger-worn device for exploring Chinese printed text with using CNN algorithm on a micro IoT processor</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Chou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">L</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">F</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="116529" to="116541" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Human action recognition using two-stream attention based LSTM networks</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Soft Computing</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page">105820</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Bibliometric study of social network analysis literature</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Libr. Hi Tech</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="420" to="433" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">A low-latency object detection algorithm for the edge devices of IoV systems</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Vehicular Technology</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="11169" to="11178" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Social Facebook with Big Six approaches for improved students&apos; learning performance and behavior: A case study of a project innovation and implementation course</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">1166</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Video scene segmentation using tensor-train faster-RCNN for multimedia IoT systems</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">T</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Deen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Internet of Things Journal</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Applying deep learning algorithms to enhance simulations of large-scale groundwater flow in IoTs</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Soft Computing</title>
+		<imprint>
+			<biblScope unit="volume">92</biblScope>
+			<biblScope unit="page">106298</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

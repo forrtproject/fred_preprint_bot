@@ -1,0 +1,2002 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Artificial Intelligence Can Recognize Whether a Job Applicant Is Selling and/or Lying According to Facial Expressions and Head Movements Much More Correctly Than Human Interviewers</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>Institute of Electrical and Electronics Engineers (IEEE)</publisher>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-10">2024-10</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Hung-Yue</forename><surname>Suen</surname></persName>
+							<idno type="ORCID">0000-0002-6796-2031</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Kuo-En</forename><surname>Hung</surname></persName>
+							<idno type="ORCID">0000-0003-2091-2747</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Che-Wei</forename><surname>Liu</surname></persName>
+							<idno type="ORCID">0000-0001-7483-6271</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Yu-Sheng</forename><surname>Su</surname></persName>
+							<idno type="ORCID">0009-0005-3601-1208</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Han-Chih</forename><surname>Fan</surname></persName>
+							<idno type="ORCID">0009-0000-4265-7615</idno>
+						</author>
+						<title level="a" type="main">Artificial Intelligence Can Recognize Whether a Job Applicant Is Selling and/or Lying According to Facial Expressions and Head Movements Much More Correctly Than Human Interviewers</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">IEEE Transactions on Computational Social Systems</title>
+						<title level="j" type="abbrev">IEEE Trans. Comput. Soc. Syst.</title>
+						<idno type="eISSN">2373-7476</idno>
+						<imprint>
+							<publisher>Institute of Electrical and Electronics Engineers (IEEE)</publisher>
+							<biblScope unit="volume">11</biblScope>
+							<biblScope unit="issue">5</biblScope>
+							<biblScope unit="page" from="5949" to="5960"/>
+							<date type="published" when="2024-10" />
+						</imprint>
+					</monogr>
+					<idno type="MD5">2A3F6EE473BD7924FBE1B3119B09A092</idno>
+					<idno type="DOI">10.1109/tcss.2024.3376732</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:16+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>affective computing</term>
+					<term>applicant faking</term>
+					<term>emotion sensing</term>
+					<term>FaceMesh</term>
+					<term>long short-term memory (LSTM)</term>
+					<term>threedimensional convolutional neural network (3D-CNN)</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Whether an interviewee's honest and deceptive responses can be detected by the signals of facial expressions in videos has been debated and called to be researched. We developed deep learning models enabled by computer vision to extract the temporal patterns of job applicants' facial expressions and head movements to identify self-reported honest and deceptive impression management (IM) tactics from video frames in real asynchronous video interviews. A 12-to 15-minute video was recorded for each of the N=121 job applicants as they answered five structured behavioral interview questions. Each applicant completed a survey to self-evaluate their trustworthiness on 4 IM measures. Additionally, a field experiment was conducted to compare the concurrent validity associated with self-reported IMs between our modeling and human interviewers. Human interviewers' performance in predicting these IM measures from another subset of 30 videos was obtained by having N=30 human interviewers evaluate three recordings. Our models explained 91% and 84% of the variance in honest and deceptive IMs, respectively, and showed a stronger correlation with self-reported IM scores compared to human interviewers.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>N employment interviews, job applicants aim to create a positive impression to sway the interviewers' evaluations and increase their likelihood of securing a job offer <ref type="bibr" target="#b0">[1]</ref>. This strategy is known as impression management (IM), which can manifest in either honest or deceptive forms (i.e., dishonest or faking) <ref type="bibr" target="#b1">[2]</ref>. For example, job applicants may use honest IM to promote their accomplishments related to the job requirements, or they might use deceptive IM to fabricate answers to interview questions and claim nonexistent achievements to obtain a job This research was partially supported by the National Science and Technology Council (NSTC), Taiwan, under grants NSTC 109-2511-H-003-046, NSTC 110-2511-H-003-044-MY2, NSTC 112-2410-H-003-102-MY2, and NSTC 111-2410-H-019-006-MY3.</p><p>offer <ref type="bibr" target="#b2">[3]</ref>. While honest IM can improve selection validity, showcasing an applicant's self-presentation skills, deceptive IM risks injecting bias into hiring decisions <ref type="bibr" target="#b3">[4]</ref>. Past research has found that even experienced interviewers cannot accurately detect and distinguish between interviewees' honest and deceptive IM behaviors (IMs), potentially distorting or inflating an interview evaluation <ref type="bibr" target="#b4">[5]</ref>. This issue persists even in highly structured interviews <ref type="bibr" target="#b1">[2]</ref>. The exploration of nonverbal valid deception signals and assessments in employment interviews is an area that requires further investigation, as called for by both psychologists <ref type="bibr" target="#b5">[6]</ref> and computer scientists <ref type="bibr" target="#b6">[7]</ref>.</p><p>Psychological research suggests that facial expressions inherently serve as signals of emotional states. However, individuals do not always have full control over their facial muscles, which may inadvertently reveal their true emotional states. This phenomenon, known as emotional leakage, happens when the signals conveyed by facial expressionsintentionally or otherwise -unveil emotions that individuals are trying to hide or express more intensely or involuntarily than initially intended <ref type="bibr" target="#b7">[8]</ref>.</p><p>In certain situations, individuals may alter their expressions and head motions for image management and to conceal deceptive behaviors <ref type="bibr" target="#b8">[9]</ref>. This phenomenon leads to the 'rigidity effect', wherein deceivers deliberately limit their facial expressions and head movements to appear truthful, particularly when under scrutiny or at risk of detection <ref type="bibr" target="#b9">[10]</ref>. Consequently, the analysis of facial expressions and head movements becomes crucial in discerning both honest and deceptive behaviors.</p><p>A meta-analysis of 206 documents comprising 24,483 records <ref type="bibr" target="#b10">[11]</ref> revealed that humans have a limited ability to distinguish between honest and deceptive expressions. The analysis revealed that humans correctly identified 61% of truthful messages as truthful and 47% of deceptive messages as deceptive.</p><p>*Corresponding authors: Yu-Sheng Su (ccucssu@gmail.com) Hung-Yue Suen, Kuo-En Hung, Che-Wei Liu, Yu-Sheng Su*, and Han-Chih Fan Artificial Intelligence can Recognize Whether a Job Applicant is Selling and/or Lying According to Facial Expressions and Head Movements Much More Correctly Than Human Interviewers</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I</head><p>With employment interviews, regardless of their experience, human interviewers can correctly recognize honest IMs at a rate of 13% to 29% and deceptive IMs at a rate of 12% to 19% <ref type="bibr" target="#b4">[5]</ref>. Roulin and Powell <ref type="bibr" target="#b11">[12]</ref> suggest that human interviewers struggle to accurately identify IMs, as they often rely on invalid cues from interviewees, such as anxiety. Dishonest interviewees tend to suppress their expressions more than honest ones to conceal their anxiety.</p><p>Research in psychology has revealed that even trained professionals struggle to accurately interpret the emotions of individuals based solely on legitimate cues from facial expressions. This challenge in discerning genuine and deceptive behaviors arises because reliable cues in facial expressions often occur in situations involving mixed or intricate deceptive strategies, which are not easily assessed through isolated cues. Furthermore, many of these reliable cues in facial expressions are too fleeting and subtle to be captured by the human eye. As a result, the limited attention span and memory capacity of human observers hinder their ability to identify and remember all the potential cues present in an individual's facial expressions <ref type="bibr" target="#b12">[13]</ref>.</p><p>Alternatively, an artificial intelligence (AI) facial expression detector, enabled by deep learning (DL), can augment the human ability to effectively discriminate between honest and deceptive IMs <ref type="bibr" target="#b13">[14]</ref>. These methods are widely applied for automatically detecting deception from videos in high-stakes situations <ref type="bibr" target="#b6">[7]</ref>, <ref type="bibr" target="#b14">[15]</ref>- <ref type="bibr" target="#b17">[18]</ref>, such as in the context of employment interviews. To achieve cost savings and avoid human interaction during the pandemic, asynchronous video interview platforms (AVIs) have been increasingly implemented by employers to screen job candidates <ref type="bibr" target="#b18">[19]</ref>. AVIs powered by DL provide a resourceful channel to extract features for detecting job applicants' IMs <ref type="bibr" target="#b19">[20]</ref>, <ref type="bibr" target="#b20">[21]</ref>.</p><p>The use of facial expressions, analyzed by computer vision to detect deception, has been a widely debated topic. Previous studies have linked specific emotions to facial action units (AUs), which correspond to different facial muscles controlling aspects of movement. However, the reliability of AUs as indicators of emotions has been questioned due to potential influences from cultural norms, individual differences, and context <ref type="bibr" target="#b21">[22]</ref>.</p><p>Due to the lack of real-time interaction between job applicants and interviewers in AVIs, and considering that research on IMs is largely limited to face-to-face contexts, the manifestation of candidate IMs in AVIs, as well as how AI technology integration in AVIs influences interview evaluations, has been a topic calling for research <ref type="bibr" target="#b18">[19]</ref>, <ref type="bibr" target="#b22">[23]</ref>, <ref type="bibr" target="#b23">[24]</ref>.</p><p>To date, there has been no empirical research on the detection of IMs in AVIs by AI in real-life scenarios. Furthermore, no study has yet compared the effectiveness of AI with that of human judges in identifying IMs through facial expressions and head movements in high-stakes situations.</p><p>To address these limitations and build upon previous work, this research utilized computer vision and DL to identify and differentiate self-reported honest and deceptive IMs during highstakes employment interviews from video sequences on an AVI platform. Unlike previous studies, this approach captured temporal patterns of facial expressions and head movements, rather than relying solely on AUs or human-coded emotion states. Furthermore, we assessed the validity of the AI detector versus professional human interviewers in identifying self-reported honest and deceptive IMs across multiple dimensions. The remainder of this paper is organized as follows: Section II presents the related works for IM behavior detection using facial expressions from videos. Section III introduces the proposed methodology of our experiment for developing an AI detector that can identify various IMs in AVIs. Section IV demonstrates and analyzes the results of the experiment and the accuracy of IM identification by our AI detector and human interviewers. Section V discusses the findings and future work for these techniques and practices.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. BACKGROUND AND RELATED WORKS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. IM as a Signaling Game in an Employment Interview</head><p>Building on signaling theory <ref type="bibr" target="#b24">[25]</ref>, job interviewees attempt to convey positive and negative messages to present their suitability, while interviewers or raters interpret these signals to make hiring recommendations <ref type="bibr" target="#b25">[26]</ref>. These signals can indicate either honest or deceptive IM <ref type="bibr" target="#b3">[4]</ref>. Honest IM involves attractively presenting oneself through qualifications (honest selfpromotion), praising the interviewer (honest ingratiation), and recounting actions taken to prevent negative occurrences (honest defensiveness). On the other hand, deceptive IM includes subtly crafting an image close to the truth of being a good candidate (slight image creation), extensively fabricating an image that includes false information (deceptive extensive image creation), defending an image by omitting negative information (deceptive image protection), and attempting to please the interviewer to gain favor, regardless of the selection criteria (deceptive ingratiation).</p><p>Although job interviewees may intentionally convey signals for both honest and deceptive IMs, signal receivers often attend to both the intended signals and unintended ones. These can include nonverbal deception cues such as the interviewees' rigidity and the temporal patterns of their facial expressions and head movements <ref type="bibr" target="#b26">[27]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Facial Expressions and Head Movements as Signals for</head><p>Identifying IM Facial expressions can be categorized into two distinct patterns: micro and macro expressions. Microexpressions last less than 1/2 of a second and usually last only 1/15 to 1/25 of a second <ref type="bibr" target="#b27">[28]</ref>, which reveals that a person is trying to mask or suppress some signals in his or her facial expressions <ref type="bibr" target="#b28">[29]</ref>. Some deception studies have studied macroexpressions (lasting &gt;=0.5 seconds) rather than microexpressions (lasting &lt;0.5 seconds) and found fewer cues or signals to predict human deception from facial expressions <ref type="bibr" target="#b12">[13]</ref>, <ref type="bibr" target="#b29">[30]</ref>, <ref type="bibr" target="#b30">[31]</ref>. In most cases, microexpressions are more informative and ecologically valid for detecting deception than macroexpressions. <ref type="bibr" target="#b31">[32]</ref>.</p><p>According to Warren et al. <ref type="bibr" target="#b12">[13]</ref>, "subtle expressions" can serve as reliable indicators for identifying deception and are comparable or even superior to microexpressions. Subtle expressions occur infrequently in mini regions of the face when a person is lying and are not easily detected by human eyes because of the restricted and small regions and their infrequent manner (i.e., "subtlety"), although not because of the duration of the facial muscle movement <ref type="bibr" target="#b32">[33]</ref>. Thus, subtle expressions may contain both macro-and microexpressions <ref type="bibr" target="#b33">[34]</ref>.</p><p>Although subtle and microexpressions are reliable and valid signals for discriminating between honest and dishonest individuals in labs using supported instruments <ref type="bibr" target="#b31">[32]</ref>, <ref type="bibr" target="#b34">[35]</ref>, most human observers have cognitive loads or coding limitations that prevent them from reading these signals because subtle and microexpressions are indistinct, temporal, and short-lived <ref type="bibr" target="#b35">[36]</ref>.</p><p>Computers and humans have vastly different abilities to detect deception <ref type="bibr" target="#b36">[37]</ref>. To improve human detection ability, Ekman et al. <ref type="bibr" target="#b37">[38]</ref> developed the facial action coding system (FACS), which utilizes all possible visible signals of facial muscle movements, including subtle and microexpressions. This approach depends on human experts to label the AUs related to universal emotions from static images, which can be biased and constrained by a universal framework that overlooks cultural variations <ref type="bibr" target="#b38">[39]</ref>. Additionally, the use of static images may not fully capture the complexity and inconsistency of individual subtle-and microexpressions in specific stimuli and contexts, which can hamper detection reliability in related works <ref type="bibr" target="#b21">[22]</ref>, <ref type="bibr" target="#b39">[40]</ref>.</p><p>Studies in cognitive science show that deception signals are rich but subtle and discrete across multiple timescales, with varying degrees of pattern and regularity. Instead, the temporal patterns of facial expressions should be fully captured to identify more valid and discrete signals that can distinguish honest and deceptive IMs <ref type="bibr" target="#b21">[22]</ref>, <ref type="bibr" target="#b39">[40]</ref>. Given that to achieve the goal of capturing temporal patterns of facial expressions, including macro-, subtle-, and microexpressions, as well as head movements, a more effective methodology would be to use sequence images instead of static images from videos and employ computer vision-based motion profiles. By leveraging computer vision and neural networks (NNs), it is possible to analyze and decode the complex, temporal patterns of facial expressions and head movements.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. AI Modeling to Decode the Signals</head><p>Wu et al. <ref type="bibr" target="#b17">[18]</ref> suggested using computer vision to capture and decode the temporal patterns of facial expressions, aiming to create an automatic deception detector for video applications. In addition, Twyman et al. <ref type="bibr" target="#b40">[41]</ref> proposed that computer vision enabled with DL via neural networks (NNs) can achieve better detection accuracy than human observers in field online automated interview settings, such as in AVIs.</p><p>The iBorderCtrl Intelligent Portable Control System is the first known attempt to utilize computer vision and NNs to develop an AI model that can evaluate the deception risk of third-country national travelers crossing EU land borders. The system works by analyzing passengers' nonverbal signals, including facial expressions and head movements, during an AI interview conducted by a virtual agent, Avatar. The system was developed based on the "silent talker" concept, which involves asking passengers a series of security questions (e.g., "What is your citizenship and the purpose of your trip?") and assigning a truthfulness score out of 100. Funding for this project was provided by the European Union's (EU) Horizon research and innovation program <ref type="bibr" target="#b41">[42]</ref>.</p><p>The original silent talker approach had an accuracy rate of only 43-54% in identifying deception, which was no better than human judgment <ref type="bibr" target="#b10">[11]</ref>. The developers of iBorderCtrl fine-tuned the system and subsequently trained and tested a sample of 32 volunteer participants. The results demonstrated that the system could achieve an overall accuracy rate of 75.55% for identifying honest interviewees and 73.66% for detecting deceptive ones <ref type="bibr" target="#b42">[43]</ref>.</p><p>Hereafter, several studies have subsequently introduced AI deception works based on facial expressions using NNs and videos from real-life court trials <ref type="bibr" target="#b6">[7]</ref>, <ref type="bibr" target="#b14">[15]</ref>- <ref type="bibr" target="#b17">[18]</ref>. Although facial expressions are more effective cues for detecting deception than body language or speech analysis <ref type="bibr" target="#b43">[44]</ref>, the labeling of facial expressions in these studies relied on human hand-crafted features. These include AUs or human-coded emotion states associated with inferred deception, rather than deception itself <ref type="bibr" target="#b44">[45]</ref>. In employment interviews, the range of IMs is varied, and they cannot be solely categorized as honest or deceptive <ref type="bibr" target="#b3">[4]</ref>.</p><p>To overcome the shortcomings identified in previous studies, our study employed computer vision and NNs to capture the temporal patterns of facial expressions and head movements as deep features <ref type="bibr" target="#b45">[46]</ref>. These features enable the AI discrimination of self-reported honest and deceptive IMs during real employment interviews, using image sequences from videos on an AVI platform. Additionally, we compared the efficacy of our AI detector with that of professional human interviewers in accurately identifying self-reported honest and deceptive IMs across various dimensions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Data Collection and Data Labeling with IM</head><p>The study adopted a field experimental design in which we contracted a Taiwanese company that uses an AVI platform based on an agreement of industry-academia cooperation. The company and its subsidiaries screen their job applicants by the AVI in the initial stage of pre-employment assessment. The company's HR department helped us by sending invitation emails to their job applicants who applied to fill a job vacancy in the company on the AVI. The participants responded to us through an online survey system without the company's knowledge. We solicited 150 participants to build a real-life dataset based on our research funding. Twenty-nine job applicants' data were eliminated from this study because they did not complete the recorded video interview or questionnaires thoroughly.</p><p>The remaining 121 job applicants were from various industrial sectors (Public service 2.48%, Administration 2.48%, Communication 4.13%, Hospitality 0.83%, Retail marketing 16, Customer service 12, Finance 14, Technical service 13.22%, Education &amp; training 9.09%, Logistic 2.48%, Manufacturing 8.26%, Construction 1.65%, Medical health 3.31%, Entertainment 4.13%, and Others 13.22%); genders (Male 46.28%, Female 53.72%), educational degrees (Doctorate 0.83%, Master 26.44%, Bachelor 72.73%), and positions (Manager 21.49%, non-Manager 78.51%). Their average age and average years of work experience were 30.37 and 5.41, respectively.</p><p>Everyone who applied to the company was invited to log into the AVI software page, after which the interview process began automatically. Each question was displayed on a single screen of the interviewees' mobile devices, with a three-minute time limit to respond before the software automatically progressed to the next question page. If the interviewee finished the question within three minutes, he/she could press the next question button.</p><p>Interviewees faced five structured behavioral questions crucial for different job roles, focusing on assessing interpersonal communication skills. These questions drew on past experiences and avoided hypothetical or future-oriented scenarios (e.g., "Can you share an instance when you had to simplify and explain a complex procedure or task to an individual or a team?"). Using behavioral-based structured interview questions was expected to trigger the interviewees' honest self-promotion, honest defensiveness, deceptive image creation (lying), and deceptive image protection <ref type="bibr" target="#b3">[4]</ref>. The entire interview process for each participant took approximately 15 minutes to complete. The hiring process in the AVI protocol did not permit requests for reviewing and rerecording.</p><p>Following the interview, participants were sent an email invitation to participate in the study. Participants who agreed to participate completed an online questionnaire on self-reported honest and deceptive IMs and signed an electronic consent form. The authors ensured that all personal information would be kept confidential and protected and that the data collected would be used only for academic research purposes. They also guaranteed that the information would not be disclosed to any parties that could potentially impact employers' hiring decisions. This approach was preferred because self-reported measures are considered more reliable than human observations when the reporter is not motivated to fake their answers <ref type="bibr" target="#b46">[47]</ref> Bourdage et al.'s <ref type="bibr" target="#b3">[4]</ref> short five-point scale was used to assess honest and deceptive self-reported IMs. This scale comprises 4 items each for honest self-promotion, honest defensiveness, deceptive extensive image creation, and deceptive image protection, along with an additional 2 items for deceptive slight image creation, totaling 18 items. The original questions about honest ingratiation, deceptive ingratiation, and two specific questions about slight image creation ("I distorted my answers based on the comments or reactions of the interviewer" and "I distorted my answers to emphasize what the interviewer was looking for") <ref type="bibr" target="#b3">[4]</ref>  <ref type="bibr" target="#b19">[20]</ref> were excluded. These questions were omitted as they require two-way interviewee-interviewer interactions, which are not applicable in one-way AVIs.</p><p>To validate our DL modeling and compare it with the ability of human interviewers to identify honest and deceptive IM, we recruited 30 HR professionals from a Taiwanese HR association, each with over three years of experience in employment interviewing. These interviewers assessed the IMs of 30 interviewees using an additional testing set of 30 video data sources, which were separate from the 121 sources used for modeling. A total of 24 female (80%) interviewers (average age: 35.8 years; average years of permanent job experience: 9.9 years) and 6 male (20%) interviewers (average age: 34.2 years; average years of permanent job experience: 8.3 years) participated in the study.</p><p>The 30 human interviewers were asked to rate the honest and deceptive IMs of three interviewees each based on the 18-item questionnaire using the 30 video data sources. Likewise, each interviewee was evaluated by three human interviewers based on their IMs, as observed by the interviewers.</p><p>The 30 videos were recorded by real job applicants from various industrial sectors collaborating with this study at the same company. These sectors included Public Service (3.33%), Administration (3.33%), Communication (3.33%), Hospitality (3.33%), Retail Marketing (2), Customer Service (6.67%), Finance (2), Technical Service (6.67%), Education &amp; Training (3.33%), Logistics (3.33%), Manufacturing (3.33%), Construction (3.33%), Medical Health (3.33%), Entertainment (3.33%), and Others (6.67%). The participants comprised 14 males (46.67%) and 16 females (53.33%) with educational qualifications of Master's degrees (5, 16.67%) and Bachelor's degrees (25, 83.33%), and professional positions of Manager (5, 16.67%) and Non-Manager (25, 83.33%). The average age of the participants was 30.95 years, with an average work experience of 6.25 years.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Analyzing Temporal Facial and Head Movement Patterns</head><p>We obtained the initial 121 interview videos and transformed them into image sequences by employing OpenCV. This approach enabled us to capture the macro-, subtle-, and microexpressions, as well as head movements of each participant frame-by-frame from the videos, which were recorded at 30 frames per second (fps), as employed by Qu et al. <ref type="bibr" target="#b47">[48]</ref>. To minimize the variability of the image frames resulting from rotation and shifting, we resized the frame images to a uniform width of 640 pixels <ref type="bibr" target="#b48">[49]</ref>. The video recordings from the AVI software used in this study were captured at a resolution of 720 pixels, and the majority of the job applicants' smartphones captured video at a resolution of 720 pixels and a maximum of 30 fps <ref type="bibr" target="#b49">[50]</ref>.</p><p>To capture the temporal patterns of the interviewees' facial expressions and head movements, which included facial movements, head nods, head shakes, and head twists, we identified the facial landmarks in each image sequentially at 30 fps <ref type="bibr" target="#b50">[51]</ref>. This process involved detecting the regions of interest (ROIs) on the face and the corresponding facial deformations, rather than merely counting static AUs. We utilized the Google MediaPipe FaceMesh library, capable of estimating 468 3D facial landmarks in real-time on mobile devices without the need for dedicated depth sensors. This tool is effective for identifying facial positions to estimate transformations within a metric 3D space <ref type="bibr" target="#b51">[52]</ref>, as shown in Fig. <ref type="figure" target="#fig_0">1</ref>. The MediaPipe Face Mesh utilizes two interconnected NN models to deduce the 3D surface geometry of a human face from a single smartphone or webcam input, eliminating the need for specialized depth sensors. One model processes the entire image to identify face locations, while the other focuses on these located faces to predict their 3D surface geometry using regression <ref type="bibr" target="#b52">[53]</ref>.</p><p>To ensure precise identification of facial landmarks even when interviewees move their heads, preprocessing techniques such as localization, translation, and rotation are employed to crop and detect face images. Subsequently, the color images are converted to grayscale to reduce noise and normalize the largescale images.</p><p>As illustrated in Fig. <ref type="figure">2</ref>, we established a horizontal axis (in orange) to align the corners of the eyes and then utilized the rectangle of 3D surface geometry to detect angle and proportion changes along this axis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 2. Eye corner alignment</head><p>To convert the original 2D images into a vector of 3D coordinates, we transformed these images into 3D space using a Cartesian coordinate system <ref type="bibr" target="#b53">[54]</ref>, as shown in Fig. <ref type="figure" target="#fig_1">3</ref>. We obtained P(𝑋 𝑓𝑚 , 𝑌 𝑓𝑚 , 𝑍 𝑓𝑚 ) from FaceMesh, where the y-coordinate matches the previously mentioned horizontal axis. The x and y coordinates of the vertices match the points in the 2D image. We rotated the 2D images along the x-, y-, and zaxes using the Cartesian coordinate system. The height (h) and width (w) of the image were calculated as depicted in equation (1), while the 3D Cartesian space was defined by a transformation matrix (2). 𝑓 = √ℎ 2 + 𝑤 2  (1)</p><formula xml:id="formula_0">[ 𝑥 𝑦 𝑧 ] = [ 1 0 -𝑤/2 0 1 -ℎ/2 0 0 0 0 1 1 ] [ 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 ] [ 𝑓 0 𝑤/2 0 0 𝑓 ℎ/2 0 0 0 1 0 ] [ 𝑋 𝑓𝑚 𝑌 𝑓𝑚 𝑍 𝑓𝑚 ]<label>(2)</label></formula><p>After transforming the 3D coordinates, we processed and computed the images as follows: each image's timing was denoted as (t), and the image at a specific time was referred to as (𝑓𝑟𝑎𝑚𝑒[𝑡]). The corner of the left eye in the image at a specific time was set as 𝑝1(𝑥1, 𝑦1, 𝑧1), and the corner of the right eye at the same time was set as 𝑝2(𝑥2, 𝑦2, 𝑧2) , forming a line L1 between p1 and p2. In the subsequent time series, 𝑓𝑟𝑎𝑚𝑒[𝑡 + 1], we formed line L2 connecting points 𝑝3(𝑥3, 𝑦3, 𝑧3) and 𝑝4(𝑥4, 𝑦4, 𝑧4) . The image sequences in 𝑓𝑟𝑎𝑚𝑒[𝑡 + 1] were then rotated along the x-, y-, and z-axes. The angles along these axes were computed as equations ( <ref type="formula">3</ref>), (4), and (5), respectively. 𝜃 𝑥𝑦 represents a head twist along the z-axis and can be computed using matrix 𝑅 𝑧 . 𝜃 𝑥𝑧 represents a head nod along the y-axis and can be computed using matrix 𝑅 𝑦 . 𝜃 𝑧𝑦 represents a head shake along the x-axis and can be computed using matrix 𝑅 𝑥 .</p><formula xml:id="formula_1">𝜃 𝑥𝑦 = tan -1 ( |𝑦 2 -𝑦 1 | |𝑥 2 -𝑥 1 | ) •</formula><p>180 𝜋 -tan -1 ( |𝑦 3 -𝑦 4 | |𝑥 3 -𝑥 4 | ) • 180 𝜋 (3) 𝜃 𝑥𝑧 = tan -1 ( |𝑧 2 -𝑧 1 | |𝑥 2 -𝑥 1 | ) • 180 𝜋 -tan -1 ( |𝑧 3 -𝑧 4 | |𝑥 3 -𝑥 4 | ) • 180 𝜋 (4) 𝜃 𝑧𝑦 = tan -1 ( |𝑦 2 -𝑦 1 | |𝑧 2 -𝑧 1 | ) • 180 𝜋 -tan -1 ( |𝑦 3 -𝑦 4 | |𝑧 3 -𝑧 4 | ) • 180 𝜋 (5)</p><p>Subsequently, we derived 𝜃 𝑥𝑦 , 𝜃 𝑥𝑧 and 𝜃 𝑧𝑦 . The rotation matrices 𝑅 𝑥 , 𝑅 𝑦 and 𝑅 𝑧 were defined by rotation matrices ( <ref type="formula">6</ref>), <ref type="bibr" target="#b6">(7)</ref>, and (8), respectively. Matrix (6) was used to describe the scenario of an object rotating around the x-axis, such as the head nodding up and down. Matrix (6) was used to describe the scenario of an object rotating around the x-axis, like the head shaking left and right. Matrix (7) captured the rotation around the y-axis, such as the head nodding up and down. Matrix <ref type="bibr" target="#b7">(8)</ref> depicted rotation around the z-axis, such as looking left or right or twisting the head. In these matrices, 𝑐𝑜𝑠(𝜃) , and 𝑠𝑖𝑛(𝜃) represented the cosine and sine values of angle θ, respectively. These matrices allowed us to precisely apply rotation operations to points or objects in three-dimensional space, altering their orientation without changing their positions. </p><p>To maintain a consistent distance between the eyes after rotation, we used the distance from 𝑝1(𝑥1, 𝑦1, 𝑧1) , to 𝑝2(𝑥2, 𝑦2, 𝑧2) as a basis, and the distance from the rotated 𝑝3(𝑥3, 𝑦3, 𝑧3) to 𝑝4(𝑥4, 𝑦4, 𝑧4), to calculate the scaling ratios for x, y, z as shown in matrix <ref type="bibr" target="#b8">(9)</ref>.</p><formula xml:id="formula_3">𝑆 𝑐 = [ |𝑥2-𝑥1| |𝑥4-𝑥3| 0 0 0 0 |𝑦2-𝑦1| |𝑦4-𝑦3| 0 0 0 0 |𝑧2-𝑧1| |𝑧4-𝑧3| 0 0 0 0 1 ]<label>(9)</label></formula><p>After scaling, the image might not fit the original canvas. Thus, we adjusted the x, y, and z axes using shearing matrices <ref type="bibr" target="#b9">(10)</ref>, <ref type="bibr" target="#b10">(11)</ref>, and <ref type="bibr" target="#b11">(12)</ref>. Since the rotation was counterclockwise, we converted the angle θ to φ, with 𝜑 = 𝜃 -360°.</p><formula xml:id="formula_4">𝑆ℎ 𝑥 = [ 1 0 0 0 𝑡𝑎𝑛(𝜑 𝑦 ) 1 0 0 𝑡𝑎𝑛(𝜑 𝑧 ) 0 1 0 0 0 0 1 ] (<label>10</label></formula><formula xml:id="formula_5">)</formula><formula xml:id="formula_6">𝑆ℎ 𝑦 = [ 1 𝑡𝑎𝑛(𝜑 𝑥 ) 0 0 0 1 0 0 0 𝑡𝑎𝑛(𝜑 𝑧 ) 1 0 0 0 0 1 ] (<label>11</label></formula><formula xml:id="formula_7">)</formula><formula xml:id="formula_8">𝑆ℎ 𝑧 = [ 1 0 𝑡𝑎𝑛(𝜑 𝑥 ) 0 0 1 𝑡𝑎𝑛(𝜑 𝑦 ) 0 0 0 1 0 0 0 0 1 ]<label>(12)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Modeling IM Based on 3D-CNN and LSTM</head><p>In our proposed method, we used a three-dimensional convolutional neural network (3D-CNN) <ref type="bibr" target="#b54">[55]</ref> as the DL algorithm to estimate two honest IMs and two deceptive IMs because CNN is a widely used, high-performing, and uncomplicated method for recognizing facial and head movement features <ref type="bibr" target="#b55">[56]</ref>. The 3D-CNN combines a CNN with a temporal dimension to process spatiotemporal data from video sequences. On average, each candidate's total video recording was approximately 15 minutes long. We split them into 5minute segments and recorded a new segment every minute, resulting in a 4-minute overlap with the previous segment according to the "motion estimation" approach <ref type="bibr" target="#b56">[57]</ref>. Each participant provided 11 video clips, resulting in a total of 1,331 short video clips used for each model. Our modeling was built on Python (version 3.7.13) using the TensorFlow framework (version 2.10.0) with the Keras library (version 2.10.0). We utilized a 3D-CNN model to process the videos and used long short-term memory (LSTM) to extract features with time sequences. These features were then fed into the regression head, which outputted values in the range of <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b4">5]</ref> as the IM scale, as shown in Fig. <ref type="figure" target="#fig_4">4</ref>. The dataset underwent random division into training, validation, and testing sets with an 80-10-10 ratio <ref type="bibr" target="#b57">[58]</ref>. The process aimed to train, select, and generalize the four models that can automatically estimate the four IM scores using the extracted temporal features of facial expressions and head movements.</p><p>The models' inputs were the entire interview video sequence frames, including fps×image pixels×3 RGB color channels, and processed facial landmarks to emphasize the ROIs for the 3D-CNN. The output was the IM scores across four IM dimensions.</p><p>The network consisted of several fixed convolutional 3D layers (Conv3D) and pooling layers (Pool). Conv3D summarizes the features in an input image by applying learned filters. A pooling layer was then added to downsize the features in patches of feature maps created by Conv3D. To address the vanishing gradient issue linked to sigmoid and hyperbolic tangent activation functions, Conv3D applied a rectified nonlinear unit to the feature maps <ref type="bibr" target="#b58">[59]</ref>.</p><p>As depicted in Fig. <ref type="figure" target="#fig_4">4</ref>, the 640×640 input images with 30 fps and 3 color channels (30×640×640×3) were initially filtered by Conv3D with random weights. The images were then reduced to 30×320×320×32 by the Conv3D_1 layer. Subsequently, the Pool_1 layer downsized the image to 30×160×160×64. This process was repeated from the Conv3D_2 layer to the Pool_2 layer and from the Conv3D_3 layer to the Pool_3 layer, resulting in feature maps and an image size of 30×10×10×256. The Padding layer expanded the image size to 30×30×30×256 from the Pool_3 layer. The Conv3D_4 layer further reduced the image size to 30×8×8×512. The Pool_4 layer then minimized the feature tensor obtained in Conv3D_5 to an image size of 30×2×2×2048. The final convolution reduced the image to 30×1×1×4096 with a 1×1 filter through average pooling to compute each patch on the feature map. The fully connected layer computed the IM scores and delivered them to the Long Short-Term Memory (LSTM) layer <ref type="bibr" target="#b59">[60]</ref> with 512 units. Eventually, the output of the LSTM layer was sent to the regression head to estimate each IM score.</p><p>The regression head included 4 dense layers and performed 3D-CNN network computations from input features to output data, applying the LSTM layer followed by ReLU activations. The input to the Dense_1 layer began with 512 units from LSTM. The process from the Dense layer to Dropout was repeated until Dense_4 was fully connected with 128 neurons. A dropout layer was included between each pair of dense layers at a rate of 0.5 to prevent model overfitting <ref type="bibr" target="#b60">[61]</ref>. During the training process, we iterated a thousand times, with each batch consisting of 4 samples, a learning rate of 0.001, and an evaluation frequency of every 10 batches. IV. RESULTS</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Self-reported IM: Statistics, Validity, and Reliability</head><p>To assess the construct validity and reliability of our model for self-reported IMs -including honest self-promotion, honest defensiveness, deceptive slight/extensive image creation, and deceptive image protection -which consist of 18 items from Bourdage et al.'s <ref type="bibr" target="#b1">[2]</ref> IM scales, we translated these scales from English into Mandarin Chinese. We then conducted an exploratory factor analysis (EFA) with varimax rotation (eigenvalues &gt; 1) and performed an internal consistency analysis using Cronbach's alpha.</p><p>The EFA indicated that the two items of deceptive slight image creation and the four items related to deceptive extensive image creation converged under a single dimension. As a result, this dimension has been designated as 'Deceptive image creation'. The remaining three dimensions were found to be in alignment with those of the original scale.</p><p>Prior to performing the EFA, Kaiser-Meyer-Olkin (KMO) and Bartlett's test of sphericity were conducted to test whether our sampling was adequate for factor analysis. The results showed that the KMO value (0.84) was more than 0.5 with a significant Bartlett's test (&lt;0.01), which indicated that factor analysis was appropriate for our sampling data <ref type="bibr" target="#b61">[62]</ref>.</p><p>The mean, standard deviation (SD), range (from minimum to maximum values), and mean score distributions for the IM dimensions are shown in Table <ref type="table">I</ref>. The table reveals that, on average, applicants in this study demonstrated more honest behaviors than deceptive IMs in AVIs. Most applicants rated their honest IMs between 3.00 to 3.99, indicating 'agree', while the majority assessed their deceptive IMs in the 2.00 to 2.99 range, suggesting 'disagree'. Only a tiny proportion selected 'strongly disagree' for either honest or deceptive IMs. These findings imply that during the actual video-recorded interviews, applicants tended to exhibit some level of IMs.</p><p>Table <ref type="table">I</ref> shows that all IM dimension factor loadings exceeded 0.5, meeting the convergence criteria with significant eigenvalues (&gt;1) <ref type="bibr" target="#b61">[62]</ref> and explaining 77.12% of the cumulative variance for IM across four distinct factors. Cronbach's alpha values for all dimensions were above 0.7, indicating adequate internal consistency for the four IM variables <ref type="bibr" target="#b62">[63]</ref>. We then calculated the mean scores for questionnaire items within these dimensions to derive four IM factor scores.</p><p>Furthermore, we performed an analysis of variance (ANOVA) and Pearson correlation analysis to determine if the demographic characteristics of job applicants, such as industrial sectors, gender, educational degree, and positions, were associated with their self-reported IMs. No significant correlations were found between any demographic variable and specific IM scores. Levene's Test revealed no significant variance differences (p &gt; 0.05) in the ANOVA, confirming the homogeneity of variances. Consequently, these demographic factors were not used as statistical controls in this study.</p><p>To assess the reliability of the self-reported IM measures, we employed an automatic personality recognition based on temporal patterns of facial expression modeling <ref type="bibr" target="#b63">[64]</ref> to evaluate the Big Five personality traits of job applicants. We then conducted multiple linear regression (MLR) analyses four times to explore the relationship between participants' Big Five personality traits and their self-reported IMs across the four IM dimensions. The MLR models revealed that interviewees with higher recognized scores for neuroticism and lower scores for extraversion reported more deceptive image creation (standardized β = .250 and -.247, respectively, p &lt; .05), accounting for 13.8% of the explanatory power (F = 3.835, p &lt; .01). In line with Bourdage et al.'s <ref type="bibr" target="#b3">[4]</ref> empirical study, individuals low in extraversion tend to avoid using deceptive IM in job interviews due to concern about others' perceptions. Conversely, those high in emotional stability (the opposite of neuroticism) are more likely to conform to social desirability and engage less in deceptive IMs <ref type="bibr" target="#b64">[65]</ref>. Our findings align with previous psychological research indicating that neuroticism is positively associated with lying, while extraversion is negatively associated with lying <ref type="bibr" target="#b65">[66]</ref>. Based on this evidence, we assert that the self-reported IM measures are reliable.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Performance of the AI Models in IM Detection</head><p>Our proposed models were validated using 121 video interviews, employing Pearson correlation coefficient (R), explained variation (R 2 ), and root mean square error (RMSE) as metrics. To examine the AI detector's concurrent validity, we collected a sample of another 30 video interviews from other participants in similar scenarios and conducted a Pearson correlation analysis between computer/human and self-reported IM measures to compare the coefficients. The additional data were kept separate and not included in the modeling.</p><p>Table <ref type="table">II</ref> shows that we created distinct models for each of the four IM types, which achieved high correlation coefficients between 0.89 and 0.96. This achievement demonstrates a strong alignment between the IMs inferred by our models and the corresponding self-reported IMs, suggesting a high degree of concurrent validity. All four models showed correlation coefficients greater than 0.7, thus confirming the robust validity of our proposed modeling approach <ref type="bibr" target="#b61">[62]</ref>.</p><p>Additionally, our models exhibited remarkable explanatory power (R 2 ). They accounted for 91% and 84% of the variance in honest and deceptive IMs, respectively, and explained a significant proportion (79-92%) of the variance in self-reported IM scores during personnel selection in a real-life AVI. These results indicate that dynamic facial expressions and head movements are effective indicators for assessing the extent of various behaviors exhibited. Furthermore, our models significantly surpassed human professionals in evaluating interview videos, with the latter only achieving an R 2 of 13%-29% for honest IMs and 12%-19% for deceptive IMs <ref type="bibr" target="#b4">[5]</ref>.</p><p>To measure the error of predictive models, we used RMSE, where lower values indicate better performance. In our study, RMSE values ranged from 0.25 to 0.41. Since SD occurs naturally in null deviance models, it can be used as a benchmark for models to outperform. Our proposed framework achieved an average RMSE/SD of 0.36 for the four predicted IM metrics, indicating that RMSE reduced randomness better than SD.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Comparison of AI and Human Interviewers in IM Detection</head><p>Fig. <ref type="figure" target="#fig_5">5</ref> presents four scatter plots illustrating the relationship between estimated scores and job candidates' self-reported scores for the four IMs. These data were sourced from 30 interview videos not included in our modeling process and were evaluated by both human interviewers and our AI detection models. To assess the concurrent validity of the job candidates' self-reported IMs, we utilized the correlation coefficient (R) for comparing the results from human interviewers with those from AI modeling.</p><p>TABLE I DESCRIPTIVE STATISTICS, CONSTRUCT VALIDITY, AND RELIABILITY FOR IM BEHAVIORS IM behaviors Means SD Range Means Distributions Factor loading Eigenvalues % of variance Cronbach's alpha Honest self-promotion 3.54 0.87 1-5 1.00-1.99 (4, 3.31%) 2.00-2.99 (17, 14.05%) 3.00-3.99 (55, 45.45%) 4.00-5.00 (45, 37.19%) 0.82-0.91 3.21 20.06 0.92 Honest defensiveness 3.37 0.86 1-5 1.00-1.99 (4, 3.31%) 2.00-2.99 (25, 20.66%) 3.00-3.99 (59, 48.76%) 4.00-5.00 (33, 27.27%) 0.74-0.87 2.88 17.98 0.86 Deceptive image creation 2.83 0.90 1-5 1.00-1.99 (5, 4.13%) 2.00-2.99 (68, 56.20%) 3.00-3.99 (26, 21.49%) 4.00-5.00 (22, 18.18%) 0.76-0.91 3.13 19.54 0.90 Deceptive image protection 3.03 0.86 1-5 1.00-1.99 (6, 4.96%) 2.00-2.99 (50, 41.32%) 3.00-3.99 (41, 33.88%) 4.00-5.00 (24, 19.83%) 0.80-0.85 3.13 19.53 0.89 TABLE II MODELING RESULTS IM behaviors R R 2 RMSE Honest self-promotion 0.96 91.79% 0.25 Honest defensiveness 0.95 89.57% 0.28 Deceptive image creation 0.94 88.62% 0.31 Deceptive image protection 0.89 78.82% 0.41</p><p>Before conducting the comparative analysis, we performed ANOVA (Levene's Test p &gt; 0.05) and correlation analysis to assess the impact of human interviewers' gender, age, and work experience on their ratings of the four IMs. However, we found no statistically significant effects, leading us to exclude their demographic data as control variables. Additionally, we observed no significant differences in the four self-reported IM scores between the 30-video experimental dataset and the 121video modeling dataset. Consequently, we can apply our modeling framework to another sample and retest the validity of the four models. Our model, using 30 samples, showed a stronger correlation (R = 0.53 to 0.72) between AI-estimated and self-reported IM scores of job applicants than human interviewers did (R = -0.26 to 0.15). In certain dimensions, such as honest defensiveness and deceptive image creation, the judgments of human interviewers contradicted the subjects' self-reported measures.</p><p>Additionally, we carried out an intraclass correlation coefficient (ICC) analysis using a two-way mixed-effects model for average measures of consistency. This analysis revealed that the interrater reliabilities of human interviewers for the four IMs were all below 0.2, indicating a lack of consistency and reliability among human interviewers in assessing IMs <ref type="bibr" target="#b66">[67]</ref>.</p><p>These findings are in line with results from previous psychological experiments, which show minimal significant correlation in field studies between job applicants' self-reported IMs and interviewers' perceptions of these IMs <ref type="bibr" target="#b35">[36]</ref>. Additionally, they support the notion that experienced human interviewers struggle to detect either truth or deception during employment interviews <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b11">[12]</ref>. Furthermore, the findings raise concerns about the labels of truth or false given by human observers as a ground truth when modeling deception detectors.</p><p>As attested by Twyman et al. <ref type="bibr" target="#b40">[41]</ref> and Wu et al. <ref type="bibr" target="#b17">[18]</ref>, our proposed AI detector applying Motion Estimation and 3D-CNN plus LSTM can augment the human capability to identify honest self-promotion, honest defensiveness, deceptive image creation, and deceptive image protection in real-life employment AVIs. This is achieved by analyzing the temporal features of interviewees' facial expressions and head movements using DL, going beyond the limitations of human annotation of expression signals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. DISCUSSION</head><p>The paper's key contributions and limitations are outlined below. Firstly, we introduce a straightforward imageprocessing methodology that leverages existing open-source tools (Google's FaceMesh, TensorFlow, and Keras), eliminating the need for additional annotations or programming. This methodology detects temporal patterns of facial expressions and head movements by segmenting video clips into a series of single frames with facial landmarks. This segmentation, using 'motion estimation,' enables AI to detect dynamic signals of emotional leakage and the rigidity effect in job candidates' IMs, setting it apart from traditional static methods such as AUs or human-coded emotion states. For future research, this methodology can be replicated and adapted to develop a deception detector at the discretion of researchers.</p><p>Second, our study was conducted in a real-life personnel selection context using an AVI platform, as opposed to a laboratory setting. To our knowledge, this is the first attempt to use 3D-CNN and LSTM to detect actual job candidates' IMs by analyzing the temporal patterns of their facial expressions and head movements. However, the focus of this study on Chinese individuals in a competitive job market may not directly apply to different cultures or environments with less competition, where deceptive IM is less common compared to that in the U.S. or Chinese communities <ref type="bibr" target="#b35">[36]</ref>, <ref type="bibr" target="#b67">[68]</ref>.</p><p>Third, in contrast to absolute true and false labeling of deception in the previous computer science studies, this study adopted Likert scales to measure the extent of a job candidate's IMs based on personnel psychology rather than simply measuring whether job candidates fake their responses in video interviews because job applicants' answers are a mix of honest and deceptive IMs <ref type="bibr" target="#b3">[4]</ref>. Our models can infer the extent of job candidates' honest and deceptive IMs with various IM content domains according to all the interview questions and answers.</p><p>Fourth, self-reporting is commonly regarded as a reliable method for measuring IMs <ref type="bibr" target="#b68">[69]</ref>. It is important to note that IMs do not always objectively reflect the subjects' emotions and mental states when assessed using sensing technology <ref type="bibr" target="#b69">[70]</ref>, <ref type="bibr" target="#b70">[71]</ref>. Although the accuracy of assessing the ground truth in deception detection is debatable and the self-report method is susceptible to response bias <ref type="bibr" target="#b71">[72]</ref>, <ref type="bibr" target="#b72">[73]</ref>, we believe this approach is more valid for labeling deception in employment selection interviews than using observers' ratings. This is because only job candidates truly know the extent of their engagement in IMs. Moreover, well-trained observers or human interviewers have limitations in their ability to identify job candidates' IMs, as supported by empirical studies <ref type="bibr" target="#b3">[4]</ref>, <ref type="bibr" target="#b24">[25]</ref>.</p><p>Fifth, the identification of facial features relevant to truth and lie detection tasks in high-stakes contexts remains a subject of debate. Our study utilized AI techniques to analyze non-human coded features, such as temporal facial expressions and head movements, achieving an explanatory power of 79-92% in an AVI setting for distinguishing between honest and deceptive IMs. However, it is crucial to inform applicants beforehand when using AI for IM detection. Predictive results should be used to guide further follow-up interview questions, not as definitive conclusions, to adhere to ethical AI practices and legal standards in various regions.</p><p>Finally, our study might be the first to compare AI and human interviewers in detecting IMs performed by job candidates, particularly in a real hiring context. Our findings indicate that AI significantly outperforms human interviewers in this task. Although human interviewers may utilize both verbal and nonverbal cues for IM detection, AI's ability to accurately identify IMs using solely facial and head movements has proven to be substantially more effective than human judgment.</p><p>Given the growing popularity of AVIs as an interview modality <ref type="bibr" target="#b18">[19]</ref>, future research can replicate and adapt our modeling to develop additional emotion-sensing modalities for mobile and wearable devices, ensuring non-invasiveness <ref type="bibr" target="#b73">[74]</ref>. Building on this study's utilization of the AVI platform for capturing clear facial and head imagery, subsequent research could investigate the use of face-to-face video recordings or conferencing software to expand application contexts. Additionally, future studies could incorporate other valid features from videos, such as other visual, vocal, and verbal signals, to develop multimodal, emotion-aware applications in real-life scenarios and establish their own datasets in specific contexts <ref type="bibr" target="#b23">[24]</ref>, <ref type="bibr" target="#b74">[75]</ref>.</p><p>In conclusion, our study highlights the potential of AIpowered AVIs as automated IM detectors, indicating that they could potentially serve as a copilot for human interviewers in detecting interviewees' IMs.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Fig. 1. Face mesh topology with facial landmarks.</figDesc><graphic coords="4,393.43,515.34,91.54,162.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3 .</head><label>3</label><figDesc>Fig. 3. 2D to 3D image transformation</figDesc><graphic coords="5,56.90,491.08,239.12,210.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><figDesc>𝑅 𝑦 = [ 𝑐𝑜𝑠(𝜃 𝑥𝑧 ) 0 -𝑠𝑖𝑛(𝜃 𝑥𝑧 ) 0 0 1 0 0 𝑠𝑖𝑛(𝜃 𝑥𝑧 ) 0 𝑐𝑜𝑠(𝜃 𝑥𝑧 ) 0</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 4 .</head><label>4</label><figDesc>Fig. 4. Proposed Image Processing and 3D-CNN -LSTM Regression Models</figDesc><graphic coords="6,313.20,567.86,253.48,154.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 5 .</head><label>5</label><figDesc>Fig. 5. Estimated vs. Self-Reported IMs: Scatter plots and coefficients.</figDesc><graphic coords="8,46.80,507.16,253.85,180.60" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>ACKNOWLEDGMENT</head><p>The authors would like to extend special thanks for the data collection associated with this work to <rs type="person">Tien-Hsin Hsu</rs> and <rs type="person">Wen-Chih Lee</rs>. They also express gratitude to <rs type="person">Ching-Fang Nien</rs> for providing the rights to use personal portraits in the published figures.</p></div>
+			</div>			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Initial impressions: What they are, what they are not, and how they influence structured interview outcomes</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Swider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Barrick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">B</forename><surname>Harris</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/apl0000077</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Appl. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="625" to="638" />
+			<date type="published" when="2016-05">May 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Why does impression management positively influence interview ratings? The mediating role of competence and warmth</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Amaral</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Ho</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ijsa.12260</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Selection Assessment</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="315" to="327" />
+			<date type="published" when="2019-08">Aug. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Faking&apos; from the applicant&apos;s perspective: A theory of selfpresentation in personnel selection settings</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Marcus</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-2389.2009.00483.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Selection Assessment</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="417" to="430" />
+			<date type="published" when="2009-11">Nov. 2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">I (might be) just that good&quot;: Honest and deceptive impression management in employment interviews</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Bourdage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tarraf</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/peps.12285</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Pers. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="597" to="632" />
+			<date type="published" when="2018-08">Aug. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Honest and deceptive impression management in the employment interview: Can it be detected and how does it impact evaluations?</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bangerter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Levashina</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/peps.12079</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Pers. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="395" to="444" />
+			<date type="published" when="2015-06">Jun. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An updated survey of beliefs and practices related to faking in individual assessments</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Robie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Risavy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Jacobs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Christiansen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Speer</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ijsa.12335</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Selection Assessment</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3-4</biblScope>
+			<biblScope unit="page" from="503" to="509" />
+			<date type="published" when="2021-05">May 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">LieToMe: An ensemble approach for deception detection from facial cues</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Avola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cascio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Cinque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fagioli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">L</forename><surname>Foresti</surname></persName>
+		</author>
+		<idno type="DOI">10.1142/s0129065720500689</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Neural Syst</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">2050068</biblScope>
+			<date type="published" when="2021-11">Nov. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Pitfalls and opportunities in nonverbal and verbal lie detection</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vrij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Granhag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Porter</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1529100610390861</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Sci. Public Interest</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="89" to="121" />
+			<date type="published" when="2010-12">Dec. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Interpersonal deception theory</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Buller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-2885.1996.tb00127.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. Theory</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="203" to="242" />
+			<date type="published" when="1996-08">Aug. 1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A video-based screening system for automated risk assessment using nuanced facial features</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Pentland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">W</forename><surname>Twyman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Nunamaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">B R</forename><surname>Diller</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07421222.2017.1393304</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Manag. Inf. Syst</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="970" to="993" />
+			<date type="published" when="2017-10">Oct. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Accuracy of deception judgments</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Bond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Depaulo</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/s15327957pspr1003_2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Personality Social Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="214" to="234" />
+			<date type="published" when="2006-08">Aug. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Identifying applicant faking in job interviews: Examining the role of criterion-based content analysis and storytelling</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Powell</surname></persName>
+		</author>
+		<idno type="DOI">10.1027/1866-5888/a000207</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Pers. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="143" to="154" />
+			<date type="published" when="2018-07">Jul. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Detecting deception from emotional and unemotional cues</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Warren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Schertler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bull</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10919-008-0057-7</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Nonverbal Behav</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="59" to="69" />
+			<date type="published" when="2009-11">Nov. 2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Spontaneous facial micro-expression recognition using 3D spatiotemporal convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P T</forename><surname>Reddy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Dubey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mukherjee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2019 Int. Joint Conf. Neural Netw. (IJCNN)</title>
+		<meeting><address><addrLine>Budapest, Hungary</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2019">Jul. 14-19 2019</date>
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Face-focused cross-stream network for deception detection in videos</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2019 IEEE/CVF Conf. Comput. Vision Pattern Recognit. (CVPR)</title>
+		<meeting><address><addrLine>Long Beach, CA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2019">Jun. 15-20 2019</date>
+			<biblScope unit="page" from="7794" to="7803" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Toward end-to-end deception detection in videos</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Karimi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE Int. Conf. Big Data</title>
+		<meeting><address><addrLine>Seattle, WA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2018-10-13">Dec. 10-13 2018</date>
+			<biblScope unit="page" from="1278" to="1283" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Deception detection in videos using robust facial features</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Stathopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dunbar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Metaxas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Future Technol. Conf. (FTC)</title>
+		<meeting>Future Technol. Conf. (FTC)<address><addrLine>Cham, Switzerland</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2020-11">2020. Nov. 5-6 2021</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="668" to="682" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Deception detection in videos</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Subrahmanian</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v32i1.11502</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. AAAI Conf. Artif. Intell</title>
+		<meeting>AAAI Conf. Artif. Intell</meeting>
+		<imprint>
+			<date type="published" when="2018-04">Apr. 2018</date>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="1695" to="1702" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Into the void: A conceptual model and research agenda for the design and use of asynchronous video interviews</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">R</forename><surname>Lukacik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Bourdage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.hrmr.2021.100789</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Hum. Resour. Manag. Rev</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">100789</biblScope>
+			<date type="published" when="2022-03">Mar. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Revealing the Influence of AI and Its Interfaces on Job Candidates&apos; Honest and Deceptive Impression Management in Asynchronous Video Interviews</title>
+		<author>
+			<persName><forename type="first">H.-Y</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K.-E</forename><surname>Hung</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.techfore.2023.123011</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Technol. Forecast. Soc. Change</title>
+		<imprint>
+			<biblScope unit="volume">198</biblScope>
+			<biblScope unit="page">123011</biblScope>
+			<date type="published" when="2024-01">Jan. 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Comparing job applicant deception in asynchronous vs synchronous video interviews, with and without AIassisted assessments</title>
+		<author>
+			<persName><forename type="first">H.-Y</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K.-E</forename><surname>Hung</surname></persName>
+		</author>
+		<idno type="DOI">10.1108/ITP-02-2023-0189</idno>
+	</analytic>
+	<monogr>
+		<title level="s">Inf. Technol. People</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>ahead-of-print aheadof-print</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">A Review of Dynamic Datasets for Facial Expression Research</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Krumhuber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Skora</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Küster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fou</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/1754073916670022</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Emotion Rev</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="280" to="292" />
+			<date type="published" when="2017-10">Oct. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Technology in the Employment Interview: A Meta-Analysis and Future Research Agenda</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Blacksmith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Willford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Behrend</surname></persName>
+		</author>
+		<idno type="DOI">10.25035/pad.2016.00</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Assess. Decis</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2016-06">Jun. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Development of an AI-Based Interview System for Remote Hiring</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">C</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">Y</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.34218/IJARET.12.3.2021.060</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Adv. Res. Eng. Technol</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="654" to="663" />
+			<date type="published" when="2021-03">Mar. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Signaling theory: A review and assessment</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">L</forename><surname>Connelly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Certo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Ireland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Reutzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0149206310388419</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Manage</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="39" to="67" />
+			<date type="published" when="2010-12">Dec. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Liar, Liar, pants on fire: How verbal deception cues signal deceptive versus honest impression management and influence interview ratings</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><forename type="middle">C</forename><surname>Klehe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Willhardt</surname></persName>
+		</author>
+		<idno type="DOI">10.25035/pad.2021.01.007</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Pers. Assessment Decis</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2021-05">May 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Cues to deception</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Depaulo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Lindsay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Malone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Muhlenbruck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Charlton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cooper</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0033-2909.129.1.74</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bull</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="74" to="118" />
+			<date type="published" when="2003-01">Jan. 2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">How fast are the leaked facial expressions: The duration of micro-expressions</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Fu</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10919-013-0159-8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Nonverbal Behav</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="217" to="230" />
+			<date type="published" when="2013-07">Jul. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Automatic recognition of facial displays of unfelt emotions</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kulkarni</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2018.2874996</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="377" to="390" />
+			<date type="published" when="2021-04">Apr. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A fake smile thwarts cheater detection</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Okubo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kobayashi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ishikawa</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10919-012-0134-9</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Nonverbal Behav</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="217" to="225" />
+			<date type="published" when="2012-07">Jul. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Darwin the detective: Observable facial muscle contractions reveal emotional high-stakes lies</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Brinke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Porter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Baker</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.evolhumbehav.2011.12.003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Evolution Human Behav</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="411" to="416" />
+			<date type="published" when="2012-07">Jul. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Microexpressions differentiate truths from lies about future malicious intent</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Matsumoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">C</forename><surname>Hwang</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2018.02545</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers Psychol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">2545</biblScope>
+			<date type="published" when="2018-12">Dec. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Sparsity in dynamics of spontaneous subtle emotions: Analysis and application</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Le Ngo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>See</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C W</forename><surname>Phan</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2016.2523996</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="396" to="411" />
+			<date type="published" when="2017-07">Jul. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Micro and macro facial expression recognition using advanced local motion patterns</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Allaert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">M</forename><surname>Bilasco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Djeraba</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2019.2949559</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="147" to="158" />
+			<date type="published" when="2019-10">Oct. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Hiding true emotions: Micro-expressions in eyes retrospectively concealed by mouth movements</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Iwasaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Noguchi</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep22049</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">22049</biblScope>
+			<date type="published" when="2016-02">Feb. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">A review of applicant faking in selection interviews</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">G</forename><surname>Melchers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Roulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Buehl</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/ijsa.12280</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Selection Assessment</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="123" to="142" />
+			<date type="published" when="2020-02">Feb. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Deception detection accuracy</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The International Encyclopedia of Interpersonal Communication</title>
+		<editor>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Berger</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Roloff</surname></persName>
+		</editor>
+		<meeting><address><addrLine>UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>WileyBlackwell</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">The Facial Action Coding System: A Technique for the Measurement of Facial Movement</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ekman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">V</forename><surname>Friesen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Hager</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>Consulting Psychologists Press</publisher>
+			<pubPlace>Palo Alto, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Microexpressions are not the best way to catch a liar</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2018.01672</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers Psychol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">1672</biblScope>
+			<date type="published" when="2018-09">Sept. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Exploring the movement dynamics of deception</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Duran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">T</forename><surname>Kello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">N H</forename><surname>Street</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Richardson</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2013.00140</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers Psychol</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">140</biblScope>
+			<date type="published" when="2013-03">Mar. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Deception detection in online automated job interviews</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">W</forename><surname>Twyman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Pentland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Spitzley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">HCI in Business, Government, and Organizations</title>
+		<editor>
+			<persName><forename type="first">F</forename><forename type="middle">F H</forename><surname>Nah</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Xiao</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham, Switzerland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="206" to="216" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Intelligent deception detection through machine based interviewing</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>O'shea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Crockett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Kindynis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Antoniades</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Boultadakis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2018 Int. Joint Conf. Neural Netw. (IJCNN)</title>
+		<meeting><address><addrLine>Rio de Janeiro, Brazil</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2018-08-13">Jul. 8-13 2018</date>
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Silent talker: A new computer-based system for the analysis of facial cues to deception</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rothwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Bandar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>O'shea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mclean</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/acp.1204</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Appl. Cogn. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="757" to="777" />
+			<date type="published" when="2006-09">Sept. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Lie detection based on facial micro expression body language and speech analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Barathi</surname></persName>
+		</author>
+		<idno type="DOI">10.17577/IJERTV5IS020336</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Eng. Res. Technol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="337" to="343" />
+			<date type="published" when="2016-02">Feb. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Does &quot;lie to me&quot; lie to you? An evaluation of facial clues to high-stakes deception</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Levine</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cviu.2016.01.009</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comp. Vis. Image Understand</title>
+		<imprint>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page" from="52" to="68" />
+			<date type="published" when="2016-06">Jun. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Deep facial expression recognition: A survey</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Deng</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2020.2981446</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1195" to="1215" />
+			<date type="published" when="2020-03">Mar. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Measuring faking in the employment interview: Development and validation of an interview faking behavior scale</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Levashina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Campion</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0021-9010.92.6.1638</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Appl. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">92</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1638" to="1656" />
+			<date type="published" when="2007-11">Nov. 2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">CAS(ME): A database for spontaneous macro-expression and micro-expression spotting and recognition</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Fu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2017.2654440</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="424" to="436" />
+			<date type="published" when="2018-10">Oct. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">A survey of automatic facial micro-expression analysis: Databases, methods, and challenges</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>See</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Le Ngo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C W</forename><surname>Phan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">M</forename><surname>Baskaran</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2018.01128</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers Psychol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">1128</biblScope>
+			<date type="published" when="2018-07">Jul. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<ptr target="https://www.apple.com/iphone-14/specs/" />
+		<title level="m">Apple, Video recording</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note>iPhone 14 -Technical Specifications</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Motion profiles for deception detection using visual cues</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dilsizian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Metaxas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Burgoon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer vision -ECCV 2010</title>
+		<editor>
+			<persName><forename type="first">K</forename><surname>Daniilidis</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">P</forename><surname>Maragos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">N</forename><surname>Paragios</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="462" to="475" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">MediaPipe face mesh</title>
+		<author>
+			<orgName type="collaboration">Google</orgName>
+		</author>
+		<ptr target="https://google.github.io/mediapipe/" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<pubPlace>MediaPipe</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Realtime facial surface geometry from monocular video on mobile GPUs</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kartynnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ablavatski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Grishchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Grundmann</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.06724</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Survey, study and review of coordinate system notations using 3D environment for better understanding of EM fields behavior</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">S</forename><surname>Rana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Shaikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Ajij</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Thirteenth Int. Conf. Wireless Opt. Commun. Netw. (WOCN)</title>
+		<meeting><address><addrLine>Hyderabad, India</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016-07-21">2016. Jul. 21-23 2016</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">3D convolutional neural network for machining feature recognition with gradient-based visual explanations from 3D CAD models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mun</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-022-19212-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">14864</biblScope>
+			<date type="published" when="2022-09">Sept. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Facial expression recognition using a temporal ensemble of multi-level convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">H</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">S</forename><surname>Na</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2019.2946540</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affective Comput</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="226" to="237" />
+			<date type="published" when="2019-10">Oct. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Coding, analysis, interpretation, and recognition of facial expressions</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Essa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Pentland</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/34.598232</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Pattern Anal. Mach. Intell</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="757" to="763" />
+			<date type="published" when="1997-07">Jul. 1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Human Emotion Recognition with Relational Region-Level Analysis</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/taffc.2021.3064918</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affect. Comput</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<date type="published" when="2021-03">Mar. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Deep learning model for real-time image compression in internet of underwater things (IoUT)</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Krishnaraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Elhoseny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Thenmozhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Selim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Shankar</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11554-019-00879-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Real-Time Image Process</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="2097" to="2111" />
+			<date type="published" when="2019-05">May 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">A 3D-CNN and LSTM based multi-task learning architecture for action recognition</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Ouyang</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/access.2019.2906654</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="40757" to="40770" />
+			<date type="published" when="2019-03">Mar. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">A CNN-based regression framework for estimating coal ash content on microscopic images</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.measurement.2021.110589</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Measurement</title>
+		<imprint>
+			<biblScope unit="volume">189</biblScope>
+			<biblScope unit="page">110589</biblScope>
+			<date type="published" when="2022-02">Feb. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Hair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">C</forename><surname>Black</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Babin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Anderson</surname></persName>
+		</author>
+		<title level="m">Multivariate Data Analysis</title>
+		<meeting><address><addrLine>Hampshire, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Cengage Learning</publisher>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">The use of cronbach&apos;s alpha when developing and reporting research instruments in science education</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">S</forename><surname>Taber</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11165-016-9602-2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Res. Sci. Educ</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1273" to="1296" />
+			<date type="published" when="2018-06">Jun. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">TensorFlow-based automatic personality recognition used in asynchronous video interviews</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">Y</forename><surname>Suen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Hung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Lin</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/access.2019.2902863</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="61018" to="61023" />
+			<date type="published" when="2019-03">Mar. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">A model of faking likelihood in the employment interview</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Levashina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Campion</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-2389.2006.00353.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Selection Assessment</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="299" to="316" />
+			<date type="published" when="2006-11">Nov. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Personality traits associated with various forms of lying</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Hart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Lemon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Curtis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Griffith</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s12646-020-00563-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Stud</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="239" to="246" />
+			<date type="published" when="2020-08">Aug. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Spontaneous facial expression in unscripted social interactions can be measured automatically</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Girard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Cohn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Jeni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Sayette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Torre</forename></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-014-0536-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Behav. Res. Methods</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1136" to="1147" />
+			<date type="published" when="2015-12">Dec. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">How much do Chinese applicants fake?</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cen</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-2389.2012.00596</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Sel. Assess</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="247" to="250" />
+			<date type="published" when="2012-05">May. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Shake and fake: The role of interview anxiety in deceptive impression management</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Bourdage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bonaccio</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10869-020-09708-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Bus. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="829" to="840" />
+			<date type="published" when="2021-08">Aug. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Investigating the reliability of self-report data in the wild: The quest for ground truth</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Saiedur Rahaman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">D</forename><surname>Salim</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3460418.3479338</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Adjunct Proc. 2021 ACM Int. Joint Conf. Pervasive Ubiquitous Comput. Proc. 2021 ACM Int. Symp. Wearable Comput</title>
+		<meeting>Adjunct . 2021 ACM Int. Joint Conf. Pervasive Ubiquitous Comput. . 2021 ACM Int. Symp. Wearable Comput</meeting>
+		<imprint>
+			<date type="published" when="2021-09">Sept. 2021</date>
+			<biblScope unit="page" from="237" to="242" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">A conceptual framework for investigating and mitigating machine learning measurement bias (MLMB) in psychological assessment</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hickman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Booth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Mello</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/mjph3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PsyArXiv</title>
+		<imprint>
+			<date type="published" when="2021-07">Jul. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">A few transparent liars explaining 54% accuracy in deception detection experiments</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Levine</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/23808985.2010.11679095</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ann. Int. Commun. Assoc</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="41" to="61" />
+			<date type="published" when="2010-05">May 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Detecting deception through facial expressions in a dataset of videotaped interviews: A comparison between human judges and machine learning models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Monaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maldera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Scarpazza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sartori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Navarin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chb.2021.107063</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Human Behav</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="page">107063</biblScope>
+			<date type="published" when="2022-02">Feb. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Design and Analysis of a Human-Machine Interaction System for Researching Human&apos;s Dynamic Emotion</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tao</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TSMC.2019.2958094</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Syst., Man, Cybern. Syst</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="6111" to="6121" />
+			<date type="published" when="2021-10">Oct. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Convolutional Features-Based Broad Learning With LSTM for Multidimensional Facial Emotion Recognition in Human-Robot Interaction</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Pedrycz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hirota</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TSMC.2023.3301001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Syst., Man, Cybern. Syst</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="64" to="75" />
+			<date type="published" when="2024-01">Jan. 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
