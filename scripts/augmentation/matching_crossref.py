@@ -1,3 +1,4 @@
+import argparse
 import json
 import csv
 import requests
@@ -5,14 +6,23 @@ from time import sleep, time
 from thefuzz import fuzz
 
 # =============================================================================
+# ARGUMENT PARSING
+# =============================================================================
+parser = argparse.ArgumentParser(description="Match preprint references with DOIs via CrossRef")
+parser.add_argument("--limit", type=int, default=15,
+                    help="Number of preprints to process (default: 15)")
+parser.add_argument("--start", type=int, default=0,
+                    help="Index of first preprint to process (default: 0)")
+args = parser.parse_args()
+
+# =============================================================================
 # SETTINGS
 # =============================================================================
-# Define file paths, Crossref endpoint, and matching parameters.
-
 INPUT_FILE = "data/preprints_with_references.json"
 OUTPUT_FILE = "data/first_preprint_references_with_doi_crossref.json"
 CSV_REPORT = "data/crossref_comparison_report.csv"
 UNMATCHED_JSON = "data/first_preprint_references_without_doi_crossref.json"
+UNMATCHED_CSV = "data/first_preprint_references_without_doi_crossref.csv"
 
 CROSSREF_URL = "https://api.crossref.org/works"
 MAILTO = "cruzersoulthrender@gmail.com"
@@ -109,23 +119,23 @@ def best_crossref_match(entry):
 
 
 def main():
-    """Process the first 15 preprints and enrich missing DOIs."""
+    """Process a subset of preprints (configurable start and limit) and enrich missing DOIs."""
     start_time = time()
 
     with open(INPUT_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    subset = data[:15]
+    subset = data[args.start: args.start + args.limit]
     processed_preprints = []
     csv_rows = []
     unmatched_refs = []
 
-    print(f"📚 Processing the first {len(subset)} preprints\n")
+    print(f"📚 Processing preprints {args.start + 1}–{args.start + len(subset)}\n")
 
-    for i, preprint in enumerate(subset, start=1):
+    for i, preprint in enumerate(subset, start=args.start + 1):
         refs = preprint.get("references", [])
         print("------------------------------------------------------------")
-        print(f"📘 Preprint {i}/{len(subset)} — {len(refs)} references")
+        print(f"📘 Preprint {i} — {len(refs)} references")
         print(f"Title: {preprint.get('title','[Untitled]')}")
         print("------------------------------------------------------------\n")
 
@@ -210,12 +220,12 @@ def main():
     print(f"💾 Total unmatched refs: {len(unmatched_refs)}")
     print("============================================================\n")
 
-    # --- Save JSON with only the first 15 preprints ---
+    # --- Save JSON output ---
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(processed_preprints, f, indent=2, ensure_ascii=False)
     print(f"💾  JSON output saved to: {OUTPUT_FILE}")
 
-    # --- Save CSV report for matches ---
+    # --- Save CSV report ---
     if csv_rows:
         with open(CSV_REPORT, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=list(csv_rows[0].keys()))
@@ -223,7 +233,7 @@ def main():
             writer.writerows(csv_rows)
         print(f"📑  Comparison report saved to: {CSV_REPORT}")
 
-    # --- Save unmatched refs in JSON and CSV ---
+    # --- Save unmatched references ---
     with open(UNMATCHED_JSON, "w", encoding="utf-8") as f:
         json.dump(unmatched_refs, f, indent=2, ensure_ascii=False)
 
