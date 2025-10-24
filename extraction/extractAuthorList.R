@@ -322,5 +322,39 @@ df.authors %>%
     checkEmail = if_else(is.na(email), NA, str_detect(pdf.email, email))
   ) %>% summarise(sameEmail = mean(checkEmail, na.rm = T))
 
+## add the affiliations based on the ORCID
+df.authors = df.authors %>% mutate(affiliation.orcid = NA)
+
+tictoc::tic() # takes about 6 min
+for (i in 1:nrow(df.authors)) {
+  
+  # ORCID public API endpoint
+  url = paste0("https://pub.orcid.org/v3.0/", df.authors$orcid[i], "/employments")
+  response = GET(url, add_headers("Accept" = "application/json"))
+  
+  # Check if the request was successful (status 200)
+  if (status_code(response) == 200) {
+    
+    # parse the JSON response
+    data = fromJSON(content(response, "text"))
+    
+    # extract affiliations
+    affiliations = data[["affiliation-group"]][["summaries"]]
+    
+    # check if any affiliations there
+    if (is.null(affiliations)) {
+      next
+    }
+    
+    # extract institution name
+    institution_names = sapply(affiliations, function(x) x$`employment-summary`$organization$name)
+    
+    df.authors$affiliation.orcid[i] = list(institution_names)
+    
+  }
+  
+}
+tictoc::toc()
+
 # save this extended author list
 write_csv(df.authors, "authorList_ext.csv")
