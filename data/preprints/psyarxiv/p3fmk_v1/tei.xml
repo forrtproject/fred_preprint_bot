@@ -1,0 +1,1427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">OCD As Aberrant Integration of Uncertainty from Local Goals to Global Goals</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Andra</forename><surname>Geana</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Providence College</orgName>
+								<address>
+									<settlement>Providence</settlement>
+									<region>RI</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Christina</forename><forename type="middle">L</forename><surname>Boisseau</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Northwestern Feinberg School of Medicine</orgName>
+								<orgName type="institution">Northwestern</orgName>
+								<address>
+									<settlement>Chicago</settlement>
+									<region>IL</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Steven</forename><surname>Rasmussen</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">Brown University Alpert Medical School</orgName>
+								<address>
+									<settlement>Providence</settlement>
+									<region>RI</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff3">
+								<orgName type="institution">Butler Hospital</orgName>
+								<address>
+									<settlement>Providence RI</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Michael</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+							<affiliation key="aff4">
+								<orgName type="institution">Brown University Carney Institute</orgName>
+								<address>
+									<settlement>Providence</settlement>
+									<region>RI</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">OCD As Aberrant Integration of Uncertainty from Local Goals to Global Goals</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">7349EE4F7D2F56712B364E9176B42FCB</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:58+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>obsessive-compulsive disorder</term>
+					<term>compulsivity</term>
+					<term>computational modelling</term>
+					<term>OCD</term>
+					<term>learning</term>
+					<term>reinforcement learning</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Compulsivity is a key feature of obsessive-compulsive disorder (OCD), with compulsionsrepetitive, stereotyped behaviors and mental acts meant to relieve distress-often posing significant obstacles to daily function. The last few years have seen increases in compulsive</p><p>behaviors; yet, the specific mechanisms of compulsions in OCD remain unknown. Previous research holds mixed findings on compulsivity-linked cognitive deficits, and, while many accounts assume compulsions aim to reduce anxiety, most individuals with anxiety do not develop compulsions-suggesting that the anxiety-reduction account is incomplete. A deeper insight into the neural and cognitive mechanisms underpinning compulsions holds immediate potential benefits for improving treatment options for OCD patients. We propose here that one factor in the formation of compulsions is the inability to integrate uncertainty across hierarchical goal levels. Using a predictive inference task with a hierarchical structure relying on local uncertainty reduction (short-term goals) in the service of global uncertainty reduction (long-term goal), we tested local and global learning in OCD patients (n = 20) and healthy age-matched controls (n = 20). Both groups showed the ability to reduce uncertainty locally, learning the statistical structure of the local environment based on observed data; however, only the healthy volunteers showed evidence of integrated learned knowledge at the local level into reducing uncertainty about the higher level of the task hierarchy. We suggest that this indicates a potential mechanism for compulsions that relies on the inability to adaptively prioritize and "toggle" among different local goals in the service of global goals.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The prevalence of obsessive-compulsive disorder (OCD) has increased worldwide in the last few years since the COVID-19 pandemic <ref type="bibr" target="#b0">[1]</ref>, with contamination-related compulsions found at unprecedented levels even in previously undiagnosed populations <ref type="bibr" target="#b1">[2]</ref>. Such compulsions, frequently manifesting as 'checking' or other elaborate routines to resolve uncertainty about the state of the world, force an individual to spend disproportionate time and effort engaged in a repetitive cycle, unable to break out and focus on other things. For example, while a healthy person might choose to wash their hands after returning home from a ride on public transit, then (once their hands are clean) move on with usual daily life, a person with OCD might fear contamination even after handwashing. This fear might lead them to wash their hands again after touching their clothes or touching a doorknob; then, perhaps, they might choose to clean the doorknob, or mop the floor to ensure they did not track in contaminants -and then wash their hands again and again after each step.</p><p>Yet, despite rising prevalence and severe impact on daily life-OCD ranks among the leading causes of disability in the United States, and in up to 30% of cases, treatment (including combinations of medication and therapy) fails to significantly relieve compulsions <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref>-a mechanistic understanding of the root of compulsions is largely lacking. This is due in part to the variability in symptoms and high comorbidity with other disorders, and to the fact that OCD is unlikely to result from alteration of any singular molecular mechanism. For instance, some accounts frame compulsions from a learning-failure perspective, assuming deficits in the ability to correctly represent action-outcome links <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b32">33]</ref>. Others suggest a lack of goal-directed control, proposing that OCD impairs the ability to act appropriately in pursuit of goals and reverting to habits <ref type="bibr" target="#b4">[5,</ref><ref type="bibr">6]</ref>. Empirical data shows mixed evidence, with OCD individuals able to learn comparably to healthy volunteers on a variety of tasks, and goal-directedness failures inconsistent across tasks and domains <ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref>. Crucially, while anxiety is considered a vital factor in OCD, it is worth nothing that most people suffering from anxiety or intrusive anxious thoughts do not develop compulsions <ref type="bibr" target="#b10">[11]</ref>; thus, it is possible that mechanisms independent of anxiety contribute to the formation of compulsions, and elucidating these separate mechanisms is critical to our understanding of the disorder.</p><p>Compulsivity as a Deficit in Uncertainty-Related Processes While classical neurocognitive assessments of OCD often involve diagnostic interviews, questionnaires (including clinical scales) and self-reported measures <ref type="bibr" target="#b11">[12]</ref>, observation from clinical settings suggests that many compulsive behaviors are aimed at reducing uncertainty, with the inability to do so ultimately perpetuating the irrational thoughts and behaviors <ref type="bibr" target="#b12">[13]</ref>. Uncertainty plays a role in most learning and decision scenarios, from ordering dinner to choosing a job, and evidence across species shows that the ability to represent and reduce uncertainty is essential for optimal decisionmaking <ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b33">[34]</ref><ref type="bibr" target="#b34">[35]</ref>. Failures to regulate uncertainty have been linked to maladaptive learning in a variety of neuropsychiatric disorders <ref type="bibr">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b17">[18]</ref><ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref>. Individuals with OCD in particular exhibit a profound intolerance of uncertainty , and perhaps as a result, oversample in uncertain environments <ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref><ref type="bibr" target="#b22">[23]</ref>. However, uncertainty-driven computations remain relatively under-examined in the context of compulsivity, and it remains unclear whether patients simply show a heightened aversion to uncertainty per se. For example, patients might assign a more negative value to the prospect of the undesired outcome for a given level of uncertainty. Or, they might exhibit overall greater uncertainty due to disruptions in the computations needed to reduce it. Here, we consider the latter possibility.</p><p>It is possible that one source of mixed results in lab studies on learning deficits in OCD is the commonly-used task structure that assesses uncertainty about a single decision (e.g., learning the underlying reward structures of two independent options). In contrast, most real-world learning scenarios involve a hierarchy of goals, with "local" subgoals (e.g., "will washing my hands make them cleaner?") in the service of broader, "global" goals ("how can I stay healthy?"). Under such framework, OCD patients may be able to resolve uncertainty about the outcomes of a local decision, but then fail to update the uncertainty about progress toward the global goal, due to disruptions in the mechanism responsible for integrating across timescales and hierarchical levels of abstraction. In line with this hypothesis, recent work <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref> shows impaired transfer of information (in the form of explicit and implicit task-relevant memories) across repeated decisions. However, to our knowledge, the integration of information in the service of short-term and long-term goals has never been tested in OCD; a mismatch in the integration of these parallel learning processes into global goals can produce compulsive behaviors.</p><p>Using a predictive inference task with a hierarchical learning structure, we tested this hypothesis in a sample of individuals with OCD and age-matched controls. While OCD patients showed intact local learning of stochastic outcomes, they exhibited impaired ability to leverage this learning to update their beliefs about global structure. We propose that a mismatch in the integration of these local learning processes into global goals can produce compulsive behaviors, while preserving the ability to locally reduce uncertainty.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>Participants were recruited through the OCD Research Program at Butler Hospital. Out of the 463 participants that were phone screened for initial eligibility, 55 (8.4%) met criteria for inperson evaluation for final determination of eligibility. To be included in the OCD group participants were required to be adults age 18-55, meet DSM-5 criteria for OCD, and identify OCD as their primary psychiatric concern. Exclusion criteria for the OCD group included past month substance use disorder or report of lifetime bipolar or psychotic disorders. Healthy controls were free of current psychiatric disorders.</p><p>Of the 55 individuals that past the initial phone screen, 4 were ruled out of the OCD group because of subclinical symptoms, 3 were ruled out of the healthy control group due to the presence of psychopathology or unreliable report and an additional 5 did not show up to the inperson assessment. Thus, the final sample contained 20 participants with OCD and 20 healthy controls. The groups were matched on age and general intellectual ability as measured by the National Adult Reading Test-Revised (NART-R; Blair &amp; Spreen,1989). All participants gave informed, written consent approved by the Institutional Review Board. They were compensated $80 dollars for approximately four hours of their time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Measures</head><p>Psychiatric diagnoses were made by a trained postdoctoral fellow based on DSM-5 criteria using the Structured Clinical Interview for DSM-5 <ref type="bibr">(SCID-5;</ref><ref type="bibr">First et al., 2015)</ref>. Severity of obsessive and compulsive symptoms was assessed using the rater-administered Yale-Brown Obsessive-Compulsive Scale (YBOCS) and Symptom Checklist <ref type="bibr">(Goodman et al., 1989a, b)</ref>. Depression and anxiety symptoms were measured using the self-report Beck Depression Inventory <ref type="bibr">(Beck et al., 1996)</ref> and Beck Anxiety Inventory <ref type="bibr">(Beck et al., 1998)</ref>. Finally, intolerance of uncertainty was measured using the self-report Intolerance of Uncertainty Scale (IUS, <ref type="bibr">Buhr &amp; Dugas, 2002)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Archer Task</head><p>We developed a new predictive inference task, building upon the basic structure of previous tasks designed to challenge dynamic learning in uncertain (stochastic and volatile) environments <ref type="bibr">[26; 27]</ref>. We modified this task (Fig <ref type="figure">1</ref>) to include a hierarchical structure, with local outcomes generated through an overarching global structure. Players had to aim arrows to shoot enemies, the locations of which are hidden, but can be inferred from sequential observations. The task was framed as a game in which players must defeat an "evil overlord" by destroying his spaceship (located at an unknown position on the screen). The spaceship sends "cannons" to attack the archer, with each cannon launching up to thirty "minions" (local samples), sequentially. To introduce uncertainty, each minion's position is drawn from a Gaussian distribution, whose local mean is centered on the position of the cannon. Each cannon's position is, in turn, launched by the spaceship with stochastic variations around the global mean. This hierarchical structure ensured that observing each minion's position can reduce uncertainty simultaneously on two levels. At the local level, the position of an individual minion provides a sample of evidence about the position of the current cannon, allowing the player to adjust their subsequent aim. With more samples they should have a more certain estimate about the cannon position (the local mean) and thus progressively adjust less with each stochastic outcome. At the global level, the player can use their updated estimate of the current cannon's position to infer spaceship position.</p><p>The players earned a small reward (1 point) for accurately aiming arrows to hit each minion's position, and a large reward at the end of the game (60 points) for accurately firing an arrow at the spaceship (they were instructed about this payoff structure during pre-task instructions as well as during the training games). At the end of the task, earned points were converted to a "bonus" reward of up to $5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1: The Archer Task. A. Example trial, starting with prediction (player's aim with the arrow), followed by the observation of a data point (minion) from the local distribution (canon), and the updated prediction (adjusting aim for next trial). The hierarchical structure of the task, with the two distributions governing minions and canon positions are show on the side of the screen. Panel B shows a graphical representation of the hierarchical Gaussian distribution, with the global distribution centered on a global mean (M) governing the distribution of local means, which in turn determine the position of each minion the player observers. C. Conceptual representation of how uncertainty can be used in the service of integration of local into global goals, and how the inability to integrate (bottom right-side arrow, red), even accompanied by intact ability to reduce uncertainty (leftside circuit) can lead to becoming "stuck" in local repetitive-action cycles.</head><p>Trading off local and global reward A vital aspect to the task was that players had a limited number of 210 arrows. They were made aware of this limit at the beginning of the task, and during training; however, they did not see the remaining number arrows once training was completed and the task began. When all but one arrows were used up, the player would immediately encounter the spaceship and have one chance to fire at it. At that point, a more accurate estimate of the spaceship's location would translate into a better chance of earning the significantly higher global reward. On the other hand, each local canon could fire up to 30 minions. By sampling a series of minions, the player can be relatively confident about the canon's location and then accumulate local rewards (r = 1 point each) relatively easily (i.e., by aiming at the mean of their previous observations). To reflect this trade-off, on each trial, players were given the chance to decide whether to "stay" and face more minions from that cannon (thus improving their local estimate) or "run" and see a new cannon (i.e., sample more from the global structure and improve their global estimate).</p><p>In sum, to maximize total reward for the task, players had to learn both each local mean (i.e. learn where each cannon is, to accurately predict where the minions will come from) and the global mean (i.e. spaceship location) that generated all these local means. The speed of their learning on both these processes changed the optimal point for continuing or quitting each local game (see modelling below for formalizing this tradeoff).</p><p>All participants played the same number of trials (210), but due to the player-made decision to stay or leave, the number of games (waves of local minions) ranged from a minimum of 7 to a maximum of 15, with an average of just under 10 games.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational Modelling</head><p>For a deeper quantitative and mechanistic understanding, we take a computational psychiatry approach <ref type="bibr" target="#b27">[28]</ref>, mixing theory-driven and data-driven methods to predict behavior based on individual inferences about the structure and likelihood of different outcomes in the world. Assuming a hierarchy of long-term (global) and short-term (local) learning goals, our computational model of the archer task allows us to test to what degree participants performed parallel updating in the estimation of local and global uncertainty, and how they integrated the two decision problems to solve the task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Uncertainty-Updating Model</head><p>On each trial (t) of each game (g), the model uses observed minion positions (x) to estimate the position of that game's cannon (𝜇𝜇 𝑔𝑔,𝑡𝑡 ), using Bayesian updating of the local means based on observed samples:</p><formula xml:id="formula_0">𝑃𝑃�𝜇𝜇 𝑔𝑔,𝑡𝑡 �𝑥𝑥 𝑡𝑡, 𝑥𝑥 1:𝑡𝑡-1 � = 𝑁𝑁 �𝜎𝜎 𝐿𝐿0 2 � 𝜇𝜇 0 𝜎𝜎 𝐿𝐿0 2 + 𝑥𝑥̅ 𝜎𝜎 2 𝑡𝑡 ⁄ � , (<label>1</label></formula><formula xml:id="formula_1">𝜎𝜎 𝐿𝐿0 2 + 1 𝜎𝜎 2 𝑡𝑡 ⁄ ) -1 �</formula><p>Where 𝜇𝜇 0 , 𝜎𝜎 𝐿𝐿0 2 are the prior beliefs on the local mean and variance for each game, and 𝑥𝑥̅ , 𝜎𝜎 2 are the local mean and variance of observed samples 1:t . For the first game, 𝜇𝜇 0 is initialized randomly to a position close to the middle of the screen (the same as the initial prior for the spaceship's position, or the global mean), and 𝜎𝜎 𝐿𝐿0 2 is initialized randomly between 5 and 10. For the other games, the model uses estimates from the global mean distribution.</p><p>The model tracked its own uncertainty about the estimated local means as the variance of the estimated local mean distribution. With more observed samples (larger t in a game), that uncertainty decreased as 1 𝑡𝑡 𝜎𝜎 2 (see Figure <ref type="figure" target="#fig_0">2A</ref>), and the probability of accurate aim on each subsequent trial increased (see Figure <ref type="figure" target="#fig_0">2B</ref>). At the end of each game, the model updated its estimate of the spaceship's position in a similar manner, using the last estimate of the game's local mean, and also tracked its uncertainty regarding this global mean estimate.</p><formula xml:id="formula_2">𝑃𝑃�𝑀𝑀 𝑔𝑔 �𝜇𝜇 𝑔𝑔, 𝜇𝜇 1:𝑔𝑔-1 � = 𝑁𝑁 �𝜎𝜎 𝑔𝑔 2 � 𝑀𝑀 0 𝜎𝜎 𝐺𝐺0 2 + 𝜇𝜇̅ 𝜎𝜎 2 𝑡𝑡 ⁄ � , (<label>1</label></formula><formula xml:id="formula_3">𝜎𝜎 𝐺𝐺0 2 + 1 𝜎𝜎 2 𝑡𝑡 ⁄ ) -1 �</formula><p>After the first game, the current estimate of the spaceship's position (the global mean) served as prior for the location of the cannon in the next game. The optimal place to aim upon encountering each new cannon (before observing any minions it sends) is this estimate of the spaceship position. Indeed, accurately learning the global distribution across games should lead to a gradual improvement in performance on the first trial of each new game (Fig. <ref type="figure" target="#fig_0">2C</ref>) -a key signature of integration of evidence from local to global levels. Conversely, failure to accurately integrate local information from each game to update the estimate of the global mean would lead to no performance improvement on the first trial of each new game (and thus players might aim randomly, or based on the last estimate of the local mean only). The model assumed that players would aim at the current estimated local mean on each trial (based on the inference processes above), with a noise parameter ε. Under that assumption, it then predicted the decision whether to stay or run, based on current uncertainty about local and global means. The values for the two actions were computed as follows: stay was associated with a reduction in local uncertainty (which decreased as the number of trials in a game increased, leading to diminishing marginal returns on information for spending longer in a game) and an increase in the probability of obtaining local rewards. It was associated with no change in global uncertainty (as the model updated the global estimate only at the end of a game). Conversely, leave was associated with an increase in local uncertainty (which reset at the beginning of each game to the current estimate of 𝜎𝜎 𝐺𝐺 2 ) and a decrease in estimated local reward, but also with a reduction in global uncertainty, and thus a small increase in the probability of obtaining the larger reward at the end of the task. Thus, the local and global reward estimates traded off on each trial in each game, depending on the uncertainties in the current estimates of the local and global means.</p><p>Each action ("Stay" vs. "Leave") was produced different local and global reward value estimates, which the model used to compute action values.</p><formula xml:id="formula_4">𝑉𝑉(𝑠𝑠𝑡𝑡𝑠𝑠𝑠𝑠) ∝ (𝑇𝑇 -𝑡𝑡) * (1 -𝑁𝑁(0, 𝜎𝜎 𝑡𝑡 2 )) + 𝑅𝑅 * (1 -𝑁𝑁(0, 𝜎𝜎 𝐺𝐺-1 2 )) 𝑉𝑉(𝑙𝑙𝑙𝑙𝑠𝑠𝑙𝑙𝑙𝑙) ∝ (𝑇𝑇 -𝑡𝑡) * (1 -𝑁𝑁(0, 𝜎𝜎 𝐺𝐺 2 )) + 𝑅𝑅 * (1 -𝑁𝑁(0, 𝜎𝜎 𝐺𝐺<label>2</label></formula><p>))</p><p>It then assumed that participants decided what to do using a softmax rule comparing these two values, with inverse temperature parameter β.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reinforcement Learning Model</head><p>The uncertainty-updating model assumes Bayesian computations of the estimated mean and uncertainty about the mean on each trial (for local means) and at the end of each game (for global mean), as well as forecasting probabilities of reward under different conditions (Stay or Leave) on each trial. While ample evidence exists of the brain engaging in Bayesian updating ( <ref type="bibr" target="#b28">[29]</ref><ref type="bibr" target="#b29">[30]</ref><ref type="bibr" target="#b30">[31]</ref>), including in the learning and decision-making domain ( <ref type="bibr">[32; 33]</ref>), such a model is expensive in computational and memory resources and requires perhaps more resources than participants are able or willing to expend on the task. A less demanding strategy might entail learning the correct place to aim via trial-and-error, and tracking the change in prediction error (PE, the difference between where the player aimed and where the observed minion appeared on screen) across trials. Previous research strongly indicates that trial-to-trial changes (specifically, the amount of reduction) in prediction error are indicative of the quality of learned information and the need to learn more ( <ref type="bibr">[34; 35]</ref>). Thus, a model tracking these changes could heuristically estimate, based on thresholds for how much the PE is being reduced, the value of local and global learning, and use that strategy to decide whether to Stay or Leave.</p><p>Our reinforcement learning (RL) model updates the local means on each trial based on prediction error PE, with a local learning rate 𝛼𝛼 𝐿𝐿 , as 𝜇𝜇 𝑔𝑔,𝑡𝑡 = 𝜇𝜇 𝑔𝑔,𝑡𝑡-1 + 𝑃𝑃𝑃𝑃 * 𝛼𝛼 𝐿𝐿 , where 𝑃𝑃𝑃𝑃 𝑡𝑡 = (𝑥𝑥 𝑔𝑔,𝑡𝑡-1 -𝜇𝜇 𝑔𝑔,𝑡𝑡-1 ) where 𝑥𝑥 𝑔𝑔,𝑡𝑡-1 is the most recent observed minion position. The global mean M is similarly updated, with a global learning rate 𝛼𝛼 𝐺𝐺 . The decision whether to stay or leave a current game is made heuristically, based on the change in tracked local and global prediction errors ∆𝑃𝑃𝑃𝑃 𝐿𝐿 , ∆𝑃𝑃𝑃𝑃 𝐺𝐺 , and local and global PE-thresholds 𝛾𝛾 𝐿𝐿 , 𝛾𝛾 𝐺𝐺 , as:</p><formula xml:id="formula_5">𝑃𝑃(𝑆𝑆𝑡𝑡𝑠𝑠𝑠𝑠) = � 0, 𝑖𝑖𝑖𝑖 ∆𝑃𝑃𝑃𝑃 𝐿𝐿 &lt; 𝛾𝛾 𝐿𝐿 𝑠𝑠𝑎𝑎𝑎𝑎 ∆𝑃𝑃𝑃𝑃 𝐺𝐺 &gt; 𝛾𝛾 𝐺𝐺 1, 𝑜𝑜𝑡𝑡ℎ𝑙𝑙𝑒𝑒𝑒𝑒𝑖𝑖𝑠𝑠𝑙𝑙 with ∆𝑃𝑃𝑃𝑃 𝐿𝐿 = 𝑃𝑃𝑃𝑃 𝑡𝑡 -𝑃𝑃𝑃𝑃 𝑡𝑡-1</formula><p>As the model learns the underlying distribution of each local game, the local prediction error decreases, and, crucially, the change in prediction error ∆𝑃𝑃𝑃𝑃 𝐿𝐿 also decreases; while the local and global PE settle near the level of the generative-process standard deviation (and so never decrease to 0), average ∆𝑃𝑃𝑃𝑃 𝐿𝐿 can reach values close to 0 once the model has learned where to aim. A low value of ∆𝑃𝑃𝑃𝑃 𝐿𝐿 is indicative that all relevant information from the local game has been learned, and it would be useful to leave and begin a new game. Conversely, a high value for ∆𝑃𝑃𝑃𝑃 𝐺𝐺 indicates that there is still relevant information to be learned about the global structure.</p><p>Thus, low local PE change and high global PE change indicate that, from an optimal learning perspective, leaving is the correct decision.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>As shown in Table <ref type="table">1</ref>, there were no significant differences between the groups on age, general intellectual ability, gender, or minority status. The OCD group reported a moderate level of OCD symptoms (M = 21.7, SD = 5.1), mild depression (M = 15.3, SD = 1.6), moderate anxiety (M = 16.7, SD = 11.7) as well high levels of intolerance of uncertainty (M = 79.6, SD = 23.3). Fifty-two percent of the OCD participants reporting taking psychiatric medication, including serotonin reuptake inhibitors (n =12), and benzodiazepines (n = 1).</p><p>Table 1: Sample demographics OCD HC p Age 29.4 (9.4) 30.5(10.1) .702 Female, n (%) 16 (80) 17 (81.0) .384 Estimated Verbal IQ 120.5 (7.8) 119.2 (6.9) .567 Employed, n (%) 14 (60.9) 14 (66.7) .690 Ethnic or racial minority, n (%) 7 (30.4) 7 (33.3) .837</p><p>Local Learning Both the group of patients (OCD) and the group of healthy volunteers (HC) learned the position of the canon in each game, gradually improving their aim throughout the duration of the game. A mixed ANOVA looking at average aim accuracy across Time (20 trials) and Group (OCD and HC) showed a significant main effect of Time, with accuracies later in the game significantly higher than earlier in the game (F(19, 779) = 54.04, p &lt; 0.01), and a marginal effect of group, with the average accuracy overall in a game slightly higher for the healthy volunteers than the OCD patients (𝑀𝑀 𝐻𝐻𝐻𝐻 = .69, 𝑆𝑆𝑆𝑆 𝐻𝐻𝐻𝐻 = .15, 𝑀𝑀 𝑂𝑂𝐻𝐻𝑂𝑂 = .655, 𝑆𝑆𝑆𝑆 𝐻𝐻𝐻𝐻 = .12, 𝐹𝐹(1,41) = 4.43, 𝑝𝑝 = 0.042). There was no significant interaction, suggesting that both groups learn similarly across the trials of a game (F(19,779)=1. 043, p = .12; figure <ref type="figure" target="#fig_1">3A</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Integration of Local into Global Learning</head><p>We examined participants' ability to integrate the information they gained in the local games into their estimate of the global mean by looking at their aim accuracies on the first trial of each new game. As the position of their archer was reset to a random point at the beginning of each new game, and the local means of all games were independently sampled from the global mean, any gain in accuracy on the first trial across games was likely due to participants applying what they learned of the global structure to select a better prior for their estimate of the yet-unseen local structure.</p><p>As predicted by our conceptual model of OCD as a disruptor to the local/global integration of information, only the healthy volunteers group showed significant improvements in the first trial across games, while the OCD group had no effect. (Fig. <ref type="figure" target="#fig_1">3B</ref>; 𝑀𝑀 𝐻𝐻𝐻𝐻 = .48, 𝑆𝑆𝑆𝑆 𝐻𝐻𝐻𝐻 = .07, 𝑀𝑀 𝑂𝑂𝐻𝐻𝑂𝑂 = .29, 𝑆𝑆𝑆𝑆 𝐻𝐻𝐻𝐻 = .072, significant Group x Time interaction, F(19,342)=2.01, p = 0.007).</p><p>We also examined the accuracy of the participants' guess on the last trial of the task (when they gave an explicit estimate of the global mean by aiming a last arrow at the spaceship). Consistent with reduced global learning, the HC group was slightly more accurate in their estimates (𝑀𝑀 = 7.73, 𝑆𝑆𝑆𝑆 = 3.50) than the OCD group (𝑀𝑀 = 10.07, 𝑆𝑆𝑆𝑆 = 3.95; two-way independent t-test, t(42) = 2.06, p = .045). Moreover, the HC group showed a significant correlation between the amount of integration of local into global learning (as measured by the slope of the global learning curves in Fig. <ref type="figure" target="#fig_1">3B</ref>) and their accuracy on that final global estimate (r(19) = 0.419, p = 0.01). This correlation was not present in the OCD group (Figure <ref type="figure" target="#fig_1">3C</ref>; r(19) = 0.02, p = 0.59). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Local Learning, Global Learning, and Stay/Leave Behavior</head><p>We examined trends in participants' stay times (i.e., how many trials they spent in a game before pressing the RUN button to leave) over the course of the task as another behavioral indicator of their ability to integrate local and global learning. Both models predicted shorter stay times in earlier games, when there was higher uncertainty about the global structure, and progressively longer stay times in later games, as more local cannons were observed and thus the uncertainty about the spaceship position was reduced (see Figure <ref type="figure" target="#fig_2">4A</ref>, dotted lines).</p><p>Participants in the HC group also followed this trend, with average stay times in early games (𝑀𝑀 𝑔𝑔𝑔𝑔𝑔𝑔𝑔𝑔1 = 22.6, 𝑆𝑆𝑆𝑆 = 7.4) significantly different from later games (𝑀𝑀 𝑔𝑔𝑔𝑔𝑔𝑔𝑔𝑔7 = 27.4, 𝑆𝑆𝑆𝑆 = 5.82; repeated -measures ANOVA, F(6,228 = 4.88, p &lt; 0.01)). In the OCD group, however, stay times did not show the same pattern, with early and late games both showing significantly longer stay times compared to the HC group (𝑀𝑀 𝑔𝑔𝑔𝑔𝑔𝑔𝑔𝑔1 = 28.2, 𝑆𝑆𝑆𝑆 = 4.00, 𝑀𝑀 𝑔𝑔𝑔𝑔𝑔𝑔𝑔𝑔7 = 29.9, 𝑆𝑆𝑆𝑆 = 0.44, F(1,228)=2.85, p = 0.01. See Figure <ref type="figure" target="#fig_2">4A</ref>, solid lines).</p><p>Model fits for learning rates and thresholds from the RL model showed significant differences in parameters for local and global learning, with global learning rates for the OCD group significantly lower than rates for the control group (𝑀𝑀 𝐺𝐺𝐺𝐺𝐺𝐺𝐺𝐺𝑔𝑔𝐺𝐺_𝐻𝐻𝐻𝐻 = 0.19, 𝑆𝑆𝑆𝑆 = 0.08, 𝑀𝑀 𝐺𝐺𝐺𝐺𝐺𝐺𝐺𝐺𝑔𝑔𝐺𝐺_𝑂𝑂𝐻𝐻𝑂𝑂 = 0.07𝑔𝑔, 𝑆𝑆𝑆𝑆 = 0.07, t(19) = 4.80, p &lt; 0.01; see Figure <ref type="figure" target="#fig_2">4B</ref>). Local learning rates, as well as thresholds for local and global learning were not significantly different (t(19) = 0.85, p = 0.4). We first ran general linear regression model examining the impact of various measures on the first-trial aim position. These measures included: the position of the last observed minion in the previous game (LO), the aim on the last trial of the previous game (LA), the aim on the first trial of the previous game (LFA), the random starting position the task automatically set the archer to on the respective current game (SP), the mean of last three or the last five observed minion positions in the previous game (LM3/LM5), as well as a weighted mean of all observed minion positions so far (with the weight decayed as a function of how many trials back they were observed, AM). Figure <ref type="figure" target="#fig_2">4A</ref> shows the results, with none of the regression coefficients significant predicting the first-trial aim.</p><p>We also examined the aim-noise parameter ε for differences between groups (Figure <ref type="figure" target="#fig_2">4B</ref>). A twoway independent t-test showed a marginal difference (t(42)=1.95, p = 0.057), with the average aim noise slightly larger in the OCD group (𝑀𝑀 𝐻𝐻𝐻𝐻 = 6.92, 𝑆𝑆𝑆𝑆 𝐻𝐻𝐻𝐻 = 1.19; 𝑀𝑀 𝑂𝑂𝐻𝐻𝑂𝑂 = 7.56, 𝑆𝑆𝑆𝑆 𝐻𝐻𝑂𝑂𝐻𝐻𝑂𝑂𝐻𝐻 = . 098). The temperature parameter in the softmax did not differ significantly between groups (t(42) = 0.95, p = 0.38). To better understand potential differences in aim strategies, we also compared the individual variability in aim across games in the two groups. As participants observe more canons, if they integrate information from local games into their estimate of global structure they should gradually show reduced variability in their aims (as their accuracy improves and they should also be less sensitive to occasional outlier minion positions). Figure <ref type="figure" target="#fig_2">4C</ref> shows this pattern of decreasing aim variability in the HC group, but not in the OCD group.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Our results suggest the OCD group shows preserved ability to reduce uncertainty at a local, but not global level. This is consistent with existing literature regarding oversampling/overfocusing in OCD <ref type="bibr">[13; 37-38]</ref>; however, our task and model further explain conflicting findings on whether OCD patients can accurately represent and reduce uncertainty <ref type="bibr">[16; 17]</ref>. Specifically, we propose based on this data that, while the circuitry of reward and uncertainty computations may function to a large degree as it does in a healthy population-as shown by the intact learning at the local level in each game (Fig. <ref type="figure" target="#fig_1">3A</ref>), the mechanism responsible for integrating across timescales and generalizing from local to global goals is impaired in OCD.</p><p>Further work is needed to precisely characterize the degree and neural bases of this impairment. One possibility involves disrupted reinforcement learning (RL) within the nested hierarchical structure among corticostriatal circuits, where more anterior frontal regions represent global abstract rules that contextualize action selection in posterior circuits involved in achieving subgoals ( <ref type="bibr" target="#b38">[39]</ref><ref type="bibr" target="#b39">[40]</ref><ref type="bibr" target="#b40">[41]</ref>). While RL might be intact at any individual level, impairment in cross-level integration would hamper abstract goals even if the subgoals have been achieved. Another possibility includes an aversion to uncertainty in identifying hidden task states at the level of orbitofrontal cortex ( <ref type="bibr" target="#b41">[42]</ref>).</p><p>Crucially, our task helped identify differences in the ability to process information across local and global levels simultaneously: the OCD group did not show evidence of employing learned global structure to improve local first-trial aims across games (Fig. <ref type="figure" target="#fig_1">3B</ref>), nor did they adjust aim variability in later games as the model using information-integration would predict (Fig. <ref type="figure" target="#fig_2">4C</ref>). Model simulations show this behavior is consistent with a lack of integration across games of learned local structure in the service of learning the global structure; it is also consistent with the failure to employ the knowledge about the global structure to further guide or refine behavior at the local level.</p><p>Interestingly, the performance of the OCD group on the last trial of the task, when participants explicitly estimated the global mean by aiming an arrow at the spaceship, was above chance and only slightly worse than that of the HC group. The lack of improvement on the first trial of each new game (Fig. <ref type="figure" target="#fig_1">3B</ref>), as well as the lack of correlation between the spaceship aim and the change in first-trial aim across games (Fig. <ref type="figure" target="#fig_1">3C</ref>) suggest that the OCD group did not rely on integration of local information learned throughout the task to estimate the spaceship position. Due to relatively small variances in the generative distributions, it is possible that they could still achieve accuracy on the spaceship trial by treating it as another "local" game. The regression in Figure <ref type="figure" target="#fig_2">4A</ref> did not find first or last aims of the previous local game a reliable predictor for aims in the OCD group; however, as there were over 200 trials before this last trial, it is possible players were relying on other parts of their observed local structure that were not tested in the regression model.</p><p>While our task design and model allowed testing for local-to-global integration and how information was used simultaneously in the service of multiple goal levels, we could not test, for instance, whether the OCD group integrated local information throughout the task to estimate the global mean but did not apply their knowledge of the global structure to aid performance on local games. This latter would be consistent with findings of impaired transfer of information in OCD <ref type="bibr" target="#b24">[25]</ref>. It is also possible that, if this group did to some extent use observed minions to estimate the spaceship's position, they did not perform that computation until the last trial, when instructions explicitly required it (all participants saw a screen warning that they were about to confront the spaceship). There is evidence that OCD patients perform implicit learning tasks better with additional explicit instruction <ref type="bibr">[43; 44]</ref>. Our task instructions explicitly mentioned the hierarchical structure (and the benefit of learning the global mean), and all participants reported in post-task debriefings that they were aware of the structure; but there were no reminders through the task of the implicit global learning necessary for optimal performance (as done, for instance, in <ref type="bibr" target="#b42">[43]</ref>). It is therefore possible that the OCD group was initially aware of the need for tracking the global and local means simultaneously, but a combination of lower attentional control <ref type="bibr" target="#b43">[45]</ref> and the lack of explicit priming during the task hampered their ability to focus on global learning.</p><p>It is also possible that the OCD participants did not integrate the local information at all to estimate the global mean due to reduced confidence in their estimates. Ample previous research has found that OCD impairs confidence in one's memory and learning <ref type="bibr" target="#b44">[46]</ref><ref type="bibr" target="#b45">[47]</ref><ref type="bibr" target="#b46">[48]</ref><ref type="bibr" target="#b47">[49]</ref>; compellingly, this reduced confidence in what one has learned has been found to link to compulsiveness scores, but not general psychiatric status or anxiety scores <ref type="bibr" target="#b48">[50]</ref>, suggesting that it is indeed linked to the mechanism that drives formation of compulsions. Our current design did not allow participants to observe unlimited minions in any patch and possibly forced them to move on before they were confident that they'd learned an accurate canon position; this may have led them to not fully rely on their observations and inferences to estimate the global structure. One way to test this would be to remove the limitations on the number of arrow and the maximum number of minions from each canon; such alternative design might compensate for the low confidence in one's local estimates enough to improve the integration into global estimates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>Using a hierarchical, predictive inference learning task that involves integrating global goals and local subgoals, we propose that compulsive behaviors associated with OCD are linked to deficits in uncertainty-processing; but, rather than a general failure in uncertainty reduction, OCD impacts the ability to recruit uncertainty pertaining to local subgoals in the service of reducing uncertainty about larger, more general goals. Such a deficit would reconcile existing accounts, by sparing local-level uncertainty reduction (which would show up as intact learning in a variety of tasks) but hampering goal-directed behavior in environments in which subgoals and goals coexist.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Integrating Local and Global Uncertainty Model. A. Example of local observed samples (blue filled circles) changing the estimate of the local mean (blue curves) on each trial of the game; at the end of a game, the final estimated local mean is used as one sample to update the estimate of the global mean (green curve). The local mean estimate resets between games. The global mean estimate carries from game to game, becoming updated at the end of each game. B. Simulation showing how under the model assumptions, more observed local samples translate to a better estimate of the local mean and improved aim accuracy (i.e., local learning throughout a game). C. Simulated model behavior showing improved aim on the first trial of each new game, i.e. global learning, when the local mean estimates are integrated into estimating the global mean.</figDesc><graphic coords="8,72.00,64.80,422.05,220.45" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Local Learning and integration of local into global learning. A. Both the control group (black line) and the OCD group (red line) reduced their uncertainty about canon position with more minions observed from one canon. The grey dotted lines show model predictions for this local learning with and without integration of local into global estimates. B. The control group (black line) shows improving aim on the first trial of new games, across the task. The OCD group (red line) does not. The grey lines show the model predictions in the case of integrating information from local to global (dark grey) versus not integrating that information (light grey). C. Global accuracy correlates with the slope of global learning only in the HC group (black markers)and not in the OCD group (red markers).</figDesc><graphic coords="11,72.00,240.73,466.65,134.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Behavior &amp; Model parameters reflecting global learning. A. Stay times (how many guards attempted per game) increase with number of games in the HC group (black solid line), but not in the OCD group (red solid line). Grey dotted lines represent optimal stay times under different model frameworks (light-grey: RL model; dark grey: uncertaintyupdating model). B. Fit model parameters for local and global learning rates in the RL model.Potential Alternative Strategies for OCD Group's Global LearningTo better understand the potential strategies and differences in the local and global learning performance of the OCD group, we tested a series of potential alternatives for their learning, specifically focusing on their strategy for aiming on the first trial of a new game.</figDesc><graphic coords="12,72.00,170.20,457.42,179.62" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Alternative strategies to integration of local into global learning for the OCD Group. A. No significant coefficients from a general linear regression model when the last (or last few) observed minions (LO, LM3, LM5), the first/last aims on the previous game (LA, LFA), the current archer position (SP), or a weighted mean of all observed minions (AM) were used as potential predictors. B. The model parameter governing the noise in aim is slightly higher for the OCD (red bar) than the HC (black bar) group. C. The HC group (black) reduces aim variability across games; the OCD group (red) does not.</figDesc><graphic coords="13,72.00,64.80,468.00,149.90" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="6,72.00,64.80,474.95,167.99" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Obsessive-compulsive disorder during the COVID-19 pandemic: a systematic review</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Guzick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Candelari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Wiese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Schneider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">K</forename><surname>Goodman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Storch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current psychiatry reports</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Exacerbation of obsessive compulsive disorder symptoms in children and adolescents during COVID-19 pandemic</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tanir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Karayagmurlu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">İ</forename><surname>Kaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">B</forename><surname>Kaynar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Türkmen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">N</forename><surname>Dambasan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Coşkun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychiatry research</title>
+		<imprint>
+			<biblScope unit="volume">293</biblScope>
+			<biblScope unit="page">113363</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Increases in symptoms associated with obsessive-compulsive disorder among university students during the COVID-19 pandemic</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Silverman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kalishman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Mitroff</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of American College Health</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="7" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Boisseau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Schwartzman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Rasmussen</surname></persName>
+		</author>
+		<title level="m">Quality of life and psychosocial functioning in OCD. Obsessive-compulsive disorder: phenomenology, pathophysiology, and treatment</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Patients with obsessive-compulsive disorder are impaired in associative learning based on external feedback</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Nielen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Den Boer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G O M</forename><surname>Smid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Medicine</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1519" to="1526" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Modelbased planning deficits in compulsivity are linked to faulty neural representations of task structure</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">X</forename><surname>Seow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Benoit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dempsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jennings</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maxwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>O'connell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Gillan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">30</biblScope>
+			<biblScope unit="page" from="6539" to="6550" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Goal-Directed Learning Deficits in Patients with OCD: A Bayesian Analysis</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">H</forename><surname>Zainal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Camprodon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Greenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Hurtado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Curtiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Berger-Gutierrez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Wilhelm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Therapy and Research</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Enhanced avoidance habits in obsessive-compulsive disorder</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Gillan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Morein-Zamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">P</forename><surname>Urcelay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sule</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Voon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Apergis-Schoute</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Robbins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biological psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="631" to="638" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Obsessive-compulsive tendencies are associated with a focused information processing strategy</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Soref</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Argov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Meiran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour research and therapy</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1295" to="1299" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Disruption in the balance between goal-directed behavior and habit learning in obsessive-compulsive disorder</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Gillan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Papmeyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Morein-Zamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Sahakian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Fineberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Robbins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>De Wit</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">168</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="718" to="726" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">The overlap between anxiety, depression, and obsessive-compulsive disorder</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Goodwin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Dialogues in clinical neuroscience</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Clinical characteristics and family history in DSM-III obsessivecompulsive disorder</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Rasmussen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Tsuang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The American journal of psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">143</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="317" to="322" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Increased decision thresholds trigger extended information gathering across the compulsivity spectrum</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">U</forename><surname>Hauser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moutoussis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nspn</forename><surname>Consortium</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Translational psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<date type="published" when="1296">2017. 1296</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Humans use directed and random exploration to solve the explore-exploit dilemma</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Geana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Ludvig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of experimental psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">143</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2014">2014. 2074</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Inferring relevance in a changing world</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in human neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">189</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Feeling uncertain despite knowing the risk: Patients with OCD (but not controls) experience known and unknown probabilistic decisions as similarly distressing and uncertain</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Jacoby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Szkutak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lerner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wilhelm</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Obsessive-Compulsive and Related Disorders</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page">100842</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Avoid jumping to conclusions under uncertainty in Obsessive Compulsive Disorder</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Morein-Zamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shapher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gasull-Camos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Fineberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Robbins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS One</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">225970</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Compulsivity is linked to reduced adolescent development of goal-directed control and frontostriatal functional connectivity</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Vaghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moutoussis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Váša</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Kievit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">U</forename><surname>Hauser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Vértes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Dolan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="issue">41</biblScope>
+			<biblScope unit="page" from="25911" to="25922" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Carving out new transdiagnostic dimensions for research in mental health</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Gillan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">X</forename><surname>Seow</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biological Psychiatry: Cognitive Neuroscience and Neuroimaging</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="932" to="934" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Associations between aversive learning processes and transdiagnostic psychiatric symptoms in a general population sample</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature communications</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">4179</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Stove checking behaviour in people with OCD vs. anxious controls</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bucarelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Purdon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of behavior therapy and experimental psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="17" to="24" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Transfer of information across repeated decisions in general and in obsessive-compulsive disorder</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Solway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Vinaik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">2014271118</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Elucidating the mechanism of uncertainty and doubt in obsessive-compulsive checkers</title>
+		<author>
+			<persName><forename type="first">Reuven</forename><surname>Dar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of behavior therapy and experimental psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="153" to="163" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Are people with obsessive-compulsive disorder underconfident in their memory and perception? A review and meta-analysis</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sarna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yardeni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lazarov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Medicine</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Doubting what you already know: Uncertainty regarding state transitions is associated with obsessive compulsive symptoms</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Fradkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ludwig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Eldar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Huppert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS computational biology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">1007634</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Rational regulation of learning dynamics by pupil-linked arousal systems</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Nassar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Rumsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Parikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Heasly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">I</forename><surname>Gold</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1040" to="1046" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Information-seeking, learning and the marginal value theorem: a normative approach to adaptive exploration</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Geana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Daw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Annual Meeting of the Cognitive Science Society</title>
+		<meeting>the Annual Meeting of the Cognitive Science Society</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">38</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Computational psychiatry as a bridge from neuroscience to clinical applications</title>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">J</forename><surname>Huys</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">V</forename><surname>Maia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="404" to="413" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">A computational account of threat-related attentional bias</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Michely</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS computational biology</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">1007341</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Precision and the Bayesian brain</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Yon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Frith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current Biology</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page" from="1026" to="R1032" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Bayesian action &amp; perception: representing the world in the brain</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Loeb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Fishel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">341</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Neural correlates of decisionmaking during a Bayesian choice task</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Poudel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bhattarai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Dickinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Drummond</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeuroReport</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="193" to="199" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Self-evaluation of decision-making: A general Bayesian framework for metacognitive computation</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Fleming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Daw</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological review</title>
+		<imprint>
+			<biblScope unit="volume">124</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">91</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Response-based outcome predictions and confidence regulate feedback processing and learning</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Frömer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Nassar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bruckner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Stürmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Sommer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Yeung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">elife</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">62825</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Combining error-driven models of associative learning with evidence accumulation models of decision-making</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">K</forename><surname>Sewell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">K</forename><surname>Jach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Boag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Van Heer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychonomic Bulletin &amp; Review</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="868" to="893" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Boosting serotonin increases information gathering by reducing subjective cognitive costs</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Michely</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">M</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">U</forename><surname>Hauser</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">32</biblScope>
+			<biblScope unit="page" from="5848" to="5855" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">What checkers actually check: an eye tracking study of inhibitory control and working memory</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Harkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Miellet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kessler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Reality monitoring and metacognitive beliefs related to cognitive confidence in obsessive-compulsive disorder</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hermans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Martens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>De Cort</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pieters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Eelen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour Research and Therapy</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="383" to="401" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Mechanisms of hierarchical reinforcement learning in corticostriatal circuits 1: computational analysis</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Badre</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral cortex</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="509" to="526" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Motor demands constrain cognitive rule structures</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G E</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS computational biology</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">1004785</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Hierarchical control of goal-directed action in the cortical-basal ganglia network</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Balleine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dezfouli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current opinion in behavioral sciences</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="1" to="7" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Human orbitofrontal cortex represents a cognitive map of state space</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">W</forename><surname>Schuck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Niv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1402" to="1412" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Explicit instructions facilitate performance of OCD participants but impair performance of non-OCD participants on a serial reaction time task</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Soref</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Liberman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abramovitch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Anxiety Disorders</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="56" to="62" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Attention allocation in OCD: A systematic review and meta-analysis of eye-tracking-based research</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Basel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hallel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lazarov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Affective Disorders</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Compulsivity reveals a novel dissociation between action and confidence</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Vaghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Luyckx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sule</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Fineberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Robbins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>De Martino</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="348" to="354" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Intolerance of uncertainty as a factor linking obsessive-compulsive symptoms, health anxiety and concerns about the spread of the novel coronavirus (COVID-19) in the United States</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Wheaton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Messner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Marks</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of obsessive-compulsive and related disorders</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page">100605</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">I don&apos;t know where to look: the impact of intolerance of uncertainty on saccades towards non-predictive emotional face distractors</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morriss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Mcsorley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Van Reekum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition and emotion</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="953" to="962" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Beliefs about losing control, obsessions, and caution: An experimental investigation</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Gagné</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Radomsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour research and therapy</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page">103574</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Cognitive confidence in obsessive-compulsive disorder: Distrusting perception, attention and memory</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hermans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Engelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Grouwels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Joos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lemmens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pieters</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour research and therapy</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="98" to="113" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

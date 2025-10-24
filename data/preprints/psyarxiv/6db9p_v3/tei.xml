@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Comprehensive Exploration of Visual Working Memory Mechanisms Using Large-Scale Behavioral Experiment</title>
+				<funder ref="#_GnuYfad #_cJPhn8d">
+					<orgName type="full">Research Grants Council of Hong Kong</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Liqiang</forename><surname>Huang</surname></persName>
+							<email>lqhuang@cuhk.edu.hk</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+								<address>
+									<settlement>Hong Kong</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Comprehensive Exploration of Visual Working Memory Mechanisms Using Large-Scale Behavioral Experiment</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">F7156E327B5CC1282240E3BB412DBAAE</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T14:47+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Two decades of research on visual working memory have produced substantial yet fragmented knowledge. This study aims to integrate these findings into a cohesive framework. Drawing on a largescale behavioral experiment involving 40 million responses to 10,000 color patterns, a quasicomprehensive exploration model of visual working memory, termed QCE-VWM, is developed. Despite its significantly reduced complexity (57 parameters versus 30,796), QCE-VWM outperforms neural networks in data fitting. The model provides an integrative framework for understanding human visual working memory, incorporating a dozen mechanisms-some directly adopted from previous studies, some modified, and others newly identified. This work underscores the value of large-scale behavioral experiments in advancing comprehensive models of cognitive mechanisms.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The fusion of AI with extensive datasets has sparked a wave of pivotal studies that utilize vast internet data to investigate human behavior <ref type="bibr" target="#b0">[1]</ref><ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref> . In the latest development of this trend, several recent research initiatives have begun conducting large-scale controlled experiments to gain deeper insights into basic cognitive processes. Each of these projects utilizes a large-scale experiment to carefully measure a specific facet of human behavior, subsequently conducts a "comprehensive exploration" of the relevant mechanisms/factors, and tries to build the most fitting model from them to interpret the accumulated data. This comprehensive exploration <ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref> approach attempts to combine the strengths of traditional experimental psychology with data-driven model development in the realm of artificial intelligence (AI). On one hand, this approach is theory-oriented: mirroring experimental psychology, it employs controlled experiments tailored to specific research objectives, striving to uncover theoretical insights. On the other hand, this approach is data-driven: similar to AI principles, this approach fundamentally relies on constructing an extensive, high-quality benchmark dataset as the cornerstone of model development, and iteratively refining the model to attain a satisfactory performance level. In brief, this is a theory-oriented, data-driven approach that uses AI tools (data-driven model development) to achieve the goal of experimental psychology (theoretical insights). A recent article provides a detailed conceptual and methodological justification for this comprehensive exploration approach <ref type="bibr" target="#b9">10</ref> .</p><p>For example, one pioneering study <ref type="bibr" target="#b6">7</ref> merged existing theories of human decision-making through machine learning, yielding a model that provides predictions with superior accuracy compared to any singular theory. In a similar vein, another study 8 formulated a quasi-comprehensive exploration model for spatial working memory. This model, while remaining explicitly interpretable, approaches the accuracy of a convolutional neural network (CNN).</p><p>This comprehensive exploration approach offers a significant advantage over typical experimental psychology studies, which usually begin with a hypothesis and predict outcomes based on one or two pre-established dimensions. Increasingly, it is evident that fragmented insights from such narrowly focused studies cannot be easily synthesized into a cohesive overall picture <ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b10">11</ref> . The comprehensive exploration approach aims to address this limitation by creating an integrative framework that unifies these fragmented insights <ref type="bibr" target="#b9">10</ref> . Naturally, unraveling the complex relationships between these fragmented mechanisms is statistically demanding, necessitating the use of large-scale experiments to provide sufficient data for robust analysis.</p><p>In this study, I embarked on a large-scale experiment to delve into the mechanisms underlying human visual working memory (VWM), a crucial domain for comprehending the complexities of the human mind  . Researchers have strived to delineate the intricate mechanisms inherent in VWM <ref type="bibr" target="#b33">[34]</ref><ref type="bibr" target="#b34">[35]</ref><ref type="bibr" target="#b35">[36]</ref><ref type="bibr" target="#b36">[37]</ref> , but achieving a consolidated theory remains challenging. The dataset harnessed in this study is several hundred times larger than those employed in previous investigations. This scale affords an avenue to formulate a comprehensive model that incorporates many established mechanisms and potentially reveals previously unreported ones.</p><p>In this study, participants carried out a delayed estimation task <ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b37">38</ref> related to VWM (See Figure <ref type="figure" target="#fig_0">1a</ref> and see the Methods section for more details). They were asked to memorize four saturated colors. After a one-second retention interval, they were required to report each of the four colors by choosing it on a color wheel. The experiment employed a total of 10,000 randomly-generated color patterns and measured 40 million responses (1,009 responses per item, SD = 32). As shown in Figure <ref type="figure" target="#fig_1">2</ref>, although the distributions of responses were generally centered around the presented colors, their shapes were notably distinct.</p><p>The study aims to develop a model that effectively explains the VWM process (i.e., fits the largescale experiment data) while maintaining parsimony. Specifically, the model uses the 10,000 color patterns as input to predict the response distributions for 40,000 items (10,000 patterns × 4 colors). Two additional models are used for support: a baseline model representing previous theory-driven models and serving as the starting point, and a guidance neural network providing a benchmark for what a comprehensive model should achieve. Importantly, while the neural network plays a critical role as a reference tool, the target model itself is not an AI model; rather, it is a theory-based model similar to those traditionally used in VWM research <ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref> .</p><p>Here, I show that a theory-based model-the QCE-VWM (described below)-simultaneously achieves effectiveness and parsimony. On one hand, the QCE-VWM is highly effective, outperforming neural networks in data fitting. On the other hand, it is fairly parsimonious, with only 57 parameters compared to the neural network's 30,796. The QCE-VWM provides an integrative framework for understanding VWM, incorporating a dozen mechanisms-some adopted directly from prior studies, others modified, and several newly identified.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pattern-level summary</head><p>The raw data are first summarized into response distributions for the 40,000 items (10,000 patterns × 4 colors) by amalgamating responses from all trials featuring the same pattern. These response distributions are then used in all subsequent modeling efforts. See Supplementary Methods 2.1 for reasoning behind this summarization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A neural network</head><p>A neural network was employed to analyze the dataset. As depicted in Figure <ref type="figure" target="#fig_0">1b</ref>, this neural network features an input layer with 8 nodes, which is fully connected to a first hidden layer comprising 100 neurons. After this layer, a ReLU activation function, defined as ReLU(x) = max(x, 0), is applied. This first hidden layer is fully connected to a second hidden layer that also contains 100 neurons, and again, a ReLU activation function is applied. Finally, the network possesses an output layer with 196 neurons.</p><p>The 8 input values are grouped into four pairs, each representing a color as the x/y coordinates on a color wheel. The 196 output values are designed to be used to simulate the distribution of responses. This neural network aims to emulate observers' responses by blending 16 normally distributed components -which represent knowledge-based responses -with a fraction of random guesses.</p><p>Subsequently, the distribution of responses is computed and compared against the ground truth (i.e., the actual distribution of observers' responses). The network was optimized to maximize the likelihood of observed data, employing a Negative Log-Likelihood for a Single Response (NLLsr) loss function, which was also applied in the subsequent conceptual models.</p><p>Further details regarding this neural network, including the precise calculation method for the distribution of responses and the justification for its chosen configuration, are available in Supplementary Methods 3.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural network as the guidance for model development</head><p>Despite their inherent interpretability challenges, it has been recently demonstrated that neural networks can provide valuable insights for theorists attempting to understand mental processes. In brief, the "scientific regret minimization" method utilizes the predictions produced by the neural network as guidance for the development of conceptual models <ref type="bibr" target="#b38">39</ref> . This role of guidance manifests in two ways.</p><p>First, the predictions of an under-development conceptual model are compared with those of the guidance neural network to gain insights into what is missing in the former. Why compare against the predictions of the neural network rather than the actual data? The sophistication of neural networks allows them to approximate underlying mechanisms, effectively extracting genuine information within the data. Concurrently, regularization techniques help filter out the majority of the noise. As a result, the neural network's predictions may prove more helpful than the raw data when used as guidance for conceptual model development. Nevertheless, it should be noted that this comparison is made only for obtaining insights, and the model is always still fitted to the actual data.</p><p>Second, the predictions of the guidance neural network are used as virtual data, allowing us to go beyond the 10,000 patterns for which we actually have data and explore all 360 4 = 16,796,160,000 possible patterns. Please see Supplementary Methods 5.3 for further details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Factorial comparison analysis as baseline for model development</head><p>Previous experimental studies of visual working memory have typically examined only one factor at a time. However, one study 17 conducted a factorial comparison of three factors-namely, the variability of mnemonic precision, the number of remembered items, and spatial binding errors-by simultaneously testing all 32 possible combinations of models (4×4×2). This factorial comparison study has greatly helped to clarify the issues surrounding the debate between slot 15 and resource <ref type="bibr" target="#b15">16</ref> . It has become a landmark in this field. Some of the levels within these three factors were inapplicable to the present design, resulting in a total of 8 possible models (2×2×2). Consistent with previous findings <ref type="bibr" target="#b16">17</ref> , the VP-F-NT model (Variable Precision, Fixed Capacity, with Non-Target Responses) emerged as the best among these 8 and is used as the baseline model for the present study. Further details of this factorial comparison analysis can be found in Supplementary Methods 4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A comprehensive exploration model</head><p>A quasi-comprehensive exploration model of VWM (QCE-VWM) is created to provide a comprehensive framework for VWM mechanisms, with "quasi" indicating a recognition of potential incompleteness. The QCE-VWM, similar to previous VWM models <ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref> , uses explicitly interpretable mechanisms to simulate VWM's underlying functions but provides a more accurate fit to the data.</p><p>As depicted in Figure <ref type="figure" target="#fig_0">1c</ref>, the QCE-VWM model underwent iterative refinement (See Supplementary Methods 5.4). This refinement process-entailing the identification of mechanisms and the determination of their assembly-was guided by observational clues derived from the scientific regret minimization method and theoretical insights from existing literature, as listed in Table <ref type="table">1</ref>.</p><p>The structure of this model is shown in Figure <ref type="figure" target="#fig_2">3</ref>, which will be elaborated below. The relative importance of different mechanisms and aspects within the QCE-VWM model is shown in Figure <ref type="figure" target="#fig_3">4</ref>.</p><p>Similar to the guidance neural network, the QCE-VWM model aims to simulate observers' responses by mixing normally distributed components, representing knowledge-based responses, with a proportion of random guesses. Specifically, the model includes eight color-category-biased components in which the memorized colors are biased toward the centers of eight color categories, one unbiased component, and three swap-based components in which the memorized colors are replaced by the three other items of the four-color pattern.</p><p>The QCE-VWM model is divided into three distinct phases, each further subdivided into multiple steps. For a detailed, step-by-step explanation of the model, please refer to Supplementary Discussion 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Phase 1: Pre-categorical processing</head><p>Phase 1 incorporates two crucial processes that occur before color categories come into play.</p><p>In step 1a, interactions between items have two effects: an effect on the retention rates of items, which affects step 3d below, and an effect on bias, which affects step 3b below. The latter also influences multiple other steps by incorporating this bias into their calculations of color values. These effects are respectively represented by the blue and green arrows in Figure <ref type="figure" target="#fig_2">3</ref>. As illustrated in Figures <ref type="figure" target="#fig_4">5a</ref> and <ref type="figure" target="#fig_4">5b</ref>, the influence of one item on another is described by a normal function of the color difference between the two items in the effect on retention, and by a Mexican-hat-like function in the effect on bias.</p><p>In step 1b, chunking between items is modeled. This chunking effect is represented by the red arrow in Figure <ref type="figure" target="#fig_2">3</ref>, and it affects two subsequent steps. As shown in Figure <ref type="figure" target="#fig_5">6a</ref>: the overall chunking effect of a pattern is calculated as a weighted average. On one hand, the elements being averaged are the chunking effects for all possible chunking structures (see Supplementary Table <ref type="table">2</ref>). As depicted in Figure <ref type="figure" target="#fig_5">6b</ref>, the magnitude of the chunking effect for each structure is quantified as a reduction in the number of storage units. For instance, a two-chunk structure (e.g., 3+1) earns two points because it reduces the number of storage units from four to two. On the other hand, the weights used for averaging are determined by the likelihood of each structure, which is derived from the difference between between-chunk variability and within-chunk variability. Intuitively, the greater the between-chunk variability (items of a chunk are very different from those in other chunks), and the smaller the within-chunk variability (items within the same chunk are similar), the more likely a chunking structure is.</p><p>An important distinction between interactions between items and chunking is that the former focuses on the effects of interactions at the individual-item level, while the latter is a whole-pattern-level index that describes how well-chunked the entire pattern is.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Phase 2: Calculation of weights of components</head><p>Eight color categories are defined in step 2a, each adhering to a normal distribution (see Figure <ref type="figure" target="#fig_6">7a</ref>). Importantly, there are two identical categories for reddish colors: red and red 2, a point that will be revisited below. In step 2b, weights of the eight color-category-biased components are determined by the distribution values of their corresponding categories. Intuitively, for blueish colors, the blue-categorybiased component weighs more than the green-category-biased one, and vice versa for greenish colors.</p><p>In step 2c, the weight of the unbiased component is determined by an item's location. This will be discussed below.</p><p>These nine weights-corresponding to the eight color-category-biased components and the unbiased component-then undergo two processes: concentration (step 2d) and crosstalk (step 2e). Previous VWM studies have explored the role of color categories <ref type="bibr" target="#b22">23</ref> and the interactions between items <ref type="bibr" target="#b17">18</ref> but have not examined the conjunction of these two concepts: how the categories of one item influence those of another. This study explores this conjunction, leading to the discovery of two mechanisms that have not been previously reported: concentration and crosstalk. In the concentration mechanism, smaller category weights are disproportionately reduced, which intensifies their diminishment-hence the term "concentration." By contrast, crosstalk involves a proportional redistribution of category weights between items, regardless of their initial magnitudes. Both concentration and crosstalk are influenced by the color difference between the two items, as illustrated in Figures <ref type="figure" target="#fig_4">5c</ref> and <ref type="figure" target="#fig_4">5d</ref>.</p><p>In step 2f, the weights of the three swap-based components decrease as the target item and the swapped item become more different, as illustrated in Figure <ref type="figure" target="#fig_4">5e</ref>. Put simply, swaps occur only between similar items. Moreover, swaps are less likely to occur with better-chunked patterns.</p><p>In step 2g, the weights of all three types of components are combined.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Phase 3: Calculation of distributions of responses</head><p>In step 3b, the biases for all 12 components of the 40,000 items are calculated. Each of the biases for the eight color-category-biased components is determined as a proportion of the color difference between the category center and the item. This proportion, termed the "degree of attraction", is calculated in step 3a. It varies across categories and decreases for better-chunked patterns. By definition, the bias for the unbiased component is zero, whereas the biases for the swap-based components are the color difference between the swapped item and the concerned item.</p><p>In step 3c, the standard deviations (SDs) of the components are calculated. As illustrated in Figure <ref type="figure" target="#fig_6">7b</ref>, the SDs of the color-category-biased components are proportional to, specifically 80.8% of, the SDs of the categories themselves. However, there is a distinctive red advantage: the color-category-biased component associated with the Red 2 category is much more precise (SD ratio = 0.452) than the proportional relationship predicts. Interestingly, as shown in Figure <ref type="figure" target="#fig_6">7c</ref>, there is a red disadvantage in the unbiased component: reddish colors (at the category center) are much less precise (SD ratio = 1.827) than other colors. Altogether, reddish colors are unique <ref type="bibr" target="#b39">40</ref> (see Supplementary Discussion 3.5).</p><p>The SD of the swap-based components is constant, equivalent to 80.8% of the SD of the distribution of their weights (i.e., the distribution shown in Figure <ref type="figure" target="#fig_4">5e</ref>).</p><p>In step 3d, the retention rates of items are primarily calculated as the weighted average of the distributions of the eight categories on the color wheel, plus a constant baseline. This implies that atypical colors, falling between the primary color categories, are generally at a disadvantage <ref type="bibr" target="#b26">27</ref> . The retention rates are also influenced by the interactions between items (i.e., the interaction on retention effect from step 1a).</p><p>In step 3e, a trade-off <ref type="bibr" target="#b27">28,</ref><ref type="bibr" target="#b40">41</ref> takes place between the quantity (retention rates) and the quality (SDs) of VWM representations.</p><p>In step 3f, the response distributions are calculated. The response distribution for each of the 12 components of every item is derived from the previously calculated biases and SDs. These 12 components for each item are then integrated into a single distribution, which is combined with a lowprecision counterpart (see also Supplementary Discussion 3.2) to form the overall distribution of knowledge-based responses-responses influenced by the knowledge about the colors of items. Then, the response distributions are computed as a mixture of knowledge-based responses and random guesses, with the proportion of knowledge-based responses indicated by the aforementioned retention rates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Spatial attention</head><p>The mechanisms of the QCE-VWM model are sometimes spatially inhomogeneous. As depicted in Figure <ref type="figure" target="#fig_4">5f</ref>, the top-left item has a distinct advantage over the bottom two items, while the top-right item occupies a middle ground. This phenomenon is likely influenced by reading habits <ref type="bibr" target="#b41">42</ref> , where readers typically begin at the top-left corner, proceed through the rest of the line, and then move to the lines below. In other words, this spatial inhomogeneity is probably a manifestation of the effect of unequal spatial attention to these locations and is tentatively interpreted as such (see also Supplementary Discussion 3.1).</p><p>As indicated by the yellow arrows in Figure <ref type="figure" target="#fig_2">3</ref>, this effect of unequal spatial attention impacts three steps. Specifically, better-attended items are more likely to be remembered (i.e., higher retention rates, step 3d), particularly as the unbiased component (step 2c). Its color categories are narrower and taller and are less effective at attracting the color-category biased component (step 2a).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical analysis</head><p>From a statistical perspective, the QCE-VWM model is robustly substantiated. It was compared with 17 alternative models. Fourteen of these models (models 2-15) were derived by eliminating a single mechanism or aspect, and they are used to show that each of these 14 mechanisms/aspects is essential for the QCE-VWM model. The remaining three (models 16-18) were developed by applying different methods to specific aspects of the QCE-VWM model, and they are used to show that each of these alternative methods is inferior to what is used in QCE-VWM.</p><p>Specifically, 17 t-tests were conducted to evaluate the QCE-VWM model's advantage (i.e., reduction in NLLsr values) over alternative models. Given the unusually large sample size (10,000 patterns), even small effects could produce extremely low p-values (p &lt; 0.001 in all cases, see details in Supplementary Table <ref type="table">3</ref>). Therefore, p-values are not a suitable statistical index in this context. For an index that does not scale with sample size, the effect sizes (Cohen's d) of these 17 comparisons are illustrated in Figure <ref type="figure" target="#fig_3">4</ref> (see the values in Supplementary Table <ref type="table">3</ref>). Most of these d values are decently large, but several are only slightly above 0.2, which could be considered small effects. However, Cohen's d is typically used in situations where the experiments are tailor-made to highlight one specific mechanism/factor, whereas the randomly generated patterns in the present study are not. With this consideration, it seems fair to say that all these effects are decently large.</p><p>The mechanisms are not equally complex. For example, eliminating the chunking mechanism results in the reduction of 3 parameters, whereas eliminating the trade-off mechanism results in the reduction of only 1 parameter. Therefore, a "complexity-adjusted d" (CAD) is also presented in Figure <ref type="figure" target="#fig_3">4</ref>. This CAD is defined as follows (see Supplementary Methods 5.1 for further details).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>𝐶𝐴𝐷 (complexity adjusted</head><formula xml:id="formula_0">d) = 𝐶𝑜ℎ𝑒𝑛 ′ 𝑠 𝑑 √ ∆ 𝑝𝑎𝑟𝑎𝑚<label>(1)</label></formula><p>Furthermore, cross-validation was conducted to evaluate the generalizability of these 17 comparisons. The data were partitioned into 10 subsets, with models being trained on one subset and then applied to the other nine subsets. Figure <ref type="figure" target="#fig_3">4</ref> reveals that the Cohen's d values for these 17 comparisons are approximately the same for both the training and validation sets. The average generalizability ratio (Cohen's d for validation set / Cohen's d for training set) for the 17 comparisons is 99.5 %, suggesting that they are generalizable (see details in Supplementary Table <ref type="table">4</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Compared to traditional one-at-a-time studies, which yield fragmented insights like pieces of a puzzle, the comprehensive exploration approach merges these pieces of insight into an overall picture: an integrative framework. The task of putting puzzle pieces together is supposedly undertaken by literature reviews, but unfortunately, they are not very effective in doing so. <ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b10">11</ref> From this perspective, comprehensive exploration can be seen as an enhanced literature review equipped with a structured methodology. As depicted in Figure <ref type="figure" target="#fig_7">8a</ref>, it aims to amalgamate the precision and evidence-based nature of experimental studies with the extensive, holistic scope of literature reviews.</p><p>By integrating the fragmented insights, the QCE-VWM model has achieved an optimal balance between effectiveness and parsimoniousness. Figure <ref type="figure" target="#fig_7">8b</ref> compares the fitting of the QCE-VWM model with those of the guidance neural network and the baseline model (i.e., the VP-F-NT model discussed above). As expected, the guidance neural network exhibits a superior fit to the data compared to the baseline model. This aligns with the commonly observed discrepancy between neural networks and cognitive models: the former excel in data fitting but tend to be complex, while the latter are parsimonious but often fall short in effectively explaining data. The QCE-VWM model has achieved effectiveness but has also maintained relative parsimoniousness. On one hand, it surpasses the guidance neural network in terms of data fit. The latter is presumably a nearly full explanation of the data, so the QCE-VWM model also is. On the other hand, it remains fairly parsimonious, with 57 parameters compared to the neural network's 30,796. In brief, by summarizing the accumulated wisdom of decades of previous work on VWM, the QCE-VWM model provides a better explanation of empirical observations than a massive neural network.</p><p>As shown in Figure <ref type="figure" target="#fig_7">8b</ref>, the performance of the neural network substantially decreases when the number of its parameters is reduced to 628 and 208 (see also Supplementary Methods 3). This observation further supports that the neural network cannot maintain its effectiveness without its complexity, highlighting the distinct advantage of the QCE-VWM model in achieving both effectiveness and parsimony simultaneously. For a complete comparison, all models involved in this study are presented in Figure <ref type="figure" target="#fig_8">9</ref>.</p><p>After demonstrating that the QCE-VWM model achieves an optimal balance between effectiveness and parsimony, we now turn to its conceptual implications. Using the puzzle analogy again, the key message of the present study is that a fairly complete overall picture is formed from these puzzle pieces, something rarely achieved or attempted for any cognitive task. In addition to this, there are numerous specific findings concerning the relationships among the puzzle pieces (i.e., the relationships between various mechanisms within the model), the discovery of new puzzle pieces, or the updating of old ones. There are too many to discuss exhaustively here; however, the 20 most important ones are listed in Table <ref type="table">1</ref>.</p><p>Next, we will go through five benefits of the comprehensive exploration over traditional one-at-atime studies and/or literature reviews. First, a comprehensive exploration explicates the relationships among individual mechanisms. Traditional experimental studies examine different mechanisms one at a time and cannot elucidate the relationship among these mechanisms. For example, one previous study <ref type="bibr" target="#b22">23</ref> distinguished between pre-categorical and category-based color information, while another explored the mechanism of chunking <ref type="bibr" target="#b20">21</ref> . However, these separate studies do not address their relationship: is chunking based on pre-categorical or category-based color information? In contrast, a comprehensive formal computational model compels us to explicitly answer such questions. Specifically, by positioning chunking in phase 1, the QCE-VWM model implies that chunking relies on pre-categorical color differences rather than category-based ones (see Supplementary Discussion 3.7). To generalize, the QCE-VWM model automatically implies numerous relationships. For instance, are each of the aspects (e.g., retention rates, memory precision, categories' attraction, swapping) affected by each of the factors (e.g., chunking, interaction between items, spatial attention, and position on the color wheel)? The model provides answers to these and other potential questions, which can be found by examining the model's details (see Table <ref type="table">1</ref>).</p><p>Second, relevant to the preceding point, a comprehensive exploration facilitates the examination of the conjunction of existing findings. Previous studies have separately established the role of color categories <ref type="bibr" target="#b22">23</ref> , the interactions between items <ref type="bibr" target="#b17">18</ref> , and the role of random guesses <ref type="bibr" target="#b14">15</ref> . The present study tries to explore the conjunctions between them. As mentioned above, the conjunction between category and interaction (i.e., how the weights of items affect each other) led to the discovery of two mechanisms that have not been previously reported: concentration and crosstalk (see Supplementary Methods 5.4 for the other conjunctions). Such a conjunction-based finding is unlikely to emerge from traditional one-at-atime studies because it requires the simultaneous consideration of two factors that are not typically considered together. Nevertheless, their importance for explaining the data (Cohen's d = 0.248 and 0.261, respectively, for concentration and crosstalk) are comparable to the conceptually straightforward mechanism, trade-off (Cohen's d = 0.238).</p><p>Third, in the comprehensive exploration, a missing or redundant mechanism can be objectively assessed through model fitting. On one hand, if an important mechanism is missing from the model, it will result in a set of poorly-fitted patterns, allowing us to speculate on the nature of the missing mechanism. On the other hand, if a mechanism is redundant, then it will not lead to further improvement in the model's fitting. In comparison, the literature review is inherently subjective and lacks an objective method to guarantee the detection of missing or redundant mechanisms.</p><p>Fourth, a comprehensive exploration fosters more constructive theoretical developments. Consider, for instance, the ongoing debate <ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b23">24</ref> between the slot model and the resource model, which has significantly influenced studies on VWM over the past 15 years. The slot model proposes a fixed number of slots for remembering items, storing high-precision information for items assigned a slot, and making random guesses for others. In contrast, the resource model suggests flexible resource allocation, enabling potentially unlimited items to be remembered with varying precision. As mentioned above, the factorial comparison study <ref type="bibr" target="#b16">17</ref> has bridged some of the gaps between them. The QCE-VWM model further progresses in integrating these theoretical positions. On one hand, it asserts that only retention rates, not SDs, are influenced by external factors (spatial attention, interactions between items), making the SDs a more fixed aspect than the retention rates. This aligns with the spirits of the slot model. On the other hand, the trade-off observed between the quantity and quality of representations in Step 3e is consistent with the spirits of the resource model. Overall, it is evident that both the slot and resource models encapsulate certain aspects of the truth, yet neither is entirely accurate (see Supplementary Discussion 3.3 for more details). The QCE-VWM model serves as a constructive intermediary in this debate, amalgamating and scrutinizing insights from both the slot and resource models within an integrative framework.</p><p>Fifth, a comprehensive exploration is more precise. For instance, the color-category-biased components are attracted toward the category centers. Although this center-attraction mechanism appears Bayesian-like, substantial modifications are needed. Bayesian rules predict an additive relationship between the precision of color-category-biased components and the precision of those categories <ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b42">43</ref> , yet a multiplicative relationship provides a better fit to the data (see Supplementary Discussion 3.6). For another example, while the von Mises distribution is commonly considered the appropriate substitute for the normal distribution in circular space, the current analysis reveals that the truncated normal distribution offers a better explanation for the data (see Supplementary Discussion 3.10).</p><p>After reviewing the benefits of comprehensive exploration, we will now explore aspects that some may find undesirable, beginning with the issue of the model's complexity. One might argue that the QCE-VWM model, with its 57 parameters, is overly complex by cognitive psychology standards. However, the traditional belief that a model should be limited to a few parameters emerged in contexts with limited datasets. Applying this convention to large datasets can be misleading. Recent research indicates that as datasets expand, the optimal models should also become more intricate <ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b43">44</ref> . Furthermore, the mechanisms underlying any function of the human mind are likely to be multifaceted. Therefore, if the goal is to reveal this complex truth, then the model must be correspondingly complex. From another perspective, as illustrated in Figure <ref type="figure" target="#fig_7">8a</ref>, the comprehensive exploration can be considered an enhanced literature review. When the QCE-VWM model is compared to a recent literature review <ref type="bibr" target="#b34">35</ref> , it demonstrates a comparable breadth of factors considered. Therefore, the complexity of the QCE-VWM model aligns with the expectations for an enhanced literature review.</p><p>A consequence of complexity is the iterative nature of the model. For example, the factorial comparison analysis <ref type="bibr" target="#b16">17</ref> , which explored a solution space of 4×4×2 = 32 possible models, is broader than what is typical in experimental psychology. The present study shares the goal of simultaneously testing multiple factors. However, the current QCE-VWM model has 57 parameters, making it obviously impossible to exhaustively test all 2 57 = 1.4E+17 ablated models, not to mention the many other parameters that could have been included. Therefore, unlike the factorial comparison study, which conducted exhaustive testing within a predefined space of solutions, the present study adopts the style of AI studies: a data-driven iterative search within an unlimited space of solutions. Thus, the current QCE-VWM model, while being the best option available at this moment, is tentative and may be replaced by superior alternatives in subsequent iterations. Several points need clarification regarding this iterative nature.</p><p>First, the minor cost of being iterative is outweighed by the greater benefit of exploring unlimited possibilities. This is why the QCE-VWM can surpass factorial comparison analysis <ref type="bibr" target="#b16">17</ref> . While exhaustive testing is valuable because it can identify the best solution within a predefined space, isn't it preferable to discover an even better solution by venturing into a larger space?</p><p>Second, being iterative does not equate to being arbitrary. Although the existence of essentially unlimited possible models prevents exhaustive assessment, necessitating an iterative search, those models that are assessed undergo rigorous statistical evaluation. The statistical evidence provided underscores the indispensability of all the model's mechanisms. Additionally, many candidate mechanisms, including the Boolean map <ref type="bibr" target="#b44">45,</ref><ref type="bibr" target="#b45">46</ref> , have been tested and found to be unhelpful and thus were rejected, indicating that mechanisms cannot be arbitrarily added. The Boolean map is particularly worth mentioning because it was the primary driving force behind my theory-driven studies <ref type="bibr" target="#b44">[45]</ref><ref type="bibr" target="#b45">[46]</ref><ref type="bibr" target="#b46">[47]</ref><ref type="bibr" target="#b47">[48]</ref> for 15 years and indeed the initial reason I started this project. However, it had to be rejected because the data indicated as much. This example clearly demonstrates that there is little room for subjective bias in the decision to add or remove a mechanism.</p><p>Lastly, the iterative or tentative nature aligns well with the inherent process of scientific discovery <ref type="bibr" target="#b48">49</ref> . In the AI domain, the iterative approach to model development is often viewed as a strength because it enables starting with a modest proposal, gathering feedback and additional data, and then refining the model based on those inputs, continuing this constructive loop of enhancements. This principle certainly applies here. Beyond the QCE-VWM model, the current dataset also represents an initial attempt. Hopefully, this study will inspire peer researchers to adopt a more comprehensive approach, and ultimately, the community will decide how to establish a better benchmark dataset for everyone's use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>The experimental procedure adhered to The Chinese University of Hong Kong's guidelines for conducting survey and behavioral research. Ethical approval was obtained from the Research Ethics Committee of The Chinese University of Hong Kong prior to the commencement of the study (SBRE-19-224, approved on 6 February 2020; SBRE-21-0204, approved on 6 December 2021). This approval encompassed the consent form, the experimental processes, and the payment system involved in the experiment.</p><p>The experiment was conducted as an online game that participants accessed using their personal devices. For obtaining informed consent, participants were explicitly informed that the outcomes of the testing would contribute to a scientific study led by the author. Additionally, details regarding the task embedded within this experiment were shared with them. Participants expressed their willingness to take part in the study by tapping the Continue button on their personal devices.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Online data collection platform</head><p>The current experiment was conducted as an online game using our laboratory's online data collection platform (<ref type="url" target="https://huang.psy.cuhk.edu.hk/games/">https://huang.psy.cuhk.edu.hk/games/</ref>). The computer code used to create the webpage for data collection was written in JavaScript, Vue.js (version 2.6.11), and PHP (version 5.3.3).</p><p>This platform is embedded within the WeChat app, meaning the webpage can only function properly when accessed through the app. This integration with WeChat is essential for facilitating user engagement and management.</p><p>WeChat, a widely used multipurpose instant messaging and social media application among Chinese individuals, boasts over a billion active users. This makes it convenient for users to share the platform on their WeChat Moments. More importantly, embedding the platform within WeChat enables access to its identification system, streamlining user payment processes and preventing the creation of multiple IDs. To utilize WeChat's ID system, the platform must automatically detect WeChat IDs, which necessitates opening the webpage exclusively within the WeChat app.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>As described, the experiment was conducted as an online game that participants accessed using their personal devices, indicating that the majority were likely active internet users. Additionally, the data collection platform was presented in Chinese and embedded within the WeChat app, implying that participants were probably Chinese language users. Individuals with color vision deficiencies were explicitly instructed not to participate. Beyond these factors, no other apparent bias exists in the study population.</p><p>A total of 2,316 participants (59.3% female; mean age = 29.4 years, both based on self-reported gender and age) participated in the game.</p><p>During each week-long session, several hundred active participants received participation-based awards (25 Chinese Yuan each), while two randomly selected participants were granted lottery-based awards (500 Chinese Yuan each). Further details can be found in the Supplementary Methods 1.3.</p><p>The target dataset size was determined based on an estimation of the total number of trials required. Specifically, based on previous experience with working memory studies, it was estimated that 1,000 trials would be sufficient for measuring VWM for each individual color pattern. Consequently, a total of 10 million trials was planned.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stimuli and procedure of the experiment</head><p>The current working memory task was depicted in Figure <ref type="figure" target="#fig_0">1a</ref>. Each trial began with a one-second presentation of a fixation, followed by a memory display that showed four colored squares arranged in a 2×2 matrix. Participants were instructed to memorize these four colors. This memory display lasted for one second, succeeded by a retention interval of equal duration. Upon completion of the retention interval, four white squares appeared, indicating to the participants that they could initiate their response.</p><p>Participants responded by tapping one of the white squares and then sliding on a color wheel to report the memorized color of the selected square. The orientation of the color wheel was randomized for each response. During sliding, the color of the selected square immediately changed to reflect the currently selected color. Once satisfied with their choice, participants released their finger to confirm their response. They then repeated this process for the remaining three colors. In this procedure, colors that had already been reported remained visible. Participants responded to the four items in any order they preferred.</p><p>The aforementioned displays occupied the central square area of the device. On a typical mobile phone screen, the squares and the gaps between them measure 0.91 cm and 1.04 cm, respectively.</p><p>Randomization was utilized for both the generation and use of color patterns. In each trial, the colors were randomly selected from a pool of 10,000 color patterns. These patterns were generated in advance, each by selecting four random integers from the range of [0, 359]. Each number corresponds to a color, represented as an angle on a color wheel. Since participants used their own devices, the actual colors displayed inevitably varied slightly between devices, implying slight inconsistencies from their designed values in the color space (See Supplementary Methods 1.2 for further details).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Relevant mechanism</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implications</head><p>Previous studies</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>See also</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Global-level implication</head><p>An integrative framework, created by merging individual mechanisms, is very effective, even more so than neural networks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>not previously reported</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Interactions between item</head><p>Items influence each other's biases and retention rates.</p><p>different from them <ref type="bibr" target="#b17">18</ref> 3.9</p><p>The interactions between items are based on pre-categorical, not categorybased, color information.</p><p>not previously reported</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.7</head><p>The effect of interaction on biases is governed by a Mexican-hat-like function.</p><p>confirms them <ref type="bibr" target="#b29">30</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Chunking</head><p>Chunking magnitude = reduction in the number of storage units. Likelihood = between-chunk variability -within-chunk variability.</p><p>different from them <ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b25">26,</ref><ref type="bibr" target="#b32">33</ref> 3.9</p><p>Chunking is based on pre-categorical, not category-based, color information. not previously reported</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.7</head><p>Better-chunked patterns are less likely to be swapped, and less attracted toward category centers.</p><p>not previously reported Contrary to previous findings, better-chunked patterns are no more likely to be remembered. different from them <ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b25">26,</ref><ref type="bibr" target="#b32">33</ref> Categorybiased component Memory of colors are affected by color categories. confirms them <ref type="bibr" target="#b22">23</ref> 3.4</p><p>The category-based encoding is Bayesian-like but does not strictly follow Bayesian rules.</p><p>different from them <ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b22">23,</ref><ref type="bibr" target="#b42">43</ref> 3.6 Red advantage: reddish colors are represented more precisely than other colors in category-biased component (i.e., red 2 category). not previously reported 3.5 Unbiased component Red disadvantage: reddish colors are represented less precisely than other colors in the unbiased component. not previously reported 3.5 Swap-based component Spatial binding errors occur at the representation stage, but not at the response stage.</p><p>different from them <ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b19">20</ref> 3.8</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Concentration &amp; Crosstalk</head><p>The weights of items affect each other. not previously reported 3.9</p><p>Retention rates / Random guess More typical colors, as defined by the categories, are more likely to be remembered.</p><p>confirms them <ref type="bibr" target="#b26">27</ref> Consistent with the spirit of the slot model, only the retention rates, not the precision, are affected by interactions between items and spatial attention.</p><p>different from them <ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b23">24</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.3</head><p>Trade-off There is a trade-off between the quantity and quality of representations. This is consistent with the spirit of resource model. confirms them 16,28,41</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Precision of representations</head><p>There are low-precision components. confirms them</p><p>17,29,31,32 3.2 Spatial attention Better-attended items are more likely to be remembered. confirms them 15,51-54 3.1 Better-attended items' color categories are narrower and taller, and less effective at attracting the color-category biased component. not previously reported 3.1</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Category/ representation</head><p>The truncated normal distribution is superior to the von Mises distribution. different from them <ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b54">55</ref> 3.10 Table <ref type="table">1</ref>. Findings and previous studies. This table presents the primary finding of the QCE-VWM model, along with 20 specific implications. The "Previous studies" column provides references to relevant prior findings when available and clarifies whether the present study confirms them or supports a different conclusion. The rightmost "see also" column guides readers to the corresponding sections in the Supplementary Discussion where each topic is elaborated.     In five cases, a variable is the function of the color difference between two items. From top to bottom, the panels respectively show the functions governing the effect of interaction on retention rate, the effect of interaction on bias, concentration, crosstalk, and weights of swap-based components. f. Several mechanisms have been identified to exhibit spatial inhomogeneity, as illustrated by the distribution shown here: the two bottom corners are at a clear disadvantage compared to the top-left corner, while the top-right corner occupies an intermediate position. This is likely attributable to the unequal distribution of spatial attention.   In contrast, the QCE-VWM model has managed to simultaneously achieve both; it surpasses the guidance neural network in terms of data fit and is also comparatively parsimonious. Four reduced versions of the guidance neural network are indicated by the gray dots. Their performance substantially decreases when the number of parameters is reduced to 628 and 208. This confirms that the neural network cannot remain effective without its complexity, highlighting the distinct advantage of the QCE-VWM model in simultaneously achieving effectiveness and parsimony. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Basic information of the present study. a.In the present study, a delayed estimation task was adopted. Participants attempted to memorize four saturated colors and report them after a onesecond retention interval. The report for each color was done by tapping the corresponding white square and selecting the appropriate color on a color wheel. b. The guidance neural network includes four layers, respectively with 8, 100, 100, and 196 nodes and fully connected throughout. c. The QCE-VWM model underwent iterative refinement. This refinement process, involving the identification of individual mechanisms and the determination of their interrelationships, was guided by both observational clues and theoretical insights.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Four sample patterns.This figure shows the response distributions of four selected sample patterns, smoothed for clearer visualization. It also includes the predictions made by the QCE-VWM model (white curve) and the guidance neural network (black curve), both of which will be explained later. These patterns were selected due to their mid-range positioning in a comparison of the fitting accuracies between the two models, giving a fair visual assessment of their relative effectiveness.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Structure of QCE-VWM model. This model aims to simulate observers' responses by blending knowledge-based responses with a proportion of random guesses. The former comprises three types of normally distributed components: eight color-category-biased components, one unbiased component, and three swap-based components.Throughout the operation of the model, the weights of these components, along with the means and SDs of their distributions, as well as the proportion of random guesses, are calculated and used collectively to make predictions about the distribution of responses. Blue, green, red, and yellow arrows respectively represent the effects of interaction on retention, interaction on bias, chunking, and spatial attention.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. QCE-VWM vs 17 alternative models. This graph illustrates the cost associated with eliminating a single mechanism (or aspect) of the QCE-VWM model, or that of applying different methods (see text and Supplementary Discussion 2 for details). These costs are gauged by the effect sizes of t-tests in 17 comparisons between QCE-VWM and 17 alternative models. These effect sizes are measured as Cohen's d value (green bars), as well as the CAD values (complexity-adjusted d, see Supplementary Methods 5.1, purple bars), and they are generally quite large. Moreover, cross-validation is performed, and the Cohen's d value for the validation set (blue bars) is nearly as large as that for the training set (red bars), suggesting that these effects are generalizable.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Various Mechanisms of the QCE-VWM Model. a-e.In five cases, a variable is the function of the color difference between two items. From top to bottom, the panels respectively show the functions governing the effect of interaction on retention rate, the effect of interaction on bias, concentration, crosstalk, and weights of swap-based components. f. Several mechanisms have been</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Chunking. a. The chunking effect of a pattern is calculated as a weighted average across possible chunking structures. b. The magnitude of the chunking effect for a structure is calculated as the reduction in the number of storage units.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>Figure 7. Color categories. a. These eight panels illustrate the distributions of the eight categories on the color wheel. They determine the weights of the eight color-category-biased components. Note that two categories, Red and Red 2, share identical distributions but are included for the reason described below. b. The SDs of seven color-category-biased components are proportional to the SDs of the categories themselves. However, there is a distinctive red advantage: the component associated with the Red 2 category is much more precise than the proportional relationship predicts. c. Conversely, there is a red disadvantage in the unbiased component: reddish colors are much less precise than other colors. Please note that panels b and c use the scale of precision (i.e., 1/SD 2 ), even though the numbers indicate the SDs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. Advantages of QCE-VWM model. a. The comprehensive exploration functions as an enhanced literature review, aiming to merge the precision and evidence-based characteristics of traditional experimental studies with the broad, holistic scope of literature reviews. b. The guidance neural network and baseline VP-F-NT model have achieved effectiveness and parsimony, respectively.In contrast, the QCE-VWM model has managed to simultaneously achieve both; it surpasses the guidance neural network in terms of data fit and is also comparatively parsimonious. Four reduced versions of the guidance neural network are indicated by the gray dots. Their performance substantially decreases when the number of parameters is reduced to 628 and 208. This confirms that the neural network cannot remain effective without its complexity, highlighting the distinct advantage of the QCE-VWM model in simultaneously achieving effectiveness and parsimony.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 9 .</head><label>9</label><figDesc>Figure 9. A thorough comparison of all models.The QCE-VWM model (represented by a green bar), along with the 17 alternative models (represented by blue bars), the guidance neural network and its four reduced versions (represented by red bars), and the eight models in the factorial comparison analysis (represented by yellow bars), are all sorted based on their data fitting (NLLsr). Please note that uneven scales are used across different ranges because the fittings are densely clustered within two specific ranges: one for the QCE-VWM and alternative models, and another for six of the eight models in the factorial comparison analysis. Consequently, uneven scales are employed to highlight the distinctions within these two clusters. The QCE-VWM and alternative models greatly outperform those in the factorial comparison analysis due to their effective integration of more mechanisms. Furthermore, the</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>The work described in this paper was supported by the <rs type="funder">Research Grants Council of Hong Kong</rs> (<rs type="grantNumber">CUHK 14610520</rs> &amp; <rs type="grantNumber">CUHK 14606622</rs>, both awarded to L.H.). The funder had no role in study design, data collection and analysis, decision to publish or preparation of the manuscript. The ChatGPT has been utilized to enhance grammar, spelling, and phrasing of this paper, but it has not been employed to generate any new text.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_GnuYfad">
+					<idno type="grant-number">CUHK 14610520</idno>
+				</org>
+				<org type="funding" xml:id="_cJPhn8d">
+					<idno type="grant-number">CUHK 14606622</idno>
+				</org>
+			</listOrg>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data availability statement</head><p>All data is available on the Open Science Framework <ref type="bibr" target="#b49">50</ref> and can be accessed at <ref type="url" target="https://doi.org/10.17605/OSF.IO/QPY49">https://doi.org/10.17605/OSF.IO/QPY49</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code availability statement</head><p>All scripts used for data analysis are available on the Open Science Framework <ref type="bibr" target="#b49">50</ref> and can be accessed at <ref type="url" target="https://doi.org/10.17605/OSF.IO/QPY49">https://doi.org/10.17605/OSF.IO/QPY49</ref>.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preliminary analysis and data exclusion</head><p>The dataset incorporates a total of 10,159,250 trials, encompassing 40,637,000 responses. The mean performance was commendably good, mirroring the results of past studies. Specifically, in preliminary analysis, performance is measured by the average root mean square error (RMSE) of participants' responses in comparison to the actual colors on the color wheel. The average RMSE for the dataset is 47°, suggesting that participants generally focused on the task at hand.</p><p>Certain trials were excluded based on pre-set criteria. Poor blocks, characterized by an average RMSE of 90° or more, were excluded. This led to the elimination of 0.64% of trials. Unusually good blocks, characterized by an average RMSE of 10° or less, were also eliminated. This resulted in the removal of 0.025% of trials. This second exclusion was motivated by the assumption that such outcomes are likely the result of artificial strategies. Following these exclusions, the dataset contained a total of 10,091,320 trials and 40,365,280 responses for subsequent analysis.</p><p>Next, the response distributions for the 40,000 combinations (10,000 patterns × 4 colors) were computed by amalgamating the responses from all trials featuring the same pattern. The compiled data was then utilized by the neural networks and the QCE-VWM model for their respective modeling processes, implemented using PyTorch version 1.12.0 and MATLAB (R2022b), respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author contributions</head><p>L. H. is the sole author of this article.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p>The author declares no competing interests.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table (see next page)</head><p>QCE-VWM and several alternative models surpass the performance of the guidance neural network, presumably because the latter does not capture the underlying mechanisms as precisely as the former.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Detecting influenza epidemics using search engine query data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ginsberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">457</biblScope>
+			<biblScope unit="page" from="1012" to="1014" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Experimental evidence of massive-scale emotional contagion through social networks</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Kramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Guillory</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Hancock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc. Natl. Acad. Sci</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="page">8788</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The spread of true and false news online</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Vosoughi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Aral</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">science</title>
+		<imprint>
+			<biblScope unit="volume">359</biblScope>
+			<biblScope unit="page" from="1146" to="1151" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Understanding individual human mobility patterns</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Gonzalez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Hidalgo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-L</forename><surname>Barabasi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">nature</title>
+		<imprint>
+			<biblScope unit="volume">453</biblScope>
+			<biblScope unit="page" from="779" to="782" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Manifesto for a new (computational) cognitive revolution</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">L</forename><surname>Griffiths</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">135</biblScope>
+			<biblScope unit="page" from="21" to="23" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The moral machine experiment</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Awad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">563</biblScope>
+			<biblScope unit="page" from="59" to="64" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Using large-scale experiments and machine learning to discover theories of human decision-making</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Peterson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">D</forename><surname>Bourgin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Reichman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">L</forename><surname>Griffiths</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">372</biblScope>
+			<biblScope unit="page" from="1209" to="1214" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A quasi-comprehensive exploration of the mechanisms of spatial working memory</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="729" to="739" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Beyond playing 20 questions with nature: Integrative experiment design in the social and behavioral sciences</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Almaatouq</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behav. Brain Sci</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="55" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<ptr target="https://osf.io/preprints/psyarxiv/g4z6w(underreview" />
+		<title level="m">Addressing the precision-breadth-simplicity impossible trinity in psychological research: a comprehensive exploration approach</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Should social science be more solution-oriented?</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Watts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Familiarity and visual change detection</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Pashler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Percept. Psychophys</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="369" to="378" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Binding in short-term visual memory</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Wheeler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Treisman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology-General</title>
+		<imprint>
+			<biblScope unit="volume">131</biblScope>
+			<biblScope unit="page" from="48" to="64" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The capacity of visual short-term memory is set both by visual information load and by number of objects</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Cavanagh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="106" to="111" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Discrete fixed-resolution representations in visual working memory</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Luck</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">453</biblScope>
+			<biblScope unit="page" from="233" to="U213" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Dynamic shifts of limited working memory resources in human vision</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Bays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Husain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">321</biblScope>
+			<biblScope unit="page" from="851" to="854" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Factorial comparison of working memory models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Den Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Awh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">121</biblScope>
+			<biblScope unit="page">124</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Hierarchical Encoding in Visual Working Memory: Ensemble Statistics Bias Memory for Individual Items</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Brady</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="384" to="392" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Contextual effects in visual working memory reveal hierarchically structured memory representations</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Brady</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Vis</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="6" to="6" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">The precision of visual working memory is set by allocation of a shared resource</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Bays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">F</forename><surname>Catalao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Husain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Vis</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="7" to="7" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">A probabilistic model of visual working memory: Incorporating higher order regularities into working memory capacity estimates</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Brady</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Tenenbaum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">85</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Modeling visual working memory with the MemToolbox</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Suchow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Brady</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fougnie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Vis</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="9" to="9" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Why some colors appear more memorable than others: A model combining categories and particulars in color working memory</title>
+		<author>
+			<persName><forename type="first">G.-Y</forename><surname>Bae</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Olkkonen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Allred</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">I</forename><surname>Flombaum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="page">744</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Clear evidence for item limits in visual working memory</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Adam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Vogel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Awh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognit. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="79" to="97" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">A model of working memory for latent representations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hedayati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>O'donnell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wyble</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="709" to="719" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Unit of visual working memory: A Boolean map provides a better account than an object does</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">149</biblScope>
+			<biblScope unit="page" from="1" to="30" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Visual memory needs categories</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Olsson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Poom</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="page" from="8776" to="8780" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Strategic trade-offs between quantity and quality in working memory</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fougnie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Cormiea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kanabar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Exp. Psychol. Hum. Percept. Perform</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page">1231</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Variability in the quality of visual working memory</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fougnie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Suchow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Commun</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">1229</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Center-surround inhibition in working memory</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kiyonaga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Egner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Curr. Biol</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="64" to="68" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">A resource-rational theory of set size effects human visual working memory</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Den Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ELife</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">34963</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Variability in encoding precision accounts for visual short-term memory limitations</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Den Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W.-C</forename><surname>Chou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>George</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page" from="8780" to="8785" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Two good reasons to say &apos;change!&apos;-ensemble representations as well as item representations impact standard measures of VWM capacity</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Liesefeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Liesefeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Müller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Br. J. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="page" from="328" to="356" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">What limits working memory capacity?</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oberauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Farrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jarrold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lewandowsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Bull</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page">758</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Benchmarks for models of short-term and working memory</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oberauer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Bull</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="page">885</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Terms of the debate on the format and structure of visual memory</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Suchow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fougnie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Brady</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Attention, Perception, &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page" from="2071" to="2079" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Current directions in visual working memory research: An introduction and emerging insights</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Liesefeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Müller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Br. J. Psychol</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="page" from="193" to="206" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">A detection theory account of change detection</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wilken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Vis</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="1120" to="1135" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Scaling up psychology via scientific regret minimization</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Peterson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">L</forename><surname>Griffiths</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="8825" to="8835" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Color channels, not color appearance or color categories, guide visual search for desaturated color targets</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Lindsey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="1208" to="1214" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Working memory capacity affects trade-off between quality and quantity only when stimulus exposure duration is sufficient: Evidence for the two-phase model</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ye</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific reports</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">8727</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Influence of reading habits on line bisection</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chokron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Imbert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive brain research</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="219" to="222" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">A probabilistic clustering theory of the organization of visual shortterm memory</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Orhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Jacobs</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">297</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">The flatland fallacy: Moving beyond low-dimensional thinking</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Jolly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Chang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Top. Cogn. Sci</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="433" to="454" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">What is the unit of visual attention? Object for selection, but Boolean map for access</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology-General</title>
+		<imprint>
+			<biblScope unit="volume">139</biblScope>
+			<biblScope unit="page" from="162" to="179" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">A Boolean map theory of visual attention</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Pashler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page" from="599" to="631" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Characterizing the limits of human visual awareness</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Treisman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Pashler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">317</biblScope>
+			<biblScope unit="page" from="823" to="825" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">2.0: A unifying framework for understanding the factors of visual-attentional processing</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fvs</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="page" from="696" to="731" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">The logic of scientific discovery</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Popper</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005">2005</date>
+			<publisher>Routledge</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Comprehensive Exploration of Visual Working Memory Mechanisms Using Large-Scale Behavioral Experiment</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.17605/OSF.IO/QPY49</idno>
+		<ptr target="https://doi.org/10.17605/OSF.IO/QPY49" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Voluntary and automatic attentional control of visual working memory</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">K</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Vogel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">F</forename><surname>Woodman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Luck</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Percept. Psychophys</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="page" from="754" to="763" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Massive effects of saliency on information processing in visual working memory</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Constant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Liesefeld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="682" to="691" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">What can half a million change detection trials tell us about visual working memory?</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Balaban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fukuda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Luria</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">191</biblScope>
+			<biblScope unit="page">103984</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Attention mediates the flexible allocation of visual working memory resources</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Emrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Lockhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Al-Aidroos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Exp. Psychol. Hum. Percept. Perform</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page">1454</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Measurement models for visual working memory-A factorial model comparison</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oberauer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="page">841</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

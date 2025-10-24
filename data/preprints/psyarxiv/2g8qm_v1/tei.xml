@@ -1,0 +1,1253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Honey, I Shrunk the Irrelevant Effects! Simple and Fast Approximate Bayesian Regularization</title>
+				<funder ref="#_GvH7KD8 #_mwzVGVd">
+					<orgName type="full">unknown</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Diana</forename><surname>Karimova</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Methodology and Statistics</orgName>
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sara</forename><surname>Van Erp</surname></persName>
+							<affiliation key="aff3">
+								<orgName type="department">Department Methodology and Statistics</orgName>
+								<orgName type="institution">Utrecht University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Roger</forename><forename type="middle">A J</forename><surname>Th</surname></persName>
+						</author>
+						<author>
+							<persName><surname>Leenders</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Jheronimus Academy of Data Science</orgName>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department">Department of Organization Studies</orgName>
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Joris</forename><surname>Mulder</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Methodology and Statistics</orgName>
+								<orgName type="institution">Tilburg University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Jheronimus Academy of Data Science</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Honey, I Shrunk the Irrelevant Effects! Simple and Fast Approximate Bayesian Regularization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">FD449AD7DA5161E46DE3E7D443CFDE2C</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:29+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Statistical models are becoming increasingly complex with more parameters to explain complex dependency structures among larger sets of variables. Regularization techniques (such as penalized regression) are ideal to identify the most important parameters by shrinking negligible effects to zero. The resulting regularized solutions are parsimonious and often show good predictive performance. Currently however regularization techniques have mainly been developed for standard modeling designs even though regularization techniques are also very useful for more complex modeling designs. Moreover, even though Bayesian regularization algorithms are competitive (and sometimes superior) to their classical counterpart, classical regularization techniques (such as the lasso) are still most common in applied research. To address these shortcomings, the current paper presents a fast and flexible approximate Bayesian regularization procedure. A Gaussian approximation is used for the integrated likelihood of the (large) set of parameters which is then combined with a Bayesian shrinkage prior to obtain a parsimonious solution with many (approximately) zero estimates. The method is implemented in the R package 'shrinkem'. The general applicability of the methodology is illustrated in various applications including linear regression models, relational event models, mediation models, factor analytic models, and Gaussian graphical models.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In the current digital era, it has become relatively easy to acquire large data with many variables. Consequently, statistical models are becoming increasingly complex with larger numbers of parameters to explain possible complex relations between the variables <ref type="bibr" target="#b1">(Azmak et al., 2015;</ref><ref type="bibr" target="#b12">Gomez-Cravioto et al., 2022)</ref>. For example, to study temporal social interaction behavior in social networks, <ref type="bibr" target="#b30">Perry &amp; Wolfe (2013)</ref> considered a relational event model to analyze 21,635 email messages among 156 employees using 230 predictor variables. van Kesteren &amp; Oberski (2019a) employed a high-dimensional mediation model for a genetic study of relationships between childhood trauma and cortisol stress activity <ref type="bibr">(Houtepen, Vinkers, Carrillo-Roa, Hiemstra, Van Lier, et al., 2016</ref>) with 1,000 potential mediators (based on DNA methylation in the blood). <ref type="bibr">Van Erp et al. (2019)</ref> presented a model for explaining crime rates using 125 potentially important predictor variables based on the community and law enforcement properties, such as the median family income, the percentage of housing that is occupied, the number of police officers, the police operating budget, in 319 communities. Furthermore, to study psychological networks <ref type="bibr" target="#b0">(Armour et al., 2017;</ref><ref type="bibr" target="#b43">Williams &amp; Mulder, 2020)</ref>, graphical models are used to identify the most important conditional dependencies in a network of PTSD symptoms. In such applications, the challenge is to identify the most important dependency relations out of the many parameters. Because many of the parameters may be zero due to possible spurious relations, there is a high risk of inflated type I errors where possible spurious effects are incorrectly deemed to be important. Regularization algorithms are a class of statistical methods which are suitable for these problems as they result in (i) parsimonious solutions where negligible effects are shrunk to zero, and (ii) good predictive performance.</p><p>In a classical framework, these approaches aim to minimize the sum of squared residuals together with a penalization on the magnitude of the free parameters. Thereby, most important (large) parameters are freely estimated while shrinking negligible parameters to zero. Many different types of penalty functions have been proposed resulting in different parsimonious solutions such as the L 2 norm (resulting in so-called ridge regression, <ref type="bibr" target="#b25">Marquardt &amp; Snee, 1975)</ref>, which constraints the sum of the squared parameters, the L 1 norm (known as the 'least absolute shrinkage and selection operator' or lasso; <ref type="bibr" target="#b35">Tibshirani, 1996)</ref>, which constraints the sum of the absolute values of the parameters, or a linear combination of L 1 norm and L 2 norm (also referred to as the elastic net model <ref type="bibr" target="#b48">Zou &amp; Hastie, 2005)</ref>, to name only a few. Uncertainly quantifications of the regularized estimates are often obtained using bootstrapping.</p><p>Alternatively, in a Bayesian framework, the prior on the key parameters has a similar role as the penalty function in penalized regression <ref type="bibr">(Van Erp et al., 2019;</ref><ref type="bibr" target="#b22">Korobilis, 2013)</ref>. Typically, these priors are symmetrical around zero (so that negative values are shrunk in the same way as positive values), peaked around zero (causing small effects to be shrunk towards zero), and have thick tails (causing little to no shrinkage for large effects). There is a vast literature on possible shrinkage priors for Bayesian regularization purposes such as Gaussian prior distributions, resulting in a Bayesian alternative to ridge regression <ref type="bibr" target="#b18">(Hsiang, 1975)</ref>, Laplace priors, resulting in the Bayesian lasso <ref type="bibr">(Park &amp; Casella, 2008a;</ref><ref type="bibr" target="#b35">Tibshirani, 1996)</ref>, or nonconcave priors, such as the horseshoe prior <ref type="bibr" target="#b5">Carvalho et al. (2010)</ref>. For an overview of possible priors for Bayesian regularization, see <ref type="bibr">Van Erp et al. (2019)</ref>, for example.</p><p>Despite the tremendous potential of statistical regularization methods to provide applied researchers with interpretable (parsimonious) explanations and yielding good predictions when fitting complex models to data with many variables, the literature on statistical regularization has mainly focused on rather standard modeling designs. Statistical papers (and software) generally consider regularization algorithms which are tailored to very specific modeling designs (e.g., simple regression designs, standard graphical models, or specific measurement levels of the dependent variables (often Gaussian)). Another limitation is that most applications make use of standard regularization methods (such as the classical lasso) even though Bayesian regularization methods can be viewed to be superior as (i) Bayesian MCMC algorithms can easily handle (superior) nonconcave priors/penalties (? <ref type="bibr">Park &amp; Casella, 2008b</ref>) and (ii) Bayesian regularization results in the full posterior of the key parameters generally resulting in better quantifications of statistical uncertainty. For example, the classical lasso may result in standard errors of zero, yielding problematic overestimation of our certainty <ref type="bibr">(Park &amp; Casella, 2008b)</ref>. Bayesian regularization methods however tend to be slower and fewer software packages have implemented these Bayesian algorithms.</p><p>The goal of the current paper is to address these shortcomings by presenting a generally applicable approximate Bayesian regularization (ABR) technique. As input, only a vector of the (unregularized) estimates (e.g., MLEs) is required together with its error (or posterior) covariance matrix. Thereby, the method can be used for any type of model and any type of parameter as long as a vector of the estimates and the corresponding errors are available, e.g., from existing software or published literature. To regularize the estimates, the errors are assumed to follow a multivariate Gaussian distribution which are combined with a specific shrinkage prior via Bayes' theorem. Statistical inference is based on the (approximated) full posterior. The methodology is readily available in the new R package 'shrinkem'.</p><p>The paper is organized as follows. Section 2 introduces existing estimation methods as a stepping stone for the ABR method that is presented in Section 3. Section 3 also presents a simple illustration of the induced shrinkage behavior of the ABR method when using different priors and it introduces the R package shrinkem. Section 4 presents several applications of the methodology for various modeling designs where the results are compared with existing (tailored) regularization algorithms. The paper ends with a discussion in Section 5.</p><p>2 Statistical methods for model fitting</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Maximum likelihood estimation</head><p>Let us consider a statistical model for a given data set where the parameters of interest are denoted by the vector β of length K and the nuisance parameters are denoted by the vector ϕ of length L. The combined vector will be denoted by θ ′ = (β ′ , ϕ ′ ). Maximum likelihood estimation belongs to the commonly used methods in statistical practice for fitting statistical models. The likelihood function, which will be denoted by p(D|X, θ), quantifies the probability of the observed data of the dependent variables, denoted by D, given the unknown model parameters θ and possible covariates X. The parameter values that maximize the (log) likelihood are called the maximum likelihood estimates (MLEs), i.e., θMLE = argmax θ {log p(D|X, θ)}.</p><p>(1)</p><p>The MLEs are the parameter values for which the observed data are most likely under the model at hand. Under fairly general conditions, it can be shown that the shape of the likelihood function can be well approximated using a multivariate normal distribution (e.g., <ref type="bibr">Gelman et al., 2014, Ch. 4)</ref> where the mean is centered around the MLE and the covariance matrix is equal to the inverse of the observed Fisher information matrix, denoted by Σθ (also known as the "error covariance matrix"), i.e., p(D|X, θ) ≈ N (θ| θMLE , Σθ ).</p><p>(2)</p><p>The Gaussian approximation of the likelihood is a commonly used technique in statistical inference, such as for constructing (approximate) confidence intervals, for Wald type significance testing, or in the derivation of the Bayesian information criterion (BIC), to name a few. The motivation of this approximation is that the sampling distribution of the MLE becomes concentrated around the true parameter value under mild conditions as the sample size grows <ref type="bibr" target="#b41">(Wald, 1949;</ref><ref type="bibr" target="#b44">Wolfowitz, 1949)</ref>, i.e.,</p><formula xml:id="formula_0">Σ-1/2 θ ( θMLE -θ 0 ) d → N (0, I K ),<label>(3)</label></formula><p>as n → +∞, where θ 0 is the true parameter value in the population. Despite the ubiquity of MLE in statistical practice, MLEs (similarly as OLS estimates) may not be preferred in statistical problems where the model at hand contains many parameters out of which many may be potentially zero and when the sample sizes are relatively small. In this case, MLEs may result in overfitting as all parameters are freely estimated, including possible spurious effects, as well as poor predictions <ref type="bibr">(refs?)</ref>. Moreover nonsparse solutions using MLEs complicate the interpretation of the results as it becomes difficult which nonzero estimated effects (out of many) truly matter to predict one or more outcome variables of interest. Penalized regression methods have been developed to resolve these limitations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Penalized regression</head><p>In the case of a large number of parameters in the model, penalization methods provide a way to obtain a more parsimonious model with many (approximate) zero estimates for negligible effects. Penalized regression constrains the magnitude of all estimates such that small, unimportant effects become (approximately) zero, while leaving large, important effects largely unaltered. This allows to eliminate negligible "noisy" effects from the analysis and produce parsimonious solutions which are easier to interpret in the case of complex models with many potentially important effects in the case of relatively small samples. A penalized estimate can be obtained by adding a penalty term (typically a norm) on the (many) key parameters to the optimization function <ref type="bibr" target="#b13">(Hastie et al., 2015)</ref>:</p><formula xml:id="formula_1">θpenalty = argmin θ {- 1 n log p(D|X, θ) + λ||β|| q },<label>(4)</label></formula><p>where ||β|| q denotes the L q norm of the coefficients (excluding the intercept) and λ is a penalty parameter. As can be seen, when setting the penalty parameter to zero, i.e., λ = 0, the optimization problem becomes equivalent to (1) yielding the standard MLE solution.</p><p>The most well-known choices for the penalty term are the L 1 norm, which yields the so-called lasso <ref type="bibr" target="#b35">(Tibshirani, 1996)</ref> solution, and the L 2 norm, which is known as the ridge solution <ref type="bibr" target="#b14">Hoerl &amp; Kennard (1970)</ref>. A striking feature of the lasso is that it can yield exact zero's for the penalized estimates (unlike the ridge solution for instance), thus yielding a sparse solution with potentially few non-zero parameters. This property has made the lasso a popular choice for penalized regression. For norms with q &lt; 1 the solutions are also sparse but the optimization problem is not convex, which makes the computation challenging <ref type="bibr">(Hastie et al., 2015, Ch.3)</ref>.</p><p>Despite its popularity, the lasso also suffers from important drawbacks, such as underestimation of the standard errors of the penalized estimates <ref type="bibr" target="#b6">(Casella et al., 2010)</ref>, and not abiding the oracle property, which comes down to inconsistent estimation behavior in certain scenario's <ref type="bibr">(Zou, 2006a)</ref>. Furthermore, to determine the penalty parameter λ which is crucial as it specifies the size of the penalty, computationally intensive methods are typically used such as cross-validation or graphical elbow methods. Due to these potential drawbacks, Bayesian approaches for statistical regularization are becoming increasingly popular.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Bayesian regularization</head><p>In a Bayesian framework, regularization occurs naturally via the prior distribution which is a standard element of a Bayesian model. The prior distribution quantifies which values of the parameters are likely or unlikely before observing the data. Thus, if a sparse solution is expected with many zero effects, priors can be specified which contain most probability mass around zero. Such priors result in sparse solutions where most posterior probability of negligible effects is is concentrated around zero. Thereby, the role of the prior in Bayesian regularization is comparable to the role of the penalty function in penalized regression. This can also be shown mathematically as the posterior is given by</p><formula xml:id="formula_2">p Bayes (θ|D, X, λ) = p(D|X, θ)p Bayes (θ|λ) p(D|X) ∝ p(D|X, θ) p Bayes (θ|λ) (5)</formula><p>Consequently, the logarithm of the posterior can be written as:</p><formula xml:id="formula_3">log p Bayes (θ|D, X) = log p(D|X, θ) + log p Bayes (θ|λ) + constant,</formula><p>where the constant does not depend on θ. Hence, the posterior mode (a Bayesian point estimate) can be expressed as:</p><formula xml:id="formula_4">θBayes = argmax θ {log p(D|θ) + log p shrinkage (θ|λ)}.<label>(6)</label></formula><p>Equation ( <ref type="formula" target="#formula_4">6</ref>) illustrates the similarity of the Bayesian posterior mode with the penalized estimate in Equation ( <ref type="formula" target="#formula_1">4</ref>)<ref type="foot" target="#foot_0">foot_0</ref> . Furthermore, it can be shown that specific prior choices result in Bayesian counterparts of common penalty functions, such as the Bayesian lasso, which uses a Laplace prior on the coefficients <ref type="bibr">(Park &amp; Casella, 2008b)</ref>.</p><p>The full posterior can be estimated using MCMC algorithms which result in accurate quantifications of the statistical uncertainty of the model parameters, thereby avoiding certain issues of the classical lasso for instance. Moreover, the penalty parameter can be jointly estimated with the model parameters using a noninformative prior so that computational intensive resampling methods such as bootstrapping can be avoided:</p><formula xml:id="formula_5">p Bayes (θ, λ|D, X) ∝ p(D|X, θ) p Bayes (θ|λ) p(λ).</formula><p>From the full posterior, the posterior of the key parameters β can be extracted. Furthermore, using flexible MCMC algorithm, many different types of priors can be considered including nonconcave horseshoe priors <ref type="bibr" target="#b5">(Carvalho et al., 2010)</ref>. Despite these useful properties, Bayesian MCMC algorithms can be slow as the exploration of the high-dimensional posterior space may consist of many complex dependencies between the (possibly nuisance) parameters. This may be an important reason for its limited use in statistical practice.</p><p>3 A fast and flexible two-step procedure for approximate Bayesian regularization</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Methodology</head><p>The current section presents a generally applicable two-step procedure for approximate Bayesian regularization (ABR). The methodology can be applied to virtually any statistical model and any set of parameters by first replacing the likelihood function with a Gaussian approximation, which is then combined with a prior distribution on the key parameters using a MCMC algorithm to obtain a sparse regularized solution. The procedure is fast due to its reliance on Gaussian approximations of the likelihood, thereby simplifying possible complex dependency structures between the parameters (including nuisance parameters). Furthermore, the procedure is flexible as the Bayesian MCMC algorithm allows virtually any type of prior (penalization) on the key parameters. Thereby the procedure avoids important limitations of classical penalization (underestimated uncertainty quantification, inability to use nonconcave penalty functions) and Bayesian regularization (computationally slow). ABR consists of the following two steps:</p><p>Step 1. Extract the unregularized estimates of the key parameters and the corresponding error covariance matrix. Due to large sample theory (Equation ( <ref type="formula">2</ref>)), and by marginalizing over the key parameters, the integrated likelihood of the key parameters can be approximated by N (β| βMLE , Σβ ).</p><p>Step 2. Fit an approximate regularized Bayesian model by combining the approximate Gaussian likelihood with a shrinkage prior:</p><p>pBayes (β, λ|D, X) ∝ N (β| βMLE , Σβ ) p Bayes (β|λ) p(λ).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Note that in</head><p>Step 1, one could for instance use the output from a classical analysis (e.g., MLEs and error covariance matrix) or from a Bayesian analysis (e.g., posterior estimates and covariance matrix using noninformative priors) for the estimate and covariance matrix of the key parameters. Fitting this approximate Bayesian model is computationally cheap because many shrinkage priors can be written as scaled mixtures of normals <ref type="bibr">(Van Erp et al., 2019)</ref>, which are conditionally conjugate with the Gaussian approximation of the likelihood. Moreover, as prior for the squared penalty parameter, λ 2 , a F prior is specified having two degrees of freedom parameters and a scale parameter. Because a F distribution can be written as a gamma scale mixture of inverse gamma distributions, the F prior is conditionally conjugate and therefore it can be implemented in a MCMC algorithm relatively straightforwardly (e.g., <ref type="bibr" target="#b27">Mulder &amp; Pericchi, 2018)</ref>. Furthermore, when setting the first degrees of freedom parameter to 1, the implied prior for the penalty parameter λ follows a half-Student t distribution, which is becoming an increasingly common prior for scale parameters <ref type="bibr" target="#b9">(Gelman, 2006;</ref><ref type="bibr" target="#b31">Polson &amp; Scott, 2012)</ref>. By setting the second degrees of freedom to 1 and together with a very large scale, a virtually flat prior can be constructed for λ.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Illustration of the regularization behavior of ABR</head><p>The goal of this section is to illustrate the induced shrinkage behavior of the ABR method for a given estimate and given error variance. This is done for a Gaussian prior (corresponding to ridge regression), when using a Laplace prior (corresponding to the Bayesian lasso), and when using the nonconcave horseshoe prior.A plot of the prior distributions is given in Figure <ref type="figure" target="#fig_0">1</ref>, which shows that the Laplace prior is more peaked at zero and has thicker tails which induces heavier shrinkage near zero and less shrinkage away from zero in comparison to the Gaussian prior. The horseshoe prior has a pole at zero and thicker than the Laplace prior (it even has thicker tails than a Cauchy distribution; <ref type="bibr" target="#b27">Mulder &amp; Pericchi, 2018)</ref> inducing heavier shrinkage near zero and less shrinkage away from zero in comparison to the Laplace prior. These three priors were chosen as they are well-known in the literature and because they show clear differences regarding their shrinkage behavior.</p><p>The shrinkage behavior of these priors using ABR is analyzed by varying an unregularized estimate, βMLE , on a grid from 0 to 10 using a fixed error variance of 1. Moreover the penalty parameter λ is fixed at 1 to clearly see the induced shrinkage behavior of the different priors. Figure <ref type="figure">2</ref> shows the estimated posterior medians (upper left panel) and estimated posterior mode (upper right panel) with 95% credibility range as a function of the unregularized estimate as well as the difference between these estimates and the unregularized estimates (right panels). The figures show that the approximated regularization methods result in comparable shrinkage behavior as full Bayesian regularization methods:</p><p>The Gaussian ridge prior results in a constant level of shrinkage, the Laplace prior first results in considerable shrinkage near zero and then moves along the estimate with an equal distance, and the horseshoe results in the heaviest shrinkage near zero which diminishes as the estimate further moves away from 0. Moreover, we see that the posterior median results in smoother shrinkage behavior in comparison to the posterior mode. We refer the interested reader to <ref type="bibr" target="#b35">Tibshirani (1996)</ref> and <ref type="bibr" target="#b4">Carvalho et al. (2009)</ref> to see that the shrinkage behavior is comparable with the original ridge, the lasso, and the horseshoe. In the applications in the following section the approximate regularized solutions are compared with the original regularized results in empirical data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">The R software package shrinkem</head><p>The ABR method is implemented in the R package shrinkem to enable fast and flexible shrinkage in the case unregularized estimates and their (dependent) errors are known.</p><p>The main function shrinkem requires a numerical vector of the unregularized estimates, x, its error covariance matrix, Sigma, and a specific type of prior which can (currently) be "ridge" (Gaussian), "lasso" (Laplace), or "horseshoe", e.g., shrinkem(x = estimates, Sigma = error.covariance.matrix, type = "horseshoe")</p><p>where estimates and error.covariance.matrix denote the objects in R containing the unregularized estimates and its error covariance matrix.</p><p>To optimize the penalty parameter, computationally intensive methods, such as crossvalidation, are avoided as the penalty parameter is jointly estimated with the other param- The Bayesian posterior median (upper panels) and the Bayesian posterior modes (lower panels) as a function of an unregularized estimate βMLE with an error variance of 1 when using a Gaussian prior (dashed blue), a Laplace prior (solid red), and a horseshoe prior (dotted green). The right panels shows the difference of the Bayesian estimates with βMLE .</p><p>eters. For the squared penalty parameter λ 2 , a F prior is chosen with degrees of freedom parameters df1 and df2, which have default values of 1, and the squared scale s2, which has default value 1e3. This prior is equivalent to a half-Cauchy prior with scale √ s2, which is virtually flat if s2 is set large enough. The advantage of the F parameterization on λ 2 is that the prior is conditionally conjugate (e.g. <ref type="bibr" target="#b27">Mulder &amp; Pericchi, 2018)</ref>, resulting in easy and fast posterior sampling.</p><p>It is also possible to fix the penalty parameters (via the arguments lambda2.fixed and lambda2. This may be useful when a user want to apply cross-validation techniques or for Bayesian regularization using an empirical Bayes estimate for λ 2 . For the latter case, one could first fit the ABR model by freely estimating the penalty parameter λ using a (approximately) flat prior. The resulting posterior mode of λ then maximizes the marginal likelihood <ref type="bibr">(Van Erp et al., 2019)</ref>. Its value can then be used as fixed penalty parameter in shrinkem. Other optional arguments include group, which can be used to apply grouped regularization where the penalty parameter is separately optimized for the different subsets of parameters (as in the group lasso, <ref type="bibr" target="#b45">Yuan &amp; Lin, 2006)</ref>, and the number of posterior draws via iterations. Throughout this paper, the default choices will be used for these optional arguments to keep the focus on the general ABR method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Empirical applications</head><p>The current section explores the shrinkage behavior and the predictive performance of the two-step approximation method using various empirical data sets and different types of models from the literature. The results of the ABR method are compared with their full, non-approximated counterparts. The goal is to illustrate that ABR often result in very similar results as existing regularization algorithms which are tailored to a specific modeling framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Small linear regression model -diabetes data</head><p>Park &amp; Casella (2008a) considered data of the diabetes data of (see <ref type="bibr" target="#b7">Efron et al., 2004)</ref> consisting of 442 diabetes patients on ten medical baseline variables. A standard linear model By fitting the Bayesian lasso on a grid of penalty parameters, the behavior of their Bayesian lasso was compared with the orginal lasso <ref type="bibr" target="#b35">(Tibshirani, 1996)</ref> and with the ordinary ridge. Here we compare the shrinkage behavior of the ABR methodology using the Laplace (lasso) prior and the Gaussian (ridge) prior with the results from <ref type="bibr">Park &amp; Casella (2008a)</ref>.</p><p>The shrinkage behavior was explored by fixing the penalty parameter λ on a grid of values to induce extreme shrinkage with only zero estimates to practically no shrinkage. Figure <ref type="figure">3</ref> shows the full Bayesian lasso (upper left panel) and the ordinary ridge (lower left panel) as well as the results of the ABR method using the Laplace (lasso) prior (upper right) panel and the Gaussian (ridge) prior (lower right panel). The left plots were taken from <ref type="bibr">(Park &amp; Casella, 2008a)</ref>. The figure shows that the ABR lasso and the ABR ridge result in virtually identical shrinkage behavior as the full Bayesian lasso and the original ridge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Large linear regression model -Communities and crime</head><p>We illustrate the ABR method for a linear regression model on a data set containing 125 predictors of the number of violent crimes per 100,000 residents in communities in the United States<ref type="foot" target="#foot_1">foot_1</ref>  <ref type="bibr" target="#b32">(Redmond, 2011)</ref>. This data set has previously been analyzed using shrinkage priors in van <ref type="bibr">Erp et al. (2019)</ref>. We only consider the scaled continuous predictors in this example (p = 121) and we split the data set in a 90% training (n = 287) and test (n = 32) set. We compare the ABR method using the ridge, lasso, and horseshoe priors to an exact implementation using the Rstan (Stan Development Team, 2024) interface to The regularization estimates when using the full Bayesian lasso (upper left), the ridge (lower left), the ABR lasso (upper right), and the ABR ridge (lower right) on the diabetes data (see <ref type="bibr" target="#b7">Efron et al., 2004)</ref> while varying the penalty parameter λ on a grid of values. The panels on the right were derived from <ref type="bibr">Park &amp; Casella (2008a)</ref>. Posterior medians were used as Bayesian point estimates.</p><formula xml:id="formula_6">||β|| 1 /max||β|| 1 ||β|| 1 /max||β|| 1 ||β|| 1 /max||β|| 1 ||β|| 1 /max||β|| 1</formula><p>Stan<ref type="foot" target="#foot_2">foot_2</ref>  <ref type="bibr" target="#b3">(Carpenter et al., 2017)</ref>. Note that for the lasso prior it is generally recommended to scale the prior to the error variance to avoid multimodal posteriors <ref type="bibr">(Park &amp; Casella, 2008b)</ref>. However, in the approximate implementation, the error variance is not available so we only compare non-scaled lasso priors. Figure <ref type="figure" target="#fig_3">4</ref> compares the posterior mean (circles) and mode (triangles) estimates and 95% credible intervals across priors and algorithms for the ten largest and smallest estimated regression coefficients. For the coefficients close to zero, the results were very comparable across priors and algorithms with only the horseshoe prior leading to slightly smaller credible intervals overall. For the ten largest coefficients, it can be seen that the horseshoe prior leads to more shrinkage when the coefficient is relatively close to zero, especially when using the posterior mode (e.g., for PctEmplManu). However, as the regression coefficient becomes large enough, it escapes this shrinkage and remains larger in value for the horseshoe compared to the ridge and lasso (e.g., for pctWInvInc and PctKids2Par ). Note that in the case of PctKids2Par the posterior mode for the exact algorithm is practically zero, while the posterior mean and the point estimates for the approximate algorithm are around -0.5. This is due to bimodality in the posterior distribution for this coefficient, which might be the result of divergent transitions arising in the exact horseshoe implementation, which might indicate non-convergence.</p><p>Finally, the prediction mean squared error (PMSE) did not differ substantially between methods, as can be seen in Table <ref type="table" target="#tab_0">1</ref>, but the error was considerably higher compared to the non-regularized model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Relational event model -Apollo 13 Mission's voice data</head><p>Relational event models are useful to study the drivers of social interaction behavior among actors in temporal social networks. Due to the complexity of social interaction behavior, relational event models can easily consist of a very large number of possible predictor variables as possible drivers of the social interaction in the network. Unregularized estimates are generally not parsimonious complicating the interpretation of the results and limiting our understanding of social interaction behavior in a network.</p><p>Here we consider a relational event sequence of voice loops taken from NASA's famous but disastrous Apollo 13 mission. The data consist of 5402 voice messages among 19 actors (three astronauts and sixteen members at mission control). <ref type="bibr" target="#b21">Karimova et al. (2023)</ref> considered full Bayesian regularized relational event models for these data consisting of 103 possible predictor variables of drivers of the communication behavior. This relational event model can be seen as a special type of multinomial regression model. Gaussian (ridge) priors, Laplace (lasso) priors, and horseshoe priors were considered to obtain parsimonious solutions. Here we compare their results with the results when using the ABR method on the unregularized estimates using the same priors. The last 500 relational events were left out when fitting (training) the models and to evaluate the out-of-sample predictive performance of the models.</p><p>First we compare the estimates based on full Bayesian regularization of the relational event model using the three different shrinkage priors with the respective ABR counterparts. Figure <ref type="figure" target="#fig_4">5</ref> concisely shows the 95% credibility intervals of the 103 parameters based on the ridge (left panel), lasso (middel panel), and horseshoe prior (right panel) when using the full Bayesian analysis on the x-axis versus the approximate Bayesian analysis on the y-axis. The grey intervals depict intervals that contain the value 0. The plots show that the differences between the lasso and the horseshoe prior are extremely small. Here we also see that the horseshoe analyses result in less shrinkage of the larger estimates than the lasso analyses. Furthermore, we can see that the ridge analyses show some considerable differences between the full and the approximate analyses. For example, we see that the estimated effects of incoming two paths (itp) and outgoing two paths (otp) are quite different. Table <ref type="table">2</ref> presents the number of 95% credibility intervals that do not contain zero. We again see that the ABR lasso and ABR horseshoe result in practically the same numbers of significant effects, which are considerably less than the unregularized analyses (which were based on a Bayesian analysis using flat priors). Furthermore, the ABR ridge results in considerably more significant effects than its full ridge counterpart.</p><p>Finally we consider the within-sample and the out-of-sample predictive performance Table <ref type="table">2</ref>: Number of 'significant' effects based on a 5% credible interval for the exact and the approximate regularized relational event model.</p><p>of the regularized solutions in this application. The predictive performance is assessed by checking the percentage of observed dyads that fall in the top 5%, top 10%, or top 20% most probable dyads according to the fitted model. Note that the network consists in total of 19 × 18 = 342 directed dyads. The results can be found in Table <ref type="table">3</ref>. Overall we can see that the predictive performance results of all models are quite good and also very similar. Only for certain out-of-sample scenarios, we can see that the percentages of certain approximated solutions are slightly lower.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Gaussian graphical models -PTSD symptoms data</head><p>Graphical models are used to study conditional dependency structures among the dependent variables in highly dimensional problems. These dependency structures are often depicted as networks where an edge implies a nonzero conditional dependence between two variables given all other variables and no edge implies conditional independence. Due to the large number of possible conditional dependencies, namely P (P -1)/2 in the case of P dependent variables, regularization methods are becoming increasingly popular to obtain parsimonious explanations of the dependency structure in a given data set. The graphical lasso <ref type="bibr" target="#b8">(Friedman et al., 2008)</ref>, abbreviated as 'glasso', belongs to the most commonly used techniques for this purpose where the elements of the precision matrix are</p><p>within-sample 5% 10% 20% unreg. ridge lasso HS unreg. ridge lasso HS unreg. ridge lasso HS Exact 88.8 88.8 88.9 88.9 96.9 96.9 96.9 96.9 99.4 99.3 99.3 99.3 Approximation -88.8 88.8 88.8 -96.9 96.9 96.8 -99.4 99.3 99.3 out-of-sample 5% 10% 20% unreg. ridge lasso HS unreg. ridge lasso HS unreg. ridge lasso HS Exact 92.7 92.7 92.8 92.9 97.7 97.7 97.8 97.8 99.5 99.3 99.4 99.4 Approximation -90.4 91.4 88.2 -96.6 97.8 95.2 -99.6 99.4 99.6</p><p>Table <ref type="table">3</ref>: Predictive performance of the full Bayesian regularized relational event models and their ABR simplifications. The results reflect the percentages of observed events that belong to the top 5%, the top 10%, and the top 20% of most likely event according to the fitted models using the full posterior for making predictions. 'HS' denotes the results of the horseshoe prior.</p><p>penalized using a L 1 norm. Bayesian alternatives of the graphical lasso are also available for continuous (Gaussian) dependent variables <ref type="bibr" target="#b42">(Wang, 2012)</ref>.</p><p>In this section we consider data of 221 people with a subthreshold posttraumatic stress disorder (PTSD) diagnosis. The network features 20 PTSD symptoms implying 190 possible conditional dependencies. A detailed description of the dataset can be found in <ref type="bibr" target="#b0">Armour et al. (2017)</ref>. These data were fitted using an unregularized Bayesian model using a noninformative Jeffreys prior on the precision matrix, the Bayesian glasso using the BayesianGLasso package in R <ref type="bibr" target="#b36">(Trainor &amp; Wang, 2022)</ref>, and the ABR methods using the lasso and the horseshoe prior. For the ABR method, the MLEs of the off-diagonal elements of the precision matrix were taken (which quantify the conditional dependence among the 20 variables) and the corresponding error covariance matrix of these estimates were obtained using bootstrapping.</p><p>To assess the shrinkage behavior, it was checked how many 95% credibility intervals of the 190 off-diagonal elements of the precision matrix contained 0. To assess the predictive performance, leave-one-out cross-validation was performed where the data was split in a training set consisting of 220 observations and a test set consisting of 1 observation. For each trained model, 5,000 posterior draws were obtained for the unknown parameters, which were used to predict each variable of the test set given all other variables of the test set from which the mean squared error was determined. This resulted in 221 mean squared errors for all 221 observations. The distribution of these mean squared errors can be found in Figure <ref type="figure" target="#fig_5">6</ref>. Moreover, Table <ref type="table" target="#tab_2">4</ref> summarizes the 2.5%, 50%, and 97.5% quantiles of the errors. The figure and table show that all three regularized solutions result in tremendous improvements regarding the leave-one-out prediction errors in comparison to the unregularized solution. Moreover, we can see that the range of the mean squared prediction errors across the three regularization methods is very similar with slightly lower errors for the full Bayesian glasso method. Interestingly we see that the ABR solutions results in only 11 and 9 significant conditional dependencies (according to the 95% credibility intervals) out of 190 parameters which is considerably less than the unregularized solution (28 significant partial correlations) and the full Bayesian glasso (33 significant partial correlations). These results indicate that ABR can result in comparable predictive behavior as the full tailored regularization algorithm but resulting in much more parsimonious solutions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Restricted factor analysis -Detecting measurement bias</head><p>We now illustrate the usefulness of the ABR method for structural equation models (SEMs). Specifically, we replicate the analysis of <ref type="bibr" target="#b24">Liang &amp; Jacobucci (2019)</ref> who used a restricted factor analysis model to detect measurement bias in 19 psychological tests administered to 7th and 8th grade students in two schools <ref type="bibr" target="#b15">(Holzinger &amp; Swineford, 1939)</ref>.</p><p>The tests aim to measure four correlated aspects of mental ability: spatial, verbal, speed, and memory. Uniform measurement bias with respect to age was assessed by regressing age on the 19 observed indicators. By regularizing the path coefficients from age to the indicators, we aim to detect substantial effects indicating measurement bias. The data set was obtained from the psychTools package and all code to reproduce the analysis is available at <ref type="url" target="https://github.com/sara-vanerp/ApproxBR">https://github.com/sara-vanerp/ApproxBR</ref>. We compare the ABR method with a ridge and horseshoe prior to a classical regularized algorithm with a ridge penalty available in regsem <ref type="bibr" target="#b20">(Jacobucci, 2023)</ref>. For the classical ridge implementation, we use similar default settings as in <ref type="bibr" target="#b24">Liang &amp; Jacobucci (2019)</ref>.</p><p>Figure <ref type="figure" target="#fig_6">7</ref> compares the posterior mean (circles) and mode (triangles) estimates and 95% credible intervals across priors and algorithms. The results for the classical regularized ridge algorithm are not shown because the optimal penalty parameter as chosen via crossvalidation based on the BIC criterion in regsem was zero, such that the results are the same as the unregularized solution. All methods indicate the presence of measurement bias for certain indicators. For small effects, results are very similar for both the regularized and unregularized solutions, although the confidence interval for the unregularized solution is slightly wider compared to the regularized credible intervals and the posterior mode for the horseshoe prior is virtually zero for small effects. For larger effects, the shrinkage priors result in more shrinkage. In sum, the horseshoe prior leads to the most parsimonious solution without sacrificing predictive power as can be seen from the PMSEs in Table <ref type="table">5</ref>. Table 5: Prediction mean squared error for the different priors and algorithms in the measurement bias application Unregularized Classical ridge Approximate ridge Approximate horseshoe 0.95 0.95 0.95 0.95</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.6">Mediation analysis -Methylation data</head><p>We illustrate the usefulness of the algorithm in the context of exploring relevant mediators using data from <ref type="bibr">(Houtepen, Vinkers, Carrillo-Roa, Hiemstra, van Lier, et al., 2016)</ref>. The goal is to identify which locations in the genome mediate the relation between childhood trauma and stress reactivity at a later age. An advantage of the proposed Bayesian regularization method for a mediation analysis is its ability to specify a shrinkage prior on a function of parameters, such as the product of two effects to quantify the indirect effects while treating the direct effects as a nuisance which are integrated out and thus are not regularized.</p><p>The data set can be downloaded from the repository of the European Bioinformatics Institute<ref type="foot" target="#foot_3">foot_3</ref> and consists of 85 healthy individuals. The independent variable childhood trauma exposure was measured using the short version of the Childhood Trauma Questionnaire (CTQ). The dependent variable stress reactivity was based on the increase of cortisol after administering the Trier Social Stress Test (TSST). A total of 385 882 DNA  <ref type="bibr">Oberski, 2019b)</ref> who select the top 1000 potential mediators based on their absolute product of correlations with the independent and dependent variable. However, since the ABR algorithm requires fitting the unregularized mediation model as a first step, we cannot consider more potential mediators than observations. We therefore select the top 45 potential mediators following the same approach as (van Kesteren &amp; Oberski, 2019b) and we additionally include the five mediators that they selected based on the Coordinate-wise Mediaton Filter (CMF). In addition to centering the independent variable and potential mediators, we scale them to ensure a similar influence of the shrinkage priors on all indirect effects. To avoid extreme differences in the scales of the dependent and independent variables, we also scale the dependent variable by a factor 100. We split the data in a 90% training and 10% test set and compare the ABR algorithm with the unregularized solution using uninformative priors in blavaan <ref type="bibr" target="#b26">(Merkle et al., 2021)</ref>. To obtain the estimates and error covariance matrix for the indirect effects, we first run the mediation model in blavaan using uninformative priors and subsequently multiply the relevant posterior draws of the two relevant effects to obtain posterior draws for the indirect effects. This way, the ABR method can regularize the indirect effects directly instead of regularizing the direct effects separately, as is the case in blavaan. All code to reproduce the analysis is available at <ref type="url" target="https://github.com/sara-vanerp/ApproxBR">https://github.com/sara-vanerp/ApproxBR</ref>. Figure <ref type="figure" target="#fig_7">8</ref> compares the posterior mean (circles) and mode (triangles) estimates and 95% credible intervals across priors and algorithms. It can be seen that the results are very similar across the horseshoe and ridge priors. Note how the credible intervals for the unregularized solution overlap with zero for every indirect effect and are much wider compared to the regularized solutions which pull all effects to zero with more certainty. As can be seen in Table <ref type="table" target="#tab_4">6</ref>, the average prediction error did not differ substantially between algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head><p>Statistical regularization is a leading technique when working with statistical models with a large number of parameters out of which many may be zero. These regularization techniques aim to obtain parsimonious solutions by shrinking small, negligible effects to zero while leaving large, important parameters largely unaltered. Currently, regularization algorithms are mainly available for specific and rather standard modeling designs. Moreover, most of these regularization algorithms rely on classical penalized techniques even though Bayesian alternatives are known to avoid certain limitations of their classical counterparts (such as the overestimation of statistical certainty). To address these shortcomings, the current paper presented a generally applicable method for approximate Bayesian regularization (ABR). As input, only a vector of unregularized (standard) estimates is required together with its error covariance matrix. Subsequently, the estimates are shrunk according to a specific prior. Various numerical illustrations showed that the method often behaves comparable as their true counterparts although sometimes there are very slight differences. These true counterparts however are only applicable for specific designs and parameters while the ABR method is generally applicable for any model and any set of parameters with known errors.</p><p>The ABR method is readily available using the R package shrinkem. Currently, a Gaussian (ridge), a Laplace (lasso), and a horseshoe prior are implemented. The choice of the specific prior for a given data set will depend on the specific application. By applying different priors, users can choose which solution is preferred depending on the interpretability (parsimony) of the solution and/or depending on the predictive performance of the solution for the data at hand.</p><p>A limitation of the method is that it may not be usable when the sample size is smaller than the number of parameters, i.e., p &gt; n (a scenario where regularization are commonly used), as unregularized estimated with a positive definite error covariance matrices would not be available. The illustrations in this paper showed however that also in the case n &gt; p, (a scenario that is most common in social science research), regularization solution generally result in better predications than unregularized estimates while providing a more interpretable solution by shrinking unimportant effects to zero.</p><p>Moreover, the difference between the shrinkage behavior of ABR and its exact counterpart will depend on the accuracy of the Gaussian approximation. For example, in the Gaussian graphical model the integrated likelihood of the off-diagonal elements of the precision matrix will be skewed, which explains possible differences in shrinkage behavior between the approximation and the exact method. Interestingly, ABR resulted in considerably more parsimonious solutions (based on the 95%-CIs) while the predictive performance was only lower with a very slight degree in this application. Thus even if the induced shrinkage behavior is different, ABR can still result in useful results. Also note that other well-known methods which also rely on Gaussian approximations, e.g., the Wald test or the Bayesian information criterion (BIC), also give useful results in the case of deviations from normality. Still, it will be useful to study (theoretical) properties of the accuracy of ABR. Moreover, other (computationally efficient) multivariate distributions could also be considered for approximating the marginalized likelihood instead of the multivariate Gaussian distribution.</p><p>Finally, the literature on priors for Bayesian regularization goes well beyond the priors that were considered in this paper, such as the Bayesian elastic net <ref type="bibr" target="#b23">(Li &amp; Lin, 2010;</ref><ref type="bibr" target="#b2">Bornn et al., 2010)</ref>, the spike-and-slab prior <ref type="bibr" target="#b11">(George &amp; McCulloch, 1993;</ref><ref type="bibr" target="#b19">Ishwaran &amp; Rao, 2005)</ref>, the adaptive lasso <ref type="bibr" target="#b47">(Zou, 2006b)</ref>, and spike-and-slab lasso <ref type="bibr" target="#b33">(Ročková &amp; George, 2018)</ref>. It is relatively straightforward to apply ABR with these more advanced priors resulting in possible better solutions depending on the application. We leave these topics for future research.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure1: Plot of a normal prior (corresponding to ridge regression; dashed line), when using a Laplace prior (corresponding to the Bayesian lasso; solid line), and a nonconcave horseshoe prior (dotted line).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><figDesc>Figure2: The Bayesian posterior median (upper panels) and the Bayesian posterior modes (lower panels) as a function of an unregularized estimate βMLE with an error variance of 1 when using a Gaussian prior (dashed blue), a Laplace prior (solid red), and a horseshoe prior (dotted green). The right panels shows the difference of the Bayesian estimates with βMLE .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><figDesc>Figure3: The regularization estimates when using the full Bayesian lasso (upper left), the ridge (lower left), the ABR lasso (upper right), and the ABR ridge (lower right) on the diabetes data (see<ref type="bibr" target="#b7">Efron et al., 2004)</ref> while varying the penalty parameter λ on a grid of values. The panels on the right were derived fromPark &amp; Casella (2008a). Posterior medians were used as Bayesian point estimates.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Posterior mean (circles) and mode (triangles) estimates, and 95% credible intervals for the ten smallest (top) and largest (bottom) regression coefficients in the crime application using either the approximate or the exact Bayesian regularization algorithm with different priors.</figDesc><graphic coords="12,191.75,125.80,226.76,294.79" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Figure5: 95% credibility intervals of the 103 parameters for the REM of the Apollo 13 data based on the ridge (left panel), lasso (middel panel), and horseshoe prior (right panel) when using the full Bayesian analysis on the x-axis versus the approximate Bayesian analysis on the y-axis. Intervals that contain 0 are printed in grey. unregularized Ridge Lasso Horseshoe Exact 62 54 53 45 Approximation -62 54 45</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Figure6: Distribution of 221 leave-one-out mean squared prediction errors using either the exact Bayesian glasso, the approximate Bayesian regularized (ABR) lasso, and ABR horseshoe, and the using unregularized solution.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Posterior mean (circles) and mode (triangles) estimates and 95% credible intervals for the paths from age to the observed indicators in the measurement bias application using either the classical frequentist, approximate Bayesian, or exact Bayesian regularization algorithm with different priors and penalty functions.</figDesc><graphic coords="25,110.85,125.80,388.55,505.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Posterior mean (circles) and mode (triangles) estimates and 95% credible intervals for the indirect effects in the mediation model using either the approximate Bayesian or exact Bayesian algorithm with different priors. 26</figDesc><graphic coords="26,110.85,125.80,388.55,505.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Prediction mean squared error for the different priors and algorithms</figDesc><table><row><cell cols="2">in the crime application</cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="3">unregularized ridge lasso horseshoe</cell></row><row><cell>Exact</cell><cell>0.80</cell><cell>0.27 0.26</cell><cell>0.28</cell></row><row><cell>Approximate</cell><cell>-</cell><cell>0.26 0.25</cell><cell>0.27</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 4 :</head><label>4</label><figDesc>Quantiles of 221 leave-one-out mean squared prediction errors based on 221 observations consisting of 190 conditional dependencies and the number of 'significant' conditional dependencies.</figDesc><table><row><cell></cell><cell cols="4">2.5%-quantile 50%-quantile 95%-quantile number of 95%-CIs</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>not containing 0</cell></row><row><cell>unregularized</cell><cell>1.321</cell><cell>15.1796</cell><cell>148.85</cell><cell>28</cell></row><row><cell>full Bayesian glasso</cell><cell>1.033</cell><cell>1.649</cell><cell>3.233</cell><cell>33</cell></row><row><cell>ABR lasso</cell><cell>1.098</cell><cell>1.798</cell><cell>3.051</cell><cell>11</cell></row><row><cell>ABR horseshoe</cell><cell>1.097</cell><cell>1.772</cell><cell>3.167</cell><cell>9</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 6 :</head><label>6</label><figDesc>Prediction mean squared error for the different priors and algorithms</figDesc><table><row><cell cols="2">in the mediation application</cell><cell></cell></row><row><cell cols="3">Unregularized Approximate ridge Approximate horseshoe</cell></row><row><cell>0.91</cell><cell>0.90</cell><cell>0.90</cell></row><row><cell cols="3">methylation loci were considered as possible mediators. We take the same preprocessing</cell></row><row><cell>steps as in (van Kesteren &amp;</cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>Note that the posterior median or the posterior mean are more common to use as point estimates than the posterior mode. Here we simply write the posterior mode to illustrate the similarity with the penalized estimate θpenalty .</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>We used the unnormalized data, available at https://archive.ics.uci.edu/ml/ datasets/Communities+and+Crime+Unnormalized</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>Note that it is also possible to implement the ABR method itself in Stan. Stan model files to do so are available at https://github.com/sara-vanerp/ApproxBR/tree/main. These models can be adapted to other prior specifications.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-GEOD-77445</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>This research was supported by an <rs type="grantName">ERC Starting Grant 'TIMEISNOW'</rs> (<rs type="grantNumber">758791</rs>) to DK, RL, and JM and by a <rs type="grantName">NWO Veni Grant</rs> (Vl.Veni.<rs type="grantNumber">221G.005</rs>) to SvE.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_GvH7KD8">
+					<idno type="grant-number">758791</idno>
+					<orgName type="grant-name">ERC Starting Grant &apos;TIMEISNOW&apos;</orgName>
+				</org>
+				<org type="funding" xml:id="_mwzVGVd">
+					<idno type="grant-number">221G.005</idno>
+					<orgName type="grant-name">NWO Veni Grant</orgName>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A network analysis of dsm-5 posttraumatic stress disorder symptoms and correlates in us military veterans</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Armour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">I</forename><surname>Fried</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Deserno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Pietrzak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of anxiety disorders</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="49" to="59" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Using big data to understand the human condition: the kavli human project</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Azmak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bayer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Caplin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Glimcher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Koonin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Patrinos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Big data</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="173" to="188" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Grouping priors and the Bayesian elastic net</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bornn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gottardo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Doucet</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1001.4083</idno>
+		<ptr target="https://arxiv.org/abs/1001.4083" />
+		<imprint>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Stan: A probabilistic programming language</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Carpenter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Goodrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Betancourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Riddell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v076.i01</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Handling sparsity via the horseshoe</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Carvalho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Polson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Scott</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Artificial intelligence and statistics</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="73" to="80" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The horseshoe estimator for sparse signals</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Carvalho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Polson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Scott</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="465" to="480" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Penalized regression, standard errors, and bayesian lassos</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Casella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kyung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian analysis</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="369" to="411" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Least angle regression</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Efron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Johnstone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of statistics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="407" to="499" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Sparse inverse covariance estimation with the graphical lasso</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biostatistics</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="432" to="441" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Prior distributions for variance parameters in hierarchical models (comment on article by browne and draper)</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="515" to="534" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Bayesian data analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Carlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Stern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>Taylor &amp; Francis Boca Raton</publisher>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Variable selection via Gibbs sampling</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">I</forename><surname>George</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Mcculloch</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2290777</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">423</biblScope>
+			<biblScope unit="page">881</biblScope>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Supervised machine learning predictive analytics for alumni income</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Gomez-Cravioto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Diaz-Ramos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Hernandez-Gress</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Preciado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Ceballos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Big Data</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="31" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Statistical learning with sparsity</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wainwright</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Monographs on statistics and applied probability</title>
+		<imprint>
+			<biblScope unit="volume">143</biblScope>
+			<biblScope unit="page">143</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Ridge regression: Biased estimation for nonorthogonal problems</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Hoerl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Kennard</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00401706.1970.10488634</idno>
+		<ptr target="https://www.tandfonline.com/doi/abs/10.1080/00401706.1970.10488634doi:10.1080/00401706.1970.10488634" />
+	</analytic>
+	<monogr>
+		<title level="j">Technometrics</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="55" to="67" />
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">A study in factor analysis: The stability of a bi-factor solution</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Holzinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Swineford</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1939">1939</date>
+		</imprint>
+	</monogr>
+	<note>Supplementary educational monographs</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Genome-wide dna methylation levels and altered cortisol stress reactivity following childhood trauma in humans</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Houtepen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Vinkers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Carrillo-Roa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hiemstra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Van Lier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Meeus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Others</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature communications</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Genomewide DNA methylation levels and altered cortisol stress reactivity following childhood trauma in humans</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Houtepen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Vinkers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Carrillo-Roa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hiemstra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Van Lier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Meeus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">.</forename><forename type="middle">.</forename><surname>Boks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P M</forename></persName>
+		</author>
+		<idno type="DOI">10.1038/ncomms10967</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Communications</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2016-03">2016, mar</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A bayesian view on ridge regression</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">C</forename><surname>Hsiang</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/2987923" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series D (The Statistician)</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="267" to="268" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Spike and slab variable selection: Frequentist and Bayesian strategies</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ishwaran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Rao</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/009053604000001147</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Statistics</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="730" to="773" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">regsem: Regularized structural equation modeling</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jacobucci</surname></persName>
+		</author>
+		<ptr target="https://CRAN.R-project.org/package=regsem(Rpackageversion1.9" />
+	</analytic>
+	<monogr>
+		<title level="j">Computer software manual</title>
+		<imprint>
+			<biblScope unit="issue">5</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Separating the wheat from the chaff: Bayesian regularization in dynamic social networks</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Karimova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">T A</forename><surname>Leenders</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Meijerink-Bosman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Networks</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="page" from="139" to="155" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Hierarchical shrinkage priors for dynamic regressions with many predictors</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Korobilis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Forecasting</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="43" to="59" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The Bayesian elastic net</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Lin</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/10-ba506</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="151" to="170" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Regularized structural equation modeling to detect measurement bias: Evaluation of lasso, adaptive lasso, and elastic net</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jacobucci</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2019.1693273</idno>
+		<idno>.2019.1693273</idno>
+		<ptr target="http://dx.doi.org/10.1080/10705511.2019.1693273doi:10.1080/10705511" />
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="722" to="734" />
+			<date type="published" when="2019-12">2019, December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Ridge regression in practice</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Marquardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Snee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The American Statistician</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="20" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Efficient bayesian structural equation modeling in stan</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Merkle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Fitzsimmons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uanhoro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Goodrich</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v100.i06</idno>
+		<ptr target="http://dx.doi.org/10.18637/jss.v100.i06doi:10.18637/jss.v100.i06" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The matrix-F prior for estimating and testing covariance matrices</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Pericchi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1193" to="1214" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The Bayesian Lasso</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Casella</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="issue">482</biblScope>
+			<biblScope unit="page" from="681" to="686" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">The Bayesian lasso</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Casella</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/016214508000000337</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="issue">482</biblScope>
+			<biblScope unit="page" from="681" to="686" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Point process modelling for directed interaction networks</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">O</forename><surname>Perry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Wolfe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Statistical Methodology)</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="821" to="849" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">On the half-cauchy prior for a global scale parameter</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Polson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Scott</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="887" to="902" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Communities and Crime Unnormalized</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Redmond</surname></persName>
+		</author>
+		<idno type="DOI">10.24432/C5PC8X</idno>
+		<ptr target="https://doi.org/10.24432/C5PC8X)" />
+	</analytic>
+	<monogr>
+		<title level="j">UCI Machine Learning Repository</title>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">The spike-and-slab lasso</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ročková</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">I</forename><surname>George</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">521</biblScope>
+			<biblScope unit="page" from="431" to="444" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">RStan: the R interface to Stan</title>
+		<author>
+			<orgName type="collaboration">Stan Development Team</orgName>
+		</author>
+		<ptr target="https://mc-stan.org/(Rpackageversion2.32.6" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Regression shrinkage and selection via the lasso</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society Series B: Statistical Methodology</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="267" to="288" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Bayesianglasso: Bayesian graphical lasso</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Trainor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<ptr target="https://cran.r-project.org/web/packages/BayesianGLasso/index.html(Rpackageversion0" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Shrinkage priors for bayesian penalized regression</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Van Erp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Oberski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="31" to="50" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Shrinkage priors for Bayesian penalized regression</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Van Erp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Oberski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jmp.2018.12.004</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="31" to="50" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Exploratory mediation analysis with many potential mediators</title>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Van Kesteren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Oberski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="710" to="723" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Exploratory mediation analysis with many potential mediators</title>
+		<author>
+			<persName><forename type="first">E.-J</forename><surname>Van Kesteren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Oberski</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10705511.2019.1588124</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Structural Equation Modeling: A Multidisciplinary Journal</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="710" to="723" />
+			<date type="published" when="2019-04">2019. apr</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Note on the consistency of the maximum likelihood estimate</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wald</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/2236315" />
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="595" to="601" />
+			<date type="published" when="1949">1949</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Bayesian graphical lasso models and efficient posterior computation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bayesian Analysis</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="867" to="886" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Bayesian hypothesis testing for gaussian graphical models: Conditional independence and order constraints</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mulder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mathematical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page">102441</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">On wald&apos;s proof of the consistency of the maximum likelihood estimate</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wolfowitz</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/2236316" />
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="601" to="602" />
+			<date type="published" when="1949">1949</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Model selection and estimation in regression with grouped variables</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society Series B: Statistical Methodology</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="67" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">The adaptive lasso and its oracle properties</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American statistical association</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">476</biblScope>
+			<biblScope unit="page" from="1418" to="1429" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">The adaptive lasso and its oracle properties</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zou</surname></persName>
+		</author>
+		<idno type="DOI">10.1198/016214506000000735</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">476</biblScope>
+			<biblScope unit="page" from="1418" to="1429" />
+			<date type="published" when="2006">2006b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Regularization and variable selection via the elastic net</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the royal statistical society: series B (statistical methodology)</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="301" to="320" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

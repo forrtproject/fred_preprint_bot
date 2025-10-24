@@ -1,0 +1,1676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">The Moral Turing Test: Evaluating Human-LLM Alignment in Moral Decision-Making</title>
+				<funder ref="#_kqecTRe">
+					<orgName type="full">European Research Council</orgName>
+				</funder>
+				<funder ref="#_uVPKt9s #_cs5enN7">
+					<orgName type="full">Agence Nationale de la Recherche</orgName>
+					<orgName type="abbreviated">ANR</orgName>
+				</funder>
+				<funder ref="#_jqEEYRT">
+					<orgName type="full">unknown</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Google</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Garcia</forename><surname>Basile</surname></persName>
+							<email>basile.garcia@unige.ch</email>
+							<idno type="ORCID">0000-0002-3227-3471</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Geneva Geneva</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Crystal</forename><surname>Qian</surname></persName>
+							<email>cjqian@google.com</email>
+							<affiliation key="aff1">
+								<orgName type="institution">Google DeepMind New York City</orgName>
+								<address>
+									<region>NY</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Stefano</forename><surname>Palminteri</surname></persName>
+							<email>stefano.palminteri@ens.fr</email>
+							<idno type="ORCID">0000-0001-5768-6646</idno>
+							<affiliation key="aff2">
+								<orgName type="institution">École Normale Supérieure Paris</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">The Moral Turing Test: Evaluating Human-LLM Alignment in Moral Decision-Making</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D4C384CB6652E58A94CF6BCF6967C9C2</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:30+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>As large language models (LLMs) become increasingly integrated into society, their alignment with human morals is crucial. To better understand this alignment, we created a large corpus of humanand LLM-generated responses to various moral scenarios. We found a misalignment between human and LLM moral assessments; although both LLMs and humans tended to reject morally complex utilitarian dilemmas, LLMs were more sensitive to personal framing. We then conducted a quantitative user study involving 230 participants (N=230), who evaluated these responses by determining whether they were AI-generated and assessed their agreement with the responses. Human evaluators preferred LLMs' assessments in moral scenarios, though a systematic anti-AI bias was observed: participants were less likely to agree with judgments they believed to be machine-generated. Statistical and NLP-based analyses revealed subtle linguistic differences in responses, influencing detection and agreement. Overall, our findings highlight the complexities of human-AI perception in morally charged decision-making.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Large language models (LLMs) are becoming widely used in applications ranging from conversational agents to decision-making systems capable of making consequential decisions, such as providing medical advice <ref type="bibr" target="#b19">[20]</ref>, legal advice <ref type="bibr" target="#b9">[10]</ref>, and mental well-being support <ref type="bibr" target="#b41">[42]</ref>. As humans increasingly interact with LLMs, understanding our ability to detect and align with LLMs' judgments becomes crucial, particularly given the risk of misuse, such as the dissemination of disinformation by LLM-powered bots <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b52">53]</ref>.</p><p>While prior work has explored AI detection and alignment, the relationship between identification and agreement remains empirically under-investigated, especially in moral decision-making processes. Specifically, it remains unclear whether a participant's belief about the source of content affects their agreement. Our research directly addresses this gap, exploring humans' capacity to detect the source of moral judgments (either human or LLM), their agreement with these judgments, and critically, the relation between these two behavioral outcomes. Additionally, we explore the linguistic factors influencing identification and agreement <ref type="bibr" target="#b42">[43,</ref><ref type="bibr" target="#b50">51]</ref>.</p><p>To investigate human-AI alignment in moral decision-making, we conducted a series of quantitative experiments involving 230 participants (N=230). First, we collected a corpus of moral judgments by presenting 60 diverse ethical scenarios to human participants and LLM models in the GPT-3.5 family. We then presented these judgments to a new group of participants, who were tasked with identifying the source (human or AI), expressing their agreement or disagreement with the judgment itself, as well as agreement with the accompanying justification. To control for detection bias, we created and evaluated additional corpora with "humanized" LLM responses. Here are the key highlights from our analysis:</p><p>• LLMs exhibit a different moral code from humans, and from each other: We found that LLMs are highly sensitive to personal vs. impersonal framing; GPT-3.5 davinci-text-003, in particular, was much more likely to agree with actions taken in impersonal moral scenarios (where they do not bear personal responsibility) than in personal moral reframings (where they bear personal responsibility). Furthermore, we found that the framing effect was greatly exacerbated between GPT-3.5 davinci-text-002 and GPT-3.5 davinci-text-003, suggesting that moral judgments may be model-dependent. • Participants prefer AI justifications over human justifications in morally-complex scenarios: Although participants preferred human justifications when the stakes were low (e.g., in non-moral scenarios), they significantly preferred LLM-generated justifications in personal moral scenarios (such as when explaining how they would handle the trolley problem), where LLMs exhibited much stronger utilitarian preferences than humans. Participants' preference for AI in these scenarios may stem from a preference for deliberative reasoning in high-stakes settings. • However, participants exhibit a strong anti-AI bias: Even though participants favored the justifications produced by LLMs, they reported disagreement if they suspected that the output was LLM-generated. Across all types of scenarios, participants exhibited a notable anti-AI bias. This result is robust to our efforts to conceal the identity of the LLM through "humanizing" linguistic features, such as introducing typos. • Subtle contextual and linguistic cues can reveal AI authorship: Participants were able to detect the source of generated justifications with moderate accuracy. The detection rate was higher in moral scenarios (such as the trolley problem) than in non-moral scenarios. Slight linguistic differences, such as an increased use of first-person pronouns in human explanations and more pedantic, analytical LLMgenerated explanations, provided some signal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">BACKGROUND 2.1 Human moral psychology</head><p>Moral psychology investigates how people make ethical decisions and evaluate others' actions. Research indicates that moral judgments are often driven by immediate emotions rather than deliberate reasoning <ref type="bibr" target="#b36">[37]</ref>. For example, in the trolley problem, individuals are asked if they would sacrifice one person to save five. Responses vary depending on whether the scenario is framed personally (where one must actively push the person onto the tracks) or impersonally. This suggests that moral judgments are frequently inconsistent, influenced by context and cognitive biases <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b17">18]</ref>. Dual process theories offer a popular explanation for these inconsistencies <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b44">45]</ref>. These theories propose that moral judgment relies on two competing cognitive systems: one that is fast, intuitive, and emotion-driven ("hot"), and another that is slow, deliberative, and rational ("cold") <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b33">34]</ref>. The deliberative system follows utilitarian principles, focusing solely on the outcomes of decisions, while the intuitive system is swayed by contextual factors unrelated to the final outcome, leading to automatic, emotional responses. Consequently, moral preferences can be inconsistent, as different framing of similar outcomes trigger varying responses <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b51">52]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">AI moral psychology</head><p>Moral scenarios can also be used to study ethics and alignment within AI systems <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b31">32]</ref>. As LLMs increase their capacity for conversational decision-making, the practice of recycling tools from cognitive psychology to study LLMs' competencies in terms of decision-making and reasoning has emerged. Several recent studies took the challenge to recycle tools from cognitive psychology to the study of LLMs' competences in terms of decision-making and reasoning <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b54">55]</ref>.</p><p>Scherrer et. al. finds that LLMs generally align with human moral values, but in ambiguous cases, their responses can vary based on question phrasing, with closed-source models demonstrating more consistent preferences <ref type="bibr" target="#b50">[51]</ref>. This variation may arise from differences in pre-training data and fine-tuning processes <ref type="bibr" target="#b45">[46,</ref><ref type="bibr" target="#b57">58]</ref>. Thus, linguistic features play a significant role in assessing the moral quality of judgments from humans or AI.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Factors influencing AI detection</head><p>Determining whether a decision is made by a human or a machine is crucial: it enhances safety by revealing our susceptibility to manipulation, acts as an epistemological Turing test <ref type="bibr" target="#b26">[27]</ref> for assessing AI conversational abilities, and guides the development of LLMs towards human-preferred outputs <ref type="bibr" target="#b10">[11]</ref>. Concerningly, recent studies indicate that humans often struggle to reliably distinguish AI-generated texts from human texts, across diverse contexts such as poetry <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b35">36]</ref> and media misinformation <ref type="bibr" target="#b34">[35]</ref>. Additionally, strategies can be employed to "humanize" AI-generated content to increase the difficulty of detection. "Humanized" LLMs have sometimes been judged as more human-like than actual humangenerated responses <ref type="bibr" target="#b24">[25]</ref>, and LLMs can be perceived as more empathetic than human responses when prompted appropriately <ref type="bibr" target="#b53">[54]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Factors influencing AI alignment</head><p>Before LLMs, research into applied fields such as autonomous vehicles highlighted the need for alignment in human and machine moral decision making <ref type="bibr" target="#b0">[1]</ref>. Prior research has shown a human tendency to favor human-generated decisions over machine-generated ones, a phenomenon known as algorithm aversion <ref type="bibr" target="#b5">[6]</ref>. However, this phenomenon is context-dependent <ref type="bibr" target="#b8">[9]</ref>. For instance, humans tend to prefer human judgement over AI judgement in the context of medical decision-making <ref type="bibr" target="#b7">[8]</ref>, but prefer AI judgement in numerical tasks <ref type="bibr" target="#b39">[40]</ref>.</p><p>Agreement with LLM-generated text hinges on factors like task nature, perceived authorship <ref type="bibr" target="#b13">[14]</ref>, prior AI interactions, and even cultural context <ref type="bibr" target="#b30">[31]</ref>. While ChatGPT's responses in social scenarios have been rated as more balanced and empathetic than human advice <ref type="bibr" target="#b23">[24]</ref>, people still show a strong preference for human advice on moral issues <ref type="bibr" target="#b46">[47]</ref>. AI authors are perceived as less competent, though humans still value their advice <ref type="bibr" target="#b6">[7]</ref>. Moreover, in persuasive content creation (e.g. advertisements), AI efforts are often rated higher than human efforts. Revealing the source of content production lessens the quality gap between human-and AI-generated content, without affecting the assessed quality of AI-created content <ref type="bibr" target="#b55">[56]</ref>. This suggests that human favoritism, rather than AI aversion, drives the perceived quality and perceived value <ref type="bibr" target="#b43">[44]</ref>.</p><p>To summarize, two competing hypotheses can help explain perceptions of LLMs in moral decision-making. A pro-AI bias may occur when machines are seen as authoritative sources of knowledge. In contrast, an anti-AI bias might emerge from societal or psychological prejudices against machines, often stemming from the belief that machines lack agency and the capacity for compassionate or morally sound decisions <ref type="bibr" target="#b1">[2]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">METHODS</head><p>Our experimental design is summarized follows (and shown in Figure <ref type="figure" target="#fig_0">1</ref>). <ref type="foot" target="#foot_0">1</ref>(1) Corpus generation First, we create two corpora of responses to scenarios of various types: non-moral, impersonal moral, or personal moral. For each scenario in corpus 1, 30 human participants and 30 API calls of GPT 3.5 davinci-text-002 (dv2) provide a response, which includes a judgement (yes/no) and a justification (free text). Corpus 2 uses GPT 3.5 davincitext-003 (dv3) instead of dv2.</p><p>(2) Corpus transformation Because human-and LLM-generated justifications may have liguistic differences (such as typos, or response length), we create corpus 3, which "humanizes" the dv2 responses from corpus 1 by adding typos or shortening the text. (3) Corpus evaluation Next, we have human raters evaluate each response from the 3 corpora. For each evaluation, they answer 1) whether they think the text was human-or LLMgenerated, 2) whether they agree with the judgement, and 3) whether they agree with the justification. (4) Linguistic analysis These remaining steps use statistical and computational analysis to figure out which specific signals are being communicated in the justification text to affect detection and alignment. In this step, we perform a linguistic analysis on potential linguistic differences between humanand LLM-generated text. (5) Predictive modeling We use NLP techniques to evaluate whether the responses in the corpora have predictive signals on our outcomes of interest. We build models to predict 1) the true source of the text, 2) the human rater's belief of the source of the text, 3) whether the human rater's belief was correct, and 4) whether the human agrees with the justification. (6) Semantic analysis Finally, we use interpretability methods to identify which specific tokens in the justification text have predictive power on the outcomes in described in 4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Corpus generation</head><p>In the preliminary item-generating stage of this study (Figure <ref type="figure" target="#fig_2">2A</ref>; corpus generation experiments), we presented 60 moral scenarios from Greene et al. <ref type="bibr" target="#b16">[17]</ref> to participants. There were three categories of these scenarios:</p><p>• Non-moral: Scenarios that do not engage complex moral reasoning, e.g. "Is it appropriate to wait for a promotion before buying a new computer, versus buying it immediately?" • Impersonal moral: Moral scenarios involving indirect intervention, e.g. "Is it appropriate to turn a runaway boxcar away from five people but towards one person?" • Personal moral: Emotionally salient scenarios that are more engaging, e.g. "Is it appropriate to push one person off a bridge to stop a runaway boxcar from hitting five people?"</p><p>These scenarios are similar to impersonal moral scenarios but involve a sense of personal agency.</p><p>Participants provided a yes/no decision and a free-text justification for each scenario. Each corpus contained 3600 responses, derived from 60 scenarios with 30 human responses and 30 LLM responses per scenario. The temperature of the LLM calls was set to 0.7, to maintain a form of inter-prompt variability similar to what is observed in humans. After removing ambiguous answers, we created two corpora: </p><formula xml:id="formula_0">•</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Corpus transformation</head><p>To mitigate any potential linguistic differences, we used GPT-3.5 to "humanize" the LLMs' responses in corpus 1 by shortening them, introducing a few typos, and providing human examples to imitate; this process is shown in Figure <ref type="figure" target="#fig_3">3</ref>. Our resulting dv2_humanized dataset showed no significant difference in length or number of typos from the human dataset, as evidenced by statistical t-tests. This resulting dataset of human and dv2_humanized responses is corpus 3.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Corpus evaluation</head><p>In the main stage of the study (Figure <ref type="figure" target="#fig_2">2B</ref>), we presented the responses generated in the first stage to new human participants (N=230). 77 participants evaluated the 46 responses in corpus 1, 76 participants evaluated the 45 responses in corpus 2, and 77 participants evaluated the 46 items in corpus 3. For each response, participants had to answer three binary questions:</p><p>(1) Detection: Whether they think these answers were given by humans or AI (human/AI) (2) Agreement with the binary judgement: Whether they agree with the binary moral judgment (yes/no) (3) Agreement with the justification: Whether they agree with the provided justification (yes/no)</p><p>3.3.1 Participants. The corpus generation experiment involved 30 human participants (15 females, mean age = 34 ± 10.26) (Figure 2A). The detection and agreement experiments involved 230 participants (113 females; mean age = 35.57 ± 11.71) (Figure <ref type="figure" target="#fig_2">2B</ref>). They were recruited through Prolific<ref type="foot" target="#foot_2">foot_2</ref> with the screening requirement that they were fluent in English. Instructions were fully transparent, informing participants that they are expected to give meta-judgments on both human and AI-generated answers. In addition to a base rate, participants were incentivized in Turing test questions with a bonus of 5 cents for each correct identification (AI/human). The average final bonus was $1.46 ± 0.28, which was significantly higher than what they would have received on average for making random choices<ref type="foot" target="#foot_3">foot_3</ref> .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.2">Statistical evaluation.</head><p>The main outcome measures from the corpus evaluation steps are the binary responses to the three questions: detection (human-or LLM-generated), agreement with judgement (yes/no), and agreement with justification (yes/no). The responses to the two 'detection' questions were transformed into an accuracy measure. The two agreement answers were averaged, such that a full agreement was coded as 1, a partial agreement as 0.5, and a complete disagreement as 0.</p><p>All inferential tests were conducted using Python 3.9 and the Pingouin 0.5.4 library. Two-tailed t-tests were performed throughout. For multiple comparisons, we used the pairwise_ttests function with Bonferroni corrections systematically applied. Single t-tests were performed using the ttest function. We report the following statistics for each t-test: Student's t-value (𝑇 (𝑑 𝑓 )), p-value significance (𝑝), Cohen's d (𝑑), and Bayesian factor (𝐵𝐹 10 ).</p><p>The anova function was used for comparing independent samples (one-way or two-way ANOVA), and the rm_anova function was used for repeated measures ANOVA (one-way ANOVA with repeated measures). For ANOVAs, we report the F-statistic (𝐹 (𝑑 𝑓 )), p-value (𝑝), and partial eta-squared (𝜂 2 𝑝 ).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Linguistic evaluation</head><p>We performed the corpus transformation step because we anticipated that linguistic differences between human-and LLM-generate text could be contributing to detection and alignment. Specifically, we hypothesize that 1. humans generate shorter justifications in length, 2. humans create more typing errors, and 3. humans tend</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Predictive modeling</head><p>Next, we wanted to understand whether state-of-the-art models could glean predictive signals for the outcomes of interest within the justification text.</p><p>Pre-processing. Lexical and semantic analyses were performed using NLTK tokenizers and stopwords <ref type="foot" target="#foot_4">4</ref> , and a TfidfVectorizer to transform raw text data into a matrix of TF-IDF features <ref type="bibr" target="#b47">[48]</ref>. The vectorizer was configured to remove common English stop words, exclude numbers, and include only alphabetic words. To limit the feature space, we set the min_df parameter to 3, excluding words that appeared in fewer than three documents, and capped the maximum number of features at 1000.</p><p>Transformer models. We fine-tuned a series of pre-trained transformerbased models locally (DistilBERT) <ref type="bibr" target="#b49">[50]</ref>, optimizing hyperparameters with optuna<ref type="foot" target="#foot_5">foot_5</ref> . Given the pre-processed text data, these models were used to predict 1. the true source of the explanation text, 2. the participant's predicted source, and 3. the participant's agreement with the judgement. Label classes were encoded for these multi-class and binary classification models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.6">Semantic analysis</head><p>To understand which specific semantic features in the text could explain outcomes, we built random forest classifier with 100 estimators trained on the corpora's dense representation <ref type="bibr" target="#b4">[5]</ref>. The decision to switch model architectures was made after confirming that performance scores were comparable across the transformer-based and tree-based implementations; the random forest implementation was less computationally intensive and easier to interpret through feature importance scores. To interpret the model's predictions, we applied SHAP (SHapley Additive exPlanations) values using TreeExplainer <ref type="bibr" target="#b40">[41]</ref>. SHAP values decompose predictions into contributions from individual features, providing insights into how different features influenced the model's decisions. Positive SHAP values indicate that a feature contributes to a higher prediction, while negative values suggest a lower prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">RESULTS</head><p>For the purpose of readability, the statistical evidence for the results section are not embedded directly in the text. The results of twotailed t-tests are shown in Table <ref type="table" target="#tab_1">1</ref>. ANOVA statistics are found in the footnotes. We claim that a result is statistically significant when the p-value of the accompanying t-test has a p-value 𝑝 &lt; 0.001.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Corpus evaluation (1 and 2): judgement</head><p>We generated corpus 1 (human-and dv2-generated responses) and corpus 2 (human and dv3-generated responses). Each response had a judgement (yes/no), and a justification free-text. Here, we evaluate the judgement values as a function of the type of the moral scenario: "Non moral", "Impersonal moral" and "Personal moral" (Figure <ref type="figure" target="#fig_2">2A</ref>).   In previous studies, decisions with utilitarian outcomes (benefiting the group) are more readily endorsed when framed in an "impersonal" manner <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b33">34]</ref>. That is, participants are less keen to sacrifice one person in the Trolley Problem scenario when they themselves are the one who must push the person onto the tracks.</p><p>However, in our study, humans are not the ones to exhibit this behavior. Figure <ref type="figure" target="#fig_4">4B</ref> shows the likelihood of endorsing across the three scenarios (with accompanying statistical values in Table <ref type="table" target="#tab_1">1</ref>). We find that there is no statistical difference, in our human sample, between the amount of impersonal moral scenario and personal moral scenario endorsements; however, humans significantly endorse nonmoral scenarios over personal moral scenarios. Interestingly, the dv2 and dv3 responses appear to follow a different moral code: dv2 significantly endorses impersonal moral scenarios more than personal moral scenarios. DV3 agents (text-davinci-003) displayed an even greater sensitivity to this framing effect. These results suggest that that human moral preferences are context-dependent, that different versions of models (dv2 vs. dv3) can express different moral preferences, and that there can be misalignment between human and LLM moral judgements.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Corpus evaluation (1 and 2): detection</head><p>In Figure <ref type="figure" target="#fig_6">5</ref>, row A, we show the probability of correctly detecting the source of the judgement as a function of the scenario type. We find that participants significantly but imperfectly identify the source of the item under evaluation, significantly higher than random guessing. In Corpus 1 (human vs. dv2 justifications) correctly identified the source 64% of the time. Identification was even higher for Corpus 2 (human vs. dv3), reaching 71% accuracy.</p><p>We also find that the context of the scenario matters: justifications related to to personal and impersonal moral scenarios were more easily detected than non-moral scenarios. That is, participants were more likely to correctly detect that content was AI-or humangenerated in moral scenarios (both personal and impersonal), as compared to non-moral. The LLMs, as compared to humans, were much more likely to endorse utilitarian scenarios; participants appear to pick up on this difference. These differences persisted when corpus 1 and 2 were grouped.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Corpus evaluation (1 and 2): alignment</head><p>We investigated whether agreement rates varied based on the source of the justification, and how this varied with scenario type. Experiments across both GPT models revealed a significant main effect of scenario type. <ref type="foot" target="#foot_6">6</ref> .</p><p>In Row B of Figure <ref type="figure" target="#fig_6">5</ref>, we see that participants' alignment with human-or LLM-responses depends on the scenario type. Participants significantly preferred human judgements over AI judgements for non-moral scenarios. Conversely, they significantly preferred AI judgements for personal moral scenarios. In impersonal moral scenarios however, we did not observe any significant bias <ref type="foot" target="#foot_7">7</ref> . This result suggests that when faced with morally complex scenarios, humans tend to agree more with justifications emitted by machines rather than humans.</p><p>In Row C of Figure <ref type="figure" target="#fig_6">5</ref>, we condition this alignment on whether the participant believes the justification was human-or LLM-generated. This exposes a significant anti-AI bias across all scenarios. Participants showed significantly more anti-AI bias in non-moral scenarios compared to personal moral ones, and in impersonal compared to personal moral scenarios for DV2. These results were consistent when experiments were grouped. These results suggest that participants' agreement with LLM judgments differs based on their belief about the source, particularly for complex (personal) moral scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Corpus 3</head><p>Comparing the results of dv2, dv3 and dv2_humanized, humanization was successful in significantly reducing the detection rate, <ref type="foot" target="#foot_8">8</ref>which dropped below 60%, but still remained above 50% (Figure <ref type="figure" target="#fig_7">6A</ref>). The difference in agreement between human and machine items remained unchanged, regardless of considering the actual source of the item (Figure <ref type="figure" target="#fig_7">6B</ref>) or the belief (Figure <ref type="figure" target="#fig_7">6C</ref>). <ref type="foot" target="#foot_9">9</ref> . Although reduced, the accuracy in the detection task was still significant in Corpus 3, suggesting that participants were not dependent on features such as text length and the number of typos for detection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Linguistic analysis</head><p>Thus far, we've learned that participants are weakly able to detect LLM-generated moral justifications, and that this detection varies across scenario type. Is it the case that linguistic features are driving this detection ability? In Figure <ref type="figure" target="#fig_8">7</ref>, we quantify each hypothesis (columns A, B, and C, respectively) and plot the probability of detection (row A) and alignment (row B). In corpus 1 and corpus 2, we see that length, typos, and first-person usage all significantly affect detection rates; participants are, in fact, using these linguistic features to influence their detection.</p><p>As expected, in corpus 3 (where we targeted reducing these differences), these effects are greatly diminished. While the use of first-person markers still significantly predicted human identification, the presence of typos as well the length of the text is no longer significant. This suggests that humans are capable of picking up on subtle linguistic cues, such as first-person pronoun usage, in the absence of more explicit cues such as text length and typos.</p><p>We also test whether typos, length and first-person pronoun usage predicted alignment. The only significant effect was observed for first-person usage in the humanized condition, although this effect was not replicated in other conditions. As linguistic features did not significantly predict agreement, this suggests that deeper concepts, semantic features, and subjective preferences affect alignment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.6">Predictive modeling</head><p>Here, we show the model performance of the multi-class and binary classifiers, built using hyperparameter-optimized, transformerbased models. Our models, like the participants, were able to detect provenance with moderate accuracy. Accuracy scores are still low, but higher than random selection. Models are also able to predict   alignment and detection, indicating that there are potentially quantifiable features within the text that can inform these higher-level choices.</p><p>While training and tuning these models, the model performance was sensitive to the distributions within the training set, particularly for performance tradeoffs between dv2_humanized-and humangenerated text. That is, the models would easily confuse the two (Table <ref type="table" target="#tab_2">2</ref>, <ref type="table" target="#tab_1">1.</ref>), but could easily differentiate dv3-generated text.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.7">Semantic analysis</head><p>To evaluate the semantic features influencing human responses on detection and agreement, we applied SHAP analysis to a random forest classifier trained on data from Experiments 2 and 3, comparing the human vs. dv2, dv3 and dv2_humanized results.</p><p>In dv2 and dv3, SHAP analysis showed that the word "appropriate" was a strong indicator of AI-generated content (Figure <ref type="figure">8</ref>; first row). LLM responses often reworded the question. For example if the question was worded like, "Is it appropriate to do X to save Y?" the LLM would begin its response with, "Yes, it is appropriate because. . . " Participants picked up on this, often identifying justifications containing the term "appropriate" as AI-generated. In particular, dv3 appeared more pedantic and repetitive, which may attribute to its high detection rate. The following are examples of dv3-generated justifications that the predictive models were able to correctly identify with high probability:</p><p>"it is not appropriate to leave this man by the side of the road in order to preserve your leather upholstery because human life is more important than material possessions. taking the time to help this man in need is the right thing to do and it is your moral responsibility to prioritize his health and safety over your car's upholstery. it may be inconvenient to have to clean up the mess and deal with the ruined upholstery, but it is a small price to pay for saving someone's life. " -dv3</p><p>"policy A has a 90% chance of causing no deaths at all and has a 10% chance of causing 1000 deaths. policy B has a 92% chance of causing no deaths and an 8% chance of causing 10, 000 deaths. overall, policy A is a   better choice because it has a lower chance of causing deaths. " -dv3</p><p>Words like "additionally" and "reason", which imply logical reasoning, were correctly recognized by both humans and our predictive models as markers of AI-generated judgments (Figure <ref type="figure">8</ref>; second row). This suggests that both the classifier and participants detected formal reasoning language as a distinctive feature of AI-produced judgments. This following example shows a correctly-predicted dv2 instance demonstrating logical reasoning: "killing someone, even your own child, is never an appropriate solution. human life is inherently valuable, and no one should be asked to make the impossible decision of sacrificing a life for the sake of others. therefore, it is not appropriate for you to kill your oldest son in order to save your husband and [other] children. " -dv2 Figure <ref type="figure">8</ref>: SHAP beeswarm plot summarizing the impact of key features on the random forest classifier predictions. The model predicted three variables (rows: source, belief, agreement) for each experiment (columns; dv2, dv3, dv2 humanized). Each point represents a data instance, with the x-axis showing the SHAP value, which reflects the importance of a word in influencing the prediction. The color represents the feature value, which in this case is the word's frequency. Black dots indicate a low frequency of the word for a given sample of moral judgements, while colored dots signify a higher frequency. Thus, the feature value (color) goes from black (low word occurrence) to brighter colors for words that appear more frequently. Features are ordered by average absolute SHAP value, highlighting their relative importance. Features with higher SHAP values have a larger influence on the model's output, with the most important features appearing at the top. We only display the 10 most important features.</p><p>Words tied to utilitarian reasoning (e.g., "lives, " "save, " "deaths") were predictive of disagreement with justifications (Figure <ref type="figure">8</ref>; third row). These words often appear in justifications to personal moral scenarios, which was the category of scenarios receiving the least endorsement by participants. For example, one such scenario asks whether it is appropriate for a doctor to sacrifice one patient to save five others. Participants often disagreed with the utilitarian outcomes in this case, highlighting the moral conflict. In contrast, the presence of terms like "murder" predicted agreement, often used in moral statements like "the murder of innocents is always wrong" aligning with deontological principles <ref type="bibr" target="#b22">[23]</ref>.</p><p>The predictive terms in the dv2_humanized corpus, where GPT-3.5 was prompted to imitate human responses, were different, both in predicting the source of the judgements (Figure <ref type="figure">8</ref>; first row) and participants' beliefs (Figure <ref type="figure">8</ref>; second row). Words like "save, " "sacrificing, " "choice, " and "killing", associated with utilitarian personal moral scenarios, frequently appeared in AI-generated content. Participants recognized these cues even without formal features (e.g., text length and typos). This reflects large language models' tendency toward utilitarian reasoning, which participants likely used as a heuristic to detect AI-generated responses.</p><p>Agreement with the humanized dv2 model (Figure <ref type="figure">8</ref>; third row) followed similar patterns as dv2 and dv3: words evoking personal moral scenarios, such as "deaths, " 'lives, " and "sacrificing, " often led to participant rejection. These terms reflect emotionally charged conflicts between utilitarian outcomes and necessary actions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Summary</head><p>In the first part of our study, we set the stage to examine differences in human-and LLM-reasoning, administering a well-established psychology task designed to elicit contrasting moral preference across a diversity of scenarios <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b33">34]</ref>.</p><p>We found that human preferences are scenario-dependent; they agree more with judgements that are not morally complex (i.e. nonmoral scenarios). We administered the same task to LLMs <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b54">55]</ref> and found there was some misalignment between human-and LLMgenerated judgements, especially across scenario type <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b45">46]</ref>.</p><p>Then, we asked raters to evaluate the responses from our corpora. We found that participants were only somewhat able to distinguish between the moral judgements generated by humans and LLMs, and that the context of the scenario was important. For judgments on relatively trivial matters, participants generally showed greater agreement with human justifications. However, participants preferred AI-generated responses to complex moral scenarios. This pro-AI bias for complex moral scenarios was not consciously recognized by participants; rather, it coexisted with a rather pervasive belief-based anti-AI bias, according to which higher agreement was given to justifications that our participants believed coming from humans, even if it was not the case.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Relationship between detection and alignment</head><p>Newer LLMs may exhibit more "correct answer bias". There was a significant decrease in alignment within responses in dv3, as compared to dv2, potentially indicative of a "correct answer" bias <ref type="bibr" target="#b45">[46]</ref>. This bias suggests that newer LLMs may be trained and finetuned to generate socially accepted responses, leading to reduced diversity in their outputs.</p><p>LLMs' more deliberate reasoning may be preferred in complex scenarios. Participants exhibited a strong preference for AIgenerated judgments in personal moral scenarios, which typically involve more deliberation and evoke stronger emotional responses (e.g., pushing one person off a bridge to save five). In contrast, for less emotionally engaging, impersonal scenarios (e.g., diverting a runaway boxcar), participants slightly favored human judgments, although this preference was not statistically significant. According to Dual Process Theory, moral judgments rely on two cognitive systems: fast, emotion-driven intuitions, and slower, deliberate reasoning <ref type="bibr" target="#b16">[17]</ref>. In personal moral scenarios, where emotions run high, the theory predicts more engagement with deliberate reasoning. This may explain the preference for AI judgments, which might be perceived as more reasoned compared to human ones. However, this framework is debated, with some arguing that the distinction between intuitive and rational processes is not always clear-cut <ref type="bibr" target="#b27">[28]</ref>.</p><p>Participants' anti-AI bias may stem from a preference for "human-like" responses. The second major finding, concerning the influence of participants' beliefs on their agreement with moral judgments, reveals a complex interaction between belief-based and source-based biases. Participants often rejected judgments they perceived as AI-generated, reflecting an anti-AI bias. Paradoxically, the same participants showed greater agreement with LLM-generated judgments in morally challenging scenarios, indicating a pro-AI bias when it came to content (pro-AI source). These findings align with previous research <ref type="bibr" target="#b43">[44,</ref><ref type="bibr" target="#b56">57]</ref>, suggesting that humans do not exhibit a simple aversion to AI <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b48">49]</ref>. Instead, they may favor judgments perceived as more "human-like," regardless of actual authorship.</p><p>Participants may exhibit ingroup favoritism. One explanation is that participants might initially agree with a judgment, but to avoid the cognitive dissonance of preferring an AI judgment, they unconsciously attribute it to a human source. This phenomenon may reflect an ingroup/outgroup bias, where individuals prefer to assign positive qualities to their own group (humans) over an outgroup (machines) <ref type="bibr" target="#b21">[22]</ref>. Interestingly, LLMs themselves have been shown to exhibit similar ingroup favoritism <ref type="bibr" target="#b37">[38]</ref>. Research in moral contexts suggests that ingroup favoritism intensifies as participants perceive their morally aligned group as embodying core values, leading to stronger biases <ref type="bibr" target="#b2">[3]</ref>. For instance, individuals may rationalize harmful actions committed by their ingroup as justified to protect core values, while condemning the same actions by the outgroup as immoral <ref type="bibr" target="#b38">[39]</ref>. This effect may be amplified in the context of AI-generated judgments, as participants may reject the notion that AIs can possess moral agency <ref type="bibr" target="#b1">[2]</ref>. In our experiments, textual and linguistic features played a key role in determining ingroup identification, as these were the only cues available to participants.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Linguistic determinants of detection and alignment</head><p>Textual features predict detection but not agreement. We conducted several analyses to understand how the different sources (human, dv2, dv3, and dv2_humanized) varied from each other and how specific features influenced detection and agreement. First, we examined linguistic features such as justification length and the presence of typos. As expected, these features significantly aided human detection, based on the assumption that LLMs tend to produce longer, typo-free responses <ref type="bibr" target="#b23">[24]</ref>. Reducing typos and shortening responses substantially lowered detection rates when evaluating corpora 3 (human vs. dv2_humanized). However, detection accuracy remained above chance, even after these modifications. Consistent with previous findings, humans demonstrated a strong tendency to use first-person discourse more frequently than LLMs <ref type="bibr" target="#b24">[25]</ref>. Notably, neither the textual features (length, typos) nor syntactic features (first-person discourse) were linked to agreement judgments, suggesting that human moral reasoning is unaffected by changes in these basic linguistic aspects.</p><p>Semantic cues drive AI detection and moral judgment divergence. To further explore these findings, we applied SHAP interpretations from a classifier model to predict the source of the text. The analysis revealed that terms indicating structured reasoning (e.g., "additionally, " "reason") were strong predictors of AIgenerated content, recognized both by the model and by participants.</p><p>Interestingly, while detection and source prediction overlapped in some cases, they diverged in corpora 3 (where GPT-3.5 mimicked human responses). In these cases, humanized responses removed many typical cues. However, semantic patterns still revealed that utilitarian cues in the predictive tokens were still identifiable, even when formal textual features were diminished. Participants likely relied on these patterns to achieve modest but significantly abovechance detection rates.</p><p>Semantic patterns also revealed that utilitarian terms (e.g., "lives, " "save") were associated with disagreement, particularly in personal moral scenarios like sacrificing one person for many. This suggests that participants' agreement was influenced by the perceived alignment of moral judgments with either utilitarian or deontological reasoning <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b22">23,</ref><ref type="bibr" target="#b33">34]</ref>. While basic textual and syntactic features affected detection, semantic elements tied to moral reasoning played a more nuanced role in agreement with judgments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Limitations</head><p>A key limitation of our study is that the findings may be specific to GPT-3.5 and might not generalize to other models. The behavior of LLMs can vary based on their architecture and the specific version used, as different models encode distinct moral values and exhibit varying behaviors <ref type="bibr" target="#b50">[51]</ref>. However, the alignment results from the 'corpus' generating experiments were not central to our main claim regarding how LLM judgments are detected and evaluated.</p><p>Additionally, participants' imperfect detection of AI-generated judgments may stem from linguistic factors, such as subtle differences in phrasing or style. Despite efforts to humanize LLM responses in corpora 3, participants still detected LLM-generated judgments above chance. As shown in Figure <ref type="figure" target="#fig_8">7</ref>, they relied on (notably) first-person cues as a decision heuristic <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b42">43]</ref>. Moreover, with careful prompting, AI-generated judgments can become even harder to detect, and in some cases, LLMs have been rated as more human-like or empathetic than actual human responses <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b53">54]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Conclusions and perspectives</head><p>Our findings reveal a potential dissociation between participants' attribution of moral agency to AI systems and their evaluation of AI-generated moral judgments. While participants might reject the notion that AIs can act as true moral agents, as supported by previous research <ref type="bibr" target="#b1">[2]</ref>, they nonetheless find AI-generated judgments persuasive, especially in complex scenarios that challenge their own moral intuitions. This tension suggests a form of cognitive dissonance or compartmentalization, where participants maintain an anti-AI bias concerning moral agency but exhibit a pro-AI bias when practically evaluating the quality of moral judgments.</p><p>Our study further demonstrates that large language models (LLMs) exhibit human-like reasoning that can deviate from utilitarian standards depending on how the moral scenario is framed. These deviations mirror those observed in humans, and, in the case of GPT-3.5, may even be more pronounced. Notably, participants often struggled to differentiate between human and AI-generated moral justifications, raising concerns about the potential of LLMs to mislead human users. In addition to generating responses that are difficult to detect, LLMs can also be leveraged to make their outputs even harder to distinguish from human-generated content.</p><p>Moreover, human agreement with LLM justifications was influenced by the nature of the moral scenario, with participants showing a stronger preference for AI judgments in more complex scenarios. This finding suggests a possible role for LLMs as advisors or mediators in human moral decision-making. However, this pro-AI bias often occurred without participants' awareness, as higher agreement was consistently given to justifications believed to come from humans, regardless of their actual source. This discrepancy between the perceived and actual competence of human and machine judgments highlights how anti-AI biases or human chauvinism may hinder the integration of LLMs into human moral decision-making processes.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: A diagram showing the experimental design. The blue and orange boxes (Steps 1 and 3) correspond to respectively Corpus generation and Detection and Agreement experiments (see Figure2). The purple boxes (Steps 2, 4, 5, and 6) denote quantitative, statistical, and computational methods. The output of the experiment is an analysis on three corpora of human-and LLM-generated responses to various scenarios.</figDesc><graphic coords="3,129.46,83.68,353.09,269.54" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Corpus 1 :</head><label>1</label><figDesc>3542 responses from the davinci-text-002 batch of experiments. Contains human and dv2 responses. • Corpus 2: 3420 responses from the davinci-text-003 batch of experiments. Contains human and dv3 responses.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: (A) Schematic interface and method used in the experiment we used to generate corpus 1 (human and dv2 responses) and corpus 2 (human and dv3 responses). (B) Schematic interface used in the 3. corpus evaluation step.</figDesc><graphic coords="5,53.80,409.24,504.32,232.19" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: (A) Identified linguistic features which have been found to be different between human-and LLM-generated responses. (dv2: text-davinci-002; dv3: text-davinci-003, dv2h: humanized dv2). (B) Schematized prompting strategy to generate the humanized LLM response, by reducing size and including typos.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: (A) Example of scenarios across three categories (taken from Greene et al. 2004). (B) Endorsement of the different moral actions as a function of category of scenario; 'non moral' refers to scenarios with no moral stakes; 'impersonal moral' refers to scenarios with moral scenario whose resolution does not involve a direct, personal involvement of the participant (emotionally non-engaging); 'personal moral' refers to moral scenario whose resolution involve a direct involvement of the participant (emotionally engaging). Note, what is asked in moral scenario is judging the appropriateness of the utilitarian response. (C) Same as (B), but for the two considered LLMs; DV2= text-davinci-002, DV3: text-davinci-003.</figDesc><graphic coords="8,53.80,83.69,504.28,195.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>F1</head></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: (A) Probability of correctly detecting the source of the judgement (p(correct identification)), as a function of the scenario type in Corpus 1 (leftmost column; Exp. 1 DV2), Corpus 2 (central column; Exp. 2 DV3), and on average (rightmost column; Average). (B) Difference in agreement between the trials featuring human-generated items and those featuring LLM-generated items as a function of the scenario type. (C) Difference in agreement between the trials the participant declared as being human-generated and those declared to be LLM-generated (belief).</figDesc><graphic coords="9,53.80,83.69,504.41,520.39" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: (A) Correct response in the detection task rate across corpus 1: dv2; corpus 2: dv3; corpus 3: dv2 humanized. (B) Actual sourceoriented agreement differential. (C) Declared source-oriented (belief) agreement differential.</figDesc><graphic coords="10,53.80,279.19,504.31,278.54" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: (A) Probability of choosing 'human' in the detection task as a function of different linguistic features. Items are split as a function of their length (leftmost column), the presence or not of typos (central column), and the utilization of first-person marker (rightmost column). (B) Probability of agreeing with a justification as a function of linguistic features.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>This table contains statistical values from two-tailed t-tests; each section corresponds to a section in the results. We report the following statistics for each t-test: Student's t-value (𝑇 (𝑑 𝑓 )), the significance of the p-value (***: 𝑝 &lt; 0.001, **: 𝑝 &lt; 0.01, *: 𝑝 &lt; 0.05, n.s.: not significant), Cohen's d (𝑑), and Bayesian factor (𝐵𝐹 10 ). The source value, when numeric, refers to the corresponding corpora.</figDesc><table><row><cell cols="2">Source Feature</cell><cell>T(df)</cell><cell>p</cell><cell>d</cell><cell>𝐵𝐹 10</cell></row><row><cell cols="2">4.1. Judgement</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">Human Impersonal vs. personal scenarios</cell><cell>T(30) = 2.8</cell><cell>*</cell><cell>0.69</cell><cell>5.02</cell></row><row><cell>dv2</cell><cell>Impersonal vs. personal scenarios</cell><cell cols="2">T(29) = 10.05 ***</cell><cell>2.23</cell><cell>1.65e8</cell></row><row><cell>dv3</cell><cell>Impersonal vs. personal scenarios</cell><cell cols="3">T(29) = 49.28 *** 12.11</cell><cell>1.09e26</cell></row><row><cell cols="2">4.2 Detection</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1</cell><cell>DV2 detection</cell><cell cols="2">T(76) = 10.49 ***</cell><cell>1.19</cell><cell>3.21e13</cell></row><row><cell>2</cell><cell>DV3 detection</cell><cell cols="2">T(75) = 13.48 ***</cell><cell>1.59</cell><cell>2.19e19</cell></row><row><cell>1</cell><cell>Impersonal moral vs. personal moral</cell><cell cols="2">T(75) = 3.93 ***</cell><cell>0.57</cell><cell>116.47</cell></row><row><cell>2</cell><cell>Personal moral vs. non-moral</cell><cell cols="2">T(75) = 4.52 ***</cell><cell>0.56</cell><cell>819.58</cell></row><row><cell>1, 2</cell><cell cols="2">Impersonal moral vs. personal moral T(152) = 3.50</cell><cell>**</cell><cell>0.32</cell><cell>30.06</cell></row><row><cell>1, 2</cell><cell>Personal moral vs. non-moral</cell><cell>T(152) = 30.6</cell><cell>**</cell><cell>0.28</cell><cell>8</cell></row><row><cell cols="2">4.3. Alignment</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1</cell><cell>Personal moral vs. non-moral</cell><cell cols="2">T(76) = 4.18 ***</cell><cell>0.71</cell><cell>263.91</cell></row><row><cell>2</cell><cell>Personal moral vs. non-moral</cell><cell cols="2">T(75) = 5.51 ***</cell><cell>0.80</cell><cell>3.06e4</cell></row><row><cell>1</cell><cell>Impersonal moral vs. personal moral</cell><cell cols="2">T(75) = 5.76 ***</cell><cell>0.77</cell><cell>7.97e4</cell></row><row><cell>1, 2</cell><cell>Personal moral vs. non-moral</cell><cell cols="2">T(152) = 6.86 ***</cell><cell>0.75</cell><cell>5.32e7</cell></row><row><cell>1, 2</cell><cell cols="3">Impersonal moral vs. personal moral T(152) = 4.68 ***</cell><cell>0.48</cell><cell>2180.9</cell></row><row><cell>1, 2</cell><cell>Non-moral</cell><cell cols="2">T(152) = 5.12 ***</cell><cell>0.58</cell><cell>1.35e10</cell></row><row><cell>1, 2</cell><cell>Moral</cell><cell cols="2">T(152) = 4.35 ***</cell><cell>0.19</cell><cell>0.39</cell></row><row><cell>1.2</cell><cell>Impersonal</cell><cell cols="2">T(152) = 1.73 n.s.</cell><cell>0.19</cell><cell>0.39</cell></row><row><cell cols="2">4.3. Alignment; conditioning on belief</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1, 2</cell><cell>Non-moral</cell><cell cols="2">T(143) = 5.76 ***</cell><cell>0.67</cell><cell>2.19e5</cell></row><row><cell>1, 2</cell><cell>Impersonal moral</cell><cell>T(143) = 2.7</cell><cell>*</cell><cell>0.31</cell><cell>3.08</cell></row><row><cell>1, 2</cell><cell>Personal moral</cell><cell cols="2">T(143) = 4.31 ***</cell><cell>0.5</cell><cell>498.6</cell></row><row><cell cols="2">4.4 Corpus 3</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>3</cell><cell>dv2_humanized detection</cell><cell cols="2">T(76) = 8.24 ***</cell><cell>0.93</cell><cell>2.3e09</cell></row><row><cell>3</cell><cell>Conditioned on belief (aggregate)</cell><cell cols="2">T(75) = 3.57 ***</cell><cell>0.4</cell><cell>37.82</cell></row><row><cell cols="2">4.5 Linguistic analysis</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1</cell><cell>Length</cell><cell cols="2">T(76) = 8.34 ***</cell><cell>1.25</cell><cell>3.44e9</cell></row><row><cell>2</cell><cell>Length</cell><cell cols="2">T(75) = 11.39 ***</cell><cell cols="2">1.8 1.139e15</cell></row><row><cell>1</cell><cell>Typos</cell><cell cols="2">T(75) = 4.02 ***</cell><cell>0.58</cell><cell>149.147</cell></row><row><cell>2</cell><cell>Typos</cell><cell cols="2">T(75) = 10.33 ***</cell><cell cols="2">1.41 1.391e13</cell></row><row><cell>3</cell><cell>Typos</cell><cell cols="2">T(76) = 1.55 n.s.</cell><cell>0.19</cell><cell>0.39</cell></row><row><cell>1</cell><cell>First-person usage</cell><cell cols="2">T(76) = 7.31 ***</cell><cell cols="2">1.04 4.423e07</cell></row><row><cell>2</cell><cell>First-person usage</cell><cell cols="2">T(75) = 13.28 ***</cell><cell cols="2">1.68 2.143e18</cell></row><row><cell>3</cell><cell>First-person usage</cell><cell cols="2">T(76) = 8.72 ***</cell><cell cols="2">1.09 1.786e10</cell></row><row><cell cols="2">4.6 Predictive modeling</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1</cell><cell>Length</cell><cell cols="2">T(76) = 0.36 n.s.</cell><cell>0.05</cell><cell>0.133</cell></row><row><cell>2</cell><cell>Length</cell><cell cols="2">T(75) = 0.49 n.s.</cell><cell>0.08</cell><cell>0.142</cell></row><row><cell>1</cell><cell>Typos</cell><cell cols="2">T(75) = 0.76 n.s.</cell><cell>0.12</cell><cell>0.167</cell></row><row><cell>2</cell><cell>Typos</cell><cell cols="2">T(75) = 0.1 n.s.</cell><cell>0.02</cell><cell>0.127</cell></row><row><cell>1</cell><cell>First-person usage</cell><cell cols="2">T(76) = 0.81 n.s.</cell><cell>0.12</cell><cell>0.173</cell></row><row><cell>2</cell><cell>First-person usage</cell><cell cols="2">T(75) = 2.07 n.s.</cell><cell>0.31</cell><cell>0.939</cell></row><row><cell>3</cell><cell>First-person usage</cell><cell>T(76) = 2.67</cell><cell>*</cell><cell>0.37</cell><cell>3.377</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>Performance table of 4 transformer models to predict outcomes based on the justification free text. 1. and 2. predicts the provenance of the justification text. 3. predicts whether the human rater agreed yes/no with the decision. 4. predicts whether the human correctly identified the explanation as human-or AIgenerated.</figDesc><table><row><cell></cell><cell>score Accuracy</cell></row><row><cell>1. Multiclass provenance classifier</cell><cell>0.61</cell></row><row><cell>dv2</cell><cell>0.66</cell></row><row><cell>dv2_humanized</cell><cell>0.58</cell></row><row><cell>dv3</cell><cell>0.74</cell></row><row><cell>human</cell><cell>0.49</cell></row><row><cell>2. Binary provenance classifier</cell><cell>0.63</cell></row><row><cell>llm</cell><cell>0.63</cell></row><row><cell>human</cell><cell>0.64</cell></row><row><cell>3. Agreement predictor</cell><cell>0.63</cell></row><row><cell>disagree</cell><cell>0.64</cell></row><row><cell>agree</cell><cell>0.62</cell></row><row><cell>4. Identification predictor</cell><cell>0.62</cell></row><row><cell>incorrect identification</cell><cell>0.63</cell></row><row><cell>correct identification</cell><cell>0.59</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>The research was conducted in accordance with the principles and guidelines for experiments involving human participants as outlined in the Declaration ofHelsinki  (1964, revised in  </p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>2013). The study received approval from Paris School of Economics ethical committee (2024-007). Informed consent was obtained from all participants prior to their involvement in each experiment.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_2"><p>https://prolific.co/</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_3"><p>𝑇 (229) = 17.28, 𝑝 &lt; 0.001 * * * , 𝑑 = 1.14, BF 10 = 9.768 × 10 39 to write more often in the first-person. We perform a statistical analysis to evaluate these differences.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_4"><p>https://www.nltk.org/</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_5"><p>https://optuna.org/</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_6"><p>𝐹 (2, 152) = 8.37, 𝑝 &lt; 0.001 * * * , 𝜂 2 𝑝 = 0.09; 𝐹 (2, 150) = 20.79, 𝑝 &lt; 0.001 * * * , 𝜂 2 𝑝 = 0.21</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7" xml:id="foot_7"><p>We define bias as a significant deviation from 0.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8" xml:id="foot_8"><p>𝐹 (2, 227) = 27.57, 𝑝 &lt; 0.001 * * * , 𝜂 2 𝑝 = 0.19</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="9" xml:id="foot_9"><p>𝐹 (2, 227) = 2.55, 𝑝 = 0.07, 𝜂 2 𝑝 = 0.02; 𝐹 (2, 223) = 2.52, 𝑝 = 0.08, 𝜂 2 𝑝 = 0.02</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>ACKNOWLEDGMENTS</head><p>The authors thank <rs type="person">Nicolas Yax</rs> for help concerning the LLM experiment. The authors thank <rs type="person">Michael Xieyang Liu</rs>, <rs type="person">Lucas Dixon</rs>, and <rs type="person">James Wexler</rs> for feedback on an early draft of the manuscript. SP is funded by the <rs type="funder">European Research Council</rs> consolidator grant (<rs type="grantNumber">RaReMem: 101043804</rs>) and three <rs type="funder">Agence Nationale de la Recherche</rs> grants (<rs type="projectName">CogFinAgent</rs>: <rs type="grantNumber">ANR-21-CE23-0002-02</rs>; <rs type="projectName">RELATIVE</rs>: <rs type="grantNumber">ANR-21-CE37-750 0008-01</rs>; <rs type="projectName">RANGE</rs>: <rs type="grantNumber">ANR-21-CE28-0024-01</rs>), the <rs type="funder">Alexander Von Humbolt foundation</rs> and a <rs type="funder">Google</rs> unrestricted gift.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_kqecTRe">
+					<idno type="grant-number">RaReMem: 101043804</idno>
+				</org>
+				<org type="funded-project" xml:id="_uVPKt9s">
+					<idno type="grant-number">ANR-21-CE23-0002-02</idno>
+					<orgName type="project" subtype="full">CogFinAgent</orgName>
+				</org>
+				<org type="funded-project" xml:id="_jqEEYRT">
+					<idno type="grant-number">ANR-21-CE37-750 0008-01</idno>
+					<orgName type="project" subtype="full">RELATIVE</orgName>
+				</org>
+				<org type="funded-project" xml:id="_cs5enN7">
+					<idno type="grant-number">ANR-21-CE28-0024-01</idno>
+					<orgName type="project" subtype="full">RANGE</orgName>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The Moral Machine experiment</title>
+		<author>
+			<persName><forename type="first">Edmond</forename><surname>Awad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sohan</forename><surname>Dsouza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Schulz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><surname>Henrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Azim</forename><surname>Shariff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-François</forename><surname>Bonnefon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iyad</forename><surname>Rahwan</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41586-018-0637-6</idno>
+		<ptr target="https://doi.org/10.1038/s41586-018-0637-6Number:7729Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">563</biblScope>
+			<biblScope unit="page" from="59" to="64" />
+			<date type="published" when="2018-11">2018. Nov. 2018</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">People are averse to machines making moral decisions</title>
+		<author>
+			<persName><forename type="first">Yochanan</forename><forename type="middle">E</forename><surname>Bigman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kurt</forename><surname>Gray</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">181</biblScope>
+			<biblScope unit="page" from="21" to="34" />
+			<date type="published" when="2018">2018. 2018</date>
+			<publisher>Elsevier</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Do the right thing&quot; for whom? An experiment on ingroup favouritism, group assorting and moral suasion</title>
+		<author>
+			<persName><forename type="first">Ennio</forename><surname>Bilancini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonardo</forename><surname>Boncinelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tatiana</forename><surname>Valerio Capraro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roberto</forename><surname>Celadin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paolo</forename><surname>Di</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S1930297500007336</idno>
+		<ptr target="https://doi.org/10.1017/S1930297500007336" />
+	</analytic>
+	<monogr>
+		<title level="j">Judgment and Decision Making</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="182" to="192" />
+			<date type="published" when="2020-03">2020. March 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Using cognitive psychology to understand GPT-3</title>
+		<author>
+			<persName><forename type="first">Marcel</forename><surname>Binz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Schulz</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2218523120</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2218523120Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">2218523120</biblScope>
+			<date type="published" when="2023-02">2023. Feb. 2023</date>
+			<publisher>National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Random Forests</title>
+		<author>
+			<persName><forename type="first">Leo</forename><surname>Breiman</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1010933404324</idno>
+		<ptr target="https://doi.org/10.1023/A:1010933404324" />
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+			<date type="published" when="2001">2001. 2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A systematic review of algorithm aversion in augmented decision making</title>
+		<author>
+			<persName><forename type="first">Jason</forename><forename type="middle">W</forename><surname>Burton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mari-Klara</forename><surname>Stein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tina</forename><forename type="middle">Blegind</forename><surname>Jensen</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/bdm.2155</idno>
+		<ptr target="https://onlinelibrary.wiley.com/doi/pdf/10.1002/bdm.2155" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Behavioral Decision Making</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="220" to="239" />
+			<date type="published" when="2020">2020. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">People devalue generative AI&apos;s competence but not its advice in addressing societal and personal challenges</title>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Böhm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moritz</forename><surname>Jörling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonhard</forename><surname>Reiter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Fuchs</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s44271-023-00032-x</idno>
+		<ptr target="https://doi.org/10.1038/s44271-023-00032-xPublisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Communications Psychology</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2023-11">2023. Nov. 2023</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Understanding, explaining, and utilizing medical artificial intelligence</title>
+		<author>
+			<persName><forename type="first">Romain</forename><surname>Cadario</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chiara</forename><surname>Longoni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carey</forename><forename type="middle">K</forename><surname>Morewedge</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-021-01146-0</idno>
+		<ptr target="https://doi.org/10.1038/s41562-021-01146-0Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="1636" to="1642" />
+			<date type="published" when="2021-12">2021. Dec. 2021</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Task-Dependent Algorithm Aversion</title>
+		<author>
+			<persName><forename type="first">Noah</forename><surname>Castelo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><forename type="middle">W</forename><surname>Bos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><forename type="middle">R</forename><surname>Lehmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0022243719851788</idno>
+		<ptr target="https://doi.org/10.1177/0022243719851788Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Marketing Research</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="809" to="825" />
+			<date type="published" when="2019-10">2019. Oct. 2019</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Engaging Legal Experts towards Responsible LLM Policies for Legal Advice</title>
+		<author>
+			<persName><forename type="first">Inyoung</forename><surname>Cheong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">King</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Kevin Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quan</forename><surname>Ze Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amy</forename><forename type="middle">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3630106.3659048</idno>
+		<ptr target="https://doi.org/10.1145/3630106.3659048" />
+	</analytic>
+	<monogr>
+		<title level="m">The 2024 ACM Conference on Fairness, Accountability, and Transparency</title>
+		<meeting><address><addrLine>Rio de Janeiro Brazil</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="2454" to="2469" />
+		</imprint>
+	</monogr>
+	<note>A)I Am Not a Lawyer, But</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference</title>
+		<author>
+			<persName><forename type="first">Wei-Lin</forename><surname>Chiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lianmin</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anastasios</forename><surname>Nikolas Angelopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianle</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dacheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Banghua</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><forename type="middle">E</forename><surname>Gonzalez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ion</forename><surname>Stoica</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2403.04132</idno>
+		<idno type="arXiv">arXiv:2403.04132</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2403.04132" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">All That&apos;s &apos;Human&apos; Is Not Gold: Evaluating Human Evaluation of Generated Text</title>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tal</forename><surname>August</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sofia</forename><surname>Serrano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikita</forename><surname>Haduong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suchin</forename><surname>Gururangan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noah</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2107.00061</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2107.00061arXiv:2107.00061[cs" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">The Role of Conscious Reasoning and Intuition in Moral Judgment: Testing Three Principles of Harm</title>
+		<author>
+			<persName><forename type="first">Fiery</forename><surname>Cushman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liane</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Hauser</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-9280.2006.01834.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1467-9280.2006.01834.xPublisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="1082" to="1089" />
+			<date type="published" when="2006-12">2006. Dec. 2006</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Psychological factors underlying attitudes toward AI tools</title>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>De Freitas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stuti</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernd</forename><surname>Schmitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Haslam</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41562-023-01734-2</idno>
+		<ptr target="https://doi.org/10.1038/s41562-023-01734-2Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Human Behaviour</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2023-11">2023. Nov. 2023</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Sleeper Social Bots: a new generation of AI disinformation bots are already a political threat</title>
+		<author>
+			<persName><forename type="first">Jaiv</forename><surname>Doshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ines</forename><surname>Novacic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Curtis</forename><surname>Fletcher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mats</forename><surname>Borges</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elea</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><forename type="middle">C</forename><surname>Marino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Gan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sophia</forename><surname>Mager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dane</forename><surname>Sprague</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melinda</forename><surname>Xia</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2408.12603</idno>
+		<idno type="arXiv">arXiv:2408.12603</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2408.12603" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The Neural Bases of Cognitive Conflict and Control in Moral Judgment</title>
+		<author>
+			<persName><surname>Greene</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2004.09.027</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2004.09.027Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="389" to="400" />
+			<date type="published" when="2004-10">2004. Oct. 2004</date>
+			<publisher>Cell Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The neural bases of cognitive conflict and control in moral judgment</title>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">D</forename><surname>Greene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leigh</forename><forename type="middle">E</forename><surname>Nystrom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">D</forename><surname>Engell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">M</forename><surname>Darley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuron.2004.09.027</idno>
+		<ptr target="https://doi.org/10.1016/j.neuron.2004.09.027" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuron</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="389" to="400" />
+			<date type="published" when="2004-10">2004. Oct. 2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">An fMRI Investigation of Emotional Engagement in Moral Judgment</title>
+		<author>
+			<persName><forename type="first">Joshua</forename><forename type="middle">D</forename><surname>Greene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">Brian</forename><surname>Sommerville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leigh</forename><forename type="middle">E</forename><surname>Nystrom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">M</forename><surname>Darley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1062872</idno>
+		<ptr target="https://doi.org/10.1126/science.1062872Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">293</biblScope>
+			<biblScope unit="page" from="2105" to="2108" />
+			<date type="published" when="2001-09">2001. Sept. 2001</date>
+			<publisher>American Association for the Advancement of Science</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Human-like intuitive behavior and reasoning biases emerged in large language models but disappeared in ChatGPT</title>
+		<author>
+			<persName><forename type="first">Thilo</forename><surname>Hagendorff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sarah</forename><surname>Fabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michal</forename><surname>Kosinski</surname></persName>
+		</author>
+		<ptr target="https://www.nature.com/articles/s43588-023-00527-xPublisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Computational Science</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="833" to="838" />
+			<date type="published" when="2023">2023. 2023</date>
+			<publisher>Nature Publishing Group US New York</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">AI-generated medical advice-GPT and beyond</title>
+		<author>
+			<persName><forename type="first">Claudia</forename><forename type="middle">E</forename><surname>Haupt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mason</forename><surname>Marks</surname></persName>
+		</author>
+		<ptr target="https://jamanetwork.com/journals/jama/article-abstract/2803077Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Jama</title>
+		<imprint>
+			<biblScope unit="volume">329</biblScope>
+			<biblScope unit="page" from="1349" to="1350" />
+			<date type="published" when="2023">2023. 2023</date>
+			<publisher>American Medical Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Aligning AI With Shared Human Values</title>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Collin</forename><surname>Burns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Basart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Critch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jerry</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawn</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Steinhardt</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2008.02275</idno>
+		<idno type="arXiv">arXiv:2008.02275</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2008.02275" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Intergroup Bias</title>
+		<author>
+			<persName><forename type="first">Miles</forename><surname>Hewstone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Rubin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hazel</forename><surname>Willis</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev.psych.53.100901.135109</idno>
+		<ptr target="https://doi.org/10.1146/annurev.psych.53.100901.135109Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Psychology</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="575" to="604" />
+			<date type="published" when="2002-02">2002. 2002. Feb. 2002</date>
+			<publisher>Annual Reviews</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Deontological coherence: A framework for commonsense moral reasoning</title>
+		<author>
+			<persName><forename type="first">Keith</forename><forename type="middle">J</forename><surname>Holyoak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><surname>Powell</surname></persName>
+		</author>
+		<ptr target="https://psycnet.apa.org/fulltext/2016-47729-001.html?casa_token=-4xn_jCipYcAAAAA:fCKRBrcTmMcOyKrsRa3_CGNq7" />
+	</analytic>
+	<monogr>
+		<title level="m">KBeNuZuZ1NtCTk5UPeVUSqliap-nvcW91PQbqbdB547</title>
+		<imprint>
+			<publisher>American Psychological Association</publisher>
+			<date type="published" when="2016">2016. 2016</date>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page">1179</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">ChatGPT&apos;s advice is perceived as better than that of professional advice columnists</title>
+		<author>
+			<persName><forename type="first">Piers</forename><surname>Douglas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lionel</forename><surname>Howe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Fay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morgan</forename><surname>Saletta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eduard</forename><surname>Hovy</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2023.1281255</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2023.1281255" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">1281255</biblScope>
+			<date type="published" when="2023">2023. 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Human heuristics for AI-generated language are flawed</title>
+		<author>
+			<persName><forename type="first">Maurice</forename><surname>Jakesch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><forename type="middle">T</forename><surname>Hancock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mor</forename><surname>Naaman</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2208839120</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2208839120Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">2208839120</biblScope>
+			<date type="published" when="2023-03">2023. March 2023</date>
+			<publisher>National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Human heuristics for AI-generated language are flawed</title>
+		<author>
+			<persName><forename type="first">Maurice</forename><surname>Jakesch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><forename type="middle">T</forename><surname>Hancock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mor</forename><surname>Naaman</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2208839120</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2208839120Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">2208839120</biblScope>
+			<date type="published" when="2023-03">2023. March 2023</date>
+			<publisher>National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">Cameron</forename><forename type="middle">R</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><forename type="middle">K</forename><surname>Bergen</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2310.20216</idno>
+		<idno type="arXiv">arXiv:2310.20216</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2310.20216" />
+		<title level="m">Does GPT-4 pass the Turing test</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">On the Wrong Track: Process and Content in Moral Psychology</title>
+		<author>
+			<persName><forename type="first">Guy</forename><surname>Kahane</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/mila.12001</idno>
+		<ptr target="https://onlinelibrary.wiley.com/doi/pdf/10.1111/mila.12001" />
+	</analytic>
+	<monogr>
+		<title level="j">Mind &amp; Language</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="519" to="545" />
+			<date type="published" when="2012">2012. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+		<idno>ADA0072A186&amp; solarid=inquiryct_2012_0027_0002_0054_0057</idno>
+		<ptr target="1257" />
+		<title level="m">Thinking, fast and slow</title>
+		<meeting><address><addrLine>C507E4DC</addrLine></address></meeting>
+		<imprint>
+			<publisher>Farrar, Straus and Giroux</publisher>
+			<date type="published" when="2011">2011. 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Choices, values, and frames</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amos</forename><surname>Tversky</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/0003-066X.39.4.341</idno>
+		<ptr target="https://doi.org/10.1037/0003-066X.39.4.341Place" />
+	</analytic>
+	<monogr>
+		<title level="j">American Psychologist</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="341" to="350" />
+			<date type="published" when="1984">1984. 1984</date>
+			<publisher>American Psychological Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Because AI is 100% right and safe&quot;: User Attitudes and Sources of AI Authority in India</title>
+		<author>
+			<persName><forename type="first">Shivani</forename><surname>Kapania</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Siy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabe</forename><surname>Clapper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Azhagu</forename><surname>Meena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nithya</forename><surname>Sambasivan</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3491102.3517533</idno>
+		<ptr target="https://doi.org/10.1145/3491102.3517533" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems (CHI &apos;22)</title>
+		<meeting>the 2022 CHI Conference on Human Factors in Computing Systems (CHI &apos;22)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1" to="18" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">A high-level overview of AI ethics</title>
+		<author>
+			<persName><forename type="first">Emre</forename><surname>Kazim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriano</forename><surname>Soares</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Koshiyama</forename></persName>
+		</author>
+		<idno type="DOI">10.1016/j.patter.2021.100314</idno>
+		<ptr target="https://doi.org/10.1016/j.patter.2021.100314Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Patterns</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2021-09">2021. Sept. 2021</date>
+			<publisher>Elsevier</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Strong and weak alignment of large language models with human values</title>
+		<author>
+			<persName><forename type="first">Mehdi</forename><surname>Khamassi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raja</forename><surname>Marceau Nahon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chatila</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-024-70031-3</idno>
+		<ptr target="https://doi.org/10.1038/s41598-024-70031-3Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">19399</biblScope>
+			<date type="published" when="2024-08">2024. Aug. 2024</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Damage to the prefrontal cortex increases utilitarian moral judgements</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Koenigs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liane</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ralph</forename><surname>Adolphs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Tranel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fiery</forename><surname>Cushman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Hauser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antonio</forename><surname>Damasio</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature05631</idno>
+		<ptr target="https://doi.org/10.1038/nature05631Number:7138Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">446</biblScope>
+			<biblScope unit="page" from="908" to="911" />
+			<date type="published" when="2007-04">2007. April 2007</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">All the News that&apos;s Fit to Fabricate: AI-Generated Text as a Tool of Media Misinformation</title>
+		<author>
+			<persName><forename type="first">Sarah</forename><forename type="middle">E</forename><surname>Kreps</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miles</forename><surname>Mccain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miles</forename><surname>Brundage</surname></persName>
+		</author>
+		<idno type="DOI">10.2139/ssrn.3525002</idno>
+		<ptr target="https://doi.org/10.2139/ssrn.3525002" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Artificial intelligence versus Maya Angelou: Experimental evidence that people cannot differentiate AI-generated from humanwritten poetry</title>
+		<author>
+			<persName><forename type="first">Nils</forename><surname>Köbis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luca</forename><forename type="middle">D</forename><surname>Mossink</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chb.2020.106553</idno>
+		<ptr target="https://doi.org/10.1016/j.chb.2020.106553" />
+	</analytic>
+	<monogr>
+		<title level="j">Computers in Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page">106553</biblScope>
+			<date type="published" when="2021-01">2021. Jan. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<author>
+			<persName><forename type="first">K</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lapsley</surname></persName>
+		</author>
+		<idno type="DOI">10.4324/9780429498824/moral-psychology-daniel-lapsley</idno>
+		<ptr target="https://www.taylorfrancis.com/books/mono/10.4324/9780429498824/moral-psychology-daniel-lapsley" />
+		<title level="m">Moral psychology</title>
+		<imprint>
+			<publisher>Routledge</publisher>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">AI AI Bias: Large Language Models Favor Their Own Generated Content</title>
+		<author>
+			<persName><forename type="first">Walter</forename><surname>Laurito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peli</forename><surname>Grietzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomáš</forename><surname>Gavenčiak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ada</forename><surname>Böhm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Kulveit</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2407.12856</idno>
+		<idno type="arXiv">arXiv:2407.12856</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2407.12856" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Ingroup glorification, moral disengagement, and justice in the context of collective violence</title>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Leidner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emanuele</forename><surname>Castano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erica</forename><surname>Zaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roger</forename><surname>Giner-Sorolla</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0146167210376391</idno>
+		<ptr target="https://doi.org/10.1177/0146167210376391" />
+	</analytic>
+	<monogr>
+		<title level="j">Personality &amp; Social Psychology Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1115" to="1129" />
+			<date type="published" when="2010-08">2010. Aug. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Algorithm appreciation: People prefer algorithmic to human judgment</title>
+		<author>
+			<persName><forename type="first">Jennifer</forename><forename type="middle">M</forename><surname>Logg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julia</forename><forename type="middle">A</forename><surname>Minson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Don</forename><forename type="middle">A</forename><surname>Moore</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.obhdp.2018.12.005</idno>
+		<ptr target="https://doi.org/10.1016/j.obhdp.2018.12.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Organizational Behavior and Human Decision Processes</title>
+		<imprint>
+			<biblScope unit="volume">151</biblScope>
+			<biblScope unit="page" from="90" to="103" />
+			<date type="published" when="2019-03">2019. March 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">A unified approach to interpreting model predictions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Scott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Su-In</forename><surname>Lundberg</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 31st International Conference on Neural Information Processing Systems (NIPS&apos;17)</title>
+		<meeting>the 31st International Conference on Neural Information Processing Systems (NIPS&apos;17)</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">A Novel Nuanced Conversation Evaluation Framework for Large Language Models in Mental Health</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Marrapese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Basem</forename><surname>Suleiman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Imdad</forename><surname>Ullah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juno</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2403.09705</idno>
+		<ptr target="http://arxiv.org/abs/2403.09705" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">ChatGPT or Human? Detect and Explain. Explaining Decisions of Machine Learning Model for Detecting Short ChatGPT-generated Text</title>
+		<author>
+			<persName><forename type="first">Sandra</forename><surname>Mitrović</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Andreoletti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omran</forename><surname>Ayoub</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2301.13852</idno>
+		<idno type="arXiv">arXiv:2301.13852</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2301.13852" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Preference for human, not algorithm aversion</title>
+		<author>
+			<persName><forename type="first">Carey</forename><forename type="middle">K</forename><surname>Morewedge</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2022.07.007</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2022.07.007Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Cognitive Sciences</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="824" to="826" />
+			<date type="published" when="2022-10">2022. Oct. 2022</date>
+			<publisher>Elsevier</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Dual Processing in Reasoning: Two Systems but One Reasoner</title>
+		<author>
+			<persName><forename type="first">Wim</forename><surname>De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neys</forename></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-9280.2006.01723.x</idno>
+		<ptr target="https://doi.org/10.1111/j.1467-9280.2006.01723.xPublisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="428" to="433" />
+			<date type="published" when="2006-05">2006. May 2006</date>
+			<publisher>SAGE Publications Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Correct answers&quot; from the psychology of artificial intelligence</title>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">S</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Schoenegger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chongyang</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2302.07267</idno>
+		<idno type="arXiv">arXiv:2302.07267</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2302.07267" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">The impact of text topic and assumed human vs. AI authorship on competence and quality assessment</title>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Proksch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julia</forename><surname>Schühle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elisabeth</forename><surname>Streeb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Finn</forename><surname>Weymann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Teresa</forename><surname>Luther</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Kimmerle</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/frai.2024.1412710</idno>
+		<ptr target="https://doi.org/10.3389/frai.2024.1412710Publisher:Frontiers" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Artificial Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<date type="published" when="2024-05">2024. May 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Text mining: use of TF-IDF to examine the relevance of words to documents</title>
+		<author>
+			<persName><forename type="first">Shahzad</forename><surname>Qaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramsha</forename><surname>Ali</surname></persName>
+		</author>
+		<ptr target="https://www.researchgate.net/profile/Shahzad-Qaiser/publication/326425709_Text_Mining_Use_of_TF-IDF_to_Examine_the_Relevance_of_Words_to_Documents/links/5b4cd57fa6fdcc8dae245aa3/Text-Mining-Use-of-TF-IDF-to-Examine-the-Relevance-of-Words-to-Documents.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Applications</title>
+		<imprint>
+			<biblScope unit="volume">181</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="25" to="29" />
+			<date type="published" when="2018">2018. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">AI Aversion: A Task Dependent Multigroup Analysis</title>
+		<author>
+			<persName><forename type="first">Md</forename><surname>Jabir Rahman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huigang</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yajiong</forename><surname>Xue</surname></persName>
+		</author>
+		<ptr target="https://aisel.aisnet.org/pacis2023/86" />
+	</analytic>
+	<monogr>
+		<title level="m">PACIS 2023 Proceedings</title>
+		<imprint>
+			<date type="published" when="2023-07">2023. July 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<author>
+			<persName><forename type="first">Victor</forename><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lysandre</forename><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.1910.01108</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.1910.01108arXiv:1910.01108[cs" />
+		<title level="m">Dis-tilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Evaluating the Moral Beliefs Encoded in LLMs</title>
+		<author>
+			<persName><forename type="first">Nino</forename><surname>Scherrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Claudia</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amir</forename><surname>Feder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.14324</idno>
+		<ptr target="http://arxiv.org/abs/2307.14324" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Framing moral intuitions</title>
+		<author>
+			<persName><forename type="first">Walter</forename><surname>Sinnott-Armstrong</surname></persName>
+		</author>
+		<ptr target="https://psycnet.apa.org/record/2007-14533-005Publisher:BostonReview" />
+		<imprint>
+			<date type="published" when="2008">2008. 2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Exploring the Deceptive Power of LLM-Generated Fake News: A Study of Real-World Detection Challenges</title>
+		<author>
+			<persName><forename type="first">Yanshen</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Limeng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuo</forename><surname>Lei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang-Tien</forename><surname>Lu</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2403.18249</idno>
+		<idno type="arXiv">arXiv:2403.18249</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2403.18249" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Are Large Language Models More Empathetic than Humans</title>
+		<author>
+			<persName><forename type="first">Anuradha</forename><surname>Welivita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pearl</forename><surname>Pu</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2406.05063</idno>
+		<idno type="arXiv">arXiv:2406.05063</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2406.05063" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Studying and improving reasoning in humans and machines</title>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Yax</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hernán</forename><surname>Anlló</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Palminteri</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s44271-024-00091-8</idno>
+		<ptr target="https://doi.org/10.1038/s44271-024-00091-8Publisher" />
+	</analytic>
+	<monogr>
+		<title level="j">Communications Psychology</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2024-06">2024. June 2024</date>
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Human favoritism, not AI aversion: People&apos;s perceptions (and bias) toward generative AI, human experts, and human-GAI collaboration in persuasive content generation</title>
+		<author>
+			<persName><forename type="first">Yunhao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renée</forename><surname>Gosline</surname></persName>
+		</author>
+		<ptr target="https://www.cambridge.org/core/journals/judgment-and-decision-making/article/human-favoritism-not-ai-aversion-peoples-perceptions-and-bias-toward-generative-ai-human-experts-and-humangai-collaboration-in-persuasive-content-generation/419C4BD9CE82673" />
+	</analytic>
+	<monogr>
+		<title level="j">Judgment and Decision Making</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page">41</biblScope>
+			<date type="published" when="2023">2023. 2023. 1D8F6C350C4</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Moral Judgments of Human vs. AI Agents in Moral Dilemmas</title>
+		<author>
+			<persName><forename type="first">Yuyan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiahua</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liying</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/bs13020181</idno>
+		<ptr target="https://doi.org/10.3390/bs13020181" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavioral Sciences</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page">181</biblScope>
+			<date type="published" when="2023-02">2023. Feb. 2023</date>
+			<pubPlace>Basel, Switzerland</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">Language Models Trained to do Arithmetic Predict Human Risky and Intertemporal Choice</title>
+		<author>
+			<persName><forename type="first">Jian-Qiao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haijiang</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">L</forename><surname>Griffiths</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2405.19313</idno>
+		<idno type="arXiv">arXiv:2405.19313</idno>
+		<ptr target="cs,econ" />
+		<imprint>
+			<date type="published" when="2024-09-12">2024. Received 12 September 2024</date>
+		</imprint>
+	</monogr>
+	<note>, q-fin</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

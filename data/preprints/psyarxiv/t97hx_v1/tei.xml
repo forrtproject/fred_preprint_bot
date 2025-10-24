@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Convex Hull Applications to Natural Language Psychometrics</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Nigel</forename><surname>Guenole</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Goldsmiths</orgName>
+								<orgName type="institution" key="instit1">University of London</orgName>
+								<orgName type="institution" key="instit2">Bowling Green State University</orgName>
+								<orgName type="institution" key="instit3">Rice University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Andrew</forename><surname>Samo</surname></persName>
+							<email>andrewsamoatasamo@bgsu.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Goldsmiths</orgName>
+								<orgName type="institution" key="instit1">University of London</orgName>
+								<orgName type="institution" key="instit2">Bowling Green State University</orgName>
+								<orgName type="institution" key="instit3">Rice University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Tianjun</forename><surname>Sun</surname></persName>
+							<email>tianjun-sun@rice.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Goldsmiths</orgName>
+								<orgName type="institution" key="instit1">University of London</orgName>
+								<orgName type="institution" key="instit2">Bowling Green State University</orgName>
+								<orgName type="institution" key="instit3">Rice University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">D</forename><forename type="middle">'</forename><surname>Damiano</surname></persName>
+							<email>dursodamiano@gmail.com.</email>
+							<affiliation key="aff0">
+								<orgName type="department">Goldsmiths</orgName>
+								<orgName type="institution" key="instit1">University of London</orgName>
+								<orgName type="institution" key="instit2">Bowling Green State University</orgName>
+								<orgName type="institution" key="instit3">Rice University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><surname>Urso</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Goldsmiths</orgName>
+								<orgName type="institution" key="instit1">University of London</orgName>
+								<orgName type="institution" key="instit2">Bowling Green State University</orgName>
+								<orgName type="institution" key="instit3">Rice University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Convex Hull Applications to Natural Language Psychometrics</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">9D780F17A5395B52EDF414D4445A704D</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:52+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>psychometrics</term>
+					<term>convex hulls</term>
+					<term>natural language processing</term>
+					<term>large language models</term>
+					<term>artificial intelligence</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Psychological measurement plays a vital role in many areas of science. Traditional methods for developing and scoring measurement instruments require large sets of human responses, making them time-consuming and costly. Recent advances in artificial intelligence (AI) offer new ways to tackle these challenges. In this brief note, we explore the use of convex hulls-a concept from computational geometry-in combination with AI-driven large language models to enhance psychometric practice. A convex hull is the smallest convex boundary around a set of points. By treating language embeddings as high-dimensional coordinates and forming convex hulls, we can interpret the structure of items and free text responses in new ways. We propose two novel applications of convex hulls: (1) item analysis without data: We use convex hulls to check if a test item "belongs" to a scale, providing a new indicator of item quality; and (2) scoring free text: By interpreting candidate responses in relation to the convex hull of other responses, we propose an objective way to score psychological constructs from natural language. Each application is possible in supervised and unsupervised modes. These methods are experimental and yet to be validated. We outline, but do not implement, brief methods for testing their efficacy. We discuss open questions that we expect will impact the utility of these methods, such as a) why we do not ask the LLM to score the items and responses, b) what the measurement scale of the proximity scores is c) why we preferred convex hull centroids over clustering and scale embedding means d) what happens of the construct hull does not match the intended target and e) what centroids and other hull attributes represent (e.g., the intensity or essence of constructs) and the implications for item analysis and scoring.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p>There is a rich history of measurement in psychology using natural language <ref type="bibr" target="#b9">(Jackson et al., 2022;</ref><ref type="bibr" target="#b10">Pennebaker et al, 2003)</ref>. Recent breakthroughs in transformer models, which are deep learning methods that incorporate self-attention <ref type="bibr" target="#b13">(Vaswani et al. 2017)</ref>, have led to rapid improvements in computational natural language capabilities via large language models. Applications of large language models to psychological measurement are now emerging at a fast rate <ref type="bibr" target="#b0">(Arnulf et al. 2021;</ref><ref type="bibr" target="#b7">Hommel et al. 2022;</ref><ref type="bibr" target="#b14">Wulff &amp; Mata 2023;</ref><ref type="bibr">Guenole et al., 2024a;</ref><ref type="bibr">Guenole et al. 2024b;</ref><ref type="bibr" target="#b5">Hernandez &amp; Nie 2022;</ref><ref type="bibr" target="#b12">Russell-Lasalandra, et al., 2024)</ref> In this brief note, we continue this tradition, proposing convex hulls for analysing embeddings in a psychometric context.</p><p>Psychometric assessments, such as personality tests, are commonly used in psychological research and practice. However, traditional methods of evaluating these assessments often require large datasets of human responses, to estimate robust measurement models and/ or train supervised machine learning (ML) models, which can be resource intensive. This is true of both the data required to estimate measurement model parameters and the responses required to build scoring models for free text response formats. With recent advancements in artificial intelligence (AI) and large language models (LLMs), there is an opportunity to explore new methods that do not rely on extensive response data.</p><p>We propose using convex hulls, a concept from computational geometry, to analyze LLM-generated text embeddings in psychometrics. By applying convex hulls, we aim to offer a novel way to assess the quality of scale items and to score free-text responses. This approach has the potential to streamline the process of psychometric design and scoring, making it more efficient and accessible. Importantly, our method could enhance the objectivity of these assessments by leveraging the inherent structures within language data, potentially offering insights that traditional methods might miss.</p><p>We highlight their application to two subdomains of psychological assessment, scale development and free response scoring. Both methods treat embeddings as coordinates in a high-dimensional space (i.e., numerical values that represent words or sentences as points). This multi-dimensional space captures the meaning and relationships between texts, making it possible to analyze their proximity to each other. The first method addressing items belongingness is similar to item analysis but without response data.</p><p>The second application proposes combining transformers and convex hulls for free text scoring of constructed responses. It builds on the recognition that the first item belongingness application we outline is indifferent to whether the text analyzed represents scale items or candidate free text responses. In both cases, we outline, but do not execute, small proof of concept studies. We close with discussion of key issues for future research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>What are Large Language Models?</head><p>Large language models (LLMs) are neural networks that have been trained on massive amounts of language data and are able to understand unstructured text, produce rich numerical representations of text, and generate new text. LLMs can be viewed as advanced text prediction tools. They've learned patterns from large corpuses of language data and can understand, interpret, and even create new text that makes sense in context. The underlying architecture that controls how data flows through the model is based on Transformers. Transformer models incorporate self-attention, a mechanism for determining the relevance of words to other words in text -have led to significant improvements in the capability of LLMs <ref type="bibr" target="#b13">(Vaswani et al. 2017)</ref>.</p><p>Sentence transformers, which we use in this work, are specialized forms of LLMs that are designed to accurately represent the semantic content of language as dense numerical vectors. Sentence transformers are like translators that turn sentences into a series of numbers. These numbers, called embeddings, capture the meaning of the sentences in a way that LLMs can understand. Embeddings are essentially ways to represent words or sentences as points in a multi-dimensional space. They are essentially special codes that capture the meaning and relationships between words.</p><p>Embedding values are often used in subsequent data science applications including, for example, supervised machine learning where downstream outcomes are predicted. In this article, we discuss sentence encoders in the context of psychological measurement for constructs such as attitudes, opinions, and traits. For a recent tutorial on large language models in behavioural science see <ref type="bibr" target="#b8">Hussain et al. (2024)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>What are convex hulls?</head><p>Imagine you have a bunch of pins on a board. If you wrap a rubber band around them and let it snap tight, the shape it forms is a convex hull. It's the smallest convex shape that can fully enclose all the points inside it such that any two points are connectable by a line that does not leave the hull <ref type="bibr" target="#b11">(Preparata &amp; Shamos, 1993)</ref>.</p><p>In our context and in both applications of transformers and convex hulls that we discuss here, we treat each text embedding as a point in a multi-dimensional space, and the convex hull represents the boundary around these points. In the case of checking item " belongingness", the distance from the centroid of the convex hull that is formed from the embeddings of other scale items is interpreted as a potential measure of item discrimination. In the case of free text scoring, a candidate's response proximity to the centroid of the hull formed by other responses is treated as a construct score, after inversion such that a higher value means closer proximity.</p><p>To form a non-degenerate convex hull (i.e., one that takes on the expected shape given the number of coordinates) in n dimensions (i.e., where each point has n coordinates) requires n +1 points. For instance, in 2-dimensional space, you need to plot three points to form a triangle; in 3-dimensional space, four points are needed for a tetrahedron. The shape in n-dimensions formed by the n+1 item embedding coordinates is always convex.</p><p>It is possible to plot fewer than n+1 cases than coordinates per point (e.g., two points in 2-dimensional space), but the hull will be degenerate (taking the form of a line segment, in our example). This n+1 requirement for a non-degenerate hull, where n = items in item analysis and candidates in response scoring, has practical implications with modern transformers. This is because transformer vectors can take on high dimensional forms. Even small embeddings have 384 dimensions today. In such cases, the item belonginess method that we discuss will require data for at least 385 items, while the free text scoring approach will require responses for at least 385 respondents. We can reduce this data burden by projecting the embedding dimensions into a lower dimensional space in both cases.</p><p>If we wish to plot the convex hulls for item discrimination or scoring, this will involve taking the first three (for a 2d plot) or four (for a 3d plot) principal components for both methods. Computational approaches without plotting require taking one fewer PCA dimensions than there are items or respondents. However, early experiences suggest taking a very high number of components is computationally expensive (i.e., very memory intensive) and this leads to overflow errors where the numbers become too large to be represented in memory. In practice, experimentation may be required determine the balance between what is theoretically and computationally possible.</p><p>We now summarise small proof of concept study designs that could test each of these new methods, and then we discuss five big issues related to measurement approaches that use convex hulls.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application One: Item analysis without data</head><p>A core challenge in psychometrics is determining the extent to which a question or statement relates to the underlying construct, i.e., the item discrimination. Common methods for solving this challenge include Classical Test Theory (CTT), Exploratory and Confirmatory Factor Analysis (EFA/CFA), and Item Response Theory (IRT) <ref type="bibr" target="#b1">(Embretson &amp; Reise, 2013)</ref>. All these methods analyse candidate responses to questions to determine analogous quantities, item total correlations under CTT, factor loadings under EFA/CFA, and slopes under IRT.</p><p>One limitation of these methods is that they all rely on actual response data. Recent papers have suggested that these parameters can be approximated without response data using large language models. The item-total correlation can be approximated as an item embedding's proximity to the construct definition embedding or the average of all other scale item embeddings <ref type="bibr">(Guenole et al., 2024)</ref>. This idea can be generalised by replacing the item response correlation matrix with the embedding cosine similarity matrix, enabling multidimensional factor loadings and potentially exploration of structural relationships before data are collected <ref type="bibr">(Guenole et al. 2024</ref>). Here we approach the task of item analysis without data from another angle with the use of convex hulls. One potential approach to checking this proposal could be as follows.</p><p>Proposed workflow for application one: item analysis without data.</p><p>• Generate items to measure a target construct, either using humans item writers or using generative A.I.</p><p>• Sort items using human raters to check the preliminary suitability of the items as indicators of their respective constructs.</p><p>• Obtain item embeddings for personality items with a sentence transformer, such as MiniLM, or even a variety of transformers.</p><p>• Reduce the embedding dimensionality as required for plotting in lower dimensions or computation in higher dimensions.</p><p>• Exclude the studied item from the computation of the hulls in the next step where the hull for each construct is computed.</p><p>• Compute the convex hull for each of the scales based on the scale items per scale excluding the studied item.</p><p>• Calculate distances, e.g. Euclidean, Manhattan, and cosine similarity between every item and every convex hull.</p><p>• Examine the internal structure of the item embeddings e.g. using multitrait-multi-method approaches.</p><p>• Refine or remove items that show unexpected relationships to the target construct or have inadequate convergent and discriminant validity in an iterative fashion.</p><p>• Compare the convex hull proximities of the final items to the actual empirical discriminations based on response data.</p><p>From these results, a number of potentially useful issues can be studied. First, we can see whether any item is within the hull of the other items using the point in the hull test. If an item falls in the hull of another set of items, it is said to be affinely dependent on the other points of the convex hull, i.e., it is redundant given it is expressible as a linear combination of non-negative weights of the other item embeddings that sums to one. This is called a convex combination. Assuming items are not redundant, we can then proceed to see which items are most related to what the items all have in common.</p><p>We can check each item's belongingness by interpreting the item proximities directly in relation to each other. We can also check whether the mean proximity across items within every scale is closer to the centroid of its own target hull (from which each item it is omitted when calculating its individual proximity) than any other hull centroid. We can check the nearest vertex to each studied item to see which hull the vertex is from.</p><p>In summary, there is a wide array of methods and tests in computational geometry that could be introduced for this step. We suggest this first application is tested using items from generative AI methods or existing questionnaires. The ultimate test, of course, is how these item proximities relate to empirical discrimination, the quantity of real interest. We suggest this as a last step in the validation of the method for establishing the validity of the method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Application Two: Scoring of Natural Language</head><p>An ultimate prize for psychological measurement is accurate free text construct scoring (e.g., interviews, SJTs, performance reviews, essays, free text survey responses). Progress is occurring but predictive accuracy against test scores or human labels is a potential drawback of current methods. It blurs distinctions between measurement and prediction and prioritises external criteria over the inherent structure in language. Can we have a natural language measurement model without prediction? Transformers <ref type="bibr" target="#b13">(Vaswani et al. 2017</ref>) and convex hulls <ref type="bibr" target="#b11">(Preparata &amp; Shamos 1993)</ref> might help here too.</p><p>The free response scoring process involving using sentence encoders to generate embeddings of candidate responses. The language to be scored can, but need not necessarily, be in response to prompts designed to focus the language generated into a specific domain. Each candidate's response is encoded with a sentence transformer. The convex hull is then formed out of all of the responses being scored. The inverted proximity between the response embedding for each candidate and the centroid of the convex hull is then interpreted as the construct score.</p><p>The idea is that a higher score reflects higher standing on the construct measured after inverting the proximities. There are two ways that we propose to investigate this. Firstly, because data collection will be expensive, we propose a simulation proof of concept using generative AI methods to create 'candidate' responses. Second, we propose empirical investigation into this topic using actual candidate data on both free response text and conventional questionnaires. Here is a general workflow that might be adapted in any such investigation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1.</head><p>Item analysis without data. The G50 <ref type="bibr" target="#b3">(Guenole, 2015)</ref> Likert personality questionnaire contains six scales corresponding to the rationale version of section III trait model in DSM-5. det is detachment; neg is negative affect; ant is antagonism; dis is disinhibition; co = compulsivity; ecc = eccentricity. This figure presents the convex hulls formed from the first four principal components of the 384-dimension embeddings of each item in the questionnaire, generated with MiniLM. The embeddings components are then projected onto the same surface. The plot is then presented from four different viewing angles with the following elevation and azimuth coordinates, moving clockwise and beginning top left (30, 20) (30,120) (30,210) (30, 300).</p><p>Proposed workflow for application two: free text scoring.</p><p>• Generate real personality scores for a trait that span the trait continuum from -3 to +3 standard deviations.</p><p>• Select or write a free response prompt for personality five, for instance, see <ref type="bibr" target="#b6">Hickman et al. (2021)</ref>.</p><p>• Ask GPT to generate 'candidate' responses to the prompt reflecting the trait levels identified in the first step.</p><p>• Ask Claude to score responses, correlate these scores with original trait scores for a sense check and demonstrate a strong correlation.</p><p>• Embed the text responses using a sentence transformer, for this experiment MiniLM would be appropriate.</p><p>• Compute the convex hull using all of responses except the candidate being scored, also calculate its centroid.</p><p>• This likely requires reducing the embedding dimensions to n-1-1=n-2 or fewer PCA coordinates.</p><p>• Calculate the Euclidean and Manhattan distances, and the cosine similarity of response embeddings to hull centroid.</p><p>• Invert the distances so that a higher response score is closer to the hull, i.e., subtract each score from the maximum.</p><p>• Repeat the above experiments at different temperatures so that the text has varying degrees of focus on the construct, as we expect human responses would.</p><p>• Check the correlation between inverted hull proximities and original scores to see that a large correlation is obtained.</p><p>In summary, like CTT, CFA, and IRT, this new scoring needs 'ground truth' only for validity, not the scoring itself. If a large correlation is obtained between the original simulated scores and the recovered proximities, it would be evidence for the efficacy of the method. Even in that case, we anticipate a number of likely questions. We turn to answer some that are likely to be the most common now. Trait recovery accuracy r=.71. The response closest to the centroid is: "I offered a listening ear and words of encouragement to help them feel better (simulated theta of 2). The response furthest from the centroid is: I provided some surface-level support because it affects productivity, nothing more beyond that (simulated theta of -1).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Key Issue 1: Why not just ask the LLM to score responses?</head><p>Questions may arise as to why we do not use other potential approaches. The most common question is likely to be why not ask the LLM to score the text directly? The answer to this is that the motivating idea behind the method is not to impose pre-existing notions or structures regarding what is measured.</p><p>The proposed method potentially achieves this, because the convex hull centroid represents what is actually discussed in language, whereas asking the LLM to score test emphasises what one hopes to find. In other words, by scoring with an LLM against a rubric, a preconceived idea about what is represented in the data is imposed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Key issue 2. Measurement scale.</head><p>A question arises as to what the measurement scale of the newly proposed proximity scores is. In one sense, they are interval and even ratio given that a response can be zero units away from the centroid of the hull. Even if the transformers that encode the sentences themselves could be also considered interval measures, however, there is no guarantee that the equal measurement scaling of the proximity scores corresponds to equal intervals on the personality spectrum (in the case of the scoring application of convex hulls). For the item analysis application, it is not guaranteed that changes in the distance from the hull correspond to equivalent changes in discriminative utility.</p><p>Having a clear measurement unit could nonetheless make the scores from convex hull methods more amenable to analysis via conventional methods in psycho-metrics than might otherwise be the case. We may be able to apply CTT, CFA, and IRT models to multiple proximity indicators from different prompts focused on the same trait (or applying rubric hulls, albeit this imposes a structure); or even apply networks models to the different proximities that emerge using scores which have a more plausibly interval or even ratio structure. Should this be possible, we can examine transformer-based construct measurement at the latent level, examining concepts such as measurement invariance and error adjusted construct relationships.</p><p>Key issue 3: Clustering and scale embedding mean centroids.</p><p>Readers may ask why we use convex hulls as opposed to a more straight-forward method such as cluster analysis. The main reason we do not use clustering is because it assigns a categorical membership. Personality traits and other psychological constructs need continuous scores. While it is possible to have a continuous proximity to cluster centroids, scoring approaches requires a proximity of all cases to the same centroid. It may then be computationally simpler to use scale embedding means. However, convex hulls emphasize the full construct by prioritising its extremities, the scale embedding centroid prioritizes central tendency.</p><p>Key issue 4: When the hull centroid does not represent the intended target.</p><p>The scoring approach assumes the hull reflects the construct, which we refer to as an 'unsupervised' convex hull mode. However, it might not be the case that the centroid reflects the target we hope. In such cases, we can constrain responses, clean the corpus, or follow a 'supervised' convex hull mode where we form the hull from target or rubric responses. (albeit the rubric approach imposes an a priori structure which we aimed to avoid). Prompts may not even be needed where a target hull is used. Multidimensional constructs could be assessed using multiple prompts or by using multiple target hulls even on the same corpus without prompts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Key issue 5: Intensity or Essence?</head><p>If the method works, the correlation between the original trait scores and the convex hull proximity scores will be positive and ideally strong. Importantly, however, this correlation may only be strong under special conditions. One is where the centre of the convex hull represents high intensity of the trait.</p><p>Whether the centroid is high can be confirmed by interpreting responses that are closest the centroid of the hull. For example, if we believe we are measuring agreeableness, high agreeableness at the center of the hull might be represented by a response to a prompt designed to elicit agreeableness such as "I offered a listening ear and words of encouragement to help them feel better".</p><p>Another possibility that would arguably lead to a positive correlation is where the hull centroid does not represent an intensity but instead represents the essence of a trait, rather than an intensity or level of a trait. If, on the other hand, the hull centroid represents some other intensity that is (person) sample dependent (i.e., not one of the poles of the trait), proximities are likely to have complex interpretations that require as yet undetermined work arounds to recover trait scores. However, it may also turn out that what is required for trait recovery is that, rather than a centroid at either construct pole, instead what matters is the degree of dimension relevant contrast between responses at the centroid and the hull's extremity. In other words, even a centroid representing a moderate position on the trait may be satisfactory for trait recovery of the extreme is sufficiently far away in the opposite direction. Given the expensive nature of data collection, we here propose that this method is fully simulated before expending money and time collecting human data. Should these simulations work out, of course, real human response data will be quickly needed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>We have proposed new methods for psychometrics that leverage convex hulls and large language models to accomplish important tasks, examine item belongingness to scales without response data, and score psychological constructs from free responses. While the methods have been presented in the context of transformers for textual analysis, the methods have applications with conventional data too. Should the methods prove effective, it will be important a) to compare these to alternative approaches such as pseudo-methods discussed earlier, b) discuss where convex hull artificial intelligence scale design steps might fit into the flow of conventional scale development, and importantly, c) identify how both pseudo-methods and convex hull techniques that we are proposing can be made as accessible as possible to practitioners.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Natural language scoring of Agreeableness from free text. Prompt relates to moral support for a colleague. Simulation set-up: Trait continuum split in .25 intervals from -3 to +3; two responses generated at each trait level for n=50 overall; response generation via Open AI GPT Turbo 3.5 using Open AI API. Sentence transformer: MiniLM via Sentence Transformers. Measurement model: Convex hull, unsupervised mode.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="9,133.77,124.80,370.75,254.84" type="bitmap" /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Editorial: Semantic Algorithms in the Assessment of Attitudes and Personality</title>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Arnulf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><forename type="middle">R</forename><surname>Ketil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Øyvind</forename><surname>Larsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kim</forename><forename type="middle">F</forename><surname>Lund Martinsen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Nimon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">720559</biblScope>
+			<date type="published" when="2021-07">2021. July</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">Susan</forename><forename type="middle">E</forename><surname>Embretson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><forename type="middle">P</forename><surname>Reise</surname></persName>
+		</author>
+		<title level="m">Item Response Theory</title>
+		<imprint>
+			<publisher>Psychology Press</publisher>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Pseudo-Discrimination Parameters from Language Embeddings</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Guenole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Samo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OSF</title>
+		<imprint>
+			<date type="published" when="2024-02-09">2024. February 9, 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The Hierarchical Structure of Work-Related Maladaptive Personality Traits</title>
+		<author>
+			<persName><forename type="first">Nigel</forename><surname>Guenole</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Psychological Assessment: Official Organ of the European Association of Psychological Assessment</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="83" to="90" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Pseudo Factor Analysis of Language Embedding Similarity Matrices: New Ways to Model Latent Constructs</title>
+		<author>
+			<persName><forename type="first">Nigel</forename><surname>Guenole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Epifanio</forename><surname>Damiano D'urso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Samo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianjun</forename><surname>Sun</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024-04-14">2024. April 14, 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The AI-IP: Minimizing the Guesswork of Personality Scale Item Development through Artificial Intelligence</title>
+		<author>
+			<persName><forename type="first">Ivan</forename><surname>Hernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiwen</forename><surname>Nie</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/peps.12543</idno>
+		<ptr target="https://doi.org/10.1111/peps.12543" />
+	</analytic>
+	<monogr>
+		<title level="j">Personnel Psychology</title>
+		<imprint>
+			<date type="published" when="2022-10">2022. October</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Automated Video Interview Personality Assessments: Reliability, Validity, and Generalizability Investigations</title>
+		<author>
+			<persName><forename type="first">Louis</forename><surname>Hickman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nigel</forename><surname>Bosch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rachel</forename><surname>Saef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Louis</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sang</forename><forename type="middle">Eun</forename><surname>Woo</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/apl0000695</idno>
+		<ptr target="https://doi.org/10.1037/apl0000695" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Applied Psychology</title>
+		<imprint>
+			<date type="published" when="2021-06">2021. June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Transformer-Based Deep Neural Language Modeling for Construct-Specific Automatic Item Generation</title>
+		<author>
+			<persName><forename type="first">Björn</forename><forename type="middle">E</forename><surname>Hommel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Franz-Josef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Veronika</forename><surname>Wollang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannes</forename><surname>Kotova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><forename type="middle">C</forename><surname>Zacher</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schmukle</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychometrika</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="749" to="772" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A Tutorial on Open-Source Large Language Models for Behavioral Science</title>
+		<author>
+			<persName><forename type="first">Zak</forename><surname>Hussain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcel</forename><surname>Binz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Mata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dirk</forename><forename type="middle">U</forename><surname>Wulff</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13428-024-02455-8</idno>
+		<ptr target="https://doi.org/10.3758/s13428-024-02455-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Research Methods</title>
+		<imprint>
+			<date type="published" when="2024-08">2024. August</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">From text to thought: How analyzing language can advance psychological science</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Jackson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Watts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>List</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Puryear</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Drabble</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Lindquist</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Psychological Science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="805" to="826" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Psychological Aspects of Natural Language. Use: Our Words, Our Selves</title>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">W</forename><surname>Pennebaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Matthias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kate</forename><forename type="middle">G</forename><surname>Mehl</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Niederhoffer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Psychology</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="page" from="547" to="577" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Computational Geometry: An Introduction</title>
+		<author>
+			<persName><forename type="first">Franco</forename><forename type="middle">P</forename><surname>Preparata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">I</forename><surname>Shamos</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-4612-1098-6</idno>
+		<ptr target="https://doi.org/10.1007/978-1-4612-1098-6" />
+	</analytic>
+	<monogr>
+		<title level="s">Monographs in Computer Science</title>
+		<imprint>
+			<date type="published" when="1993">1993</date>
+			<publisher>Springer</publisher>
+			<pubPlace>New York, NY</pubPlace>
+		</imprint>
+	</monogr>
+	<note>PDF. 1st ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Generative Psychometrics via AI-GENIE: Automatic Item Generation and Validation via Network-Integrated Evaluation</title>
+		<author>
+			<persName><surname>Russell-Lasalandra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hudson</forename><surname>Christensen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Golino</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024-09">2024. September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Attention Is All You Need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+		<ptr target="https://proceedings.neurips.cc/paper/7181-attention-is-all" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Automated Jingle-Jangle Detection: Using Embeddings to Tackle Taxonomic Incommensurability</title>
+		<author>
+			<persName><forename type="first">Dirk</forename><forename type="middle">U</forename><surname>Wulff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Mata</surname></persName>
+		</author>
+		<idno type="DOI">10.31234/osf.io/9h7aw</idno>
+		<ptr target="https://doi.org/10.31234/osf.io/9h7aw" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Neural Network Predictive Analysis of Echoic Behavior for Children with Autism</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Chris</forename><surname>Ninness</surname></persName>
+							<email>cninness@suddenlink.net</email>
+						</author>
+						<author>
+							<persName><forename type="first">Lee</forename><surname>Mason</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Child Study Center</orgName>
+								<orgName type="department" key="dep2">Cook Children&apos;s Health Care System</orgName>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Burnett School of Medicine</orgName>
+								<orgName type="department" key="dep2">Behavioral Software Systems &amp; Human Interventions Institute</orgName>
+								<orgName type="institution">Texas Christian University</orgName>
+								<address>
+									<addrLine>2207 Pinecrest Dr.</addrLine>
+									<postCode>75965.</postCode>
+									<settlement>Nacogdoches</settlement>
+									<region>TX</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Behavioral Software Systems &amp; Human Interventions Institute</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Neural Network Predictive Analysis of Echoic Behavior for Children with Autism</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">066018A581952A67258C9EF7146B26B3</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2" ident="GROBID" when="2025-10-22T20:37+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<label type="revision">a91ee48</label>
+					<label type="parameters">startPage=-1, endPage=-1, consolidateCitations=0, consolidateHeader=1, consolidateFunders=0, includeRawAffiliations=false, includeRawCitations=false, includeRawCopyrights=false, generateTeiIds=false, generateTeiCoordinates=[], sentenceSegmentation=false, flavor=null</label>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>children with autism</term>
+					<term>echoic skills assessment</term>
+					<term>multilayer perceptron&apos;s</term>
+					<term>machine learning</term>
+					<term>cross-validation</term>
+					<term>behavior analysis</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>As a primer on machine learning strategies applied to behavior analytic investigations, we sought to predict the likelihood that particular children with autism spectrum disorder (ASD) would develop echoic verbal behavior. After retrieving 143 case records of children assessed with the VB-MAPP from a data repository, we reserved 22 case records for holdout analysis. Through iterative development, the model achieved 100% accuracy in predicting the presence or absence of an echoic repertoire. While the functional value of predicting a known outcome might be questioned, it is only possible to gauge the accuracy of any prediction technique when known outcomes are available. Thus, rather than trying to predict a completely unknown outcome, our experimental preparations were directed at gauging the multilayer perceptron's (MLP) ability to predict at high levels of precision, sensitivity, specificity, and overall prediction accuracy while accessing a limited dataset from one children's healthcare setting. We discuss procedures for employing this machine learning strategy in conjunction with a receiver operator characteristics analysis of our findings. We developed this study as a general guide for using one of several quickly evolving neural network methodologies for behavior analytic researchers, and we examine specifics regarding MLP functions and operations as they relate to providing more efficacious treatment for children with ASD.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Network Predictive Analysis of Echoic Behavior for</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Children with Autism</head><p>During recent years, a growing body of research points to the advantages of using echoic prompts when training complex verbal behavior in children with autism spectrum disorder (ASD), a neurodevelopmental disorder characterized by behavioral deficits (i.e., social communication and interaction) and excesses (i.e., restricted, repetitive behaviors; <ref type="bibr">Kodak et al., 2020;</ref><ref type="bibr">Muharib et al., 2021;</ref><ref type="bibr">Roncati et al., 2019;</ref><ref type="bibr">Shillingsburg et al., 2022)</ref>. While early intensive behavioral intervention has been shown helpful to remediate language deficits <ref type="bibr" target="#b40">(Rivard &amp; Forget, 2012)</ref>, as many as 1/3 of children with ASD will fail to develop vocal language <ref type="bibr" target="#b41">(Rose et al., 2016)</ref>. Consequently, these and related studies (e.g., <ref type="bibr">Vladescu et al., 2021)</ref> speak to the potential benefits of being able to predict echoic repertoires.</p><p>To highlight these possibilities, consider the following example. A practitioner working with a child with ASD may be interested in determining whether the child will be able to echo the language of others. Predictive analytic models might help address this issue by identifying the factors associated with this particular ability. By looking for commonalities among an extensive database of various characteristics of children with ASD who do and do not demonstrate echoic repertoires, applied researchers might construct a model of relevant variables specific to children who demonstrate the ability to echo. Then, by comparing the child's skills against the model, the practitioner can determine whether the conditions are right for their child to begin echoing other people's language. However, until very recently, no existing technology has been able to predict such outcomes with high levels of accuracy.</p><p>The heterogeneity of ASD makes it challenging to draw broad generalities about the disorder. The multiple causes of ASD have yet to be identified, and symptoms of the disorder range broadly across a variety of different behavioral excesses and deficits. Consequently, predicting treatment effects for this group has been problematic <ref type="bibr" target="#b3">(Bent &amp; Hendren, 2010;</ref><ref type="bibr" target="#b53">Trembath &amp; Vivanti, 2014;</ref><ref type="bibr" target="#b53">Vivanti et al, 2014)</ref>. Modern advances in machine learning (ML) may prove beneficial to enhancing the predictive outcomes for children with ASD.</p><p>Behavior analysts have recently examined the use of ML for predicting treatment outcomes of children with ASD who received behavior-analytic intervention. These researchers have compared various types of statistical and machine learning algorithms, such as linear regression <ref type="bibr">(Linstead et al., 2017;</ref><ref type="bibr" target="#b22">Maharjan et al., 2023;</ref><ref type="bibr" target="#b50">Préfontaine et al., 2022)</ref>, decision trees <ref type="bibr">(Maharjan et al.; Préfontaine et al.)</ref>, k-nearest neighbors, Gaussian process, and support vector machines <ref type="bibr">(Préfontaine et al.)</ref>, cosine similarity and collaborative filtering <ref type="bibr" target="#b19">(Kohli et al., 2022)</ref>, as well as artificial neural networks <ref type="bibr">(Linstead et al.)</ref>.</p><p>Using different neural network techniques, researchers have examined a variety of predictive outcomes for children diagnosed with ASD. These variables include treatment intensity <ref type="bibr">(Linstead et al., 2017;</ref><ref type="bibr" target="#b22">Maharjan et al., 2023)</ref>, the selection of treatment goals <ref type="bibr" target="#b19">(Kohli et al., 2022)</ref>; mastery of learning outcomes <ref type="bibr">(Linstead et al.)</ref>, and treatment prognosis <ref type="bibr" target="#b50">(Préfontaine et al., 2022)</ref>. Across all studies machine learning was effective, with the predictive accuracy positively correlated with the complexity of the machine learning algorithm. That is, for the three studies that compared complex (i.e., artificial neural networks, decision trees) against simple (i.e., linear regression) algorithms <ref type="bibr">(Linstead et al., Maharjan et al.)</ref>, the more complex machine learning algorithms always outperformed linear regression. <ref type="bibr" target="#b50">Préfontaine et al. (2022)</ref>, who compared five complex algorithms against one another, concluded, "None of the algorithms produced systematically worst predictions than all the others" (p. 4). Indeed, other approaches to machine learning are having an impact across the academic spectrum. In particular, <ref type="bibr" target="#b47">Turgeon &amp; Lanovaz (2020)</ref> demonstrated that ML algorithms such as random forest, support vector classifier, stochastic gradient descent, and k-nearest neighbors are powerful prognostic systems when classifying a variety of datasets in applied behavior analytic research.</p><p>With recent advances in machine learning, neural network techniques have become increasingly accurate, flexible, and inexplicable <ref type="bibr" target="#b6">(Dafoe, 2018;</ref><ref type="bibr" target="#b18">Kissinger et al., 2021</ref>). As will be described, neural networks are frequently capable of solving the most intractable of problems. When operating at peak performance, these systems can disentangle and predict outcomes for the most evasive social (e.g., <ref type="bibr" target="#b36">Ninness et al., 2021)</ref>, physiological (e.g., <ref type="bibr" target="#b0">Almeida &amp; Azkune, 2018;</ref><ref type="bibr" target="#b29">Ninness et al., 2012)</ref>, and behavior issues (e.g., <ref type="bibr" target="#b48">Phan et al., 2017;</ref><ref type="bibr" target="#b7">Dufour, 2020;</ref><ref type="bibr">Ninness &amp; Ninness, 2020a)</ref>. See <ref type="bibr" target="#b47">Turgeon &amp; Lanovaz (2020)</ref> for a well-organized machine learning tutorial focusing on behavior-analytic investigations.</p><p>An irrefutable fact is that neural networks can be remarkably accurate but retroactively inscrutable. Unlike logistic regression or multiple regression procedures, these algorithms generate an extraordinarily large number of weights and bias values. Identifying the precise functions of these values is an active area of investigation but is far from being accomplished <ref type="bibr" target="#b35">(Ninness &amp; Ninness, 2020b)</ref>.</p><p>Notwithstanding, because of their high levels of precision, sensitivity, and specificity, neural networks (and a wide range of related machine learning systems) are in a state of exponential evolution and expansion throughout the academic (e.g., <ref type="bibr" target="#b21">Lyddy &amp; Barnes-Holmes 2007;</ref><ref type="bibr" target="#b30">Ninness et al., 2018;</ref><ref type="bibr" target="#b42">Smith &amp; Hayes, 2022;</ref><ref type="bibr" target="#b46">Tovar &amp; Westermann, 2017)</ref>, medical (e.g., <ref type="bibr" target="#b4">Chicco &amp; Jurman, 2020)</ref>, and corporate communities (e.g., <ref type="bibr" target="#b38">Özener et al., 2013;</ref><ref type="bibr">Tegmark, 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MLP Overview</head><p>We used the Python programming language to train our multilayer perceptron (MLP) neural network model. MLPs are a type of feedforward neural network architecture employed extensively throughout the area of artificial intelligence (see <ref type="bibr">McCaffrey, 2023, for examples)</ref>. MLPs are comprised of layers of nodes that have activation functions applied to their output (i.e., see Table <ref type="table" target="#tab_0">1</ref>) that learn unique data patterns as they process input values. During network training, the weights of the connections between the nodes within the network layers adjust given their input and output values. These weights are continually updated as the data are passed forward (feedforward/forward pass) and backward (backpropagation/backward pass) across the layers of the network throughout training <ref type="bibr" target="#b28">(Nielsen, 2015;</ref><ref type="bibr" target="#b31">Ninness et al., 2019)</ref>.</p><p>One of the fascinating features of MLPs is the way in which training is initiated using a series of entirely randomized values. During the feedforward pass, connections between individual nodes (neurons) within layers (node layers) are initialized with small random weights (e.g., between -0. 10 and +0. 10). Data are presented to the network via the input layer, and this layer contains one node for each independent variable within the dataset. Dependent variables are represented on an output layer.</p><p>For example, the current architecture (network structure) includes 10 input nodes and one output node. When training begins, the input values are passed to the first hidden layer and multiplied by small random weights. As illustrated in Figure <ref type="figure" target="#fig_0">1</ref>, the sums of all weighted input values are then passed to the hyperbolic tangent (tanh) activation function within each hidden node (see ∑ƒ in Figure <ref type="figure" target="#fig_0">1</ref>). This activation function (see Figure <ref type="figure" target="#fig_1">2</ref> and Table <ref type="table" target="#tab_0">1</ref>) is referred to as a squashing function because it systematically compresses input values of any size into outputs ranging between -1 and +1. Note that alternative activation functions (e.g., ReLu) accept values from negative to positive infinity and return values within a specific range (see <ref type="bibr">Islam et al., 2021, for a discussion)</ref>. Upon passing through all of the hidden layers, the data (signals) reach the node in the output layer, where the sigmoid function compresses outputs ranging between 0 and 1(see p o in Figure <ref type="figure" target="#fig_0">1</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bias Nodes.</head><p>Although not displayed in Figure <ref type="figure" target="#fig_0">1</ref>, bias nodes are constants usually initialized with values of 1. Bias node values are used during training to offset predicted outcomes away from the center of the coordinate axis. These values are trained much the same as other inputs in that they are multiplied by small random weights and ultimately become part of the trained model (see Table <ref type="table" target="#tab_0">1</ref> for related details). Outputs from the tanh function in the first layer are again multiplied  Haykin (2009) notes that as the network training process advances, "…the hidden neurons begin to gradually 'discover' the salient features that characterize the training data. They do so by performing a nonlinear transformation on the input data into a new space called the feature space" (p. 126). During the early training iterations, there are large differences between the network's calculated output values and the known target values. These differences are forms of error. During backpropagation, the algorithm attempts to gradually minimize these errors by updating its weights so that the calculated outputs become better approximations of the known target values.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Backpropagation</head><p>Backpropagation is a network training process that entails a few specialized terms and computations. In conjunction with the feedforward process, backpropagation performs a series of corrections to the error values that occur during training. As described earlier, over the course of many forward and backward passes these operations shrink the error value, creating a neural network model with increasingly accurate predictions. Error is never completely eliminated, but is instead brought into an acceptable level of error by minimizing a loss function which minimizes the difference between the predicted outputs and the actual outputs. If the error level is minimized too much, then the model may be subject to overfitting which is liable to cause poor out-of-sample performance.</p><p>Depending on the size and diversity of the input values, network training may entail several thousand iterations before the MLP learns the relations among input values and known target values. In the current study, this algorithm required 576 iterations to learn the relations among the variables employed. Table <ref type="table" target="#tab_0">1</ref> provides a glossary of common MLP terms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stochastic Gradient Descent</head><p>Analogous to conventional statistics, a neural network determines predicted outcomes in terms of probability and error. Just as the standard deviation is one of the more frequently employed error values used in conventional statistics, the mean square error (MSE) is one of the more commonly used error values in the neural network literature. Loss and cost are two more important terms in the neural network lexicon.</p><p>Loss refers to the error value computed for a training instance, while cost refers to the average loss value when all instances have been computed. Within the current illustrative study, we will emphasize the loss function.</p><p>In equation 1, MSE is the loss function for the neural network.</p><p>Throughout training, it measures how well the algorithm reduces the differences between the known target value (Ŷ) and its calculated (Y) value. As its name suggests, the MSE is obtained by repeatedly squaring the differences between the target value and the MLP's most recently computed output, summing (∑) this squared difference, and then dividing the sum by the number (n) of data points employed for the number of completed iterations. More concisely, the MSE is the mean of the squared differences between the MLP's predicted and known target outcomes (see Equation <ref type="formula">1</ref>).</p><p>(1)</p><p>If network training progresses as intended, the MLP learns through gradual but slightly erratic approximations. Figure <ref type="figure" target="#fig_2">3</ref> illustrates that as the number of iterations increases, the MSE shrinks while the MLP's calculated output values become better estimates of the known target values. While the gradient descent illustrates a transition from 1 to a stabilized value 0. 0026, there are conspicuous spikes of higher error across iterations. Gradients represent the magnitude and direction of change of the output signals (Haykin, 2009). That is, gradients measure weight variations (error changes) that occur while training a model. Particularly at the beginning of training there is oscillation in the error values (see Figure 3). When the gradient changes are consistent with improved learning, the error shrinks toward some minimal threshold. These error values tell us the distance between the network's current calculated values and the known target values. As the gradient gradually descends, it moves toward a stable series of minimal errors. In accordance with the values shown in Figure 3, when these values stabilize within ± 0. 0001 over 100 consecutive iterations, training is discontinued. Hyperparameters Before network training begins, there are a series of external settings that the researcher specifies. Hyperparameters (often referred to as parameters) are the settings by the researcher that initiate and  <ref type="table" target="#tab_0">1</ref> for a list of commonly used neural network terms).</p><p>There are a growing number of approaches for selecting hyperparameters when training different types of neural networks, including a range of automated algorithms. To name only a few of these approaches, grid search <ref type="bibr" target="#b17">(Jiménez et al., 2007)</ref>, randomized search <ref type="bibr" target="#b39">(Probst et al., 2019)</ref>, Bayesian optimization <ref type="bibr" target="#b54">(Victoria &amp; Maragatham, 2020)</ref>, and gradient-based optimization <ref type="bibr" target="#b2">(Bengio, 2000)</ref> are popular techniques for selecting optimal hyperparameters. Providing details on these techniques is beyond the scope of this paper, but see <ref type="bibr" target="#b57">Yang &amp; Shami (2020)</ref> for an examination of these and related systems.</p><p>As an alternative to automated algorithms, a manual search allows the developer to systematically explore a combination of hyperparameters and develop a model that maximizes network performance. Manual hyperparameter tuning is an interface between human logic and machine learning. Analogous to how we adjust various audio settings on a stereo system (e.g., bass, treble, balance, etc.), a network algorithm can be tuned to improve its performance during training. In the current study, our hyperparameters were tuned by conducting training sequences wherein we observed the network's accuracy levels and adjusted the hyperparameters accordingly. Note that raw scores that were not originally expressed as binary values were normalized to numbers falling between 0 and 1using the Min-Max normalization function.</p><p>We set the maximum number of iterations ('max_iter') at 5,000 while specifying that if the model did not reduce error during a series of 100 consecutive iterations, training would stop ('n_iter_no_change': 100).</p><p>This strategy allowed us to verify that the MSE had reached a threshold of diminished and stabilized loss. Several of these strategies and parameters follow those recommended by <ref type="bibr" target="#b26">McCaffrey, 2023</ref> The hope is that the network becomes well trained so that it learns enough about the past to generalize to the future. From such a perspective, the learning process amounts to a choice of network parameterization for a given set of data. More specifically, we may view the network selection problem as choosing, within a set of candidate model structures (parameterizations), the "best" one according to a certain criterion. (p. 171)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cross-Validation</head><p>Nothing provides predictive confirmation like empirical evidence.</p><p>Cross-validation (CV) techniques are employed to confirm, or negate, a statistical or neural network algorithm's ability to forecast performance outcomes accurately when presented with previously unseen input values. <ref type="bibr" target="#b44">Stevens (2001)</ref> describes the advantages of performing CVs when conducting any type of logistic-regression analysis. In particular, Stevens emphasizes, "…although there are many procedures for selecting a 'good' model, the acid test is the generalizability of the model. In other words, how well will the model chosen fit on an independent sample?</p><p>This leads us once again into cross-validation…" (p. 586). There are several strategies for conducting CVs (e.g., <ref type="bibr" target="#b14">Haykin, 2009;</ref><ref type="bibr">Plis et al., 2014;</ref><ref type="bibr" target="#b56">Wong, 2015)</ref>. As an overview, the technique entails conducting a series of assessments wherein subsets (folds) of randomly selected training and validation data are extracted from an available database.</p><p>Typically, CV procedures divide large datasets into separate training sets, validation sets, and a single holdout (test) set. As described by <ref type="bibr" target="#b13">Hagan (2002)</ref>, "When we divide the data, approximately 70% is typically used for training, with 15% for validation and 15% for testing. These are only approximate numbers." (Chapter 13, p. 8) Outcomes from CV procedures allow us to compare and contrast the accuracy, precision, sensitivity (also termed recall), and specificity of the predictive models.</p><p>Similar procedures have been used to simulate and predict human behavior (cf. <ref type="bibr" target="#b12">Greene, 2017;</ref><ref type="bibr">Ninness &amp; Ninness, 2020a)</ref>. As shown in Fig 4, CV trials were rotated across five-folds, and each trial employed a different subset for validation. For each trial, accuracy was assessed by measuring how well the trained model predicted outcomes for its particular validation fold. The model's performance was obtained by averaging its predictive accuracy across all CV trials. Irrespective of CV accuracy, a network model remains an abstraction until it accurately ASD show profound language deficits, of which one-fourth are functionally non-verbal <ref type="bibr">(Baghdadli et al., 2012;</ref><ref type="bibr" target="#b41">Rose et al., 2016)</ref>. Some children with ASD may acquire language skills through early intensive behavioral intervention, while others will remain non-or minimally verbal. For practitioners, it may be helpful to identify the children who show the prerequisite skills for developing language.</p><p>Prior research on early intensive behavioral intervention has suggested that children with ASD who demonstrate an echoic repertoire, in conjunction with higher IQ and lower age, are more likely to develop spoken language <ref type="bibr" target="#b11">(Goldstein, 2002;</ref><ref type="bibr" target="#b51">Sallows &amp; Graupner, 2005)</ref>. Echoic behavior is distinctive in that it shares point-to-point correspondence with a prior verbal stimulus <ref type="bibr" target="#b15">(Ingvarsson, 2016)</ref>. Also known as verbal imitation, echoic behavior is frequently considered the mechanism by which other forms of verbal behavior are learned <ref type="bibr" target="#b37">(Palmer, 2012)</ref>, a cornerstone for conditioning the behavior of the listener (Schlinger, 2008a), and the basis for remembering <ref type="bibr">(Schlinger, 2008b)</ref>. The acquisition of an echoic repertoire has been shown to increase independence and reduce problem behavior <ref type="bibr">(Cividini-Motta et al., 2017)</ref>.</p><p>Consequently, the ability to predict an echoic repertoire may be of special value to applied researchers and clinicians.</p><p>In the current demonstration study, our ambition in conducting predictive-analytic procedures is to cultivate interventions for a child's current verbal skills and their potential for advancing these skills. To fulfill this ambition, we examined the intake evaluations of children with ASD on the Verbal Behavior Milestones Assessment and Placement</p><p>Program, Second Edition (VB-MAPP; <ref type="bibr" target="#b52">Sundberg, 2014)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental Objectives</head><p>We explored the extent to which scores on the various domains of the VB-MAPP are predictive of a child's echoic repertoire as measured by the Early Echoic Skills Assessment (EESA; <ref type="bibr" target="#b9">Esch, 2008)</ref>. The ability to reliably and accurately predict the presence and absence of an echoic repertoire is an indication of the interrelatedness of the domains on the VB-MAPP. Based on these outcomes, we may be able to determine the existence of behavioral profiles indicative of vocal imitation.</p><p>To assess these potentials, we employed procedures that allowed us to identify the degree of accuracy, precision, sensitivity, and specificity of these techniques. In doing so, we examine MLP operations as they relate to more efficacious treatment for children with ASD.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Research Issues and Methods</head><p>Participants and Settings. Archival data were collected from 143 young children with ASD who received early intensive behavioral intervention (EIBI) across a seven-year period between 2015 and 2022.</p><p>As part of the comprehensive EIBI services provided by a not-for-profit children's healthcare center, a Verbal Behavior Milestones Assessment and Placement Program, Second Edition (VB-MAPP; <ref type="bibr" target="#b52">Sundberg, 2014)</ref> was administered to each patient every six months. Patients were 80% male, and ranged in age from 1 year, 10 months to 8 years, 11 months at the time of their initial assessment. Patients had been independently diagnosed with ASD by a medical doctor prior to their enrollment in EIBI services.</p><p>The VB-MAPP is a criterion-referenced assessment of basic language and language-related skills that is commonly used to assess the</p><p>communication and social skills deficits of children with ASD. The VB-MAPP consists of five different components: Milestones Assessment, Barriers Assessment, Transition Assessment, Task Analysis and Supporting Skills, and Placement and IEP Goals. The Milestones Assessment is the core feature of the VB-MAPP, from which the other four components are derived. The Milestones Assessment contains 170 language and collateral milestones that are sequenced across three developmental levels. Level 1 consists of nine domains balanced across a scale of 1 to 5, which correspond with the language skills acquired by typically developing children from birth to 18 months of age. Level 2 consists of 12 domains balanced across a scale of 6 to 10, which correspond with skills acquired from 18 to 30 months of age. Embedded within Levels 1 and 2 is a subtest of verbal imitation called the Early Echoic Skills Assessment (EESA; Esch, 2008) that is used to rate the speaker's ability to echo a variety of speech phonemes, syllable combinations, and intonation patterns. Level 3 consists of 13 domains balanced across a scale of 11 to 15, which correspond with skills acquired from 30 to 48 months of age.</p><p>For the present study, we were particularly interested in the data from Level 1 of the initial VB-MAPP administration that was collected at the onset of EIBI for each child.</p><p>All VB-MAPP assessments were completed in a clinical setting under the supervision of a Board Certified Behavior Analyst. Patients were either directly observed or tested for their ability to complete each of the skills included on the Milestones Assessment. On their initial intake assessment, patient scores ranged from Level 1 to Level 3 across the various domains of the VB-MAPP. Patient records were maintained in an online database that -subsequent to receiving IRB approval -was accessed to create a de-identified dataset for our analyses. may result in isolated behavioral excesses or deficits <ref type="bibr" target="#b25">(Mayes et al., 2011;</ref><ref type="bibr" target="#b49">Ploog, 2010)</ref>. In contrast to their typically developing peers, a high score in one domain of the VB-MAPP is not necessarily representative of high scores in the other domains.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>At the start of the study, 121 patient records were available for review. Twenty-two additional case records became available over the course of the archival review, and these records were allocated to the holdout dataset. Thus, the entire dataset included 143 case records, wherein 22 of these were allocated to the holdout dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Variables</head><p>Along with each patient's age and sex, we examined their scores on considered the earliest form of language; a prerequisite to other skills like requesting, labeling, and conversing <ref type="bibr" target="#b52">(Sundberg, 2014)</ref>.</p><p>Notably, the language skills assessed within Level 1 of the VB-MAPP are not mutually exclusive. For example, the first Mand and Tact milestones allow the use of echoic prompts. Similarly, the second Mand milestone allows the presence of the desired item (i.e., Tact). The interaction of these basic language skills has been well documented within the verbal behavior literature <ref type="bibr" target="#b10">(Gamba et al., 2015;</ref><ref type="bibr" target="#b24">Mason &amp; Andrews, 2019;</ref><ref type="bibr" target="#b27">Michael et al., 2011)</ref>. <ref type="bibr" target="#b52">Sundberg (2014)</ref> describes the remaining four domains as language-related skills. The VP-MTS domain examines a person's visual ability to discriminate between similar features of the environment. The Play domain examines a person's ability to manipulate their environment independently, while the Social domain examines a person's ability to engage with other people. Finally, the Imitation domain examines a person's ability to imitate the actions of others.</p><p>The EESA subtest was used as the binary dependent variable for this investigation. Verbal imitation skills typically emerge by 11 months of age, and are frequently considered a prerequisite to more complex verbal behavior <ref type="bibr" target="#b9">(Esch, 2008)</ref>. The EESA is designed to evaluate a person's ability to echo the language models provided by another person, and is completed in full with each administration of the VB-MAPP.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental Preparations</head><p>For the current explorative study, the presence or absence of an echoic repertoire served as the dependent variable, while the remaining eight domains of Level 1 of the VB-MAPP served as independent variables. Prior to conducting the analyses, we determined a threshold of four points on the EESA as the cut point for distinguishing between participants with and without an echoic repertoire. That is, participants who scored less than or equal to four on the EESA subtest were considered to have no echoic repertoire (0). Participants who scored 5 or above on the EESA subtest were classified as demonstrating an echoic repertoire (1).</p><p>Given that all of the domains of the VB-MAPP, including the EESA, are part of the same instrument, we were well-positioned to identify the degree to which a MLP can make such predictions even when employing a dataset composed of only 143 participant records. While the functional value of predicting a known outcome might be questioned, it is only possible to gauge the accuracy of any prediction technique when known outcomes are available. Thus, rather than trying to predict an unknown outcome, our experimental preparations were directed at gauging the MLP's ability to predict at high levels of precision, sensitivity, specificity, and overall prediction accuracy while accessing a limited dataset from one children's healthcare setting.</p><p>Interobserver agreement (IOA) was assessed by asking a second rater to independently re-code 49% (n = 59) of the records used in our analysis. The IOA sample was randomly selected by assigning each record a random number. Next, the dataset was sorted by random number in ascending order. We then renumbered the dataset sequentially from 1 to 118, and extracted the odd-numbered records for IOA. Of the 59 records that were re-coded, 55 (93%) were an exact match. For the remaining four records, point-by-point agreement on the nine VB-MAPP domains averaged 86% (range, 78% to 89%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Procedures</head><p>We randomly selected and segregated 22 participant case records from the existing database to be analyzed as holdout data, and we employed the remaining 121 records to conduct and MLP followed by a ROC analyses.</p><p>MLP Analysis. To summarize several of our earlier details, we employed the five-layer MLP architecture shown in Figure <ref type="figure" target="#fig_0">1</ref>. Extracting five separate training and validation sets from our sample, we conducted a series of five CV folds from our database (cf. <ref type="bibr" target="#b43">Smith, 2005)</ref>. During these trials, it became apparent that employing two hidden layers produced more accurate outcomes than could be obtained using three hidden layers. In particular, we found that two hidden layers where the number of hidden nodes per layer was set to 5 and 4 generated the highest level of predictive accuracy. In a similar way, we found using a</p><p>Learning Rate set to 0. 01 produced the best performance outcomes.  of cases classified incorrectly as 0 and 0. Precision is displayed at 1. 00, and sensitivity is 1. 00. Specificity is shown as 1. 00. Test Accuracy, 1. 00, is the overall proportion of correct class identifications when the holdout dataset was presented to the trained MLP model. Note. As viewed from our application C# Windows panel, the center of the figure shows a 2x2 contingency table displaying the predicted and actual positive and negative values. The sklearn.neural_network MLPClassifier shows the same outcomes.  Note. Solid bars display the presence (1) or absence (0) of echoic verbal behavior for each participant. Hatched bars display MLP's prediction of the participant's ability to echo on a continuous scale of 0-1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Receiver Operator Characteristics (ROC) Analysis</head><p>To further address binary classification thresholds, we provide an accuracy threshold continuum by way of the ROC curve. The ROC curve conveys binary classifiers' social validity and diagnostic ability in terms of the thresholds achieved at consecutive levels of sensitivity and specificity.</p><p>Figure <ref type="figure" target="#fig_11">7</ref> illustrates a performance scale on a range of accuracy thresholds attained by the MLP. Again, sensitivity identifies the proportion of accurately predicted positive cases or true positive rate, while specificity denotes the proportion of accurately predicted negative cases or true negative rate. By transposing specificity to 1 -specificity along the x-axis, the ROC curve illustrates the convergence of sensitivity and specificity as a single metric. The diagonal 45-degree line demarcates random classifiers. Utility and Social Validity. A Type I error is an inferential statistical determination that occurs when the null hypothesis is erroneously rejected. That is, an experimental outcome is inconsistent with performances that would occur within the broader parent population. Such inaccurate statistical inferences fall under the more general heading of false positive errors. The ROC curve represents the true positive rate in conjunction with the false positive rate by means of a pooled accuracy analysis. Models with the fewest Type I and Type II error rates (the best-performing models) lay adjacent to the upper left corner of the graph, indicating that the model can accurately </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>As it relates to the natural science of behavior, we concern ourselves with the extent to which ML can describe, predict and control various environmental relations. A primary purpose of the current study was to demonstrate the predictive ability of ML for identifying whether or not children with autism would develop echoic verbal behavior.</p><p>For the purposes of the current analysis, we included the information available to us from the initial intake results of the VB-MAPP, which included sex, age, and the nine domains of Level 1. Consequently, it is important to delineate the Mand, Tact, Listener, VP/MTS, Play, Social, Imitation, Echoic, and Vocal skills as measured by the VB-MAPP from the more general description for each of these operants. For example, many children with ASD demonstrate echolalia, which is emblematic of an echoic repertoire. Yet, the echoic ability of these same children may not register on the EESA subtest of the VB-MAPP.</p><p>Therefore, we make it a point to distinguish the domains of the VB-MAPP, denoted with a capital letter (e.g., Mand), from the more general operant class, denoted with a lowercase letter (e.g., mand).</p><p>The results of the current study serve as one version of a phenotypic marker for vocal speech. By identifying the relevant collateral behavior associated with a functional Echoic repertoire, our findings provide a better understanding of human language and point to future research opportunities. Specifically, our results help to paint a broad picture of the environmental determinants of language development, and we urge caution when interpreting these outcomes within the clinical case context. <ref type="bibr">Sidman's (1960)</ref> warning that "we have no way of evaluating whether or not a given example of group data actually does provide a true picture of individual behavioral processes" (p. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prediction with Small Samples</head><p>This demonstration study sought to predict the likelihood that children with ASD would develop echoic verbal behavior. Using 143 case records of the VB-MAPP, we built predictive models based on MLP strategies. We then assessed the predictive ability using 22 holdout case records, and the techniques described in this study may contribute to a broader body of current investigations focusing on the development of improved network accuracy <ref type="bibr" target="#b8">(Dubey et al., 2022)</ref>. It should be noted that other machine learning algorithms may produce similar outcomes and require less computing power for small datasets (see <ref type="bibr" target="#b47">Turgeon &amp; Lanovaz, 2020</ref>, for a tutorial). Moreover, other popular ML techniques such as random forest, support vector classifier, stochastic gradient descent, and k-nearest neighbors are increasingly valuable and functional techniques particularly when classifying small-n datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Test Accuracy</head><p>The test accuracy level (100%) obtained by this model is noteworthy, given the small sample employed to train our model. The potential for predicting skills measured by the VB-MAPP to children who will benefit from early intensive behavioral intervention is supported by this investigation, and this is an important step toward broader treatment efficacy. In this predictive analysis, the MLP model's high level of accuracy may help identify children with the repertoires necessary for emitting echoic behavior and guide treatment decisions for children who do not already demonstrate this skill. As a practical matter, these findings suggest that predictions based on MLP models can support decisions for more intensive training aimed at students with particular skill sets.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Figure 1 Diagram of the MLP Architecture Employed in the Current Study</figDesc><graphic coords="9,155.90,373.00,304.15,329.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2</head><label>2</label><figDesc>Figure 2Illustration of the Hyperbolic Tangent Function</figDesc><graphic coords="11,163.50,128.05,261.50,121.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3</head><label>3</label><figDesc>Figure 3Display of Stochastic Gradient Descent across 576 Iterations</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4</head><label>4</label><figDesc>Figure 4 Display of the Training and Validation Sequences during Cross-Validation</figDesc><graphic coords="20,72.00,324.15,474.00,229.50" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><figDesc>Subsequent to retrieving and compiling the case records within this dataset from the initial administrations of the VB-MAPP Milestones Assessment for each patient, we formatted the data into 121 rows that consisted of the patient's age (at the time of assessment), sex, and the score recorded for each of the nine domains from Level 1: Mand, Tact, Listener Responding, Visual Perceptual Skills and Matching to Sample (VP-MTS), Independent Play, Social Behavior and Social Play, Motor Imitation, Spontaneous Vocal Behavior, and Echoic, as demonstrated by the EESA (Mason, 2022). The score for each domain ranged from 0 to 5 in half-point increments. According to Sundberg (2014), the scores across domains are approximately balanced, such that a Mand score of 5 is developmentally equivalent to a score of 5 in each of the remaining eight domains of Level 1. A typically developing child, therefore, would show similar scores across each domain. However, prior research on individuals with ASD has shown circumscribed learning patterns that</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><figDesc>Level 1 of the VB-MAPP Milestones Assessment. The nine domains assessed within Level 1 are designed to correspond with the skills displayed by typically developing children up to 18 months of age. Five of these skills are directly related to functional language development. The Mand domain examines a person's ability to request access to preferred items and activities. The Tact domain examines a person's ability to label their surroundings. The Listener domain examines a person's ability to follow instructions. The Vocal domain examines a person's physical ability to produce speech sounds. Finally, the Echoic domain examines a person's ability to repeat what they hear. Echoing is frequently</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><figDesc>This strategy allowed us to save a model consistent with the most functional weights and bias values and the number of layers and nodes within layers used during training. Then, during the holdout test, using all 121 training case records, we employed the sklearn.neural_network MLPClassifier to ascertain the effects of age and sex in conjunction with the ability to mand, tact, listen, demonstrate VP/MTS, play, interact socially, imitate, and vocalize on the probability that participants are able to acquire echoic behaviors.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 5</head><label>5</label><figDesc>Figure 5 shows the classification table depicting performance outcomes for the MLP analysis of the 22 participant records in the holdout dataset. The diagonal cells show the number of correctly identified cases. Predicted positives and predicted negatives are classified as 11 and 11, respectively. Off-diagonal cells show the number</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 5</head><label>5</label><figDesc>Figure 5Display of Predictive Classification Findings</figDesc><graphic coords="31,72.00,126.85,436.60,147.75" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 6</head><label>6</label><figDesc>Figure 6 shows predictive findings where the blue bars display the known participants' echoic performance levels. Hatched bars show the MLPs prediction of each participant's echoic performance. The trained MLP model accurately predicted the presence or absence of echoic behavior for 22 of 22 cases.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 6</head><label>6</label><figDesc>Figure 6Display of the MLP Model's Predictive Findings</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 7</head><label>7</label><figDesc>Figure 7Display of the MLP Model's Predictive Findings</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><figDesc>274) was reiterated by Skinner (1966) who cautioned, "A curve which enables us to predict the performance of another organism does not therefore represent a basic process" (p. 20). First, we should acknowledge the limitations of our findings by reiterating that the participants in this study were 143 children diagnosed with ASD. Our findings say nothing about neurotypical language development, or the language development of individuals with other verbal behavior disorders. Additionally, the heterogeneity of ASD may be associated with differing basic repertoires that serve as either prerequisite or collateral supports for vocal language. Future researchers should consider replicating our findings with similar and diverse groups of participants. Second, our findings are premised upon the structural hierarchy of skills outlined by the VB-MAPP. The VB-MAPP purports to be matched across domains within each level. That is, typically developing speakers who show Level 1 Echoic skills also tend to show Level 1 skills within the Mand, Imitation, Vocal, and other domains. To the extent that the developmental profiles within and across each of these domains remains valid, we can be confident in the accuracy of our predictions. Padilla and Akers (2021) found strong support for developmental age appropriateness of all but two of the Level 1 domains; the two exceptions, Independent Play and Social Behavior &amp; Social Play, were found to have moderate support. This evidence suggests that the scores of the VB-MAPP provide information relevant to the target behaviors of interest. Nevertheless, our findings are limited to the use of the VB-MAPP, and are not inevitably representative of other verbal behavior measures. Future researchers should seek to replicate our findings with other language assessments. Clinicians who use the VB-MAPP to monitor progress and as a curriculum guide may identify results from individual clients with ASD that align with the findings of the current study to varying degrees. A client that demonstrates Mand, Imitation, and Vocal skills, who also displays Echoics as measured by the EESA fits the hybrid predictive model perfectly. The same is true for a client that does not demonstrate Mand, Imitation, or Vocal skills, who also does not display an Echoic repertoire. Given that our study examined only the initial VB-MAPP scores gathered at intake, we cannot say whether the relationship between Mand/Imitation/Vocal skills and Echoics is correlational or causal. In the case of the latter client, future researchers could investigate the extent to which remediation of the Mand, Imitation, or Vocal domains leads to the development of an Echoic repertoire.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="14,72.00,71.95,477.05,229.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><graphic coords="33,107.40,71.95,374.40,203.35" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>General Deep Neural Network Terms and Explanations</figDesc><table><row><cell>. Rather than</cell></row></table><note><p><ref type="bibr" target="#b55">(Wenliang &amp; Seitz, 2018)</ref></p><p>. If the training process is completed successfully, the researcher can employ the newly developed model to predict outputs that match or closely resemble the target outputs. This technique allows the investigator to employ the newly-developed architecture to forecast entirely new and previously unseen data. The finalized architecture is identified as a specific type (or version) of neural network model. As described by<ref type="bibr" target="#b30">Ninness et al. (2018)</ref></p><p>, such a model is designed to forecast performance outcomes for new data. That is, the trained model is likely to generalize its learning and make accurate predictions when presented with unseen or previously nonexistent datadata that were completely unknown when the model was being trained.<ref type="bibr" target="#b14">Haykin (2009)</ref> </p><p>describes the network training process as follows:</p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_0"><p>Neurocomputing, 415, https://doi.org/10.1016/j.neucom.2020.07.061</p></note>
+		</body>
+		<back>
+
+			
+			<div type="funding">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Funding: No type of funding or other compensation was provided for conducting any part of this investigation.</p></div>
+			</div>
+
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Data and Software Availability: The archival dataset analyzed and described within this manuscript was retrieved from, and is downloadable to interested researchers at, the Texas Christian University Digital Repository: <ref type="url" target="https://repository.tcu.edu/handle/116099117/56144">https://repository.tcu.edu/handle/116099117/56144</ref> </p><p>Copies of the Python and C# software employed in this study can be downloaded from Behavioral Software Systems: <ref type="url" target="https://www.behavioralsoftwaresystems.com/">https://www.behavioralsoftwaresystems.com</ref> </p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Ethical Approval: All procedures performed with respect to human participants were conducted in accordance with the ethical standards of the institutional research committee and in conformance with the 1964</p><p>Helsinki declaration and all of its subsequent amendments or similar ethical standards.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflict of Interest:</head><p>On behalf of both authors, the corresponding author affirms that there are no conflicts of interest with regard to any aspect of this investigation.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Predicting human behaviour with recurrent neural networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Azkune</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/app8020305</idno>
+		<ptr target="https://doi.org/10.3390/app8020305" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Sciences</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">305</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Developmental trajectories of adaptive behaviors from early childhood to adolescence in a cohort of 152 children with autism spectrum disorders</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Baghdadli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Assouline</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sonié</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pernon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Darrou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Michelon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Picot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Aussilloux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pry</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10803-011-1357-z</idno>
+		<ptr target="https://doi.org/10.1007/s10803-011-1357-z" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Autism and Developmental Disorders</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1314" to="1325" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Gradient-Based Optimization of Hyperparameters</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/089976600300015187</idno>
+		<ptr target="https://doi.org/10.1162/089976600300015187" />
+	</analytic>
+	<monogr>
+		<title level="j">Neural Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1889" to="1900" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Improving the prediction of response to therapy in autism</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Hendren</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.nurt.2010.05.011</idno>
+		<ptr target="https://doi.org/10.1016/j.nurt.2010.05.011" />
+	</analytic>
+	<monogr>
+		<title level="j">Neurotherapeutics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="232" to="240" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Machine learning can predict survival of patients with heart failure from serum creatinine and ejection fraction alone</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chicco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Jurman</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12911-020-1023-5</idno>
+		<ptr target="https://doi.org/10.1186/s12911-020-1023-5" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Medical Informatics and Decision Making</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An assessment of three procedures to teach echoic responding</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Cividini-Motta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Scharrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Ahearn</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40616-016-0069-z</idno>
+		<ptr target="https://doi.org/10.1007/s40616-016-" />
+	</analytic>
+	<monogr>
+		<title level="j">The Analysis of Verbal Behavior</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="41" to="63" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dafoe</surname></persName>
+		</author>
+		<ptr target="https://www.fhi.ox.ac.uk/wp-content/uploads/GovAI-Agenda.pdf" />
+		<title level="m">AI governance: A research agenda</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+		<respStmt>
+			<orgName>University of Oxford</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Artificial intelligence for the measurement of vocal stereotypy</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dufour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Lanovaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Cardinal</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jeab.636</idno>
+		<ptr target="https://doi.org/10.1002/jeab.636" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Experimental Analysis of Behavior</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="368" to="380" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Activation functions in deep learning: A comprehensive survey and benchmark</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Dubey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">B</forename><surname>Chaudhuri</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neucom.2022.06.111</idno>
+		<ptr target="https://doi.org/10.1016/j.neucom.2022.06.111" />
+	</analytic>
+	<monogr>
+		<title level="j">Neurocomputing</title>
+		<imprint>
+			<biblScope unit="volume">503</biblScope>
+			<biblScope unit="page" from="92" to="108" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Early echoic skills assessment</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Esch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The verbal behavior milestones assessment and placement program</title>
+		<editor>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Sundberg</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Concord, CA</addrLine></address></meeting>
+		<imprint>
+			<publisher>AVB Press</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="62" to="63" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">The functional independence of mands and tacts: Has it been demonstrated empirically? The Analysis of Verbal Behavior</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gamba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Goyos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Petursdottir</surname></persName>
+		</author>
+		<ptr target="https://doi.org/10.1007%2Fs40616-014-0026-7" />
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="10" to="38" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">communication intervention for children with autism: A review of treatment efficacy</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Goldstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/a:1020589821992</idno>
+		<ptr target="https://doi.org/10.1023/a:1020589821992" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Autism and Developmental Disorders</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="373" to="396" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">NEURAL Networks and consumer behavior: NEURAL models, logistic regression, and the behavioral perspective model</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Greene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H</forename><surname>Morgan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Foxall</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40614-017-0105-x</idno>
+		<ptr target="https://doi.org/10.1007/s40614-017-0105-x" />
+	</analytic>
+	<monogr>
+		<title level="j">The Behavior Analyst</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="393" to="418" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Neural network design</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Hagan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">B</forename><surname>Demuth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Beale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>De Jesús</surname></persName>
+		</author>
+		<ptr target="https://hagan.okstate.edu/NNDesign.pdf" />
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>PWS Publishing Company</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Neural network and learning machines</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Haykin</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10278-012-9556-5</idno>
+		<ptr target="https://doi.org/10.1007/s10278-012-9556-5" />
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>Prentice Hall</publisher>
+		</imprint>
+	</monogr>
+	<note>3rd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Tutorial: Teaching verbal behavior to children with ASD</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">T</forename><surname>Ingvarsson</surname></persName>
+		</author>
+		<ptr target="https://files.eric.ed.gov/fulltext/EJ1126669.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">International Electronic Journal of Elementary Education</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="433" to="450" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Examining Sigmoid vs ReLu Activation Functions in Deep Learning</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Rebman</surname></persName>
+		</author>
+		<idno type="DOI">10.1201/9781003202240-68</idno>
+		<ptr target="https://doi.org/10.1201/9781003202240-68" />
+	</analytic>
+	<monogr>
+		<title level="j">Interdisciplinary Research in Technology and Management</title>
+		<imprint>
+			<biblScope unit="page" from="432" to="437" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Finding Optimal Model Parameters by Discrete Grid Search</title>
+		<author>
+			<persName><forename type="first">Á</forename><forename type="middle">B</forename><surname>Jiménez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Lázaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Dorronsoro</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-540-74972-117</idno>
+		<ptr target="https://doi.org/10.1007/978-3-540-74972-117" />
+	</analytic>
+	<monogr>
+		<title level="j">Innovations in Hybrid Intelligent Systems</title>
+		<imprint>
+			<biblScope unit="page" from="120" to="127" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Kissinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Huttenlocher</surname></persName>
+		</author>
+		<title level="m">The age of AI: And our human future</title>
+		<imprint>
+			<publisher>Hachette UK</publisher>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Machine learningbased ABA treatment recommendation and personalization for autism spectrum disorder: An exploratory study</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kohli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Kar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bangalore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename></persName>
+		</author>
+		<idno type="DOI">10.1186/s40708-022-00164-6</idno>
+		<ptr target="https://doi.org/10.1186/s40708-022-00164-6" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Informatics</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">16</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Intensity and learning outcomes in the treatment of children with autism spectrum disorder</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Linstead</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Dixon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>French</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Granpeesheh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>German</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Stevens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tarbox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kornack</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0145445516667059</idno>
+		<ptr target="https://doi.org/10.1177/0145445516667059" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior Modification</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="229" to="252" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Stimulus equivalence as a function of training protocol in a connectionist network</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Lyddy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Barnes-Holmes</surname></persName>
+		</author>
+		<idno type="DOI">10.1037/h0100204</idno>
+		<ptr target="https://doi.org/10.1037/h0100204" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Speech &amp; Language Pathology &amp; Applied Behavior Analysis</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="14" to="24" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Machine learning determination of applied behavioral analysis treatment plan type</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Maharjan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Garikipati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Dinenno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ciobanu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Barnes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Browning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Decurzio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Das</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s40708-023-00186-8</idno>
+		<ptr target="https://doi.org/10.1186/s40708-023-00186-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Informatics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The VB-MAPP Level 1 Milestones Assessment profiles of children with autism spectrum disorder</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mason</surname></persName>
+		</author>
+		<idno type="DOI">10.18776/tcu/data/56144</idno>
+		<ptr target="https://doi.org/10.18776/tcu/data/56144" />
+	</analytic>
+	<monogr>
+		<title level="j">Texas Christian University Library Data Management</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">The verbal behavior stimulus control ratio equation: A quantification of language</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Mason</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Andrews</surname></persName>
+		</author>
+		<ptr target="https://doi.org/10.1007%2Fs40614-018-0141-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Behavior Science</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="323" to="343" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Use of Gilliam Asperger&apos;s Disorder Scale in differentiating high and low functioning autism and ADHD</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Mayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Calhoun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Murray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Morrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cothren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Purichia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K L</forename><surname>Yurich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Bouder</surname></persName>
+		</author>
+		<idno type="DOI">10.2466/04.10.15.pr0.108.1.3-13</idno>
+		<ptr target="https://doi.org/10.2466/04.10.15.pr0.108.1.3-13" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Reports</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="13" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Binary Classification Using a scikit MLPClassifier Neural Network</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mccaffrey</surname></persName>
+		</author>
+		<ptr target="https://jamesmccaffrey.wordpress.com/2023/05/05/binary-classification-using-a-scikit-mlpclassifier-neural-network/" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The multiple control of verbal behavior</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Palmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Sundberg</surname></persName>
+		</author>
+		<ptr target="https://doi.org/10.1007%2FBF03393089" />
+	</analytic>
+	<monogr>
+		<title level="j">The Analysis of Verbal Behavior</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="22" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Nielsen</surname></persName>
+		</author>
+		<title level="m">Neural networks and deep learning</title>
+		<meeting><address><addrLine>San Francisco, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Determination Press</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">25</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Behavioral and biological neural network analyses: A common pathway toward pattern recognition and prediction</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lauter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Coffee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Clary</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rumph</surname></persName>
+		</author>
+		<idno type="DOI">10.5210/bsi.v22i0.4450</idno>
+		<ptr target="https://doi.org/10.5210/bsi.v22i0.4450" />
+	</analytic>
+	<monogr>
+		<title level="j">The Psychological Record</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="579" to="598" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">The emergence of stimulus relations: Human and computer learning</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rumph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lawson</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40614-017-0125-6</idno>
+		<ptr target="https://doi.org/10.1007/s40614-017-0125-6" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspective on Behavioral Science</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="121" to="154" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Identifying accurate and inaccurate stimulus relations: Human and computer learning</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Rehfeldt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ninness</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40732-019-00337-6</idno>
+		<ptr target="https://doi.org/10.1007/s40732-019-00337-6" />
+	</analytic>
+	<monogr>
+		<title level="j">The Psychological Record</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="333" to="356" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Small Group Statistics: A Monte Carlo Comparison of Parametric and Randomization Tests</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Newton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Saxon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rumph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bradfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Harrison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Vasquez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<idno type="DOI">10.5210/bsi.v12i1.79</idno>
+		<ptr target="https://doi.org/10.5210/bsi.v12i1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior and Social Issues</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="53" to="63" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Multivariate Randomization Tests for Small-N Behavioral Research: A Web-Based Application</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rumph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Vasquez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bradfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<idno type="DOI">10.5210/bsi.v12i1.80</idno>
+		<ptr target="https://doi.org/10.5210/bsi.v12i1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior and Social Issues</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="64" to="74" />
+			<date type="published" when="2002">2002b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Emergent virtual analytics: Modeling contextual control of derived stimulus relations</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s42822-020-00032-0</idno>
+		<ptr target="https://doi.org/10.1007/s42822-020-00032-0" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior and Social Issues</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="119" to="137" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Emergent virtual analytics: Artificial intelligence and human-computer interactions</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s42822-020-00031-1</idno>
+		<ptr target="https://doi.org/10.1007/s42822-020-00031-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior and Social Issues</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="100" to="118" />
+			<date type="published" when="2020">2020b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Predicting heuristic decisions in child welfare: A neural network exploration</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Yelick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Ninness</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Cordova</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s42822-021-00047-1</idno>
+		<ptr target="https://doi.org/10.1007/s42822-021-00047-1" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavior and Social Issues</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="194" to="208" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">The role of atomic repertoires in complex behavior</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Palmer</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/bf03392266</idno>
+		<ptr target="https://doi.org/10.1007/bf03392266" />
+	</analytic>
+	<monogr>
+		<title level="j">The Behavior Analyst</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="59" to="73" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Artificial neural network approach to predicting engine-out emissions and performance parameters of a turbo charged diesel engine</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Özener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yüksek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Özkan</surname></persName>
+		</author>
+		<idno type="DOI">10.2298/tsci120321220o</idno>
+		<ptr target="https://doi.org/10.2298/tsci120321220o" />
+	</analytic>
+	<monogr>
+		<title level="j">Thermal Science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="153" to="166" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Hyperparameters and tuning strategies for random forest</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Probst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Boulesteix</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/widm.1301</idno>
+		<ptr target="https://doi.org/10.1002/widm.1301" />
+	</analytic>
+	<monogr>
+		<title level="j">WIREs Data Mining and Knowledge Discovery</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Verbal behavior in young children with autism spectrum disorders at the onset of an early behavioral intervention program</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rivard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Forget</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF03395796</idno>
+		<ptr target="https://doi.org/10.1007/BF03395796" />
+	</analytic>
+	<monogr>
+		<title level="j">The Psychological Record</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="165" to="186" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">The proportion of minimally verbal children with autism spectrum disorder in a community-based early intervention programme</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Trembath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Keen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Paynter</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/jir.12284</idno>
+		<ptr target="https://doi.org/10.1111/jir.12284" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Intellectual Disability Research</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="464" to="477" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">An open-source relational network derivation script in R for modeling and visualizing complex behavior for scientists and practitioners</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Hayes</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2022.%20914485</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2022.914485" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Neural network verification</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Methods and Procedures for the Verification and Validation of Artificial Neural Networks</title>
+		<editor>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Taylor</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Applied multivariate statistics for the social sciences</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Stevens</surname></persName>
+		</author>
+		<idno type="DOI">10.4324/9781410604491</idno>
+		<ptr target="https://doi.org/10.4324/9781410604491" />
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Psychology Press</publisher>
+		</imprint>
+	</monogr>
+	<note>4 th ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tegmark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Life</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">0</biblScope>
+			<date type="published" when="2018">2018</date>
+			<publisher>Penguin Books</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">A neurocomputational approach to trained and transitive relations in equivalence classes</title>
+		<author>
+			<persName><forename type="first">Á</forename><forename type="middle">E</forename><surname>Tovar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Westermann</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyg.2017.01848</idno>
+		<ptr target="https://doi.org/10.3389/fpsyg.2017.01848" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Psychology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="1" to="15" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Tutorial: Applying Machine Learning in Behavioral Research</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Turgeon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Lanovaz</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40614-020-00270-y</idno>
+		<ptr target="https://doi.org/10.1007/s40614-020-00270-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Perspectives on Behavior Science</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="697" to="723" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Ontologybased deep learning for human behavior prediction with explanations in health social networks</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Phan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Piniewski</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ins.2016.08.038</idno>
+		<ptr target="https://doi.org/10.1016/j.ins.2016.08.038" />
+	</analytic>
+	<monogr>
+		<title level="j">Information Sciences</title>
+		<imprint>
+			<biblScope unit="volume">384</biblScope>
+			<biblScope unit="page" from="298" to="313" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Stimulus overselectivity four decades later: A review of the literature and its implications for current research in autism spectrum disorder</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">O</forename><surname>Ploog</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10803-010-0990-2</idno>
+		<ptr target="https://doi.org/10.1007/s10803-010-0990-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Autism and Developmental Disorders</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1332" to="1349" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Brief report: Machine learning for estimating prognosis of children with autism receiving early behavioral intervention-A proof of concept</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Préfontaine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Lanovaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rivard</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10803-022-05641-9</idno>
+		<ptr target="https://doi.org/10.1007/s10803-022-05641-9" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Autism and Developmental Disorders</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="6" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Intensive behavioral treatment for children with autism: Four-year outcome and predictors</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">O</forename><surname>Sallows</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">D</forename><surname>Graupner</surname></persName>
+		</author>
+		<idno type="DOI">10.1352/0895-8017(2005)110%5B417:ibtfcw%5D2.0.co;2</idno>
+		<ptr target="https://doi.org/10.1352/0895-8017(2005)110[417:ibtfcw]2.0.co" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal on Mental Retardation</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="417" to="438" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">The verbal behavior milestones assessment and placement program: The VB-MAPP</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Sundberg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>AVB Press</publisher>
+			<pubPlace>Concord, CA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Problematic but predictive: Individual differences in children with autism spectrum disorders</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Trembath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Vivanti</surname></persName>
+		</author>
+		<idno type="DOI">10.3109/17549507.2013.859300</idno>
+		<ptr target="https://doi.org/10.3109/17549507.2013.859300" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Speech-Language Pathology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="57" to="60" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Automatic tuning of hyperparameters using Bayesian optimization</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Victoria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Maragatham</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s12530-020-09345-2</idno>
+		<ptr target="https://doi.org/10.1007/s12530-020-09345-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Evolving Systems</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="217" to="223" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Deep neural networks for modeling visual perceptual learning</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Wenliang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Seitz</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/jneurosci.%201620-17.2018</idno>
+		<ptr target="https://doi.org/10.1523/jneurosci.1620-17.2018" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="6028" to="6044" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Performance evaluation of classification algorithms by k-fold and leave-one-out cross validation</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">T</forename><surname>Wong</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.patcog.2015.03.009</idno>
+		<ptr target="https://doi.org/10.1016/j.patcog.2015.03.009" />
+	</analytic>
+	<monogr>
+		<title level="j">Pattern Recognition</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="2839" to="2846" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">On hyperparameter optimization of machine learning algorithms: Theory and practice</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shami</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

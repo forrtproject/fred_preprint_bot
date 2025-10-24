@@ -18,7 +18,7 @@ app.conf.update(
 
 app.conf.task_routes = {
     "osf_sync.tasks.download_single_pdf": {"queue": "pdf"},
-}
+}   
 
 app.conf.beat_schedule.update({
     "queue-pdf-downloads-daily": {

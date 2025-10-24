@@ -8,7 +8,7 @@ Produces a structured JSON with one entry per preprint containing:
   - List of all references (from div[@type="references"])
 
 Usage:
-    python3 scripts/extract_preprints_and_references.py --data-dir data/preprints --output data/preprints_with_references.json --verbose
+    python3 scripts/augmentation/extract_preprints_and_references.py --data-dir data/preprints --output data/preprints_with_references.json --verbose
 
 Output structure:
 {

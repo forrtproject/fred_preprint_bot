@@ -1,10 +1,10 @@
 import copy
 import json
 import requests
-from thefuzz import fuzz #TODO Add to requirements.txt
+from thefuzz import fuzz
 import time
 
-# TODO - Multiple steps
+# TODO
 # 1. Get list of papers with the same title - with year, journal name, author name fields also selected
 #  1.1. (Done) Case agnostic - already by default on openalex
 #  1.2. TODO Some strange errors, "Invalid" reference, looks like it's splitting on punctuation?
@@ -12,11 +12,10 @@ import time
 # 3. (Done) Fuzzy search by journal name (for abbreviations)
 # 4. TODO Fuzzy search on authors (for initials and name order) - Implement yourself, as Levenshtein alone won't work
 
-#TODO Test OpenAlex accuracy by querying on objects that have a DOI in input - after fixing querying problems
-
 # TODO Set a threshold via experimentation
 FUZZY_MATCH_THRESHOLD = 75
 
+#TODO Implement test mode: Test OpenAlex accuracy by querying on objects that have a DOI in input - after fixing querying problems
 test_mode = False
 
 # Populate a dictionary with values from the original e.g., if no match was found on OpenAlex
@@ -71,7 +70,7 @@ def parse_query_results(query_output):
         return []
 
 def match_title_and_year(title,year):
-    url = 'https://api.openalex.org/works?filter=title.search:"{title}"&mailto=nid@dmi.dk'.format(title=title, year=year) #TODO Generic email
+    url = 'https://api.openalex.org/works?filter=title.search:"{title}"&mailto=cruzersoulthrender@gmail.com'.format(title=title, year=year) #TODO Generic email
     #print(url)
     #TODO Paging (returns max 25 results otherwise)
     response = requests.get(url)
@@ -137,72 +136,40 @@ def fuzzy_match_authors(journal_matches, author_list):
 
 #TODO Main method
 
-fname = '../data/preprints_with_references.json' #TODO better folder traversal
-fout = '../data/openalex_doi_matched_preprints_with_references.json'
+fname = 'data/first_preprint_references_without_doi_crossref.json'
+fout = 'data/openalex_doi_matched_preprints_with_references.json'
 
 with open(fname, 'r') as f:
-    data = json.load(f)
+    reflist = json.load(f)
 
 parsed_data = []
 
 ctr = 0
 
-for doc in data:
-    print(doc['preprint']['title'])
-    reflist = doc['references']
-    preprint_data = copy.deepcopy(doc['preprint'])
-    preprint_data['file_path'] = doc['file_path']
-    
-    final_data = dict()
 
-    preprint_key_list = ['doi', 'title', 'authors', 'journal', 'published_date']
-    references_key_list = ['ref_id', 'doi', 'title', 'authors', 'journal', 'year']
+references_key_list = ['ref_id', 'doi', 'title', 'authors', 'journal', 'year']
 
-    if (preprint_data['has_doi'] == False) or (preprint_data['doi'] == 'null'):
-        preprint_match = match_title_and_year(preprint_data['title'], preprint_data['published_date'])
-        if len(preprint_match) == 0:
-            final_data = default_copy(preprint_data, preprint_key_list)
-        else:
-            final_data = copy.deepcopy(preprint_match[0]) # TODO Multiple results from OpenAlex?
+ref_doi = []
+for ref in reflist:
+    tm = dict()
+    tm['ref_id'] = ref['ref_id']
+    if ref['has_doi']:
+        if not test_mode:
+            tm = default_copy(ref, references_key_list)
     else:
-        if not test_mode: # If we are not testing, then do not waste time querying OpenAlex
-            final_data = default_copy(preprint_data, preprint_key_list)
-
-    ref_doi = []
-    for ref in reflist:
-        tm = dict()
-        tm['ref_id'] = ref['ref_id']
-        if ref['has_doi']:
-            if not test_mode:
-                tm = default_copy(ref, references_key_list)
+        title_matches = match_title_and_year(ref['title'], ref['year'])
+        #print(ref['title'], len(title_matches))
+        if len(title_matches) > 0: #TODO Better selection (e.g. with fuzzy matching) than just first result with doi
+            tm0 = title_matches[0]
+            if tm0['doi'] is None:
+                for pm in title_matches[1:]:
+                    if pm['doi'] is not None:
+                        tm0 = pm
+            for key in tm0:
+                tm[key] = tm0[key]
         else:
-            title_matches = match_title_and_year(ref['title'], ref['year'])
-            #print(ref['title'], len(title_matches))
-            if len(title_matches) > 0:
-                tm0 = title_matches[0]
-                if tm0['doi'] is None:
-                    for pm in title_matches[1:]:
-                        if pm['doi'] is not None:
-                            tm0 = pm
-                for key in tm0:
-                    tm[key] = tm0[key]
-            else:
-                tm = default_copy(ref, references_key_list)
-        ref_doi.append(tm)
-
-    #print(type(final_data))
-    final_data['references'] = ref_doi
-    parsed_data.append(final_data)
-    ctr = ctr + 1
+            tm = default_copy(ref, references_key_list)
+    ref_doi.append(tm)
 
 with open(fout, 'w') as f:
     json.dump(parsed_data, f)
-
-
-#title_matches = match_title_and_year("cancer", 2021) # TODO read from json
-#year = 2021
-#print(title_matches, len(title_matches))
-
-#if len(title_matches) > 1:
-#    year_matches = match_year(title_matches, year)
-#    print(year_matches)
