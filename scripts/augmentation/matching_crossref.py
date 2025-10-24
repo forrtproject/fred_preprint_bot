@@ -7,18 +7,6 @@ from thefuzz import fuzz
 # =============================================================================
 # SETTINGS
 # =============================================================================
-<<<<<<< HEAD
-INPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\preprints_with_references.json"
-OUTPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_15_preprints_with_doi_crossref.json"
-CSV_REPORT = r"C:\Users\paspe\fred_preprint_bot\data\crossref_comparison_report.csv"
-UNMATCHED_JSON = r"C:\Users\paspe\fred_preprint_bot\data\unmatched_references_crossref.json"
-UNMATCHED_CSV = r"C:\Users\paspe\fred_preprint_bot\data\unmatched_references_crossref.csv"
-
-CROSSREF_URL = "https://api.crossref.org/works"
-MAILTO = "pasquale.pellegrini@bih-charite.de"
-SLEEP_SECONDS = 0.7
-YEAR_TOLERANCE = 1
-=======
 # Define file paths, Crossref endpoint, and matching parameters.
 
 INPUT_FILE = "data/preprints_with_references.json"
@@ -30,7 +18,6 @@ CROSSREF_URL = "https://api.crossref.org/works"
 MAILTO = "cruzersoulthrender@gmail.com"
 SLEEP_SECONDS = 0.7  # pause between queries (polite use)
 YEAR_TOLERANCE = 1   # enforce ±1 year difference
->>>>>>> 685d3f0c7dc98bed97e02f6180184cd1b7883022
 # =============================================================================
 
 
