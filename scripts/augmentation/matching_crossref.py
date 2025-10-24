@@ -11,6 +11,7 @@ from thefuzz import fuzz
 INPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\preprints_with_references.json"
 OUTPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_with_doi_crossref.json"
 CSV_REPORT = r"C:\Users\paspe\fred_preprint_bot\data\crossref_comparison_report.csv"
+UNMATCHED_JSON = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_without_doi_crossref.json"
 
 CROSSREF_URL = "https://api.crossref.org/works"
 MAILTO = "pasquale.pellegrini@bih-charite.de"
@@ -95,7 +96,7 @@ def best_crossref_match(entry):
             }
 
     # Reject weak title matches
-    if not best_item or scores["title"] < 80:
+    if not best_item or scores.get("title", 0) < 80:
         return None
 
     # Assign confidence levels
@@ -138,6 +139,7 @@ def main():
     query_times = []
     conf_stats = {"high": 0, "medium": 0, "low": 0}
     csv_rows = []
+    unmatched_refs = []  # <-- collect refs that couldn't be matched / no DOI added
 
     # =============================================================================
     # SEARCH CROSSREF FOR MISSING DOIs
@@ -187,6 +189,9 @@ def main():
             })
         else:
             print(f"❌  No match for: {title[:80]} ({elapsed:.2f}s)")
+            # Mark and collect as unmatched (keep original fields for later review)
+            ref.setdefault("doi_match_status", "not_found")
+            unmatched_refs.append(ref)
 
         sleep(SLEEP_SECONDS)
 
@@ -223,6 +228,13 @@ def main():
             writer.writeheader()
             writer.writerows(csv_rows)
         print(f"📑  Comparison report saved to: {CSV_REPORT}")
+
+    # =============================================================================
+    # SAVE UNMATCHED REFERENCES (NO DOI ADDED)
+    # =============================================================================
+    with open(UNMATCHED_JSON, "w", encoding="utf-8") as f:
+        json.dump(unmatched_refs, f, indent=2, ensure_ascii=False)
+    print(f"🚫  Unmatched references (no DOI) saved to: {UNMATCHED_JSON}  —  Count: {len(unmatched_refs)}")
 
 
 # =============================================================================
