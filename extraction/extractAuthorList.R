@@ -357,4 +357,4 @@ for (i in 1:nrow(df.authors)) {
 tictoc::toc()
 
 # save this extended author list
-write_csv(df.authors, "authorList_ext.csv")
+write_csv(df.authors %>% mutate(affiliation.orcid = as.character(affiliation.orcid)), "authorList_ext.csv")
