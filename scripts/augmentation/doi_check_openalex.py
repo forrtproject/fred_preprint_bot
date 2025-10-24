@@ -135,6 +135,8 @@ def fuzzy_match_authors(journal_matches, author_list):
                 author_matches.append(obj_dict)
     return author_matches
 
+#TODO Main method
+
 fname = '../data/preprints_with_references.json' #TODO better folder traversal
 fout = '../data/openalex_doi_matched_preprints_with_references.json'
 
