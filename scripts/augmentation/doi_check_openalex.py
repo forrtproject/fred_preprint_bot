@@ -71,7 +71,7 @@ def parse_query_results(query_output):
         return []
 
 def match_title_and_year(title,year):
-    url = 'https://api.openalex.org/works?filter=title.search:"{title}"&mailto=nid@dmi.dk'.format(title=title, year=year) #TODO Generic email
+    url = 'https://api.openalex.org/works?filter=title.search:"{title}"&mailto=cruzersoulthrender@gmail.com'.format(title=title, year=year) #TODO Generic email
     #print(url)
     #TODO Paging (returns max 25 results otherwise)
     response = requests.get(url)

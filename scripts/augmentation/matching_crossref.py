@@ -8,13 +8,14 @@ from thefuzz import fuzz
 # SETTINGS
 # =============================================================================
 # Define file paths, Crossref endpoint, and matching parameters.
-INPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\preprints_with_references.json"
-OUTPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_with_doi_crossref.json"
-CSV_REPORT = r"C:\Users\paspe\fred_preprint_bot\data\crossref_comparison_report.csv"
-UNMATCHED_JSON = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_without_doi_crossref.json"
+
+INPUT_FILE = "data/preprints_with_references.json"
+OUTPUT_FILE = "data/first_preprint_references_with_doi_crossref.json"
+CSV_REPORT = "data/crossref_comparison_report.csv"
+UNMATCHED_JSON = "data/first_preprint_references_without_doi_crossref.json"
 
 CROSSREF_URL = "https://api.crossref.org/works"
-MAILTO = "pasquale.pellegrini@bih-charite.de"
+MAILTO = "cruzersoulthrender@gmail.com"
 SLEEP_SECONDS = 0.7  # pause between queries (polite use)
 YEAR_TOLERANCE = 1   # enforce ±1 year difference
 # =============================================================================
