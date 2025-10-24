@@ -13,6 +13,7 @@ INPUT_FILE = "data/preprints_with_references.json"
 OUTPUT_FILE = "data/first_preprint_references_with_doi_crossref.json"
 CSV_REPORT = "data/crossref_comparison_report.csv"
 UNMATCHED_JSON = "data/first_preprint_references_without_doi_crossref.json"
+UNMATCHED_CSV = "data/first_preprint_references_without_doi_crossref.csv"
 
 CROSSREF_URL = "https://api.crossref.org/works"
 MAILTO = "cruzersoulthrender@gmail.com"
@@ -38,7 +39,7 @@ def query_crossref(entry):
         r.raise_for_status()
         return r.json().get("message", {}).get("items", [])
     except Exception as e:
-        print(f"⚠️  Query failed for '{entry.get('title','')[:60]}': {e}")
+        print(f"⚠️  Query failed for '{entry.get('title', '')[:60]}': {e}")
         return []
 
 
@@ -68,13 +69,15 @@ def best_crossref_match(entry):
         title_score = fuzz.token_set_ratio(input_title, cross_title)
 
         cross_authors = [
-            f"{a.get('given','')} {a.get('family','')}".strip().lower()
+            f"{a.get('given', '')} {a.get('family', '')}".strip().lower()
             for a in item.get("author", [])
         ] if "author" in item else []
-        author_score = fuzz.token_set_ratio(" ".join(input_authors), " ".join(cross_authors))
+        author_score = fuzz.token_set_ratio(
+            " ".join(input_authors), " ".join(cross_authors))
 
         cross_journal = (item.get("container-title", [""])[0] or "").lower()
-        journal_score = fuzz.token_set_ratio(input_journal, cross_journal) if input_journal else 0
+        journal_score = fuzz.token_set_ratio(
+            input_journal, cross_journal) if input_journal else 0
 
         combined = 0.6 * title_score + 0.3 * author_score + 0.1 * journal_score
 
@@ -126,7 +129,7 @@ def main():
         refs = preprint.get("references", [])
         print("------------------------------------------------------------")
         print(f"📘 Preprint {i}/{len(subset)} — {len(refs)} references")
-        print(f"Title: {preprint.get('title','[Untitled]')}")
+        print(f"Title: {preprint.get('title', '[Untitled]')}")
         print("------------------------------------------------------------\n")
 
         total_refs = len(refs)
@@ -156,7 +159,8 @@ def main():
                 new_dois_found += 1
                 conf_stats[match["confidence"]] += 1
 
-                print(f"🆕  [{match['confidence'].upper()}] {title[:60]} → {match['doi']} ({elapsed:.2f}s)")
+                print(
+                    f"🆕  [{match['confidence'].upper()}] {title[:60]} → {match['doi']} ({elapsed:.2f}s)")
 
                 csv_rows.append({
                     "preprint_index": i,
@@ -169,7 +173,7 @@ def main():
                     "journal_crossref": match["journal_crossref"],
                     "authors_input": "; ".join(ref.get("authors", [])),
                     "authors_crossref": "; ".join(
-                        [f"{a.get('given','')} {a.get('family','')}".strip()
+                        [f"{a.get('given', '')} {a.get('family', '')}".strip()
                          for a in match.get("authors_crossref", [])]
                     ),
                     "title_score": match["scores"]["title"],
@@ -194,13 +198,15 @@ def main():
         refs_with_doi_after = sum(1 for r in refs if r.get("doi"))
         processed_preprints.append(preprint)
 
-        avg_query_time = sum(query_times) / len(query_times) if query_times else 0
+        avg_query_time = sum(query_times) / \
+            len(query_times) if query_times else 0
         print("\n------------------------------------------------------------")
         print(f"Preprint {i} summary:")
         print(f"DOIs before: {refs_with_doi_before}")
         print(f"New DOIs added: {new_dois_found}")
         print(f"Final DOIs: {refs_with_doi_after}")
-        print(f"Confidence: High={conf_stats['high']} | Medium={conf_stats['medium']} | Low={conf_stats['low']}")
+        print(
+            f"Confidence: High={conf_stats['high']} | Medium={conf_stats['medium']} | Low={conf_stats['low']}")
         print(f"Avg query time: {avg_query_time:.2f}s\n")
 
     elapsed_total = time() - start_time
@@ -229,7 +235,8 @@ def main():
 
     if unmatched_refs:
         with open(UNMATCHED_CSV, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=list(unmatched_refs[0].keys()))
+            writer = csv.DictWriter(
+                f, fieldnames=list(unmatched_refs[0].keys()))
             writer.writeheader()
             writer.writerows(unmatched_refs)
     print(f"🚫  Unmatched refs saved to: {UNMATCHED_JSON} and {UNMATCHED_CSV}")
