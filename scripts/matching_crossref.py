@@ -1,33 +1,32 @@
 import json
+import csv
 import requests
-from time import sleep
+from time import sleep, time
 from thefuzz import fuzz
 
 # =============================================================================
 # SETTINGS
 # =============================================================================
-# Input and output file paths
+# Define file paths, Crossref endpoint, and matching parameters.
 INPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\preprints_with_references.json"
-OUTPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_with_doi.json"
+OUTPUT_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_with_doi_crossref.json"
+CSV_REPORT = r"C:\Users\paspe\fred_preprint_bot\data\crossref_comparison_report.csv"
 
-# Crossref API settings
 CROSSREF_URL = "https://api.crossref.org/works"
-MAILTO = "pasquale.pellegrini@bih-charite.de"  # included for polite API identification
-
-# Query behavior
-SLEEP_SECONDS = 1  # delay between queries to respect Crossref rate limits
+MAILTO = "pasquale.pellegrini@bih-charite.de"
+SLEEP_SECONDS = 0.7  # pause between queries (polite use)
+YEAR_TOLERANCE = 1   # enforce ±1 year difference
 # =============================================================================
 
 
-# -----------------------------------------------------------------------------
-# Function: query_crossref
-# -----------------------------------------------------------------------------
-# Builds and sends a request to the Crossref API for one reference.
-# Allows a ±1 year window for publication year mismatch (online vs print date).
 def query_crossref(entry):
+    """
+    Query Crossref by title and year, within a ±1 year window.
+    Crossref will prioritize but not strictly enforce the date filter.
+    """
     params = {
         "query.title": entry.get("title", ""),
-        "rows": 5,
+        "rows": 8,
         "mailto": MAILTO
     }
 
@@ -36,52 +35,53 @@ def query_crossref(entry):
         params["filter"] = f"from-pub-date:{year-1}-01-01,until-pub-date:{year+1}-12-31"
 
     try:
-        response = requests.get(CROSSREF_URL, params=params, timeout=10)
-        response.raise_for_status()
-        return response.json().get("message", {}).get("items", [])
+        r = requests.get(CROSSREF_URL, params=params, timeout=10)
+        r.raise_for_status()
+        return r.json().get("message", {}).get("items", [])
     except Exception as e:
-        print(f"⚠️  [Warning] Crossref query failed for '{entry.get('title','')[:60]}': {e}")
+        print(f"⚠️  Query failed for '{entry.get('title','')[:60]}': {e}")
         return []
 
 
-# -----------------------------------------------------------------------------
-# Function: best_crossref_match
-# -----------------------------------------------------------------------------
-# Among several returned Crossref items, finds the best match based on
-# fuzzy similarity between your metadata (title, authors, journal)
-# and the Crossref record.
 def best_crossref_match(entry):
+    """
+    Identify the best Crossref match for a reference using fuzzy matching
+    on title, author, and journal. Enforces a strict ±YEAR_TOLERANCE filter.
+    """
     items = query_crossref(entry)
     if not items:
         return None
 
-    # Input fields for comparison
     input_title = (entry.get("title") or "").lower()
     input_authors = [a.lower() for a in entry.get("authors", [])]
     input_journal = (entry.get("journal") or "").lower()
+    input_year = entry.get("year")
 
-    best_item = None
-    best_score = 0
-    scores = {}
+    best_item, best_score, scores = None, 0, {}
 
-    # Loop through Crossref candidate items
     for item in items:
-        # Compare titles
+        # --- Extract publication year and enforce tolerance ---
+        cross_year = item.get("issued", {}).get("date-parts", [[None]])[0][0]
+        if input_year and cross_year:
+            try:
+                if abs(int(cross_year) - int(input_year)) > YEAR_TOLERANCE:
+                    continue  # skip if outside allowed year difference
+            except Exception:
+                pass
+
+        # --- Fuzzy match title, authors, and journal ---
         cross_title = (item.get("title", [""])[0] or "").lower()
         title_score = fuzz.token_set_ratio(input_title, cross_title)
 
-        # Compare authors
         cross_authors = [
             f"{a.get('given','')} {a.get('family','')}".strip().lower()
             for a in item.get("author", [])
         ] if "author" in item else []
         author_score = fuzz.token_set_ratio(" ".join(input_authors), " ".join(cross_authors))
 
-        # Compare journals
         cross_journal = (item.get("container-title", [""])[0] or "").lower()
         journal_score = fuzz.token_set_ratio(input_journal, cross_journal) if input_journal else 0
 
-        # Weighted combined score
         combined = 0.6 * title_score + 0.3 * author_score + 0.1 * journal_score
 
         if combined > best_score:
@@ -94,106 +94,139 @@ def best_crossref_match(entry):
                 "combined": combined
             }
 
-    # Only accept confident matches
-    if best_item and best_score > 70:
-        return {
-            "doi": best_item.get("DOI"),
-            "title_crossref": best_item.get("title", [None])[0],
-            "year_crossref": best_item.get("issued", {}).get("date-parts", [[None]])[0][0],
-            "journal_crossref": best_item.get("container-title", [None])[0],
-            "scores": scores
-        }
+    # Reject weak title matches
+    if not best_item or scores["title"] < 80:
+        return None
 
-    return None
+    # Assign confidence levels
+    conf = (
+        "high" if scores["combined"] >= 85
+        else "medium" if scores["combined"] >= 75
+        else "low"
+    )
+
+    return {
+        "doi": best_item.get("DOI"),
+        "title_crossref": best_item.get("title", [None])[0],
+        "year_crossref": best_item.get("issued", {}).get("date-parts", [[None]])[0][0],
+        "journal_crossref": best_item.get("container-title", [None])[0],
+        "authors_crossref": best_item.get("author", []),
+        "scores": scores,
+        "confidence": conf
+    }
 
 
-# -----------------------------------------------------------------------------
-# Function: main
-# -----------------------------------------------------------------------------
-# Main execution flow:
-# 1. Loads your JSON file.
-# 2. Takes only the first preprint and its references.
-# 3. For each reference, searches Crossref.
-# 4. Adds missing DOIs and logs results.
 def main():
-    # --- Load input file ---
+    """Main process: load data, query Crossref, enrich references, and save results."""
+    start_time = time()
+
+    # --- Load input JSON ---
     with open(INPUT_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    if not data:
-        print("No preprints found in the input file.")
-        return
-
     first_preprint = data[0]
     refs = first_preprint.get("references", [])
+
     print("------------------------------------------------------------")
     print(f"📘 Processing {len(refs)} references from the first preprint:")
     print(f"Title: {first_preprint.get('title','[Untitled]')}")
     print("------------------------------------------------------------\n")
 
-    # --- Initialize counters ---
     total_refs = len(refs)
     refs_with_doi_before = sum(1 for r in refs if r.get("doi"))
     new_dois_found = 0
-    doi_mismatch = 0
+    query_times = []
+    conf_stats = {"high": 0, "medium": 0, "low": 0}
+    csv_rows = []
 
-    # --- Process each reference ---
+    # =============================================================================
+    # SEARCH CROSSREF FOR MISSING DOIs
+    # =============================================================================
     for ref in refs:
+        if ref.get("doi"):
+            continue  # skip already-identified DOIs
+
         title = (ref.get("title") or "").strip()
         if not title:
-            print("⚪  Skipped reference with no title.")
             continue
 
-        print(f"🔍  Searching Crossref for: {title[:80]}")
+        t0 = time()
         match = best_crossref_match(ref)
+        elapsed = time() - t0
+        query_times.append(elapsed)
 
         if match:
-            existing_doi = ref.get("doi")
-            doi_cross = match["doi"]
-
-            if existing_doi:
-                if existing_doi.lower() != doi_cross.lower():
-                    doi_mismatch += 1
-                    ref["doi_crossref"] = doi_cross
-                    ref["doi_match_status"] = "mismatch"
-                    print(f"⚠️   DOI mismatch: existing {existing_doi} vs found {doi_cross}")
-                else:
-                    ref["doi_match_status"] = "match"
-                    print(f"✔️   DOI confirmed: {doi_cross}")
-            else:
-                ref["doi"] = doi_cross
-                ref["doi_match_status"] = "added"
-                new_dois_found += 1
-                print(f"🆕  Added DOI: {doi_cross}")
-
+            # Update reference metadata
+            ref["doi"] = match["doi"]
+            ref["doi_confidence"] = match["confidence"]
+            ref["doi_match_status"] = "added"
             ref["match_scores"] = match["scores"]
-            ref["crossref_title"] = match["title_crossref"]
-            ref["crossref_year"] = match["year_crossref"]
-            ref["crossref_journal"] = match["journal_crossref"]
+            new_dois_found += 1
+            conf_stats[match["confidence"]] += 1
+
+            print(f"🆕  [{match['confidence'].upper()}] {title[:60]} → {match['doi']} ({elapsed:.2f}s)")
+
+            csv_rows.append({
+                "title_input": title,
+                "title_crossref": match["title_crossref"],
+                "doi_crossref": match["doi"],
+                "year_input": ref.get("year"),
+                "year_crossref": match["year_crossref"],
+                "journal_input": ref.get("journal"),
+                "journal_crossref": match["journal_crossref"],
+                "authors_input": "; ".join(ref.get("authors", [])),
+                "authors_crossref": "; ".join(
+                    [f"{a.get('given','')} {a.get('family','')}".strip()
+                     for a in match.get("authors_crossref", [])]
+                ),
+                "title_score": match["scores"]["title"],
+                "author_score": match["scores"]["author"],
+                "journal_score": match["scores"]["journal"],
+                "combined_score": match["scores"]["combined"],
+                "confidence": match["confidence"]
+            })
         else:
-            print("❌  No match found.")
+            print(f"❌  No match for: {title[:80]} ({elapsed:.2f}s)")
 
         sleep(SLEEP_SECONDS)
 
-    # --- Summary ---
+    # =============================================================================
+    # SUMMARY STATISTICS
+    # =============================================================================
+    elapsed_total = time() - start_time
+    avg_query_time = sum(query_times) / len(query_times) if query_times else 0
+    m, s = divmod(elapsed_total, 60)
     refs_with_doi_after = sum(1 for r in refs if r.get("doi"))
+
     print("\n============================================================")
     print(f"Total references processed: {total_refs}")
-    print(f"With DOI before: {refs_with_doi_before}")
+    print(f"DOIs before: {refs_with_doi_before}")
     print(f"New DOIs added: {new_dois_found}")
-    print(f"DOI mismatches: {doi_mismatch}")
-    print(f"With DOI after: {refs_with_doi_after}")
+    print(f"Final total DOIs: {refs_with_doi_after}")
+    print("------------------------------------------------------------")
+    print(f"Confidence breakdown: High={conf_stats['high']}, Medium={conf_stats['medium']}, Low={conf_stats['low']}")
+    print(f"⏱  Total runtime: {m:.0f} min {s:.1f} sec")
+    print(f"📊  Avg metadata query time: {avg_query_time:.2f}s")
     print("============================================================\n")
 
-    # --- Save updated dataset ---
+    # =============================================================================
+    # SAVE UPDATED DATA
+    # =============================================================================
     data[0] = first_preprint
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-    print(f"💾  Output saved to: {OUTPUT_FILE}")
+    print(f"💾  JSON output saved to: {OUTPUT_FILE}")
+
+    if csv_rows:
+        with open(CSV_REPORT, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=list(csv_rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(csv_rows)
+        print(f"📑  Comparison report saved to: {CSV_REPORT}")
 
 
-# -----------------------------------------------------------------------------
-# Script entry point
-# -----------------------------------------------------------------------------
+# =============================================================================
+# ENTRY POINT
+# =============================================================================
 if __name__ == "__main__":
     main()
