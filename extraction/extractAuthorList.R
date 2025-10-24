@@ -117,7 +117,7 @@ df.authors %>%
   mutate(match = id.x == id.y) %>%
   filter(!match)
 
-# check for ORCID conflicts > problem with Van Hedger (same surname, same ID)
+# check for ORCID conflicts
 df.authors %>% 
   mutate(match = orcid.x == orcid.y) %>%
   filter(!match)
