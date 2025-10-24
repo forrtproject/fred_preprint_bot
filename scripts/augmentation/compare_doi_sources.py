@@ -5,9 +5,9 @@ from thefuzz import fuzz, process
 # =============================================================================
 # SETTINGS
 # =============================================================================
-CROSSREF_FILE = r"C:\Users\paspe\fred_preprint_bot\data\first_preprint_references_with_doi_crossref.json"
-OPENALEX_FILE = r"C:\Users\paspe\fred_preprint_bot\data\openalex_doi_matched_preprints_with_references.json"
-OUTPUT_CSV = r"C:\Users\paspe\fred_preprint_bot\data\doi_comparison_fuzzy_titles.csv"
+CROSSREF_FILE = "data/first_preprint_references_with_doi_crossref.json"
+OPENALEX_FILE = "data/openalex_doi_matched_preprints_with_references.json"
+OUTPUT_CSV = "data/doi_comparison_fuzzy_titles.csv"
 
 TITLE_MATCH_THRESHOLD = 85  # minimum fuzzy score (0–100) for titles to be considered the same
 # =============================================================================
