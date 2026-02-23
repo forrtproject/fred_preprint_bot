@@ -498,6 +498,14 @@ def sync_from_date_to_now(
     return out
 
 
+def _is_withdrawn(raw: Optional[Dict[str, Any]]) -> bool:
+    """Check whether the stored OSF API payload indicates a withdrawn preprint."""
+    if not raw:
+        return False
+    attrs = raw.get("attributes") or raw
+    return bool(attrs.get("date_withdrawn"))
+
+
 def download_single_pdf(osf_id: str) -> Dict[str, Any]:
     repo = PreprintsRepo()
     row = repo.get_preprint_basic(osf_id)
@@ -505,6 +513,16 @@ def download_single_pdf(osf_id: str) -> Dict[str, Any]:
         return {"osf_id": osf_id, "skipped": "no longer in DB"}
 
     provider_id = row["provider_id"] or "unknown"
+
+    if _is_withdrawn(row.get("raw")):
+        log_preprint_exclusion(
+            reason="withdrawn",
+            osf_id=osf_id,
+            stage="pdf",
+            details={"provider_id": provider_id},
+        )
+        logger.info("Skipping withdrawn preprint [%s]", osf_id)
+        return {"osf_id": osf_id, "skipped": "withdrawn"}
 
     kind, path, exclusion_reason = ensure_pdf_available_or_delete(
         osf_id=row["osf_id"],
