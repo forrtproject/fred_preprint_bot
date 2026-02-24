@@ -25,6 +25,7 @@ import random
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 import functools
 import json
+from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
@@ -73,6 +74,33 @@ METADATA_PRIORITY = ["crossref_title", "crossref_raw", "openalex_title"]
 _api_cache = ApiCacheRepo()
 _mem_cache: Dict[str, Any] = {}  # in-memory L1 cache for the current run
 _MEM_CACHE_SENTINEL = object()  # distinguishes cached None from cache miss
+MOJIBAKE_MARKERS = (
+    "Ã",
+    "Â",
+    "â",
+    "ï¿½",
+    "�",
+)
+MOJIBAKE_REPLACEMENTS = {
+    "\xa0": " ",
+    "Â ": " ",
+    "â": "–",
+    "â": "—",
+    "â": "‐",
+    "â": "’",
+    "â": "‘",
+    "â": "“",
+    "â": "”",
+    "â¦": "…",
+}
+TRANSCODE_PRENORMALIZE = str.maketrans(
+    {
+        "’": "'",
+        "‘": "'",
+        "“": '"',
+        "”": '"',
+    }
+)
 
 
 def _cache_key(prefix: str, payload: Any) -> str:
@@ -123,6 +151,82 @@ def _cached(key: str, fn, *args, **kwargs):
     val = fn(*args, **kwargs)
     _cache_set(key, val)
     return val
+
+
+def _decode_response_text(resp: requests.Response) -> str:
+    raw = resp.content or b""
+    if not raw:
+        return ""
+    for enc in ("utf-8", (resp.encoding or "").strip(), getattr(resp, "apparent_encoding", "")):
+        if not enc:
+            continue
+        try:
+            return raw.decode(enc)
+        except Exception:
+            continue
+    return raw.decode("latin-1", errors="replace")
+
+
+def _repair_common_mojibake(text: str) -> str:
+    s = " ".join(str(html.unescape(text or "")).split()).strip()
+    if not s:
+        return s
+
+    def _apply_replacements(candidate: str) -> str:
+        out = candidate
+        for bad, good in MOJIBAKE_REPLACEMENTS.items():
+            out = out.replace(bad, good)
+        return " ".join(out.split()).strip()
+
+    def _score(candidate: str) -> int:
+        score = 0
+        for ch in candidate:
+            code = ord(ch)
+            if code == 0xFFFD:
+                score += 12
+            elif 0x80 <= code <= 0x9F:
+                score += 8
+        for marker in MOJIBAKE_MARKERS:
+            score += candidate.count(marker) * 3
+        return score
+
+    base_clean = _apply_replacements(s)
+    candidates = {base_clean}
+    frontier = [s, base_clean] if base_clean != s else [s]
+    for _ in range(2):
+        next_frontier: List[str] = []
+        for base in frontier:
+            for source in {base, base.translate(TRANSCODE_PRENORMALIZE)}:
+                for enc in ("latin-1", "cp1252"):
+                    try:
+                        fixed = " ".join(source.encode(enc).decode("utf-8").split()).strip()
+                    except Exception:
+                        continue
+                    fixed = _apply_replacements(fixed)
+                    if fixed and fixed not in candidates:
+                        candidates.add(fixed)
+                        next_frontier.append(fixed)
+        if not next_frontier:
+            break
+        frontier = next_frontier
+
+    ranked = sorted(candidates, key=lambda c: (_score(c), -len(c)))
+    return ranked[0] if ranked else s
+
+
+def _mojibake_penalty(text: str) -> int:
+    if not text:
+        return 0
+    score = 0
+    for ch in text:
+        code = ord(ch)
+        if code == 0xFFFD:
+            score += 12
+        elif 0x80 <= code <= 0x9F:
+            score += 8
+    for marker in MOJIBAKE_MARKERS:
+        score += text.count(marker) * 3
+    return score
 
 
 METHOD_PRIORITY = ["crossref_raw", "crossref_title", "openalex_title"]
@@ -207,7 +311,7 @@ def _maybe_log_progress(processed: int, log_every: int, out_file) -> None:
             pass
 
 
-def _normalize_doi(doi: Optional[str]) -> Optional[str]:
+def _normalize_doi(doi: Optional[str], *, source: str = "text") -> Optional[str]:
     if not doi:
         return None
     d = html.unescape(str(doi)).strip().lower()
@@ -234,7 +338,11 @@ def _normalize_doi(doi: Optional[str]) -> Optional[str]:
     if m:
         d = m.group(0)
     d = d.split("?", 1)[0].split("#", 1)[0].strip()
-    d = d.strip(" \t\r\n\"'<>[]{}(),.;:")
+    d = d.strip(" \t\r\n\"'<>[]{}")
+    if source != "api":
+        d = d.strip(".,;:")
+        while d.endswith(")") and d.count("(") < d.count(")"):
+            d = d[:-1].rstrip()
     if not d:
         return None
     if not d.startswith("10."):
@@ -244,9 +352,9 @@ def _normalize_doi(doi: Optional[str]) -> Optional[str]:
     return d
 
 
-def normalize_doi(doi: Optional[str]) -> Optional[str]:
+def normalize_doi(doi: Optional[str], *, source: str = "text") -> Optional[str]:
     """Public DOI normalizer for ingestion/update code paths."""
-    return _normalize_doi(doi)
+    return _normalize_doi(doi, source=source)
 
 
 def doi_resolves(doi: str, timeout: int = 10) -> Optional[bool]:
@@ -926,7 +1034,7 @@ def _score_candidate_unparsed(raw_citation: str, doi: str) -> Tuple[Optional[flo
 def _build_method_candidates(items: List[Dict[str, Any]], method: str) -> List[Dict[str, Any]]:
     entries: List[Dict[str, Any]] = []
     for idx, cand in enumerate(items or [], 1):
-        doi = _normalize_doi(cand.get("DOI") or cand.get("doi"))
+        doi = _normalize_doi(cand.get("DOI") or cand.get("doi"), source="api")
         if not doi:
             continue
         entry = {
@@ -1007,27 +1115,38 @@ def _fetch_citation_for_doi(doi: Optional[str], style: str = "apa") -> Optional[
     """Resolve a DOI into a formatted citation text."""
     if not doi:
         return None
+    best_body: Optional[str] = None
+    best_penalty = 10**9
     try:
         r = requests.get(
             f"https://doi.org/{doi}",
             headers={"Accept": f"text/x-bibliography; style={style}"},
             timeout=20,
         )
-        if r.status_code == 200 and r.text:
-            return r.text.strip()
+        body = _repair_common_mojibake(_decode_response_text(r).strip())
+        if r.status_code == 200 and body:
+            penalty = _mojibake_penalty(body)
+            best_body, best_penalty = body, penalty
+            if penalty == 0:
+                return body
     except Exception:
         pass
     try:
         r = requests.get(
-            f"https://api.crossref.org/works/{doi}/transform/text/x-bibliography",
-            params={"style": style},
+            f"https://api.crossref.org/works/{doi}/transform",
+            headers={"Accept": f"text/x-bibliography; style={style}"},
             timeout=20,
         )
-        if r.status_code == 200 and r.text:
-            return r.text.strip()
+        body = _repair_common_mojibake(_decode_response_text(r).strip())
+        if r.status_code == 200 and body:
+            penalty = _mojibake_penalty(body)
+            if penalty < best_penalty:
+                best_body, best_penalty = body, penalty
+            if penalty == 0:
+                return body
     except Exception:
         pass
-    return None
+    return best_body
 
 
 

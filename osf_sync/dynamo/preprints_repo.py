@@ -4,8 +4,12 @@ from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Attr, Key
 from typing import List, Dict, Optional, Any, Iterable, Set
 import datetime as dt
+import functools
 import os
 import re
+import urllib.parse
+
+import requests
 
 
 def _strip_nones(d: Dict[str, Any]) -> Dict[str, Any]:
@@ -14,9 +18,51 @@ def _strip_nones(d: Dict[str, Any]) -> Dict[str, Any]:
 
 
 _DOI_RE = re.compile(r"10\.[0-9]{4,9}/\S+", re.IGNORECASE)
+_CROSSREF_TRANSFORM_DOI_RE = re.compile(r"/works/([^/]+)/transform", re.IGNORECASE)
+_CANONICALIZE_ALIAS_PREFIXES = tuple(
+    p.strip().lower()
+    for p in os.environ.get("DOI_CANONICALIZE_ALIAS_PREFIXES", "10.2307/").split(",")
+    if p.strip()
+)
+_CANONICALIZE_TIMEOUT_SECONDS = float(os.environ.get("DOI_CANONICALIZE_TIMEOUT_SECONDS", "8"))
 
 
-def _normalize_reference_doi(value: Any) -> Optional[str]:
+@functools.lru_cache(maxsize=8192)
+def _canonicalize_alias_doi(doi: str) -> str:
+    """
+    Canonicalize alias-style DOIs via doi.org redirect target when available.
+
+    This is prefix-gated to avoid expensive per-DOI network requests.
+    """
+    value = str(doi or "").strip().lower()
+    if not value:
+        return value
+    if _CANONICALIZE_ALIAS_PREFIXES and not any(value.startswith(p) for p in _CANONICALIZE_ALIAS_PREFIXES):
+        return value
+    try:
+        safe = urllib.parse.quote(value, safe="")
+        resp = requests.get(
+            f"https://doi.org/{safe}",
+            headers={"Accept": "text/x-bibliography; style=apa"},
+            allow_redirects=True,
+            timeout=(4, max(4.0, _CANONICALIZE_TIMEOUT_SECONDS)),
+        )
+        final_url = str(resp.url or "")
+    except Exception:
+        return value
+    match = _CROSSREF_TRANSFORM_DOI_RE.search(final_url)
+    if not match:
+        return value
+    try:
+        canonical = urllib.parse.unquote(match.group(1)).strip().lower()
+    except Exception:
+        return value
+    if canonical.startswith("10.") and _DOI_RE.fullmatch(canonical):
+        return canonical
+    return value
+
+
+def _normalize_reference_doi(value: Any, *, source: Optional[str] = None) -> Optional[str]:
     raw = str(value or "").strip().lower()
     if not raw:
         return None
@@ -40,11 +86,20 @@ def _normalize_reference_doi(value: Any) -> Optional[str]:
     if m:
         raw = m.group(0)
     raw = raw.split("?", 1)[0].split("#", 1)[0].strip()
-    raw = raw.strip(" \t\r\n\"'<>[]{}(),.;:")
+    raw = raw.strip(" \t\r\n\"'<>[]{}")
+    source_key = (source or "").lower()
+    if source_key not in {"crossref", "openalex"}:
+        raw = raw.strip(".,;:")
+        while raw.endswith(")") and raw.count("(") < raw.count(")"):
+            raw = raw[:-1].rstrip()
     if not raw or not raw.startswith("10."):
         return None
     if not _DOI_RE.fullmatch(raw):
         return None
+    if source_key in {"tei", "crossref", "openalex"}:
+        raw = _canonicalize_alias_doi(raw)
+        if not raw or not raw.startswith("10.") or not _DOI_RE.fullmatch(raw):
+            return None
     return raw
 
 log = get_logger(__name__)
@@ -888,7 +943,7 @@ class PreprintsRepo:
 
     def upsert_reference(self, osf_id: str, ref: Dict) -> None:
         ref_clean = dict(ref)
-        doi_norm = _normalize_reference_doi(ref_clean.get("doi"))
+        doi_norm = _normalize_reference_doi(ref_clean.get("doi"), source=ref_clean.get("doi_source"))
         if doi_norm:
             ref_clean["doi"] = doi_norm
             ref_clean["has_doi"] = True
@@ -1194,7 +1249,7 @@ class PreprintsRepo:
 
     def update_reference_doi(self, osf_id: str, ref_id: str, doi: str, *, source: str) -> bool:
         # Only set if not already set
-        doi_norm = _normalize_reference_doi(doi)
+        doi_norm = _normalize_reference_doi(doi, source=source)
         if not doi_norm:
             with_extras(log, osf_id=osf_id, ref_id=ref_id, doi=doi, source=source).warning(
                 "Rejected malformed DOI update"

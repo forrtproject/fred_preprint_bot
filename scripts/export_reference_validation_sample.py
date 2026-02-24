@@ -20,6 +20,7 @@ import re
 import sys
 import threading
 import time
+import html
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -41,6 +42,33 @@ from osf_sync.dynamo.api_cache_repo import ApiCacheRepo
 
 DOI_RE = re.compile(r"10\.[0-9]{4,9}/\S+", re.IGNORECASE)
 WS_RE = re.compile(r"\s+")
+MOJIBAKE_MARKERS = (
+    "Ã",
+    "Â",
+    "â",
+    "ï¿½",
+    "�",
+)
+MOJIBAKE_REPLACEMENTS = {
+    "\xa0": " ",
+    "Â ": " ",
+    "â": "–",
+    "â": "—",
+    "â": "‐",
+    "â": "’",
+    "â": "‘",
+    "â": "“",
+    "â": "”",
+    "â¦": "…",
+}
+TRANSCODE_PRENORMALIZE = str.maketrans(
+    {
+        "’": "'",
+        "‘": "'",
+        "“": '"',
+        "”": '"',
+    }
+)
 
 
 def _clean_text(value: Any) -> str:
@@ -50,11 +78,96 @@ def _clean_text(value: Any) -> str:
     return WS_RE.sub(" ", text).strip()
 
 
+def _decode_response_text(resp: requests.Response) -> str:
+    """
+    Decode response bytes robustly (UTF-8 first) to avoid mojibake.
+    """
+    raw = resp.content or b""
+    if not raw:
+        return ""
+    for enc in ("utf-8", (resp.encoding or "").strip(), getattr(resp, "apparent_encoding", "")):
+        if not enc:
+            continue
+        try:
+            return raw.decode(enc)
+        except Exception:
+            continue
+    return raw.decode("latin-1", errors="replace")
+
+
+def _repair_common_mojibake(text: str) -> str:
+    """
+    Repair common UTF-8-decoded-as-latin-1/cp1252 artifacts in legacy cache rows.
+    """
+    s = _clean_text(html.unescape(text))
+    if not s:
+        return s
+
+    def _apply_replacements(candidate: str) -> str:
+        out = candidate
+        for bad, good in MOJIBAKE_REPLACEMENTS.items():
+            out = out.replace(bad, good)
+        return _clean_text(out)
+
+    def _score(candidate: str) -> int:
+        score = 0
+        for ch in candidate:
+            code = ord(ch)
+            if code == 0xFFFD:
+                score += 12
+            elif 0x80 <= code <= 0x9F:
+                score += 8
+        for marker in MOJIBAKE_MARKERS:
+            score += candidate.count(marker) * 3
+        return score
+
+    base_clean = _apply_replacements(s)
+    candidates = {base_clean}
+    frontier = [s, base_clean] if base_clean != s else [s]
+    # Try up to two rounds of latin-1/cp1252 -> utf-8 recovery.
+    for _ in range(2):
+        next_frontier: List[str] = []
+        for base in frontier:
+            for source in {base, base.translate(TRANSCODE_PRENORMALIZE)}:
+                for enc in ("latin-1", "cp1252"):
+                    try:
+                        fixed = _clean_text(source.encode(enc).decode("utf-8"))
+                    except Exception:
+                        continue
+                    fixed = _apply_replacements(fixed)
+                    if fixed and fixed not in candidates:
+                        candidates.add(fixed)
+                        next_frontier.append(fixed)
+        if not next_frontier:
+            break
+        frontier = next_frontier
+
+    # Prefer lowest mojibake score; tie-break on longer text to avoid lossy fixes.
+    ranked = sorted(candidates, key=lambda c: (_score(c), -len(c)))
+    return ranked[0] if ranked else s
+
+
+def _mojibake_penalty(text: str) -> int:
+    if not text:
+        return 0
+    candidate = _clean_text(text)
+    score = 0
+    for ch in candidate:
+        code = ord(ch)
+        if code == 0xFFFD:
+            score += 12
+        elif 0x80 <= code <= 0x9F:
+            score += 8
+    for marker in MOJIBAKE_MARKERS:
+        score += candidate.count(marker) * 3
+    return score
+
+
 def _normalize_raw_key(raw: Any) -> str:
     return _clean_text(raw).lower()
 
 
-def _normalize_doi(doi: Any) -> str:
+def _normalize_doi(doi: Any, source: str = "") -> str:
     value = _clean_text(doi).lower()
     if not value:
         return ""
@@ -81,7 +194,11 @@ def _normalize_doi(doi: Any) -> str:
     if match:
         value = match.group(0)
     value = value.split("?", 1)[0].split("#", 1)[0].strip()
-    value = value.strip(" \t\r\n\"'<>[]{}(),.;:")
+    value = value.strip(" \t\r\n\"'<>[]{}")
+    if source.lower() not in {"crossref", "openalex"}:
+        value = value.strip(".,;:")
+        while value.endswith(")") and value.count("(") < value.count(")"):
+            value = value[:-1].rstrip()
     if not value or not value.startswith("10."):
         return ""
     if not DOI_RE.fullmatch(value):
@@ -309,7 +426,7 @@ def _load_reuse_csv(path: Optional[str]) -> Dict[str, Tuple[str, str]]:
         with p.open("r", encoding="utf-8-sig", newline="") as f:
             for row in csv.DictReader(f):
                 doi = _normalize_doi(row.get("doi"))
-                apa = _clean_text(row.get("apa_reference"))
+                apa = _repair_common_mojibake(_clean_text(row.get("apa_reference")))
                 src = _clean_text(row.get("apa_source")) or "reused_csv"
                 if doi and apa:
                     out[doi] = (apa, src)
@@ -334,7 +451,7 @@ def _load_checkpoint(path: Optional[str]) -> Dict[str, Tuple[str, str]]:
     for doi, rec in raw.items():
         if not isinstance(rec, dict):
             continue
-        apa = _clean_text(rec.get("apa_reference"))
+        apa = _repair_common_mojibake(_clean_text(rec.get("apa_reference")))
         src = _clean_text(rec.get("apa_source")) or "checkpoint"
         norm = _normalize_doi(doi)
         if norm and apa:
@@ -403,8 +520,9 @@ class DefensiveCitationResolver:
                     timeout=self.timeout,
                 )
                 last_status = int(resp.status_code)
-                if resp.status_code == 200 and _clean_text(resp.text):
-                    return _clean_text(resp.text), 200
+                body = _repair_common_mojibake(_decode_response_text(resp))
+                if resp.status_code == 200 and body:
+                    return body, 200
 
                 transient = resp.status_code in {408, 425, 429, 500, 502, 503, 504}
                 if not transient:
@@ -428,20 +546,34 @@ class DefensiveCitationResolver:
         if not doi:
             return "", "missing"
         safe = quote(doi, safe="/")
+        best_text = ""
+        best_source = "missing"
+        best_penalty = 10**9
+
         text, status = self._request(
             f"https://doi.org/{safe}",
             headers={"Accept": "text/x-bibliography; style=apa"},
         )
         if text:
-            return text, "doi.org"
+            penalty = _mojibake_penalty(text)
+            best_text, best_source, best_penalty = text, "doi.org", penalty
+            if penalty == 0:
+                return text, "doi.org"
 
         # Crossref fallback helps for many (but not all) registrations.
         text, _ = self._request(
-            f"https://api.crossref.org/works/{safe}/transform/text/x-bibliography",
-            params={"style": "apa"},
+            f"https://api.crossref.org/works/{safe}/transform",
+            headers={"Accept": "text/x-bibliography; style=apa"},
         )
         if text:
-            return text, "crossref"
+            penalty = _mojibake_penalty(text)
+            if penalty < best_penalty:
+                best_text, best_source, best_penalty = text, "crossref", penalty
+            if penalty == 0:
+                return text, "crossref"
+
+        if best_text:
+            return best_text, best_source
 
         if status in {408, 425, 429, 500, 502, 503, 504}:
             return "", "missing_transient"
@@ -502,14 +634,15 @@ def main() -> int:
     source_counts = Counter()
     by_osf: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for row in all_rows:
-        doi = _normalize_doi(row.get("doi"))
+        source = _clean_text(row.get("doi_source"))
+        doi = _normalize_doi(row.get("doi"), source=source)
         raw = _clean_text(row.get("raw_citation"))
         osf_id = _clean_text(row.get("osf_id"))
         if not doi or not raw or not osf_id:
             continue
         row["doi"] = doi
         row["raw_citation"] = raw
-        source = _clean_text(row.get("doi_source")) or "(missing)"
+        source = source or "(missing)"
         source_counts[source] += 1
         by_osf[osf_id].append(row)
 
@@ -531,7 +664,13 @@ def main() -> int:
         f"(selected pool {len(selected_preprints)} = {args.preprint_count}+{args.extra_preprints})"
     )
 
-    unique_dois = sorted({_normalize_doi(r.get("doi")) for r in sampled if _normalize_doi(r.get("doi"))})
+    unique_dois = sorted(
+        {
+            _normalize_doi(r.get("doi"), source=_clean_text(r.get("doi_source")))
+            for r in sampled
+            if _normalize_doi(r.get("doi"), source=_clean_text(r.get("doi_source")))
+        }
+    )
     print(f"Unique DOIs in sample: {len(unique_dois)}")
 
     citation_by_doi: Dict[str, str] = {}
@@ -540,7 +679,7 @@ def main() -> int:
     # 1) FLORA on-row
     flora_hits = 0
     for row in sampled:
-        doi = _normalize_doi(row.get("doi"))
+        doi = _normalize_doi(row.get("doi"), source=_clean_text(row.get("doi_source")))
         if not doi or doi in citation_by_doi:
             continue
         apa_ref, apa_source = _extract_flora_apa_for_doi(row, doi)
@@ -586,6 +725,18 @@ def main() -> int:
         citation_by_doi[doi] = citation
         citation_source_by_doi[doi] = source or "checkpoint"
         checkpoint_hits += 1
+
+    # Refresh only suspiciously encoded citations instead of trusting stale cache rows.
+    suspicious = {
+        doi
+        for doi, citation in list(citation_by_doi.items())
+        if _mojibake_penalty(citation) > 0
+    }
+    if suspicious:
+        for doi in suspicious:
+            citation_by_doi.pop(doi, None)
+            citation_source_by_doi.pop(doi, None)
+        print(f"Suspicious cached/reused APA rows to refresh: {len(suspicious)}")
 
     external_dois = [doi for doi in unique_dois if doi not in citation_by_doi and doi not in cached_negative]
     print(
@@ -668,7 +819,7 @@ def main() -> int:
 
     out_rows: List[Dict[str, Any]] = []
     for row in sampled:
-        doi = _normalize_doi(row.get("doi"))
+        doi = _normalize_doi(row.get("doi"), source=_clean_text(row.get("doi_source")))
         out_rows.append(
             {
                 "osf_id": _clean_text(row.get("osf_id")),
