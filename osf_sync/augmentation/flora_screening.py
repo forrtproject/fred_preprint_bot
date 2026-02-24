@@ -27,6 +27,7 @@ def screen_flora_replications(
     *,
     limit: int = 500,
     osf_id: Optional[str] = None,
+    osf_ids: Optional[List[str]] = None,
     ref_id: Optional[str] = None,
     persist_flags: bool = True,
     debug: bool = False,
@@ -38,12 +39,26 @@ def screen_flora_replications(
     already cited in the same preprint reference list.
     """
     repo = PreprintsRepo()
-    rows = repo.select_refs_with_flora_original(
-        limit=limit,
-        osf_id=osf_id,
-        ref_id=ref_id,
-        include_missing_original=True,
-    )
+    if osf_ids:
+        rows: List[Dict[str, Any]] = []
+        for pid in osf_ids:
+            rows.extend(
+                repo.select_refs_with_flora_original(
+                    limit=0,
+                    osf_id=pid,
+                    ref_id=ref_id,
+                    include_missing_original=True,
+                )
+            )
+        if limit:
+            rows = rows[:limit]
+    else:
+        rows = repo.select_refs_with_flora_original(
+            limit=limit,
+            osf_id=osf_id,
+            ref_id=ref_id,
+            include_missing_original=True,
+        )
     candidate_ids = sorted({(r or {}).get("osf_id") for r in rows if (r or {}).get("osf_id")})
     allowed_ids = repo.filter_osf_ids_without_sent_email(candidate_ids)
     rows = [r for r in rows if (r or {}).get("osf_id") in allowed_ids]
@@ -173,8 +188,8 @@ def screen_flora_replications(
 
 def lookup_and_screen_flora(
     *,
-    limit_lookup: int = 200,
-    limit_screen: int = 500,
+    limit_lookup: int = 0,
+    limit_screen: int = 0,
     osf_id: Optional[str] = None,
     ref_id: Optional[str] = None,
     cache_ttl_hours: Optional[int] = None,
@@ -196,9 +211,15 @@ def lookup_and_screen_flora(
         ignore_cache=ignore_cache,
         debug=debug,
     )
+    scoped_osf_ids: Optional[List[str]] = None
+    if not osf_id and not ref_id and only_unchecked:
+        touched = lookup_stats.get("processed_osf_ids")
+        if isinstance(touched, list):
+            scoped_osf_ids = [str(v) for v in touched if v]
     screen_results = screen_flora_replications(
         limit=limit_screen,
         osf_id=osf_id,
+        osf_ids=scoped_osf_ids,
         ref_id=ref_id,
         persist_flags=persist_flags,
         debug=debug,
@@ -210,9 +231,9 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(
         description="Screen replication DOIs via FLORA local CSV comparison.")
-    ap.add_argument("--limit", type=int, default=500)
-    ap.add_argument("--limit-lookup", type=int, default=200,
-                    help="How many rows to run through FLORA local CSV lookup before screening")
+    ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--limit-lookup", type=int, default=0,
+                    help="How many rows to run through FLORA local CSV lookup before screening (0 = unlimited)")
     ap.add_argument("--osf_id", default=None)
     ap.add_argument("--only-osf-id", dest="osf_id", default=None,
                     help="Alias for --osf_id to process a single OSF id")

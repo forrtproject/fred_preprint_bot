@@ -197,16 +197,13 @@ def lookup_originals_with_flora(
     cache_ttl_hours: Optional[int] = None,
     ignore_cache: bool = False,
     debug: bool = False,
-) -> Dict[str, int]:
+) -> Dict[str, Any]:
     """
     Populate FLORA original/replication pairs from local flora.csv data.
     The file is refreshed once per day from FLORA's public CSV source.
     """
     repo = PreprintsRepo()
     rows = repo.select_refs_with_doi(limit=limit, osf_id=osf_id, ref_id=ref_id, only_unchecked=only_unchecked)
-    if only_unchecked:
-        # Treat status=False as terminal for local CSV mode; only process never-checked rows.
-        rows = [r for r in rows if r and r.get("flora_lookup_status") is None]
 
     candidate_ids = sorted({(r or {}).get("osf_id") for r in rows if (r or {}).get("osf_id")})
     allowed_ids = repo.filter_osf_ids_without_sent_email(candidate_ids)
@@ -223,7 +220,7 @@ def lookup_originals_with_flora(
     refresh_meta = _ensure_fresh_flora_csv(flora_path, debug=debug)
     flora_pairs = _load_flora_pairs_by_original(flora_path)
 
-    stats: Dict[str, int] = {
+    stats: Dict[str, Any] = {
         "checked": 0,
         "updated": 0,
         "failed": 0,
@@ -231,6 +228,7 @@ def lookup_originals_with_flora(
         "cache_hits": 0,
         "csv_downloaded": 1 if refresh_meta.get("downloaded") else 0,
     }
+    processed_osf_ids: set[str] = set()
 
     for r in rows:
         osfid = r.get("osf_id")
@@ -240,6 +238,8 @@ def lookup_originals_with_flora(
             continue
 
         stats["checked"] += 1
+        if osfid:
+            processed_osf_ids.add(osfid)
         ref_pairs = flora_pairs.get(doi) or []
         status = bool(ref_pairs)
         try:
@@ -259,6 +259,8 @@ def lookup_originals_with_flora(
                 match_found=status,
             )
 
+    stats["processed_preprints"] = len(processed_osf_ids)
+    stats["processed_osf_ids"] = sorted(processed_osf_ids)
     return stats
 
 

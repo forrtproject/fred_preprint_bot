@@ -842,8 +842,8 @@ def process_enrich_batch(
 
 def process_flora_batch(
     *,
-    limit_lookup: int = 200,
-    limit_screen: int = 500,
+    limit_lookup: int = 0,
+    limit_screen: int = 0,
     osf_id: Optional[str] = None,
     ref_id: Optional[str] = None,
     cache_ttl_hours: Optional[int] = None,
@@ -1472,8 +1472,8 @@ def _add_downstream_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--enrich-limit", type=int, default=300, help="Max preprints for DOI enrichment")
     parser.add_argument("--author-limit", type=int, default=None)
     parser.add_argument("--randomize-limit", type=int, default=None, help="Optional cap for author randomization")
-    parser.add_argument("--limit-lookup", type=int, default=200)
-    parser.add_argument("--limit-screen", type=int, default=500)
+    parser.add_argument("--limit-lookup", type=int, default=0)
+    parser.add_argument("--limit-screen", type=int, default=0)
     parser.add_argument("--enrich-workers", type=int, default=1, help="Parallel workers for Crossref/OpenAlex enrichment")
     parser.add_argument("--orcid-workers", type=int, default=3, help="Parallel workers for ORCID lookups")
     parser.add_argument("--skip-author", action="store_true", help="Skip author extraction stage")
@@ -1540,8 +1540,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--include-existing", action="store_true")
     p_run.add_argument("--write-debug-csv", action="store_true")
     p_run.add_argument("--ref-id", default=None)
-    p_run.add_argument("--limit-lookup", type=int, default=200)
-    p_run.add_argument("--limit-screen", type=int, default=500)
+    p_run.add_argument("--limit-lookup", type=int, default=0)
+    p_run.add_argument("--limit-screen", type=int, default=0)
     p_run.add_argument("--cache-ttl-hours", type=int, default=None)
     p_run.add_argument("--no-persist", action="store_true")
     p_run.add_argument("--include-checked", action="store_true")
