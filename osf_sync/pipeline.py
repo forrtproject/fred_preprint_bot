@@ -1084,11 +1084,16 @@ def run_stage(args: argparse.Namespace) -> Dict[str, Any]:
             osf_id=args.osf_id,
         )
     if stage == "inbox":
-        from .email.inbox import process_inbox
-        return process_inbox(
+        from .email.inbox import process_inbox, process_validation_responses
+        inbox_result = process_inbox(
             max_messages=args.limit or 200,
             dry_run=args.dry_run,
         )
+        validation_result = process_validation_responses(
+            max_messages=args.limit or 50,
+            dry_run=args.dry_run,
+        )
+        return {**inbox_result, "validation_responses": validation_result}
     raise ValueError(f"Unsupported stage: {stage}")
 
 
@@ -1186,6 +1191,12 @@ def run_all(args: argparse.Namespace) -> Dict[str, Any]:
             dry_run=args.dry_run,
         )
 
+
+    from .email.inbox import process_validation_responses
+    out["stages"]["inbox"] = process_validation_responses(
+        max_messages=50,
+        dry_run=args.dry_run,
+    )
     if not args.skip_randomization:
         out["stages"]["author-randomize"] = process_author_randomization_batch(
             authors_csv=getattr(args, "authors_csv", "osf_sync/extraction/authorList_ext.csv"),
@@ -1389,6 +1400,12 @@ def run_post_grobid(args: argparse.Namespace) -> Dict[str, Any]:
             dry_run=args.dry_run,
         )
 
+
+    from .email.inbox import process_validation_responses
+    out["stages"]["inbox"] = process_validation_responses(
+        max_messages=50,
+        dry_run=args.dry_run,
+    )
     if not args.skip_randomization:
         out["stages"]["author-randomize"] = process_author_randomization_batch(
             authors_csv=getattr(args, "authors_csv", "osf_sync/extraction/authorList_ext.csv"),

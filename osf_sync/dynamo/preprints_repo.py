@@ -1339,7 +1339,7 @@ class PreprintsRepo:
                     "SET doi=:d, has_doi=:hd, doi_source=:src, flora_queue_pk=:fp, flora_queue_sk=:fsk, updated_at=:t "
                     "REMOVE doi_checked_at, flora_lookup_status, flora_checked_at, "
                     "flora_lookup_payload, flora_refs, flora_refs_count, flora_ref_pairs, flora_ref_pairs_count, "
-                    "flora_original_cited, flora_screened_at, flora_matching_replication_dois"
+                    "flora_replication_cited, flora_screened_at, flora_matching_replication_dois"
                 ),
                 ExpressionAttributeValues={
                     ":d": doi_norm,
@@ -1422,14 +1422,14 @@ class PreprintsRepo:
         osf_id: str,
         ref_id: str,
         *,
-        original_cited: bool,
+        replication_cited: bool,
     ) -> None:
         now = dt.datetime.utcnow().isoformat()
-        update_expr = "SET flora_original_cited=:v, flora_screened_at=:t, updated_at=:t REMOVE flora_matching_replication_dois"
+        update_expr = "SET flora_replication_cited=:v, flora_screened_at=:t, updated_at=:t REMOVE flora_matching_replication_dois"
         self.t_refs.update_item(
             Key={"osf_id": osf_id, "ref_id": ref_id},
             UpdateExpression=update_expr,
-            ExpressionAttributeValues={":v": bool(original_cited), ":t": now},
+            ExpressionAttributeValues={":v": bool(replication_cited), ":t": now},
         )
 
     def update_preprint_flora_eligibility(
@@ -1451,6 +1451,90 @@ class PreprintsRepo:
                 ":count": int(eligible_count),
                 ":t": now,
             },
+        )
+
+    def update_reference_citation_distance(
+        self,
+        osf_id: str,
+        ref_id: str,
+        *,
+        distance: float,
+        apa_citation: str,
+        validation_status: str,
+    ) -> None:
+        """Store citation distance and validation status on a reference.
+
+        *validation_status* should be ``"pass"`` or ``"pending_review"``.
+        """
+        from decimal import Decimal
+        now = dt.datetime.utcnow().isoformat()
+        self.t_refs.update_item(
+            Key={"osf_id": osf_id, "ref_id": ref_id},
+            UpdateExpression=(
+                "SET citation_distance=:d, citation_apa_resolved=:apa, "
+                "citation_validation_status=:s, citation_validation_updated_at=:t, "
+                "updated_at=:t"
+            ),
+            ExpressionAttributeValues={
+                ":d": Decimal(str(round(distance, 6))),
+                ":apa": apa_citation,
+                ":s": validation_status,
+                ":t": now,
+            },
+        )
+
+    def update_reference_validation_decision(
+        self,
+        osf_id: str,
+        ref_id: str,
+        *,
+        decision: str,
+    ) -> None:
+        """Record a reviewer's approve/reject decision for a reference.
+
+        *decision* should be ``"approved"`` or ``"rejected"``.
+        """
+        now = dt.datetime.utcnow().isoformat()
+        self.t_refs.update_item(
+            Key={"osf_id": osf_id, "ref_id": ref_id},
+            UpdateExpression=(
+                "SET citation_validation_status=:s, "
+                "citation_validation_updated_at=:t, updated_at=:t"
+            ),
+            ExpressionAttributeValues={":s": decision, ":t": now},
+        )
+
+    def set_citation_validation_pending(
+        self,
+        osf_id: str,
+        *,
+        pending: bool,
+        review_id: Optional[str] = None,
+    ) -> None:
+        """Set or clear the preprint-level citation validation pending flag.
+
+        When *pending* is True, preprint is excluded from email selection until
+        all flagged references are reviewed.  Pass *review_id* to store the
+        review identifier used to match incoming reviewer responses.
+        """
+        now = dt.datetime.utcnow().isoformat()
+        if pending:
+            expr = "SET flora_citation_validation_pending=:true, updated_at=:t"
+            eav: Dict[str, Any] = {":true": True, ":t": now}
+            if review_id:
+                expr += ", citation_validation_review_id=:rid"
+                eav[":rid"] = review_id
+        else:
+            expr = (
+                "SET updated_at=:t "
+                "REMOVE flora_citation_validation_pending, "
+                "citation_validation_review_id"
+            )
+            eav = {":t": now}
+        self.t_preprints.update_item(
+            Key={"osf_id": osf_id},
+            UpdateExpression=expr,
+            ExpressionAttributeValues=eav,
         )
 
     def update_preprint_author_email_candidates(
@@ -1479,6 +1563,8 @@ class PreprintsRepo:
                     "attribute_exists(author_email_candidates)"
                     " AND trial_arm = :treatment"
                     " AND (attribute_not_exists(excluded) OR excluded = :false)"
+                    " AND (attribute_not_exists(flora_citation_validation_pending)"
+                    "      OR flora_citation_validation_pending = :false)"
                 ),
                 "ExpressionAttributeValues": {
                     ":q": "pending",
