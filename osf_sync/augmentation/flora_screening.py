@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set
@@ -6,6 +7,11 @@ from typing import Any, Dict, List, Optional, Set
 from ..dynamo.preprints_repo import PreprintsRepo
 from .flora_original_lookup import normalize_doi, lookup_originals_with_flora
 from ..logging_setup import get_logger, with_extras
+from .citation_distance import (
+    compute_citation_distance,
+    fetch_apa_citation,
+    needs_validation,
+)
 
 logger = get_logger(__name__)
 
@@ -51,6 +57,107 @@ def _extract_dois(refs: List[Dict[str, Any]]) -> Set[str]:
         if d:
             dois.add(d)
     return dois
+
+
+def _validate_eligible_ref_distances(
+    pid: str,
+    eligible_refs: List[Dict[str, Any]],
+    repo: PreprintsRepo,
+) -> None:
+    """Compute citation distance for each eligible ref and flag high-distance ones.
+
+    Distance and APA citation are always stored on the reference.
+
+    Email gating (``flora_citation_validation_pending``) is only activated
+    when ``validation.reviewer_email`` is configured.  Without a reviewer,
+    high-distance refs are logged as warnings but do not block sending —
+    there is no mechanism to resolve the pending state without a reviewer.
+
+    Network failures (doi.org unreachable) are logged and silently passed
+    through so they never block screening.
+    """
+    from ..runtime_config import RUNTIME_CONFIG
+
+    reviewer_configured = bool(RUNTIME_CONFIG.validation.reviewer_email)
+    flagged: List[Dict[str, Any]] = []
+
+    for ref in eligible_refs:
+        ref_doi = ref.get("original_doi")
+        ref_id = ref.get("ref_id")
+        if not ref_doi or not ref_id:
+            continue
+
+        # Skip refs already processed (may happen on re-runs)
+        if ref.get("citation_validation_status") in ("pass", "pending_review", "approved", "rejected"):
+            continue
+
+        try:
+            apa = fetch_apa_citation(ref_doi)
+        except Exception as exc:
+            _warn("APA citation fetch failed; skipping validation",
+                  osf_id=pid, ref_id=ref_id, doi=ref_doi, error=str(exc))
+            continue
+
+        if not apa:
+            _warn("No APA citation returned; skipping validation",
+                  osf_id=pid, ref_id=ref_id, doi=ref_doi)
+            continue
+
+        raw = ref.get("raw_citation", "")
+        distance = compute_citation_distance(raw, apa)
+        validation_needed = needs_validation(distance, RUNTIME_CONFIG.validation.distance_threshold)
+        # Only mark as pending_review when a reviewer can actually act on it
+        status = "pending_review" if (validation_needed and reviewer_configured) else "pass"
+
+        # Store result on the reference
+        ref["citation_apa_resolved"] = apa
+        ref["citation_distance"] = distance
+        ref["citation_validation_status"] = status
+
+        try:
+            repo.update_reference_citation_distance(
+                pid, ref_id,
+                distance=distance,
+                apa_citation=apa,
+                validation_status=status,
+            )
+        except Exception as exc:
+            _warn("Failed to persist citation distance",
+                  osf_id=pid, ref_id=ref_id, error=str(exc))
+
+        if validation_needed and not reviewer_configured:
+            _warn(
+                "High citation distance but no reviewer configured; proceeding without gate",
+                osf_id=pid, ref_id=ref_id, doi=ref_doi,
+                distance=f"{distance:.1%}",
+            )
+        elif validation_needed:
+            flagged.append(ref)
+
+    if not flagged:
+        return
+
+    review_id = f"review-{pid}-{uuid.uuid4().hex[:8]}"
+    try:
+        repo.set_citation_validation_pending(pid, pending=True, review_id=review_id)
+    except Exception as exc:
+        _warn("Failed to set citation validation pending flag",
+              osf_id=pid, review_id=review_id, error=str(exc))
+        return
+
+    _info(
+        "Citation validation pending",
+        osf_id=pid,
+        flagged_count=len(flagged),
+        review_id=review_id,
+    )
+
+    try:
+        from ..email.citation_review import send_citation_review_email
+        send_citation_review_email(pid, flagged, review_id)
+    except Exception as exc:
+        _warn("Failed to send citation review email",
+              osf_id=pid, review_id=review_id, error=str(exc))
 
 
 def screen_flora_replications(
@@ -162,7 +269,7 @@ def screen_flora_replications(
                     repo.update_reference_flora_screening(
                         pid,
                         refid,
-                        original_cited=replication_cited,
+                        replication_cited=replication_cited,
                     )
                 except Exception as e:
                     _warn("Failed to persist FLORA screening flag",
@@ -174,10 +281,16 @@ def screen_flora_replications(
                 "original_doi": ref_doi,
                 "matching_replication_dois": replication_dois,
                 "replication_cited": replication_cited,
+                # raw_citation carried for citation distance validation below
+                "raw_citation": r.get("raw_citation", ""),
             }
             retained_refs.append(payload)
             if not replication_cited:
                 eligible_refs.append(payload)
+
+        # --- Citation distance validation for eligible refs ---
+        if persist_flags and eligible_refs:
+            _validate_eligible_ref_distances(pid, eligible_refs, repo)
 
         if persist_flags and hasattr(repo, "update_preprint_flora_eligibility"):
             try:

@@ -83,10 +83,21 @@ def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Op
     # Fetch all references for this preprint
     all_refs = _fetch_all_refs(osf_id, repo)
 
-    # Separate into eligible (original NOT cited → has replications to notify about)
-    # and already-cited (original IS cited)
-    eligible_refs = [r for r in all_refs if r.get("flora_original_cited") is False and r.get("flora_ref_pairs")]
-    cited_refs = [r for r in all_refs if r.get("flora_original_cited") is True]
+    # Safety check: skip preprints still awaiting citation distance validation
+    if preprint.get("flora_citation_validation_pending"):
+        logger.info("Preprint has pending citation validation; skipping email", extra={"osf_id": osf_id})
+        return None
+
+    # Separate into eligible (replication NOT cited → notify author)
+    # and already-cited (replication IS cited — author is aware).
+    # Exclude refs whose DOI match was rejected by the reviewer.
+    eligible_refs = [
+        r for r in all_refs
+        if r.get("flora_replication_cited") is False
+        and r.get("flora_ref_pairs")
+        and r.get("citation_validation_status") != "rejected"
+    ]
+    cited_refs = [r for r in all_refs if r.get("flora_replication_cited") is True]
 
     if not eligible_refs:
         logger.info("No eligible references for email", extra={"osf_id": osf_id})
@@ -160,7 +171,7 @@ def _fetch_all_refs(osf_id: str, repo: PreprintsRepo) -> List[Dict[str, Any]]:
         if not last_key:
             break
     # Only return refs that have been through FLORA screening
-    return [r for r in items if r.get("flora_original_cited") is not None]
+    return [r for r in items if r.get("flora_replication_cited") is not None]
 
 
 def _build_original_entry(ref: Dict[str, Any], ref_pairs: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
