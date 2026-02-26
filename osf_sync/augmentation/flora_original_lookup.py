@@ -170,6 +170,7 @@ def _load_flora_pairs_by_original(path: Path) -> Dict[str, List[Dict[str, Option
                 "apa_ref_o": _row_value(row, "apa_ref_o"),
                 "apa_ref_r": _row_value(row, "apa_ref_r"),
                 "replication_outcome": outcome,
+                "oa_url_r": _row_value(row, "oa_url_r"),
             }
             key = (
                 rec["doi_o"],
