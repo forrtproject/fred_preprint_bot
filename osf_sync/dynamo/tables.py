@@ -33,11 +33,6 @@ TABLES = {
         {"AttributeName":"queue_email","AttributeType":"S"}
     ],
     "GlobalSecondaryIndexes":[
-        { "IndexName":"by_published",
-          "KeySchema":[{"AttributeName":"date_published","KeyType":"HASH"}],
-          "Projection":{"ProjectionType":"ALL"},
-          "ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}
-        },
         { "IndexName":"by_queue_pdf",
           "KeySchema":[
               {"AttributeName":"queue_pdf","KeyType":"HASH"},
@@ -80,15 +75,7 @@ TABLES = {
     ],
     "AttributeDefinitions":[
         {"AttributeName":"osf_id","AttributeType":"S"},
-        {"AttributeName":"ref_id","AttributeType":"S"},
-        {"AttributeName":"doi_source","AttributeType":"S"}
-    ],
-    "GlobalSecondaryIndexes":[
-        { "IndexName":"by_doi_source",
-          "KeySchema":[{"AttributeName":"doi_source","KeyType":"HASH"}],
-          "Projection":{"ProjectionType":"ALL"},
-          "ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}
-        }
+        {"AttributeName":"ref_id","AttributeType":"S"}
     ],
     "ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}
   },

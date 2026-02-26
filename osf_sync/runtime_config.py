@@ -16,6 +16,7 @@ class IngestConfig:
     anchor_date: Optional[str]
     window_months: int
     backfill_on_config_change: bool
+    excluded_providers: tuple
 
 
 @dataclass(frozen=True)
@@ -45,7 +46,7 @@ class RuntimeConfig:
 
 def _default_config() -> RuntimeConfig:
     return RuntimeConfig(
-        ingest=IngestConfig(anchor_date=None, window_months=6, backfill_on_config_change=True),
+        ingest=IngestConfig(anchor_date=None, window_months=6, backfill_on_config_change=True, excluded_providers=("thesiscommons",)),
         flora=FloraConfig(
             original_lookup_url="https://rep-api.forrt.org/v1/original-lookup",
             cache_ttl_hours=48,
@@ -122,6 +123,12 @@ def load_runtime_config(config_path: Optional[Path] = None) -> RuntimeConfig:
         cfg.ingest.backfill_on_config_change,
     )
 
+    raw_excluded = ingest_raw.get("excluded_providers")
+    if isinstance(raw_excluded, (list, tuple)):
+        excluded_providers = tuple(str(p).strip().lower() for p in raw_excluded if str(p).strip())
+    else:
+        excluded_providers = cfg.ingest.excluded_providers
+
     original_lookup_url = flora_raw.get("original_lookup_url", cfg.flora.original_lookup_url)
     if not isinstance(original_lookup_url, str) or not original_lookup_url.strip():
         original_lookup_url = cfg.flora.original_lookup_url
@@ -163,6 +170,7 @@ def load_runtime_config(config_path: Optional[Path] = None) -> RuntimeConfig:
             anchor_date=anchor_date,
             window_months=window_months,
             backfill_on_config_change=backfill_on_config_change,
+            excluded_providers=excluded_providers,
         ),
         flora=FloraConfig(
             original_lookup_url=original_lookup_url,
