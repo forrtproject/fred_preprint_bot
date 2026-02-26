@@ -946,7 +946,8 @@ class PreprintsRepo:
         item_full = {"osf_id": osf_id, **preprint, "extracted_at": dt.datetime.utcnow().isoformat()}
         self.t_tei.put_item(Item=_strip_nones(item_full))
 
-    def upsert_reference(self, osf_id: str, ref: Dict) -> None:
+    def prepare_reference_item(self, osf_id: str, ref: Dict) -> Dict[str, Any]:
+        """Build a complete DynamoDB item for a reference without writing it."""
         ref_clean = dict(ref)
         doi_norm = _normalize_reference_doi(ref_clean.get("doi"), source=ref_clean.get("doi_source"))
         if doi_norm:
@@ -961,7 +962,10 @@ class PreprintsRepo:
             ref_clean.pop("doi_source", None)
         item_full = {"osf_id": osf_id, "ref_id": ref["ref_id"], **ref_clean,
                      "updated_at": dt.datetime.utcnow().isoformat()}
-        self.t_refs.put_item(Item=_strip_nones(item_full))
+        return _strip_nones(item_full)
+
+    def upsert_reference(self, osf_id: str, ref: Dict) -> None:
+        self.t_refs.put_item(Item=self.prepare_reference_item(osf_id, ref))
 
     # --- utilities / other operations ---
     def delete_preprint(self, osf_id: str) -> None:
