@@ -129,7 +129,8 @@ def write_extraction(
             if raise_on_error:
                 raise
 
-        # References
+        # References — prepare all items, then batch-write.
+        prepared_items: List[Dict] = []
         for idx, ref in enumerate(references):
             ref_id = ref.get("ref_id") or f"r{idx}"
             raw_citation = _safe_str(ref.get("raw_citation"))
@@ -216,16 +217,30 @@ def write_extraction(
                 "raw_citation": raw_citation,
             }
             try:
-                repo.upsert_reference(osf_id, item)
-                result["refs_upserted"] += 1
+                prepared_items.append(repo.prepare_reference_item(osf_id, item))
             except Exception as e:
                 result["refs_failed"] += 1
                 _log.warning(
-                    "Reference upsert failed",
+                    "Reference preparation failed",
                     extra={"osf_id": osf_id, "ref_idx": idx, "ref_id": ref_id, "error": str(e)},
                 )
                 if raise_on_error:
                     raise
+
+        # Batch-write all prepared reference items (25 per DynamoDB batch request).
+        try:
+            with repo.t_refs.batch_writer() as batch:
+                for item in prepared_items:
+                    batch.put_item(Item=item)
+            result["refs_upserted"] = len(prepared_items)
+        except Exception as e:
+            result["refs_failed"] += len(prepared_items) - result["refs_upserted"]
+            _log.warning(
+                "Batch reference upsert failed",
+                extra={"osf_id": osf_id, "error": str(e)},
+            )
+            if raise_on_error:
+                raise
 
         if result["tei_ok"]:
             repo.mark_extracted(osf_id)
