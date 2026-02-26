@@ -1,5 +1,6 @@
 from __future__ import annotations
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set
 
 from ..dynamo.preprints_repo import PreprintsRepo
@@ -23,6 +24,35 @@ def _warn(msg: str, **extras: Any) -> None:
         logger.warning(msg)
 
 
+def _query_all_refs(repo: PreprintsRepo, osf_id: str) -> List[Dict[str, Any]]:
+    """Fetch all references for a preprint in a single unfiltered query."""
+    items: List[Dict[str, Any]] = []
+    last_key = None
+    while True:
+        kwargs: Dict[str, Any] = {
+            "KeyConditionExpression": "osf_id = :oid",
+            "ExpressionAttributeValues": {":oid": osf_id},
+        }
+        if last_key:
+            kwargs["ExclusiveStartKey"] = last_key
+        resp = repo.t_refs.query(**kwargs)
+        items.extend(resp.get("Items", []))
+        last_key = resp.get("LastEvaluatedKey")
+        if not last_key:
+            break
+    return items
+
+
+def _extract_dois(refs: List[Dict[str, Any]]) -> Set[str]:
+    """Extract and normalize all DOIs from a list of reference items."""
+    dois: Set[str] = set()
+    for r in refs:
+        d = normalize_doi((r or {}).get("doi"))
+        if d:
+            dois.add(d)
+    return dois
+
+
 def screen_flora_replications(
     *,
     limit: int = 500,
@@ -39,26 +69,30 @@ def screen_flora_replications(
     already cited in the same preprint reference list.
     """
     repo = PreprintsRepo()
-    if osf_ids:
+    preprint_dois: Dict[str, Set[str]] = {}
+
+    if osf_ids or osf_id:
+        # Combined fetch: read each partition once, split into flora rows + DOI set.
+        pids_to_fetch = osf_ids if osf_ids else [osf_id]
         rows: List[Dict[str, Any]] = []
-        for pid in osf_ids:
+        for pid in pids_to_fetch:
+            all_refs = _query_all_refs(repo, pid)
+            preprint_dois[pid] = _extract_dois(all_refs)
             rows.extend(
-                repo.select_refs_with_flora_original(
-                    limit=0,
-                    osf_id=pid,
-                    ref_id=ref_id,
-                    include_missing_original=True,
-                )
+                r for r in all_refs
+                if r and r.get("flora_lookup_status") is not None
+                and (not ref_id or r.get("ref_id") == ref_id)
             )
         if limit:
             rows = rows[:limit]
     else:
+        # Scan path — DOIs will be pre-fetched after grouping.
         rows = repo.select_refs_with_flora_original(
             limit=limit,
-            osf_id=osf_id,
             ref_id=ref_id,
             include_missing_original=True,
         )
+
     candidate_ids = sorted({(r or {}).get("osf_id") for r in rows if (r or {}).get("osf_id")})
     allowed_ids = repo.filter_osf_ids_without_sent_email(candidate_ids)
     rows = [r for r in rows if (r or {}).get("osf_id") in allowed_ids]
@@ -69,26 +103,26 @@ def screen_flora_replications(
         if osfid:
             grouped[osfid].append(r)
 
-    results: List[Dict[str, Any]] = []
+    # Pre-fetch DOIs for preprints not covered by the combined fetch (scan path).
+    missing_pids = [pid for pid in grouped if pid not in preprint_dois]
+    if missing_pids:
+        fetch_workers = min(20, len(missing_pids))
+        with ThreadPoolExecutor(max_workers=fetch_workers) as pool:
+            futures = {
+                pool.submit(_query_all_refs, repo, pid): pid
+                for pid in missing_pids
+            }
+            for future in as_completed(futures):
+                pid = futures[future]
+                try:
+                    preprint_dois[pid] = _extract_dois(future.result())
+                except Exception as e:
+                    _warn("Failed to pre-fetch DOIs", osf_id=pid, error=str(e))
+                    preprint_dois[pid] = set()
 
-    for pid, refs in grouped.items():
-        # Collect all DOIs cited in this preprint (normalize)
-        all_dois: Set[str] = set()
-        for r in refs:
-            d = normalize_doi(r.get("doi"))
-            if d:
-                all_dois.add(d)
-        # Also consider other references without FLORA mapping (so fetch all DOI refs for this preprint).
-        try:
-            extra = repo.select_refs_with_doi(
-                limit=0, osf_id=pid, only_unchecked=False)
-        except TypeError:
-            extra = repo.select_refs_with_doi(
-                limit=0, osf_id=pid)  # fallback for older signature
-        for r in extra:
-            d = normalize_doi(r.get("doi"))
-            if d:
-                all_dois.add(d)
+    def _process_preprint(pid: str, refs: List[Dict[str, Any]]) -> Dict[str, Any]:
+        # All DOIs for this preprint were pre-fetched into preprint_dois.
+        all_dois: Set[str] = set(preprint_dois.get(pid, set()))
 
         eligible_refs: List[Dict[str, Any]] = []
         retained_refs: List[Dict[str, Any]] = []
@@ -115,18 +149,9 @@ def screen_flora_replications(
                 seen_replication_dois.add(doi_r)
                 replication_dois.append(doi_r)
 
-            # Not a baseline target: the cited DOI is not an original with known linked replications.
+            # Not a baseline target: skip without writing — no downstream consumer
+            # needs a flag on refs that aren't FLORA originals.
             if not replication_dois:
-                if persist_flags:
-                    try:
-                        repo.update_reference_flora_screening(
-                            pid,
-                            refid,
-                            original_cited=False,
-                        )
-                    except Exception as e:
-                        _warn("Failed to persist FLORA screening flag",
-                              osf_id=pid, ref_id=refid, error=str(e))
                 continue
 
             replication_cited = any(
@@ -154,21 +179,6 @@ def screen_flora_replications(
             if not replication_cited:
                 eligible_refs.append(payload)
 
-        if eligible_refs:
-            results.append({
-                "osf_id": pid,
-                "eligible": True,
-                "eligible_count": len(eligible_refs),
-                "replication_refs": retained_refs,
-            })
-        else:
-            results.append({
-                "osf_id": pid,
-                "eligible": False,
-                "eligible_count": 0,
-                "replication_refs": retained_refs,
-            })
-
         if persist_flags and hasattr(repo, "update_preprint_flora_eligibility"):
             try:
                 repo.update_preprint_flora_eligibility(
@@ -182,6 +192,34 @@ def screen_flora_replications(
         if debug:
             _info("FLORA screening", osf_id=pid, eligible_count=len(
                 eligible_refs), total=len(retained_refs))
+
+        if eligible_refs:
+            return {
+                "osf_id": pid,
+                "eligible": True,
+                "eligible_count": len(eligible_refs),
+                "replication_refs": retained_refs,
+            }
+        return {
+            "osf_id": pid,
+            "eligible": False,
+            "eligible_count": 0,
+            "replication_refs": retained_refs,
+        }
+
+    results: List[Dict[str, Any]] = []
+    max_workers = min(20, len(grouped)) if grouped else 1
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {
+            pool.submit(_process_preprint, pid, refs): pid
+            for pid, refs in grouped.items()
+        }
+        for future in as_completed(futures):
+            pid = futures[future]
+            try:
+                results.append(future.result())
+            except Exception as e:
+                _warn("FLORA screening failed for preprint", osf_id=pid, error=str(e))
 
     return results
 
