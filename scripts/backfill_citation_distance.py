@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Backfill citation distance for existing FLORA-matched eligible references.
 
-Scans for references where:
+Processes references where:
+  - preprint has flora_eligible = True
   - flora_replication_cited = False  (replication NOT cited — eligible for email)
-  - flora_ref_pairs exists        (FLORA-matched reference)
   - doi exists (non-empty)
   - citation_distance does not yet exist (not yet validated)
 
@@ -57,44 +57,75 @@ from osf_sync.augmentation.citation_distance import (
 from osf_sync.runtime_config import RUNTIME_CONFIG
 
 
+def _get_flora_eligible_osf_ids(repo: PreprintsRepo, osf_id: Optional[str]) -> List[str]:
+    """Return OSF IDs of preprints with flora_eligible=True."""
+    if osf_id:
+        return [osf_id]
+
+    osf_ids: List[str] = []
+    last_key = None
+    while True:
+        kwargs: Dict[str, Any] = {
+            "FilterExpression": Attr("flora_eligible").eq(True),
+            "ProjectionExpression": "osf_id",
+        }
+        if last_key:
+            kwargs["ExclusiveStartKey"] = last_key
+        resp = repo.t_preprints.scan(**kwargs)
+        osf_ids.extend(item["osf_id"] for item in resp.get("Items", []))
+        last_key = resp.get("LastEvaluatedKey")
+        if not last_key:
+            break
+    return osf_ids
+
+
+def _get_eligible_refs_for_preprint(
+    repo: PreprintsRepo,
+    osf_id: str,
+) -> List[Dict[str, Any]]:
+    """Query refs for a single preprint: flora_replication_cited=False, doi set, citation_distance absent."""
+    from boto3.dynamodb.conditions import Key as DKey
+    filter_expr = (
+        Attr("flora_replication_cited").eq(False)
+        & Attr("flora_ref_pairs_count").gt(0)
+        & Attr("doi").exists()
+        & Attr("doi").ne("")
+        & Attr("citation_distance").not_exists()
+    )
+    rows: List[Dict[str, Any]] = []
+    last_key = None
+    while True:
+        kwargs: Dict[str, Any] = {
+            "KeyConditionExpression": DKey("osf_id").eq(osf_id),
+            "FilterExpression": filter_expr,
+            "ProjectionExpression": "osf_id, ref_id, doi, raw_citation, citation_validation_status",
+        }
+        if last_key:
+            kwargs["ExclusiveStartKey"] = last_key
+        resp = repo.t_refs.query(**kwargs)
+        rows.extend(resp.get("Items", []))
+        last_key = resp.get("LastEvaluatedKey")
+        if not last_key:
+            break
+    return rows
+
+
 def _scan_eligible_refs(
     repo: PreprintsRepo,
     osf_id: Optional[str],
     limit: int,
 ) -> List[Dict[str, Any]]:
-    """Scan refs with flora_replication_cited=False, flora_ref_pairs set, doi set, citation_distance absent."""
-    filter_expr = (
-        Attr("flora_replication_cited").eq(False)
-        & Attr("flora_ref_pairs").exists()
-        & Attr("doi").exists()
-        & Attr("doi").ne("")
-        & Attr("citation_distance").not_exists()
-    )
-    if osf_id:
-        filter_expr = filter_expr & Attr("osf_id").eq(osf_id)
+    """Collect eligible refs from flora_eligible preprints only.
 
+    Queries preprints for flora_eligible=True, then queries refs per preprint
+    rather than scanning the entire refs table.
+    """
+    osf_ids = _get_flora_eligible_osf_ids(repo, osf_id)
     rows: List[Dict[str, Any]] = []
-    last_key = None
-    page_size = min(100, limit) if limit else 100
-
-    while True:
-        kwargs: Dict[str, Any] = {
-            "FilterExpression": filter_expr,
-            "Limit": page_size,
-            "ProjectionExpression": (
-                "osf_id, ref_id, doi, raw_citation, citation_validation_status"
-            ),
-        }
-        if last_key:
-            kwargs["ExclusiveStartKey"] = last_key
-        resp = repo.t_refs.scan(**kwargs)
-        rows.extend(resp.get("Items", []))
+    for pid in osf_ids:
+        rows.extend(_get_eligible_refs_for_preprint(repo, pid))
         if limit and len(rows) >= limit:
             return rows[:limit]
-        last_key = resp.get("LastEvaluatedKey")
-        if not last_key:
-            break
-
     return rows
 
 
