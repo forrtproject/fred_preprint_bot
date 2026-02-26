@@ -1577,7 +1577,7 @@ def _score_group_email_matches(
             if not validation_cache[key]:
                 return False
             if key not in suppression_cache:
-                suppression_cache[key] = is_suppressed(email, repo=repo)
+                suppression_cache[key] = is_suppressed(email)
             if suppression_cache[key]:
                 return False
         if key in seen:
