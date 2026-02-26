@@ -131,10 +131,10 @@ def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Op
         "cited_replication_count": cited_replication_count,
         "flora_learn_more_url": cfg.flora_learn_more_url,
         "report_url": report_url,
-        "feedback_helpful_url": f"{feedback_base}?osf_id={osf_id}&response=helpful",
-        "feedback_not_helpful_url": f"{feedback_base}?osf_id={osf_id}&response=not_helpful",
-        "feedback_already_aware_url": f"{feedback_base}?osf_id={osf_id}&response=already_aware",
-        "feedback_report_error_url": f"{feedback_base}?osf_id={osf_id}&response=report_error",
+        "feedback_helpful_url": f"{feedback_base}?server={provider_id}&response=helpful",
+        "feedback_not_helpful_url": f"{feedback_base}?server={provider_id}&response=not_helpful",
+        "feedback_already_aware_url": f"{feedback_base}?server={provider_id}&response=already_aware",
+        "feedback_report_error_url": f"{feedback_base}?server={provider_id}&response=report_error",
         "unsubscribe_mailto": unsubscribe_mailto,
         "_recipients": recipients,
         "_osf_id": osf_id,
@@ -195,7 +195,7 @@ def _build_original_entry(ref: Dict[str, Any], ref_pairs: List[Dict[str, Any]]) 
             or rep.get("outcome")
             or "unknown"
         )
-        rep_oa_url = rep.get("oa_url") or ""
+        rep_oa_url = pair.get("oa_url_r") or rep.get("oa_url") or ""
 
         replications.append({
             "full_reference": rep_ref,
