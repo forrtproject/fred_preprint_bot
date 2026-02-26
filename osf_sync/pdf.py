@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from pypdf import PdfReader
-from requests.exceptions import RequestException, Timeout, ConnectionError
+from requests.exceptions import RequestException, Timeout, ConnectionError, HTTPError
 from .dynamo.preprints_repo import PreprintsRepo
 from .iter_preprints import SESSION, OSF_API  # reuse resilient session
 
@@ -106,10 +106,9 @@ def _download_to(path: Path, url: str):
 def _pdf_length_status(path: Path) -> str:
     try:
         doc = PdfReader(str(path))
+        page_count = len(doc.pages)
     except Exception:
         return "unreadable"
-
-    page_count = len(doc.pages)
     if page_count < MIN_PDF_PAGES:
         return "too_short"
 
@@ -205,7 +204,16 @@ def ensure_pdf_available_or_delete(
       Other: delete row
     Returns (kind, path|None, reason|None) where kind in {"pdf","<office_ext>->pdf","deleted"}.
     """
-    url, ctype, name = resolve_primary_file_info_from_raw(raw)
+    try:
+        url, ctype, name = resolve_primary_file_info_from_raw(raw)
+    except HTTPError as exc:
+        status_code = getattr(exc.response, "status_code", None)
+        if status_code in (404, 410):
+            logger.info("Primary file gone on OSF [%s] status=%s", osf_id, status_code)
+            delete_preprint(osf_id)
+            return "deleted", None, "primary_file_gone"
+        raise
+
     if not url:
         delete_preprint(osf_id)
         return "deleted", None, "missing_primary_file"
@@ -220,7 +228,8 @@ def ensure_pdf_available_or_delete(
         _download_to(pdf_path, url)
         length_status = _pdf_length_status(pdf_path)
         if length_status == "unreadable":
-            raise RuntimeError("pdf_length_check_unreadable")
+            logger.warning("PDF unreadable by pypdf (encrypted/corrupt), passing to GROBID [%s]", osf_id)
+            return "pdf", str(pdf_path), None
         if length_status == "too_short":
             delete_preprint(osf_id)
             try:
@@ -243,7 +252,8 @@ def ensure_pdf_available_or_delete(
         if ok:
             length_status = _pdf_length_status(pdf_path)
             if length_status == "unreadable":
-                raise RuntimeError("pdf_length_check_unreadable")
+                logger.warning("Converted PDF unreadable by pypdf, passing to GROBID [%s]", osf_id)
+                return f"{office_ext[1:]}->pdf", str(pdf_path), None
             if length_status == "too_short":
                 delete_preprint(osf_id)
                 try:
@@ -278,7 +288,14 @@ def ensure_pdf_available_or_skip(
 
     Returns (kind, path|None, reason|None) where kind in {"pdf","<office_ext>->pdf","skipped"}.
     """
-    url, ctype, name = resolve_primary_file_info_from_raw(raw)
+    try:
+        url, ctype, name = resolve_primary_file_info_from_raw(raw)
+    except HTTPError as exc:
+        status_code = getattr(exc.response, "status_code", None)
+        if status_code in (404, 410):
+            return "skipped", None, "primary_file_gone"
+        raise
+
     if not url:
         return "skipped", None, "missing_primary_file"
 

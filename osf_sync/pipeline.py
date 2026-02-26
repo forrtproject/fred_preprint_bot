@@ -595,6 +595,9 @@ def extract_from_tei(provider_id: str, osf_id: str) -> Dict[str, Any]:
     }
 
 
+PDF_MAX_RETRIES = int(os.environ.get("PDF_MAX_RETRIES", "3"))
+
+
 def process_pdf_batch(
     *,
     limit: int = 100,
@@ -637,8 +640,12 @@ def process_pdf_batch(
                     processed += 1
                 except Exception as exc:
                     failed += 1
-                    repo.record_stage_error("pdf", osf_id, str(exc))
-                    logger.exception("PDF stage failed", extra={"osf_id": osf_id})
+                    retries = repo.record_stage_error("pdf", osf_id, str(exc))
+                    if retries >= PDF_MAX_RETRIES:
+                        log_preprint_exclusion(reason="max_pdf_retries_exceeded", osf_id=osf_id, stage="pdf", details={"last_error": str(exc)[:200]})
+                        logger.warning("PDF stage permanently failed [%s] after %d retries: %s", osf_id, retries, exc)
+                    else:
+                        logger.warning("PDF stage failed [%s] (retry %d/%d): %s", osf_id, retries, PDF_MAX_RETRIES, exc)
     else:
         for osf_id in claimed_ids:
             try:
@@ -646,8 +653,12 @@ def process_pdf_batch(
                 processed += 1
             except Exception as exc:
                 failed += 1
-                repo.record_stage_error("pdf", osf_id, str(exc))
-                logger.exception("PDF stage failed", extra={"osf_id": osf_id})
+                retries = repo.record_stage_error("pdf", osf_id, str(exc))
+                if retries >= PDF_MAX_RETRIES:
+                    log_preprint_exclusion(reason="max_pdf_retries_exceeded", osf_id=osf_id, stage="pdf", details={"last_error": str(exc)[:200]})
+                    logger.warning("PDF stage permanently failed [%s] after %d retries: %s", osf_id, retries, exc)
+                else:
+                    logger.warning("PDF stage failed [%s] (retry %d/%d): %s", osf_id, retries, PDF_MAX_RETRIES, exc)
 
     out = {
         "stage": "pdf",
