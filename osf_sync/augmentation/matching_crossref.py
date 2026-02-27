@@ -126,7 +126,11 @@ def _build_params(title: str,
         "query.title": title,
         "rows": str(rows),
         # Include score so consumers can surface the Crossref relevance score.
-        "select": ",".join(["DOI", "title", "issued", "author", "container-title", "score"]),
+        "select": ",".join([
+            "DOI", "title", "issued", "author", "container-title", "score",
+            "volume", "issue", "page",
+            "published-print", "published-online",
+        ]),
         "mailto": _mailto(),
     }
 
@@ -781,8 +785,12 @@ def _query_crossref(title: str,
 def _query_crossref_biblio(blob: str, rows: int, debug: bool) -> List[dict]:
     params = {
         "query": blob,
-        # "rows": str(rows),
-        # "select": ",".join(["DOI", "title", "issued", "author", "container-title"]),
+        "rows": str(rows),
+        "select": ",".join([
+            "DOI", "title", "issued", "author", "container-title", "score",
+            "volume", "issue", "page",
+            "published-print", "published-online",
+        ]),
         "mailto": _mailto(),
     }
     if debug:

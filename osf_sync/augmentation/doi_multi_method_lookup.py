@@ -132,16 +132,51 @@ def _cache_get(key: str) -> Tuple[bool, Optional[Any]]:
     return True, payload
 
 
+_CROSSREF_KEEP_FIELDS = {
+    "DOI", "title", "container-title", "author", "score",
+    "issued", "published-print", "published-online",
+    "volume", "issue", "page",
+}
+_AUTHOR_KEEP_FIELDS = {"given", "family", "literal"}
+
+
+def _slim_crossref_items(items: Any) -> Any:
+    """Strip Crossref items to only the fields used downstream."""
+    if not isinstance(items, list):
+        return items
+    slim = []
+    for item in items:
+        if not isinstance(item, dict):
+            slim.append(item)
+            continue
+        kept = {k: v for k, v in item.items() if k in _CROSSREF_KEEP_FIELDS}
+        # Strip author objects to only name fields (removes affiliations etc.)
+        if "author" in kept and isinstance(kept["author"], list):
+            kept["author"] = [
+                {k: v for k, v in au.items() if k in _AUTHOR_KEEP_FIELDS}
+                if isinstance(au, dict) else au
+                for au in kept["author"]
+            ]
+        slim.append(kept)
+    return slim
+
+
 def _cache_set(key: str, value: Optional[Any]) -> None:
     _mem_cache[key] = value
-    payload = {"_none": True} if value is None else value
-    _api_cache.put(
-        key,
-        payload,
-        source="doi_multi_method",
-        ttl_seconds=int(DOI_MULTI_METHOD_CACHE_TTL_SECS),
-        status=value is not None,
-    )
+    payload = {"_none": True} if value is None else _slim_crossref_items(value)
+    try:
+        _api_cache.put(
+            key,
+            payload,
+            source="doi_multi_method",
+            ttl_seconds=int(DOI_MULTI_METHOD_CACHE_TTL_SECS),
+            status=value is not None,
+        )
+    except Exception as exc:
+        if "Item size has exceeded" in str(exc):
+            logger.warning("Cache item too large for DynamoDB, skipping persist: %s", key)
+        else:
+            raise
 
 
 def _cached(key: str, fn, *args, **kwargs):
