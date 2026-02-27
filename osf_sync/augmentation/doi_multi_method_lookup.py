@@ -74,6 +74,7 @@ METADATA_PRIORITY = ["crossref_title", "crossref_raw", "openalex_title"]
 _api_cache = ApiCacheRepo()
 _mem_cache: Dict[str, Any] = {}  # in-memory L1 cache for the current run
 _MEM_CACHE_SENTINEL = object()  # distinguishes cached None from cache miss
+DDB_HASHKEY_MAX_BYTES = 2048
 MOJIBAKE_MARKERS = (
     "Ã",
     "Â",
@@ -115,11 +116,21 @@ def _cache_key(prefix: str, payload: Any) -> str:
     return f"{prefix}::{blob}"
 
 
+def _cache_key_too_long(key: str) -> bool:
+    try:
+        return len(key.encode("utf-8")) > DDB_HASHKEY_MAX_BYTES
+    except Exception:
+        # Extremely defensive: if encoding fails, avoid sending to DynamoDB.
+        return True
+
+
 def _cache_get(key: str) -> Tuple[bool, Optional[Any]]:
     # L1: in-memory
     mem_val = _mem_cache.get(key, _MEM_CACHE_SENTINEL)
     if mem_val is not _MEM_CACHE_SENTINEL:
         return True, mem_val
+    if _cache_key_too_long(key):
+        return False, None
     # L2: DynamoDB
     item = _api_cache.get(key)
     if not item or not _api_cache.is_fresh(item, ttl_seconds=int(DOI_MULTI_METHOD_CACHE_TTL_SECS)):
@@ -163,6 +174,8 @@ def _slim_crossref_items(items: Any) -> Any:
 
 def _cache_set(key: str, value: Optional[Any]) -> None:
     _mem_cache[key] = value
+    if _cache_key_too_long(key):
+        return
     payload = {"_none": True} if value is None else _slim_crossref_items(value)
     try:
         _api_cache.put(
