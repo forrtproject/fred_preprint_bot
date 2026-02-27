@@ -87,7 +87,6 @@ jobs:
       - name: Run GROBID stages
         id: run
         run: |
-          set -o pipefail
           LIMIT="${{ inputs.limit || '0' }}"
           DL_WORKERS="${{ inputs.download_workers || '4' }}"
           CURRENT_DEPTH="${{ inputs.backlog_depth || '5' }}"
@@ -98,13 +97,15 @@ jobs:
 
           # Suppress per-run summary emails; send one final summary only when recursion is exhausted.
           # --max-seconds: exit gracefully before the GH Actions timeout-minutes (330).
+          # Use --output-json to write result directly to file, bypassing stdout
+          # (stray print() calls in submodules can corrupt piped JSON).
           PIPELINE_NOTIFY_EMAIL="" python -m osf_sync.pipeline run-grobid-stages \
             --sync-limit "$LIMIT" \
             --pdf-limit "$LIMIT" \
             --grobid-limit "$LIMIT" \
             --download-workers "$DL_WORKERS" \
             --max-seconds 18000 \
-            | tee /tmp/pipeline_output.json
+            --output-json /tmp/pipeline_output.json
 
           # Check if any stage was cut short by time or had items processed
           if python -c "

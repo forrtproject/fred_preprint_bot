@@ -115,20 +115,20 @@ jobs:
               --orcid-workers "$ORCID_WORKERS" \
               --max-seconds-per-stage 3600 \
               $EMAIL_ARGS \
-              | tee /tmp/pipeline_output.json
+              --output-json /tmp/pipeline_output.json
           elif [ "$STAGE" = "extract-enrich" ]; then
             python -m osf_sync.pipeline run \
               --stage extract \
               --limit "$LIMIT" \
               --max-seconds 18000 \
-              | tee /tmp/pipeline_output_extract.json
+              --output-json /tmp/pipeline_output_extract.json
 
             python -m osf_sync.pipeline run \
               --stage enrich \
               --limit "$LIMIT" \
               --enrich-workers "$ENRICH_WORKERS" \
               --max-seconds 18000 \
-              | tee /tmp/pipeline_output_enrich.json
+              --output-json /tmp/pipeline_output_enrich.json
 
             cat > /tmp/merge_pipeline_outputs.py <<'PY'
           import json
@@ -174,7 +174,7 @@ jobs:
               --orcid-workers "$ORCID_WORKERS" \
               --max-seconds 18000 \
               $EXTRA_ARGS \
-              | tee /tmp/pipeline_output.json
+              --output-json /tmp/pipeline_output.json
           fi
 
           cat > /tmp/has_pipeline_backlog.py <<'PY'

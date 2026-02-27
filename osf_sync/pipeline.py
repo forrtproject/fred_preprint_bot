@@ -1473,6 +1473,16 @@ def _notify_pipeline_summary(result: Dict[str, Any]) -> None:
         logger.warning("Failed to send pipeline summary email", exc_info=True)
 
 
+def _add_output_json_arg(parser: argparse.ArgumentParser) -> None:
+    """Add --output-json to a subparser so the result is written to a file."""
+    parser.add_argument(
+        "--output-json",
+        default=None,
+        metavar="PATH",
+        help="Write JSON result to this file (avoids stdout contamination)",
+    )
+
+
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
     """Arguments shared by all multi-stage subcommands."""
     parser.add_argument("--max-seconds-per-stage", type=int, default=None)
@@ -1480,6 +1490,7 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--lease-seconds", type=int, default=DEFAULT_LEASE_SECONDS)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    _add_output_json_arg(parser)
 
 
 def _add_grobid_args(parser: argparse.ArgumentParser) -> None:
@@ -1574,6 +1585,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--no-persist", action="store_true")
     p_run.add_argument("--include-checked", action="store_true")
     p_run.add_argument("--spread-seconds", type=int, default=None, help="Spread email sends over this many seconds (email stage only)")
+    _add_output_json_arg(p_run)
     p_run.set_defaults(func=run_stage)
 
     # -- run-all: full pipeline (sync → pdf → grobid → extract → enrich → flora → author → randomize → email)
@@ -1678,7 +1690,12 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     init_db()
     out = args.func(args)
-    print(json.dumps(out, ensure_ascii=False, indent=2, default=str))
+    json_str = json.dumps(out, ensure_ascii=False, indent=2, default=str)
+    output_path = getattr(args, "output_json", None)
+    if output_path:
+        with open(output_path, "w", encoding="utf-8") as fh:
+            fh.write(json_str)
+    print(json_str)
     return 0
 
 
