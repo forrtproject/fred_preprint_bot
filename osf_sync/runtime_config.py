@@ -38,10 +38,17 @@ class EmailConfig:
 
 
 @dataclass(frozen=True)
+class ValidationConfig:
+    distance_threshold: float
+    reviewer_email: str
+
+
+@dataclass(frozen=True)
 class RuntimeConfig:
     ingest: IngestConfig
     flora: FloraConfig
     email: EmailConfig
+    validation: ValidationConfig
 
 
 def _default_config() -> RuntimeConfig:
@@ -60,6 +67,10 @@ def _default_config() -> RuntimeConfig:
             report_base_url="https://forrt.org/flora-notify/report",
             flora_learn_more_url="https://forrt.org/flora/",
             progress_emails=True,
+        ),
+        validation=ValidationConfig(
+            distance_threshold=0.29,
+            reviewer_email="",
         ),
     )
 
@@ -165,6 +176,15 @@ def load_runtime_config(config_path: Optional[Path] = None) -> RuntimeConfig:
     email_learn_more = _str_field(email_raw, "flora_learn_more_url", cfg.email.flora_learn_more_url)
     email_progress_emails = _safe_bool(email_raw.get("progress_emails", cfg.email.progress_emails), cfg.email.progress_emails)
 
+    validation_raw = raw.get("validation") if isinstance(raw, dict) else {}
+    if not isinstance(validation_raw, dict):
+        validation_raw = {}
+    try:
+        dist_thresh = float(validation_raw.get("distance_threshold", cfg.validation.distance_threshold))
+    except (TypeError, ValueError):
+        dist_thresh = cfg.validation.distance_threshold
+    reviewer_email = _str_field(validation_raw, "reviewer_email", cfg.validation.reviewer_email)
+
     return RuntimeConfig(
         ingest=IngestConfig(
             anchor_date=anchor_date,
@@ -185,6 +205,10 @@ def load_runtime_config(config_path: Optional[Path] = None) -> RuntimeConfig:
             report_base_url=email_report,
             flora_learn_more_url=email_learn_more,
             progress_emails=email_progress_emails,
+        ),
+        validation=ValidationConfig(
+            distance_threshold=dist_thresh,
+            reviewer_email=reviewer_email,
         ),
     )
 
