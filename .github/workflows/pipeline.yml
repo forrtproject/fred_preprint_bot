@@ -101,6 +101,10 @@ jobs:
           fi
 
           EMAIL_LIMIT="$INPUT_EMAIL_LIMIT"
+          # Keep a safety margin below the GH Actions job timeout (330 min)
+          # so we can still set backlog output and self-dispatch.
+          SOFT_TIMEOUT_SECONDS=18600
+          SOFT_DEADLINE_EPOCH=$(( $(date +%s) + SOFT_TIMEOUT_SECONDS ))
 
           EMAIL_ARGS=""
           if [ "$EMAIL_LIMIT" != "0" ]; then
@@ -108,27 +112,85 @@ jobs:
           fi
 
           if [ "$STAGE" = "all" ]; then
-            python -m osf_sync.pipeline run-post-grobid \
-              --extract-limit "$LIMIT" \
-              --enrich-limit "$LIMIT" \
-              --enrich-workers "$ENRICH_WORKERS" \
-              --orcid-workers "$ORCID_WORKERS" \
-              --max-seconds-per-stage 3600 \
-              $EMAIL_ARGS \
-              --output-json /tmp/pipeline_output.json
-          elif [ "$STAGE" = "extract-enrich" ]; then
-            python -m osf_sync.pipeline run \
-              --stage extract \
-              --limit "$LIMIT" \
-              --max-seconds 18000 \
-              --output-json /tmp/pipeline_output_extract.json
+            REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+            if [ "$REMAINING_SECONDS" -le 0 ]; then
+              echo "::warning::No soft-time budget left before stage 'all'; marking backlog for follow-up run."
+              printf '%s\n' '{"stages":{"all":{"stage":"all","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}}}' > /tmp/pipeline_output.json
+              RUN_RC=124
+            else
+            set +e
+            timeout --signal=TERM --kill-after=60 \
+              "$REMAINING_SECONDS" \
+              python -m osf_sync.pipeline run-post-grobid \
+                --extract-limit "$LIMIT" \
+                --enrich-limit "$LIMIT" \
+                --enrich-workers "$ENRICH_WORKERS" \
+                --orcid-workers "$ORCID_WORKERS" \
+                --max-seconds-per-stage 3600 \
+                $EMAIL_ARGS \
+                --output-json /tmp/pipeline_output.json
+            RUN_RC=$?
+            set -e
+            fi
 
-            python -m osf_sync.pipeline run \
-              --stage enrich \
-              --limit "$LIMIT" \
-              --enrich-workers "$ENRICH_WORKERS" \
-              --max-seconds 18000 \
-              --output-json /tmp/pipeline_output_enrich.json
+            if [ "$RUN_RC" -eq 124 ]; then
+              echo "::warning::run-post-grobid hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+              printf '%s\n' '{"stages":{"all":{"stage":"all","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}}}' > /tmp/pipeline_output.json
+            elif [ "$RUN_RC" -ne 0 ]; then
+              exit "$RUN_RC"
+            fi
+          elif [ "$STAGE" = "extract-enrich" ]; then
+            EXTRACT_TIMED_OUT=0
+
+            REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+            if [ "$REMAINING_SECONDS" -le 0 ]; then
+              RUN_RC=124
+            else
+              set +e
+              timeout --signal=TERM --kill-after=60 \
+                "$REMAINING_SECONDS" \
+                python -m osf_sync.pipeline run \
+                  --stage extract \
+                  --limit "$LIMIT" \
+                  --max-seconds 18000 \
+                  --output-json /tmp/pipeline_output_extract.json
+              RUN_RC=$?
+              set -e
+            fi
+
+            if [ "$RUN_RC" -eq 124 ]; then
+              echo "::warning::stage 'extract' hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+              printf '%s\n' '{"stage":"extract","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}' > /tmp/pipeline_output_extract.json
+              EXTRACT_TIMED_OUT=1
+            elif [ "$RUN_RC" -ne 0 ]; then
+              exit "$RUN_RC"
+            fi
+
+            if [ "$EXTRACT_TIMED_OUT" -eq 0 ]; then
+              REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+              if [ "$REMAINING_SECONDS" -le 0 ]; then
+                RUN_RC=124
+              else
+                set +e
+                timeout --signal=TERM --kill-after=60 \
+                  "$REMAINING_SECONDS" \
+                  python -m osf_sync.pipeline run \
+                    --stage enrich \
+                    --limit "$LIMIT" \
+                    --enrich-workers "$ENRICH_WORKERS" \
+                    --max-seconds 18000 \
+                    --output-json /tmp/pipeline_output_enrich.json
+                RUN_RC=$?
+                set -e
+              fi
+
+              if [ "$RUN_RC" -eq 124 ]; then
+                echo "::warning::stage 'enrich' hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+                printf '%s\n' '{"stage":"enrich","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}' > /tmp/pipeline_output_enrich.json
+              elif [ "$RUN_RC" -ne 0 ]; then
+                exit "$RUN_RC"
+              fi
+            fi
 
             cat > /tmp/merge_pipeline_outputs.py <<'PY'
           import json
@@ -167,14 +229,31 @@ jobs:
               SPREAD=$(( STAGE_LIMIT * 270 ))
               EXTRA_ARGS="--spread-seconds $SPREAD"
             fi
-            python -m osf_sync.pipeline run \
-              --stage "$STAGE" \
-              --limit "$STAGE_LIMIT" \
-              --enrich-workers "$ENRICH_WORKERS" \
-              --orcid-workers "$ORCID_WORKERS" \
-              --max-seconds 18000 \
-              $EXTRA_ARGS \
-              --output-json /tmp/pipeline_output.json
+            REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+            if [ "$REMAINING_SECONDS" -le 0 ]; then
+              RUN_RC=124
+            else
+              set +e
+              timeout --signal=TERM --kill-after=60 \
+                "$REMAINING_SECONDS" \
+                python -m osf_sync.pipeline run \
+                  --stage "$STAGE" \
+                  --limit "$STAGE_LIMIT" \
+                  --enrich-workers "$ENRICH_WORKERS" \
+                  --orcid-workers "$ORCID_WORKERS" \
+                  --max-seconds 18000 \
+                  $EXTRA_ARGS \
+                  --output-json /tmp/pipeline_output.json
+              RUN_RC=$?
+              set -e
+            fi
+
+            if [ "$RUN_RC" -eq 124 ]; then
+              echo "::warning::stage '$STAGE' hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+              printf '{"stage":"%s","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}\n' "$STAGE" > /tmp/pipeline_output.json
+            elif [ "$RUN_RC" -ne 0 ]; then
+              exit "$RUN_RC"
+            fi
           fi
 
           cat > /tmp/has_pipeline_backlog.py <<'PY'
