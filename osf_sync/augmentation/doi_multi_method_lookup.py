@@ -124,6 +124,23 @@ def _cache_key_too_long(key: str) -> bool:
         return True
 
 
+def test_cache_key_too_long_boundary() -> None:
+    """
+    Unit test for the DynamoDB hash key length guard.
+
+    Verifies that keys whose UTF-8 byte length is exactly equal to
+    DDB_HASHKEY_MAX_BYTES are allowed, while keys that exceed this length
+    are considered too long and thus should not be sent to DynamoDB.
+    """
+    # Use ASCII characters so character count == UTF-8 byte count.
+    within_limit_key = "x" * DDB_HASHKEY_MAX_BYTES
+    over_limit_key = "x" * (DDB_HASHKEY_MAX_BYTES + 1)
+
+    # Exactly at the limit should NOT be considered "too long".
+    assert _cache_key_too_long(within_limit_key) is False
+
+    # Exceeding the limit by one byte should be considered "too long".
+    assert _cache_key_too_long(over_limit_key) is True
 def _cache_get(key: str) -> Tuple[bool, Optional[Any]]:
     # L1: in-memory
     mem_val = _mem_cache.get(key, _MEM_CACHE_SENTINEL)
