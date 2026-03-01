@@ -13,6 +13,7 @@ import os
 import sys
 from collections import Counter
 from datetime import datetime, timezone
+from statistics import median
 
 import boto3
 from botocore.config import Config
@@ -104,6 +105,24 @@ def _scan_count_with_filter(table, filter_expression):
     return total
 
 
+def _scan_with_filter(table, filter_expression, projection_expression):
+    """Full paginated scan returning projected attributes for items matching a filter."""
+    items = []
+    resp = table.scan(
+        FilterExpression=filter_expression,
+        ProjectionExpression=projection_expression,
+    )
+    items.extend(resp["Items"])
+    while resp.get("LastEvaluatedKey"):
+        resp = table.scan(
+            FilterExpression=filter_expression,
+            ProjectionExpression=projection_expression,
+            ExclusiveStartKey=resp["LastEvaluatedKey"],
+        )
+        items.extend(resp["Items"])
+    return items
+
+
 # ---------------------------------------------------------------------------
 # Data collection
 # ---------------------------------------------------------------------------
@@ -154,6 +173,56 @@ def collect_stats():
         boto3.dynamodb.conditions.Attr("email_error").exists(),
     )
 
+    # FLoRA matching — preprints with flora_eligible = True
+    Attr = boto3.dynamodb.conditions.Attr
+    flora_eligible_items = _scan_with_filter(
+        preprints,
+        Attr("flora_eligible").eq(True),
+        "osf_id, flora_eligible_count, flora_citation_validation_pending, "
+        "author_email_candidates, trial_assignment_status, excluded",
+    )
+    flora_total = len(flora_eligible_items)
+
+    # Distribution of eligible reference counts
+    eligible_counts = [
+        int(item.get("flora_eligible_count", 0))
+        for item in flora_eligible_items
+    ]
+    flora_median_refs = median(eligible_counts) if eligible_counts else 0
+    flora_max_refs = max(eligible_counts) if eligible_counts else 0
+    flora_multi_ref = sum(1 for c in eligible_counts if c > 1)
+    flora_multi_ref_pct = (flora_multi_ref / flora_total * 100) if flora_total else 0
+
+    # Preprints with citation validation pending (refs needing confirmation)
+    flora_validation_pending = sum(
+        1 for item in flora_eligible_items
+        if item.get("flora_citation_validation_pending") is True
+    )
+
+    # Preprints missing author emails
+    flora_missing_email = sum(
+        1 for item in flora_eligible_items
+        if not item.get("author_email_candidates")
+    )
+
+    # Total assignable: flora_eligible, has email, no pending validation (regardless
+    # of assignment status — the effective sample size)
+    flora_total_assignable = sum(
+        1 for item in flora_eligible_items
+        if not item.get("excluded")
+        and item.get("author_email_candidates")
+        and not item.get("flora_citation_validation_pending")
+    )
+
+    # Assignment pending: assignable but not yet assigned
+    flora_assignment_pending = sum(
+        1 for item in flora_eligible_items
+        if not item.get("trial_assignment_status")
+        and not item.get("excluded")
+        and item.get("author_email_candidates")
+        and not item.get("flora_citation_validation_pending")
+    )
+
     return {
         "funnel": funnel,
         "total_preprints": total_preprints,
@@ -165,6 +234,15 @@ def collect_stats():
         "suppression_counts": suppression_counts,
         "total_suppressed": total_suppressed,
         "email_error_open": email_error_open,
+        "flora_total": flora_total,
+        "flora_median_refs": flora_median_refs,
+        "flora_max_refs": flora_max_refs,
+        "flora_multi_ref": flora_multi_ref,
+        "flora_multi_ref_pct": flora_multi_ref_pct,
+        "flora_validation_pending": flora_validation_pending,
+        "flora_missing_email": flora_missing_email,
+        "flora_total_assignable": flora_total_assignable,
+        "flora_assignment_pending": flora_assignment_pending,
     }
 
 
@@ -203,6 +281,27 @@ def render_markdown(stats):
     for reason in sorted(stats["excl_counts"]):
         lines.append(f"| {reason} | {stats['excl_counts'][reason]} |")
     lines.append(f"**Total excluded:** {stats['total_excluded']}")
+
+    # FLoRA matching
+    lines.extend([
+        "",
+        "## FLoRA Matching",
+        "| Metric | Value |",
+        "|--------|-------|",
+        f"| Preprints with FLoRA matches | {stats['flora_total']} |",
+        f"| Pending citation confirmation | {stats['flora_validation_pending']} |",
+        f"| Missing author emails | {stats['flora_missing_email']} |",
+        "",
+        "**Matched reference distribution:**",
+        f" Median: {stats['flora_median_refs']}, "
+        f"Max: {stats['flora_max_refs']}, "
+        f">1 match: {stats['flora_multi_ref']}/{stats['flora_total']}"
+        f" ({stats['flora_multi_ref_pct']:.0f}%)",
+        "",
+        f"**Total assignable (eligible, has email, no pending validation):** "
+        f"{stats['flora_total_assignable']}",
+        f"**Assignment pending:** {stats['flora_assignment_pending']}",
+    ])
 
     # Trial assignments
     lines.extend(["", "## Trial Assignment", "| Arm | Count |", "|-----|-------|"])
