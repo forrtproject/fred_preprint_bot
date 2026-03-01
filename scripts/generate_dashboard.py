@@ -173,8 +173,16 @@ def collect_stats():
         boto3.dynamodb.conditions.Attr("email_error").exists(),
     )
 
-    # FLoRA matching — preprints with flora_eligible = True
+    # FLoRA screening and email extraction coverage
     Attr = boto3.dynamodb.conditions.Attr
+    flora_screened = _scan_count_with_filter(
+        preprints, Attr("flora_eligible").exists(),
+    )
+    email_extracted = _scan_count_with_filter(
+        preprints, Attr("author_email_candidates").exists(),
+    )
+
+    # FLoRA matching — preprints with flora_eligible = True
     flora_eligible_items = _scan_with_filter(
         preprints,
         Attr("flora_eligible").eq(True),
@@ -234,6 +242,8 @@ def collect_stats():
         "suppression_counts": suppression_counts,
         "total_suppressed": total_suppressed,
         "email_error_open": email_error_open,
+        "flora_screened": flora_screened,
+        "email_extracted": email_extracted,
         "flora_total": flora_total,
         "flora_median_refs": flora_median_refs,
         "flora_max_refs": flora_max_refs,
@@ -288,6 +298,8 @@ def render_markdown(stats):
         "## FLoRA Matching",
         "| Metric | Value |",
         "|--------|-------|",
+        f"| Screened against FLoRA | {stats['flora_screened']} / {stats['total_preprints']} |",
+        f"| Email extraction completed | {stats['email_extracted']} / {stats['total_preprints']} |",
         f"| Preprints with FLoRA matches | {stats['flora_total']} |",
         f"| Pending citation confirmation | {stats['flora_validation_pending']} |",
         f"| Missing author emails | {stats['flora_missing_email']} |",
