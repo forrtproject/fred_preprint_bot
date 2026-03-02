@@ -1,50 +1,50 @@
-**Subject: Replication attempts related to citations in your {{ server_name }} preprint**
+Subject: {{ 'A replication attempt' if total_replication_count == 1 else 'Replication attempts' }} related to {{ 'a citation' if originals|length == 1 else 'citations' }} in your {{ server_name }} preprint
 
-Dear {{ author_first_name }} {{ author_last_name }},
+{{ author_greeting }}
 
-Thank you for sharing *{{ preprint_title }}* on {{ server_name }}. We are part of the FORRT team maintaining the Library of Replication Attempts (FLoRA). We have often heard that researchers struggle to find replication studies relevant to the original work they rely on, because replication attempts are not consistently linked to the original studies in common databases. To help bridge this gap, we are reaching out to share potentially relevant replication data based on your preprint references.
+Thank you for sharing *{{ preprint_title }}* openly on {{ server_name }}. Our automated system identified {{ 'a replication attempt for one of the studies' if total_replication_count == 1 else 'replication attempts for some of the studies' }} cited in your preprint in the Library of Replication Attempts (FLoRA).
 
-Our system has identified potential matches between your preprint references and the FLoRA database, which you might find relevant{% if some_replications_cited %} in addition to the replication{{ 's' if cited_replication_count != 1 else '' }} you are already citing{% endif %}.
+We are part of the FORRT team maintaining FLoRA, a community-driven database that links replication attempts to the studies they examine. Because replication attempts are not consistently connected to original studies in common databases, we are sharing replication evidence identified from the references in your preprint{% if some_replications_cited %}, which you might find relevant in addition to the {{ 'replication' if cited_replication_count == 1 else 'replications' }} you are already citing{% endif %}.
 
----
 {% for original in originals %}
+**Cited:** {{ original.full_reference }}{% if original.doi %} [{{ original.doi }}]({{ original.doi_url }}){% endif %}
 
-**Cited original:**
-
-{{ original.full_reference }}{% if original.doi %} [DOI:{{ original.doi }}]({{ original.doi_url }}){% endif %}
-
-**Replication attempt{{ 's' if original.replications|length > 1 else '' }}:**
 {% for replication in original.replications %}
-{{ '• ' if original.replications|length > 1 else '' }}{{ replication.full_reference }}{% if replication.doi %} [DOI:{{ replication.doi }}]({{ replication.doi_url }}){% endif %}{% if replication.oa_url %} [Open Access]({{ replication.oa_url }}){% endif %} — reported as {{ replication.outcome }} ([Learn more]({{ flora_learn_more_url }}))
+> **Replication:** {{ replication.full_reference }}{% if replication.doi %} [{{ replication.doi }}]({{ replication.doi_url }}){% endif %}{% if replication.oa_url %} — [Open Access]({{ replication.oa_url }}){% endif %} — Reported as {{ replication.outcome }}
+
 {% endfor %}
----
 {% endfor %}
 
-If relevant to your framing and interpretation, you may want to consider citing one or more replication attempts and/or contextualising the original citation(s). Providing this context can help readers better evaluate the current evidence base for these effects.
+If relevant to your framing and interpretation, you may wish to consider citing or contextualising replication evidence alongside the original reference to help readers evaluate the current evidence base.
 
-This message is informational. We are conducting a study to evaluate whether such notifications are useful to researchers.
+This message is informational and was generated automatically using publicly available bibliographic metadata. We are conducting a UKRI-funded study evaluating whether such notifications are useful to researchers.
 
 **One-click feedback: Was this email helpful?**
 
-*You will be able to provide some additional feedback after clicking on the link. By clicking, you consent for your response to be included in our analysis.*
+[Helpful]({{ feedback_helpful_url }}) | [Not helpful]({{ feedback_not_helpful_url }}) | [Already aware of {{ 'this replication' if total_replication_count == 1 else 'these replications' }}]({{ feedback_already_aware_url }})
+[Report data error/concern]({{ feedback_report_error_url }})
 
-[Helpful]({{ feedback_helpful_url }}) | [Not helpful]({{ feedback_not_helpful_url }}) | [Already aware of all these replications]({{ feedback_already_aware_url }}) | [Report data error/concern]({{ feedback_report_error_url }})
+*(You will be able to provide additional feedback after clicking. By clicking, you consent for your response to be included in our analysis.)*
 
-If you have any questions, please reply to this email.
+If you have any questions or comments, please reply directly to this email.
 
 Sincerely,
 
-The FLoRA Team
+**The FLoRA Team**
 
 Dr Lukas Wallrich, Birkbeck, University of London<br>
 Dr Lukas Röseler, Münster Center for Open Science, University of Münster<br>
 Dr Josefina Weinerova, Birkbeck, University of London<br>
-Keegan Vaz, Technical University Dortmund
+Keegan Vaz, Technical University Dortmund<br>
+Dr. Flávio Azevedo, Utrecht University
 
-This is part of the UKRI-funded project *Making Replications Count.* You can find further information on [our website](https://forrt.org/marco/), which includes additional tools to discover replications.
+This email is part of the UKRI-funded project *Making Replications Count*. Further information and additional discovery tools are available at: [https://forrt.org/marco](https://forrt.org/marco)
+
+We may contact you about future preprints you publish. If you do not want to receive such emails, please [unsubscribe here]({{ unsubscribe_mailto }}).
 
 <small>
-We might email you about other preprints you publish in the coming months. If you don't want to receive such emails, [unsubscribe from future FLoRA-Notify emails]({{ unsubscribe_mailto }}).
 
-***Data protection notice:** We are using publicly accessible bibliographic information from OSF Preprints and related databases. We are processing only your name and email address associated with your preprint to send you this message. Your data will not be shared. If you chose to share your feedback via the links above, that data will be used for research. For full details, see [link to privacy notice]. We will only send one email per preprint; to unsubscribe from emails concerning future preprints, please use the link above.*
+**Data protection notice**
+We use publicly accessible bibliographic information from OSF Preprints and related databases. We process only your name and email address associated with your preprint to send this message. Your data will not be shared. If you choose to provide feedback via the links above, that information will be used for research purposes. Full details are available in our [privacy notice](https://forrt.org/marco/privacy). We will send at most one notification per preprint.
+
 </small>

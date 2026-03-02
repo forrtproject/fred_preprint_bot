@@ -35,9 +35,9 @@ class EmailBatchBudgetTests(unittest.TestCase):
         mock_limiter_cls.return_value = limiter
 
         contexts = {
-            "p1": {"_recipients": [{"email": "a1@uni.edu"}]},
-            "p2": {"_recipients": [{"email": "b1@uni.edu"}, {"email": "b2@uni.edu"}]},
-            "p3": {"_recipients": [{"email": "c1@uni.edu"}]},
+            "p1": {"_recipients": [{"email": "a1@uni.edu", "first_name": "Alice"}], "author_greeting": "Dear Alice,"},
+            "p2": {"_recipients": [{"email": "b1@uni.edu", "first_name": "Bob"}, {"email": "b2@uni.edu", "first_name": "Beth"}], "author_greeting": "Dear Bob, dear Beth,"},
+            "p3": {"_recipients": [{"email": "c1@uni.edu", "first_name": "Carol"}], "author_greeting": "Dear Carol,"},
         }
         mock_assemble.side_effect = lambda pid, repo=None: contexts.get(pid)
 

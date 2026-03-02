@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
@@ -34,6 +35,18 @@ def _provider_display_name(provider_id: str | None) -> str:
     if not provider_id:
         return "OSF Preprints"
     return _PROVIDER_NAMES.get(provider_id.lower(), provider_id)
+
+
+def _build_greeting(first_names: List[str]) -> str:
+    """Build a greeting addressing recipients by first name.
+
+    Single recipient: "Dear Alice,"
+    Multiple: "Dear Alice, dear Bob,"
+    """
+    if not first_names:
+        return "Dear Author,"
+    parts = [f"Dear {first_names[0]}"] + [f"dear {n}" for n in first_names[1:]]
+    return ", ".join(parts) + ","
 
 
 def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Optional[Dict[str, Any]]:
@@ -76,9 +89,8 @@ def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Op
         logger.info("No email candidates with addresses", extra={"osf_id": osf_id})
         return None
 
-    # Use the first candidate's name for the greeting
-    first_name = recipients[0]["first_name"]
-    last_name = recipients[0]["last_name"]
+    # Build greeting addressing all recipients by first name
+    author_greeting = _build_greeting([r["first_name"] for r in recipients])
 
     # Fetch all references for this preprint
     all_refs = _fetch_all_refs(osf_id, repo)
@@ -132,20 +144,25 @@ def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Op
     feedback_base = cfg.feedback_base_url.rstrip("/")
     report_url = f"{cfg.report_base_url.rstrip('/')}/{osf_id}"
 
+    # Singular vs multiple: one original study cited → singular, otherwise multiple.
+    # Also compute total replication count for subject-line pluralisation in the template.
+    cardinality = "singular" if len(originals) == 1 else "multiple"
+    total_replication_count = sum(len(o["replications"]) for o in originals)
+
     context = {
         "preprint_title": title,
         "server_name": _provider_display_name(provider_id),
-        "author_first_name": first_name,
-        "author_last_name": last_name,
+        "author_greeting": author_greeting,
         "originals": originals,
+        "total_replication_count": total_replication_count,
         "some_replications_cited": some_replications_cited,
         "cited_replication_count": cited_replication_count,
         "flora_learn_more_url": cfg.flora_learn_more_url,
         "report_url": report_url,
-        "feedback_helpful_url": f"{feedback_base}?server={provider_id}&response=helpful",
-        "feedback_not_helpful_url": f"{feedback_base}?server={provider_id}&response=not_helpful",
-        "feedback_already_aware_url": f"{feedback_base}?server={provider_id}&response=already_aware",
-        "feedback_report_error_url": f"{feedback_base}?server={provider_id}&response=report_error",
+        "feedback_helpful_url": f"{feedback_base}?email_choice=helpful_{cardinality}&server_id={provider_id}",
+        "feedback_not_helpful_url": f"{feedback_base}?email_choice=not_helpful_{cardinality}&server_id={provider_id}",
+        "feedback_already_aware_url": f"{feedback_base}?email_choice=already_aware&server_id={provider_id}",
+        "feedback_report_error_url": f"{feedback_base}?email_choice=report_error_{cardinality}&server_id={provider_id}",
         "unsubscribe_mailto": unsubscribe_mailto,
         "_recipients": recipients,
         "_osf_id": osf_id,
@@ -174,14 +191,29 @@ def _fetch_all_refs(osf_id: str, repo: PreprintsRepo) -> List[Dict[str, Any]]:
     return [r for r in items if r.get("flora_replication_cited") is not None]
 
 
+def _strip_doi_from_ref(text: str, doi: str) -> str:
+    """Remove DOI URLs/text already embedded in a reference string."""
+    if not doi or not text:
+        return text
+    # Remove any doi.org URL — catches case variations, spacing artifacts, and URL encoding
+    text = re.sub(r"https?://(?:dx\.)?doi\.org/\S*", "", text, flags=re.IGNORECASE)
+    # Also strip textual "DOI: xxx" labels (some databases embed these in the reference string)
+    doi_pat = re.escape(doi).replace("/", r"/\s*")
+    text = re.sub(r"\bDOI:\s*" + doi_pat, "", text, flags=re.IGNORECASE)
+    # Strip trailing whitespace/punctuation artifacts left behind
+    return text.rstrip(". ").rstrip()
+
+
 def _build_original_entry(ref: Dict[str, Any], ref_pairs: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """Build a single original entry with its replications from FLORA ref_pairs."""
     if not ref_pairs:
         return None
 
     # The ref itself is the "original" that was cited in the preprint
-    original_citation = ref.get("raw_citation") or ref.get("title") or "(unknown reference)"
     original_doi = ref.get("doi") or ""
+    original_citation = ref.get("raw_citation") or ref.get("title") or "(unknown reference)"
+    if original_doi:
+        original_citation = _strip_doi_from_ref(original_citation, original_doi)
     original_doi_url = f"https://doi.org/{original_doi}" if original_doi else ""
 
     replications: List[Dict[str, Any]] = []
@@ -207,6 +239,9 @@ def _build_original_entry(ref: Dict[str, Any], ref_pairs: List[Dict[str, Any]]) 
             or "unknown"
         )
         rep_oa_url = pair.get("oa_url_r") or rep.get("oa_url") or ""
+
+        if rep_doi:
+            rep_ref = _strip_doi_from_ref(rep_ref, rep_doi)
 
         replications.append({
             "full_reference": rep_ref,
