@@ -396,6 +396,10 @@ def process_preprint(
         # No PDF email match — drop this candidate (declared > fallback rule)
         dropped.append({"name": name, "email": email})
 
+    if not matched_candidates:
+        # No candidate matched any PDF email — don't wipe the list, leave as-is
+        return None
+
     if not changes and not dropped:
         # Nothing to fix: all candidates already have PDF emails
         return None
