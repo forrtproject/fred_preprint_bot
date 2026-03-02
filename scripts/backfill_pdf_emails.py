@@ -52,6 +52,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Suppress noisy warnings from PDF parsing and HTTP libraries
+logging.getLogger("pypdf").setLevel(logging.ERROR)
+logging.getLogger("pypdf._reader").setLevel(logging.ERROR)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
+logging.getLogger("botocore").setLevel(logging.ERROR)
+
 # ---------------------------------------------------------------------------
 # Re-used helpers from extract_author_list.py (copied to avoid pulling in
 # ORCID/OpenAlex dependencies that this script does not need).
