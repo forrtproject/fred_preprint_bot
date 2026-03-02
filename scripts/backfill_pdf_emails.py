@@ -27,6 +27,7 @@ import os
 import re
 import sys
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -425,13 +426,15 @@ def main() -> None:
                         help="Max preprints to process (0 = all)")
     parser.add_argument("--ids", nargs="+", default=None,
                         help="Specific OSF IDs to process")
+    parser.add_argument("--workers", type=int, default=6,
+                        help="Parallel download workers (default: 6)")
     args = parser.parse_args()
 
     pdf_root = os.environ.get("PDF_DEST_ROOT", "/tmp/preprints")
     repo = PreprintsRepo()
 
-    logger.info("Scanning preprints (limit=%s, ids=%s, dry_run=%s)",
-                args.limit or "all", args.ids or "none", args.dry_run)
+    logger.info("Scanning preprints (limit=%s, ids=%s, dry_run=%s, workers=%d)",
+                args.limit or "all", args.ids or "none", args.dry_run, args.workers)
 
     items = _scan_preprints_with_candidates(
         repo,
@@ -443,16 +446,18 @@ def main() -> None:
     total_affected = 0
     total_changes = 0
     total_dropped = 0
+    processed = 0
     all_results: List[Dict[str, Any]] = []
 
-    for i, item in enumerate(items):
-        osf_id = item["osf_id"]
-        result = process_preprint(item, repo, pdf_root, dry_run=args.dry_run)
+    def _handle_result(result: Optional[Dict[str, Any]]) -> None:
+        nonlocal total_affected, total_changes, total_dropped, processed
+        processed += 1
         if result:
             total_affected += 1
             total_changes += len(result["changes"])
             total_dropped += len(result["dropped"])
             all_results.append(result)
+            osf_id = result["osf_id"]
             for ch in result["changes"]:
                 action = "WOULD REPLACE" if args.dry_run else "REPLACED"
                 logger.info("[%s] %s %s: %s -> %s (sim=%s)",
@@ -462,10 +467,29 @@ def main() -> None:
                 action = "WOULD DROP" if args.dry_run else "DROPPED"
                 logger.info("[%s] %s %s (%s) — no PDF email match",
                             osf_id, action, dr["name"], dr["email"])
-
-        if (i + 1) % 50 == 0:
+        if processed % 50 == 0:
             logger.info("Progress: %d/%d preprints processed, %d affected",
-                        i + 1, len(items), total_affected)
+                        processed, len(items), total_affected)
+
+    workers = max(1, args.workers)
+    if workers == 1:
+        for item in items:
+            result = process_preprint(item, repo, pdf_root, dry_run=args.dry_run)
+            _handle_result(result)
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = {
+                executor.submit(process_preprint, item, repo, pdf_root, dry_run=args.dry_run): item
+                for item in items
+            }
+            for future in as_completed(futures):
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    osf_id = futures[future].get("osf_id", "?")
+                    logger.error("[%s] unexpected error: %s", osf_id, exc)
+                    result = None
+                _handle_result(result)
 
     logger.info("=" * 60)
     logger.info("Done. Processed %d preprints, %d affected, %d email changes, %d candidates dropped%s",
