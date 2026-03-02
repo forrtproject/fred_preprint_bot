@@ -1654,6 +1654,23 @@ def _match_emails_in_csv(path: str, threshold: float) -> None:
     tmp_path.replace(in_path)
 
 
+def _given_surname_from_row(row: Dict[str, Any]) -> Tuple[str, str]:
+    """Return (given, surname) using the best available name source.
+
+    Priority: OSF names (canonical), then ORCID, then TEI.
+    """
+    for given_key, surname_key in [
+        ("osf.name.given", "osf.name.surname"),
+        ("name.given.orcid", "name.surname.orcid"),
+        ("name.given", "name.surname"),
+    ]:
+        given = (row.get(given_key) or "").strip()
+        surname = (row.get(surname_key) or "").strip()
+        if given or surname:
+            return given, surname
+    return "", ""
+
+
 def _assign_pdf_emails(
     rows: List[Dict[str, Any]],
     pdf_emails: List[str],
@@ -1663,11 +1680,11 @@ def _assign_pdf_emails(
     if not rows or not pdf_emails:
         return 0
 
-    # Rule 2 requires plausible text matching between PDF email locals and TEI author names.
+    # Only consider rows without an existing email and with a usable name.
     candidate_rows = [
         idx
         for idx, row in enumerate(rows)
-        if (not _has_row_email(row)) and (row.get("name.given") or row.get("name.surname"))
+        if (not _has_row_email(row)) and any(_given_surname_from_row(row))
     ]
     if not candidate_rows:
         return 0
@@ -1694,8 +1711,7 @@ def _assign_pdf_emails(
         best_sim = 0.0
         for idx in remaining_rows:
             row = rows[idx]
-            given = (row.get("name.given") or "").strip()
-            surname = (row.get("name.surname") or "").strip()
+            given, surname = _given_surname_from_row(row)
             candidate_email, sim = _best_email_for_author(
                 given,
                 surname,
