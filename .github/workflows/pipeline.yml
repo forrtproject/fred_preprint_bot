@@ -73,6 +73,19 @@ jobs:
       PIPELINE_NOTIFY_EMAIL: ${{ secrets.PIPELINE_NOTIFY_EMAIL }}
 
     steps:
+      - name: Report run parameters
+        run: |
+          echo "## Pipeline Run: stage=\`$INPUT_STAGE\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Parameter | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Stage | \`$INPUT_STAGE\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Limit | \`$INPUT_LIMIT\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Email limit | \`$INPUT_EMAIL_LIMIT\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Enrich workers | \`$INPUT_ENRICH_WORKERS\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ORCID workers | \`$INPUT_ORCID_WORKERS\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Backlog depth | \`$INPUT_BACKLOG_DEPTH\` |" >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
