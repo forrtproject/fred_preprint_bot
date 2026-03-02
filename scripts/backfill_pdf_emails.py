@@ -357,49 +357,52 @@ def process_preprint(
     if not pdf_emails:
         return None
 
-    # Check if any PDF email already present in candidates
-    existing_emails = {
-        (c.get("email") or "").lower()
-        for c in candidates
-        if c.get("email")
-    }
+    # Match PDF emails to candidates by name, then keep ONLY candidates
+    # with a PDF email (mirroring the pipeline's "declared > fallback" rule).
     pdf_email_set = {e.lower() for e in pdf_emails}
-    if pdf_email_set & existing_emails:
-        # At least one PDF email already in candidates — already correct
-        return None
 
-    # Try to match PDF emails to candidates by name
+    # First pass: for each candidate, check if it already has a PDF email
+    # or can be matched to one.
+    matched_candidates: List[Dict[str, Any]] = []
     changes: List[Dict[str, str]] = []
-    updated_candidates = []
+    dropped: List[Dict[str, str]] = []
+
     for cand in candidates:
         name = cand.get("name") or ""
-        email = cand.get("email") or ""
-        given, surname = _split_candidate_name(name)
-        if not given and not surname:
-            updated_candidates.append(cand)
+        email = (cand.get("email") or "").strip()
+
+        # Already has a PDF email — keep as-is
+        if email.lower() in pdf_email_set:
+            matched_candidates.append(cand)
             continue
 
-        best_email, sim = _best_email_for_author(given, surname, pdf_emails)
-        if best_email and sim >= BACKFILL_THRESHOLD:
-            changes.append({
-                "name": name,
-                "old_email": email,
-                "new_email": best_email,
-                "similarity": f"{sim:.3f}",
-            })
-            new_cand = dict(cand)
-            new_cand["email"] = best_email
-            updated_candidates.append(new_cand)
-        else:
-            updated_candidates.append(cand)
+        # Try to match by name
+        given, surname = _split_candidate_name(name)
+        if given or surname:
+            best_email, sim = _best_email_for_author(given, surname, pdf_emails)
+            if best_email and sim >= BACKFILL_THRESHOLD:
+                changes.append({
+                    "name": name,
+                    "old_email": email,
+                    "new_email": best_email,
+                    "similarity": f"{sim:.3f}",
+                })
+                new_cand = dict(cand)
+                new_cand["email"] = best_email
+                matched_candidates.append(new_cand)
+                continue
 
-    if not changes:
+        # No PDF email match — drop this candidate (declared > fallback rule)
+        dropped.append({"name": name, "email": email})
+
+    if not changes and not dropped:
+        # Nothing to fix: all candidates already have PDF emails
         return None
 
     # Apply update
     if not dry_run:
         try:
-            repo.update_preprint_author_email_candidates(osf_id, updated_candidates)
+            repo.update_preprint_author_email_candidates(osf_id, matched_candidates)
         except Exception as exc:
             logger.error("[%s] update failed: %s", osf_id, exc)
             return None
@@ -407,6 +410,7 @@ def process_preprint(
     return {
         "osf_id": osf_id,
         "changes": changes,
+        "dropped": dropped,
         "applied": not dry_run,
     }
 
@@ -438,6 +442,7 @@ def main() -> None:
 
     total_affected = 0
     total_changes = 0
+    total_dropped = 0
     all_results: List[Dict[str, Any]] = []
 
     for i, item in enumerate(items):
@@ -446,20 +451,25 @@ def main() -> None:
         if result:
             total_affected += 1
             total_changes += len(result["changes"])
+            total_dropped += len(result["dropped"])
             all_results.append(result)
             for ch in result["changes"]:
                 action = "WOULD REPLACE" if args.dry_run else "REPLACED"
                 logger.info("[%s] %s %s: %s -> %s (sim=%s)",
                             osf_id, action, ch["name"],
                             ch["old_email"], ch["new_email"], ch["similarity"])
+            for dr in result["dropped"]:
+                action = "WOULD DROP" if args.dry_run else "DROPPED"
+                logger.info("[%s] %s %s (%s) — no PDF email match",
+                            osf_id, action, dr["name"], dr["email"])
 
         if (i + 1) % 50 == 0:
             logger.info("Progress: %d/%d preprints processed, %d affected",
                         i + 1, len(items), total_affected)
 
     logger.info("=" * 60)
-    logger.info("Done. Processed %d preprints, %d affected, %d email changes%s",
-                len(items), total_affected, total_changes,
+    logger.info("Done. Processed %d preprints, %d affected, %d email changes, %d candidates dropped%s",
+                len(items), total_affected, total_changes, total_dropped,
                 " (dry run)" if args.dry_run else "")
 
     if all_results:

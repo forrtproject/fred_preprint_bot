@@ -29,7 +29,7 @@ if str(EXTRACTION_DIR) not in sys.path:
 from osf_sync.dynamo.preprints_repo import PreprintsRepo
 from osf_sync.dynamo.api_cache_repo import ApiCacheRepo
 from osf_sync.email.blacklist import load_blacklist
-from osf_sync.email.validation import validate_recipient
+from osf_sync.email.validation import validate_recipient, repair_email_tld
 from osf_sync.email.suppression import is_suppressed
 from osf_sync.exclusion_logging import log_preprint_exclusion
 from osf_sync.iter_preprints import SESSION, OSF_API
@@ -130,6 +130,8 @@ def _clean_email(raw: Optional[str], *, allow_blacklist: bool = False) -> Option
         return None
     if not EMAIL_RE.match(txt):
         return None
+    # Strip trailing PDF annotation artifacts (e.g. .Link, .Highlights)
+    txt = repair_email_tld(txt)
     local, _, domain = txt.rpartition("@")
     if not local or not domain:
         return None

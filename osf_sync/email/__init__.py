@@ -10,12 +10,12 @@ from typing import Any, Dict, Optional
 
 from ..dynamo.preprints_repo import PreprintsRepo
 from ..dynamo.suppression_repo import SuppressionRepo
-from .data_assembly import assemble_email_context
+from .data_assembly import assemble_email_context, _build_greeting
 from .gmail import send_email
 from .inbox import process_inbox
 from .suppression import is_suppressed
 from .template import render_email
-from .validation import validate_recipient
+from .validation import validate_recipient, repair_email_tld
 
 logger = logging.getLogger(__name__)
 
@@ -150,8 +150,9 @@ def process_email_batch(
 
         # Filter recipients: remove suppressed and invalid per-address
         valid_addresses = []
+        valid_first_names = []
         for recip in all_recipients:
-            addr = recip["email"]
+            addr = repair_email_tld(recip["email"])
             if is_suppressed(addr, repo=suppression_repo):
                 skipped_suppressed += 1
                 logger.info("Skipped suppressed email", extra={"osf_id": pid, "email": addr})
@@ -162,6 +163,7 @@ def process_email_batch(
                 logger.info("Skipped invalid email", extra={"osf_id": pid, "email": addr, "error": err_msg})
                 continue
             valid_addresses.append(addr)
+            valid_first_names.append(recip["first_name"])
 
         if not valid_addresses:
             repo.mark_email_validated(pid, "no valid recipients")
@@ -183,6 +185,9 @@ def process_email_batch(
             )
             _release_claim_safe(pid)
             continue
+
+        # Rebuild greeting to reflect only valid recipients
+        context["author_greeting"] = _build_greeting(valid_first_names)
 
         # Render email
         try:
