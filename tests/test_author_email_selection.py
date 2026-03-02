@@ -54,7 +54,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(
+        candidates, rejected = _score_group_email_matches(
             rows,
             threshold=0.90,
             repo=object(),
@@ -62,6 +62,8 @@ class AuthorEmailSelectionTests(unittest.TestCase):
         )
 
         self.assertEqual(candidates, [{"name": "A1 Author", "email": "valid@uni.edu", "position": 0}])
+        self.assertIn("invalid@uni.edu", rejected)
+        self.assertIn("suppressed@uni.edu", rejected)
 
     @patch("osf_sync.extraction.extract_author_list.validate_recipient", return_value=(True, None))
     def test_preprint_contact_gate_detects_xml_or_pdf_contactable_email(self, _mock_validate) -> None:
@@ -276,7 +278,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             }
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.75)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.75)
 
         self.assertEqual(candidates, [{"name": "Lukas Wallrich", "email": "ublwal002@bbk.ac.uk", "position": 0}])
         self.assertEqual(rows[0]["email.possible"], "ublwal002@bbk.ac.uk")
@@ -303,7 +305,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         self.assertEqual(
             candidates,
@@ -343,7 +345,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
         self.assertEqual(rows[0]["email.source"], "pdf")
         self.assertFalse(rows[1].get("email"))
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
         self.assertEqual(candidates, [{"name": "Jane Doe", "email": "jane.doe@lab.edu", "position": 0}])
 
     def test_declared_contacts_more_than_five_are_capped_to_first_five(self) -> None:
@@ -406,7 +408,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         self.assertEqual(
             candidates,
@@ -479,7 +481,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         self.assertEqual(
             candidates,
@@ -536,7 +538,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         self.assertEqual(
             candidates,
@@ -598,7 +600,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         self.assertEqual(
             candidates,
@@ -663,7 +665,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
         self.assertEqual(candidates, [])
 
 
@@ -697,7 +699,7 @@ class AuthorEmailSelectionTests(unittest.TestCase):
             },
         ]
 
-        candidates = _score_group_email_matches(rows, threshold=0.90)
+        candidates, _ = _score_group_email_matches(rows, threshold=0.90)
 
         # Sorted by n: Alice(n=1) rank 0, Bob(n=2) rank 1, Charlie(n=3) rank 2
         self.assertEqual(candidates[0]["name"], "Alice First")

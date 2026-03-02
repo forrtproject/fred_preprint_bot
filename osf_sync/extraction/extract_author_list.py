@@ -392,6 +392,11 @@ def _ensure_tei(provider_id: str, osf_id: str, dest_root: str) -> Optional[Path]
     if tei_path.exists():
         _dbg(f"[{osf_id}] tei: found {tei_path}")
         return tei_path
+    # Try S3 cache before expensive GROBID regeneration.
+    from ..tei_cache import download_tei
+    if download_tei(provider_id, osf_id, str(tei_path)):
+        _dbg(f"[{osf_id}] tei: restored from S3 cache")
+        return tei_path
     attempt = 0
     backoff = GROBID_BACKOFF
     while True:
@@ -1460,7 +1465,7 @@ def _score_group_email_matches(
     *,
     repo: Optional[PreprintsRepo] = None,
     enforce_contactability: bool = False,
-) -> List[Dict[str, Any]]:
+) -> Tuple[List[Dict[str, Any]], Dict[str, str]]:
     openalex_domain_cache: Dict[str, Optional[str]] = {}
     validation_cache: Dict[str, bool] = {}
     suppression_cache: Dict[str, bool] = {}
@@ -1559,6 +1564,8 @@ def _score_group_email_matches(
     seen_declared: Set[str] = set()
     seen_fallback: Set[str] = set()
 
+    rejected_emails: Dict[str, str] = {}  # email -> reason
+
     def _append_candidate(
         rank: int,
         row: Dict[str, Any],
@@ -1572,15 +1579,21 @@ def _score_group_email_matches(
         if enforce_contactability:
             if key not in validation_cache:
                 try:
-                    ok, _err = validate_recipient(email)
+                    ok, err = validate_recipient(email)
                     validation_cache[key] = bool(ok)
-                except Exception:
-                    validation_cache[key] = False
+                    if not ok:
+                        rejected_emails[key] = f"validation: {err}"
+                except Exception as exc:
+                    # Fail-open on transient validation failures to avoid
+                    # dropping valid contacts (consistent with ORCID gate).
+                    validation_cache[key] = True
+                    _log(f"[warn] validate_recipient({email}) raised {exc!r}; fail-open")
             if not validation_cache[key]:
                 return False
             if key not in suppression_cache:
                 suppression_cache[key] = is_suppressed(email)
             if suppression_cache[key]:
+                rejected_emails[key] = "suppressed"
                 return False
         if key in seen:
             return False
@@ -1600,24 +1613,24 @@ def _score_group_email_matches(
     # Prefer declared corresponding-contact emails from TEI/PDF regardless of author position.
     if declared_candidates:
         if len(declared_candidates) <= 5:
-            return declared_candidates
+            return declared_candidates, rejected_emails
         last_author_position = author_count - 1
         last_author_candidate = next(
             (cand for cand in declared_candidates if cand.get("position") == last_author_position),
             None,
         )
         if last_author_candidate:
-            return declared_candidates[:4] + [last_author_candidate]
-        return declared_candidates[:5]
+            return declared_candidates[:4] + [last_author_candidate], rejected_emails
+        return declared_candidates[:5], rejected_emails
 
     # Fallback contacts (ORCID/other inferred sources) are restricted to first four + last author.
     if author_count <= 0 or not fallback_candidates:
-        return []
+        return [], rejected_emails
 
     allowed_positions: Set[int] = set(range(min(4, author_count)))
     allowed_positions.add(author_count - 1)
     selected_fallback = [cand for cand in fallback_candidates if cand.get("position") in allowed_positions]
-    return selected_fallback[:5]
+    return selected_fallback[:5], rejected_emails
 
 
 def _count_contactable_candidates(candidates: List[Dict[str, Any]]) -> int:
@@ -1808,19 +1821,38 @@ def run_author_extract(
     def _handle_result(osf_id: str, item: dict, rows: Optional[List[Dict[str, Any]]]) -> None:
         nonlocal count_rows, count_preprints
         if rows:
-            candidates = _score_group_email_matches(
+            candidates, rejected_emails = _score_group_email_matches(
                 rows,
                 match_emails_threshold,
                 repo=repo,
                 enforce_contactability=True,
             )
             if _count_contactable_candidates(candidates) == 0:
+                # Collect emails that were present in the rows for diagnostics.
+                all_row_emails = []
+                for row in rows:
+                    email = _row_email_for_selection(row)
+                    if email:
+                        all_row_emails.append(email)
+                details: Dict[str, Any] = {
+                    "provider_id": item.get("provider_id"),
+                    "rows": len(rows),
+                }
+                if all_row_emails:
+                    details["emails_found"] = all_row_emails
+                if rejected_emails:
+                    details["emails_rejected"] = rejected_emails
                 log_preprint_exclusion(
                     reason="no_author_contacts_extracted",
                     osf_id=osf_id,
                     stage="author",
-                    details={"provider_id": item.get("provider_id"), "rows": len(rows)},
+                    details=details,
                 )
+                if all_row_emails or rejected_emails:
+                    _log(
+                        f"[warn] {osf_id}: excluded with {len(rows)} rows, "
+                        f"emails_found={all_row_emails}, rejected={rejected_emails}"
+                    )
             try:
                 repo.update_preprint_author_email_candidates(osf_id, candidates)
             except Exception as exc:
