@@ -270,27 +270,35 @@ STAGE_LABELS = {
 
 def render_markdown(stats):
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    total_identified = stats["total_preprints"] + stats["total_excluded"]
     lines = [
         "# FLoRA Preprint Notifier — Dashboard",
         f"*Updated: {now}*",
         "",
+        "## Preprint Flow",
+        "| | Count |",
+        "|---|---:|",
+        f"| **Preprints identified (OSF)** | **{total_identified}** |",
+        f"| − Excluded | {stats['total_excluded']} |",
+        f"| = Active in pipeline | {stats['total_preprints']} |",
+    ]
+
+    # Exclusion breakdown sorted by frequency
+    lines.extend(["", "### Exclusion Breakdown", "| Reason | Count |", "|--------|------:|"])
+    for reason, count in stats["excl_counts"].most_common():
+        lines.append(f"| {reason} | {count} |")
+
+    # Pipeline funnel
+    lines.extend([
+        "",
         "## Pipeline Funnel",
         "| Stage | Pending | Done | Total |",
-        "|-------|---------|------|-------|",
-    ]
+        "|-------|--------:|-----:|------:|",
+    ])
 
     for q in ["queue_pdf", "queue_grobid", "queue_extract", "queue_email"]:
         s = stats["funnel"][q]
         lines.append(f"| {STAGE_LABELS[q]} | {s['pending']} | {s['done']} | {s['total']} |")
-
-    lines.append("")
-    lines.append(f"**Total preprints in pipeline:** {stats['total_preprints']}")
-
-    # Exclusions
-    lines.extend(["", "## Exclusions", "| Reason | Count |", "|--------|-------|"])
-    for reason in sorted(stats["excl_counts"]):
-        lines.append(f"| {reason} | {stats['excl_counts'][reason]} |")
-    lines.append(f"**Total excluded:** {stats['total_excluded']}")
 
     # FLoRA matching
     lines.extend([
