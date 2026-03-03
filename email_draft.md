@@ -21,8 +21,7 @@ This message is informational and was generated automatically using publicly ava
 
 **One-click feedback: Was this email helpful?**
 
-[Helpful]({{ feedback_helpful_url }}) | [Not helpful]({{ feedback_not_helpful_url }}) | [Already aware of {{ 'this replication' if total_replication_count == 1 else 'these replications' }}]({{ feedback_already_aware_url }})
-[Report data error/concern]({{ feedback_report_error_url }})
+[Helpful]({{ feedback_helpful_url }}) | [Not helpful]({{ feedback_not_helpful_url }}) | [Already aware of {{ 'this replication' if total_replication_count == 1 else 'these replications' }}]({{ feedback_already_aware_url }}) | [Report data error/concern]({{ feedback_report_error_url }})
 
 *(You will be able to provide additional feedback after clicking. By clicking, you consent for your response to be included in our analysis.)*
 
@@ -36,7 +35,7 @@ Dr Lukas Wallrich, Birkbeck, University of London<br>
 Dr Lukas Röseler, Münster Center for Open Science, University of Münster<br>
 Dr Josefina Weinerova, Birkbeck, University of London<br>
 Keegan Vaz, Technical University Dortmund<br>
-Dr. Flávio Azevedo, Utrecht University
+for the FLoRA Notify Collaboration
 
 This email is part of the UKRI-funded project *Making Replications Count*. Further information and additional discovery tools are available at: [https://forrt.org/marco](https://forrt.org/marco)
 
