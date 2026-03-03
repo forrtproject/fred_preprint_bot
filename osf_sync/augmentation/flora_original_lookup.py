@@ -140,6 +140,11 @@ def _ensure_fresh_flora_csv(path: Path, *, debug: bool = False) -> Dict[str, Any
 
 
 def _load_flora_pairs_by_original(path: Path) -> Dict[str, List[Dict[str, Optional[str]]]]:
+    # The CSV at FLORA_CSV_URL is flora_filtered.csv, which is pre-filtered upstream in line
+    # with the protocol: it excludes OSF registrations, Boyce et al. (2023) student
+    # replications, and retracted replications (RetractionWatch). Replications without a DOI
+    # are retained here but are skipped downstream in flora_screening.py when doi_r is None.
+    # Filter script: https://github.com/forrtproject/FReD-data/blob/main/R/filter_flora.R
     pairs_by_original: Dict[str, List[Dict[str, Optional[str]]]] = {}
     seen_by_original: Dict[str, set] = {}
 

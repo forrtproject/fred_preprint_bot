@@ -273,7 +273,7 @@ def render_markdown(stats):
     total_identified = stats["total_preprints"] + stats["total_excluded"]
     lines = [
         "# FLoRA Preprint Notifier — Dashboard",
-        f"*Updated: {now}*",
+        f"*Updated: {now} · [Source](https://github.com/forrtproject/flora_preprint_notifier)*",
         "",
         "## Preprint Flow",
         "| | Count |",
