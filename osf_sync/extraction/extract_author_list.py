@@ -123,7 +123,7 @@ EMAIL_RE = re.compile(r"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,15}$", re.IGNOREC
 def _clean_email(raw: Optional[str], *, allow_blacklist: bool = False) -> Optional[str]:
     if not raw:
         return None
-    txt = raw.strip().strip("<>").strip().strip(";").strip(",")
+    txt = raw.strip().strip("<>").strip().strip(";").strip(",").strip(".")
     if txt.lower().startswith("mailto:"):
         txt = txt[7:].strip()
     if not txt:
