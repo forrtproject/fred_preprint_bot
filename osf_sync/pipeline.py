@@ -1444,29 +1444,68 @@ def _notify_pipeline_summary(result: Dict[str, Any]) -> None:
         from .email.gmail import send_email
 
         stages = result.get("stages", {})
+        td = 'style="padding:4px 12px;text-align:right"'
+        tdl = 'style="padding:4px 12px;text-align:left"'
+
+        # --- identified row (sync stage, when present) ---
+        sync_data = stages.get("sync")
+        identified_row = ""
+        if sync_data is not None:
+            identified = sync_data.get("upserted", sync_data.get("processed", 0))
+            sync_timed = " (timed out)" if sync_data.get("stopped_due_to_time") else ""
+            identified_row = (
+                f'<tr style="font-weight:bold;border-bottom:1px solid #ccc">'
+                f'<td {tdl}>Preprints identified (OSF sync)</td>'
+                f'<td {td}>{identified}</td><td {td}>—</td>'
+                f'<td {tdl}>{sync_timed.strip()}</td></tr>'
+            )
+
+        # --- downstream stage rows ---
         rows = []
         any_failed = False
         for name, data in stages.items():
+            if name == "sync":
+                continue
             p = data.get("processed", 0)
             f = data.get("failed", 0)
             timed = " (timed out)" if data.get("stopped_due_to_time") else ""
             if f:
                 any_failed = True
-            rows.append(f"<tr><td>{name}</td><td>{p}</td><td>{f}</td><td>{timed.strip()}</td></tr>")
+            rows.append(f"<tr><td {tdl}>{name}</td><td {td}>{p}</td><td {td}>{f}</td><td {tdl}>{timed.strip()}</td></tr>")
 
         is_dry_run = any(data.get("dry_run") for data in stages.values())
         status = "DRY RUN" if is_dry_run else ("with errors" if any_failed else "OK")
         table = (
             '<table style="border-collapse:collapse;font-family:monospace;font-size:14px">'
-            '<tr style="border-bottom:2px solid #333"><th style="text-align:left;padding:4px 12px">Stage</th>'
-            '<th style="padding:4px 12px">Processed</th><th style="padding:4px 12px">Failed</th>'
-            '<th style="padding:4px 12px">Note</th></tr>'
+            '<tr style="border-bottom:2px solid #333">'
+            f'<th {tdl}>Stage</th>'
+            f'<th {td}>Processed</th><th {td}>Failed</th>'
+            f'<th {tdl}>Note</th></tr>'
+            + identified_row
             + "".join(rows)
             + "</table>"
         )
 
+        # --- exclusion breakdown section ---
+        excl = result.get("excluded_preprints_summary", {})
+        excl_total = excl.get("total_excluded_preprints")
+        excl_section = ""
+        if excl_total is not None:
+            by_reason = excl.get("by_reason") or {}
+            reason_rows = "".join(
+                f'<tr><td {tdl} style="padding-left:24px">− {reason}</td><td {td}>{count}</td></tr>'
+                for reason, count in sorted(by_reason.items(), key=lambda x: -x[1])
+            )
+            excl_section = (
+                "<h3 style='font-family:monospace;margin-top:16px'>Excluded preprints (cumulative)</h3>"
+                '<table style="border-collapse:collapse;font-family:monospace;font-size:14px">'
+                f'<tr style="font-weight:bold"><td {tdl}>Total excluded</td><td {td}>{excl_total}</td></tr>'
+                + reason_rows
+                + "</table>"
+            )
+
         dry_note = "<p><em>This was a dry run — no data was written.</em></p>" if is_dry_run else ""
-        html = f"<p>Pipeline run completed <strong>{status}</strong>.</p>{dry_note}{table}"
+        html = f"<p>Pipeline run completed <strong>{status}</strong>.</p>{dry_note}{table}{excl_section}"
         send_email(PIPELINE_NOTIFY_EMAIL, f"FLoRA pipeline: {status}", html)
         logger.info("Pipeline summary email sent", extra={"to": PIPELINE_NOTIFY_EMAIL})
     except Exception:
