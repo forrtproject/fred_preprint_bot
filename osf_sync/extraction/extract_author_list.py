@@ -123,7 +123,7 @@ EMAIL_RE = re.compile(r"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,15}$", re.IGNOREC
 def _clean_email(raw: Optional[str], *, allow_blacklist: bool = False) -> Optional[str]:
     if not raw:
         return None
-    txt = raw.strip().strip("<>").strip().strip(";").strip(",").strip(".")
+    txt = raw.strip().strip("<>\"'").strip().strip(";").strip(",").strip(".")
     if txt.lower().startswith("mailto:"):
         txt = txt[7:].strip()
     if not txt:
@@ -1416,12 +1416,15 @@ def _best_email_for_author(
         sims: List[float] = []
         for v in variants:
             sims.append(_similarity(v, local))
-            if v.startswith(local):
-                sims.append(len(local) / len(v))
-            if local in v:
-                sims.append(len(local) / len(v))
-            if v in local:
-                sims.append(len(v) / len(local))
+            # A local part fully contained in a name variant (or vice versa) is a
+            # strong signal even when string distance is diluted by length difference.
+            # This catches patterns like "karimima" ⊂ "karimimalekabadi" or
+            # "lwal" ⊂ "lwallrich" (initial + surname prefix, with digits already
+            # stripped from local by _normalize_name, e.g. "lwal004" → "lwal").
+            if len(local) >= 4 and local in v:
+                sims.append(0.85)
+            elif len(v) >= 4 and v in local:
+                sims.append(0.85)
         sim = max(sims) if sims else 0.0
         # Prefer locals that contain both given + surname over single-token matches
         if given_n and surname_n:
