@@ -86,8 +86,16 @@ DEFAULT_DEBUG_CSV = EXTRACTION_DIR / "authorList_ext.debug.csv"
 PDF_EMAIL_MATCH_THRESHOLD = float(os.environ.get("PDF_EMAIL_MATCH_THRESHOLD", "0.75"))
 PDF_ORCID_MATCH_THRESHOLD = float(os.environ.get("PDF_ORCID_MATCH_THRESHOLD", "0.75"))
 
-# Persistent ORCID cache (DynamoDB api_cache table)
-_api_cache = ApiCacheRepo()
+# Persistent API cache (DynamoDB) — lazily initialised so env vars are
+# resolved at first use rather than at module import time.
+_api_cache: Optional["ApiCacheRepo"] = None
+
+
+def _get_api_cache() -> "ApiCacheRepo":
+    global _api_cache
+    if _api_cache is None:
+        _api_cache = ApiCacheRepo()
+    return _api_cache
 _ORCID_PERSON_TTL = 30 * 24 * 3600  # 30 days
 _ORCID_EMPLOYMENT_TTL = 30 * 24 * 3600  # 30 days
 _ORCID_NAME_SEARCH_TTL = 7 * 24 * 3600  # 7 days
@@ -516,8 +524,8 @@ def _extract_authors_from_tei(tei_path: Path) -> List[TeiAuthor]:
 def _fetch_contributors(osf_id: str) -> List[dict]:
     # Check DynamoDB persistent cache first
     db_key = f"osf_contributors::{osf_id}"
-    db_item = _api_cache.get(db_key)
-    if db_item and _api_cache.is_fresh(db_item, ttl_seconds=_OSF_CONTRIBUTORS_TTL):
+    db_item = _get_api_cache().get(db_key)
+    if db_item and _get_api_cache().is_fresh(db_item, ttl_seconds=_OSF_CONTRIBUTORS_TTL):
         payload = db_item.get("payload")
         if isinstance(payload, list):
             _dbg(f"[{osf_id}] osf contributors from cache total={len(payload)}")
@@ -536,7 +544,7 @@ def _fetch_contributors(osf_id: str) -> List[dict]:
         url = (data.get("links") or {}).get("next")
     _dbg(f"[{osf_id}] osf contributors total={len(out)}")
     # Persist to DynamoDB cache
-    _api_cache.put(db_key, out, source="osf", ttl_seconds=_OSF_CONTRIBUTORS_TTL)
+    _get_api_cache().put(db_key, out, source="osf", ttl_seconds=_OSF_CONTRIBUTORS_TTL)
     return out
 
 
@@ -688,8 +696,8 @@ def _fetch_orcid_person(orcid: str, cache: Dict[str, dict]) -> Optional[dict]:
         return cache[orcid]
     # L2: check DynamoDB persistent cache
     db_key = f"orcid_person::{orcid}"
-    db_item = _api_cache.get(db_key)
-    if db_item and _api_cache.is_fresh(db_item, ttl_seconds=_ORCID_PERSON_TTL):
+    db_item = _get_api_cache().get(db_key)
+    if db_item and _get_api_cache().is_fresh(db_item, ttl_seconds=_ORCID_PERSON_TTL):
         payload = db_item.get("payload")
         if isinstance(payload, dict) and payload.get("_none") is True:
             cache[orcid] = None
@@ -702,11 +710,11 @@ def _fetch_orcid_person(orcid: str, cache: Dict[str, dict]) -> Optional[dict]:
     _dbg(f"[orcid] person {orcid} status={r.status_code}")
     if r.status_code >= 400:
         cache[orcid] = None
-        _api_cache.put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_PERSON_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_PERSON_TTL)
         return None
     data = r.json()
     cache[orcid] = data
-    _api_cache.put(db_key, data, source="orcid", ttl_seconds=_ORCID_PERSON_TTL)
+    _get_api_cache().put(db_key, data, source="orcid", ttl_seconds=_ORCID_PERSON_TTL)
     return data
 
 
@@ -715,8 +723,8 @@ def _fetch_orcid_employments(orcid: str, cache: Dict[str, List[str]]) -> List[st
         return cache[orcid]
     # L2: check DynamoDB persistent cache
     db_key = f"orcid_employments::{orcid}"
-    db_item = _api_cache.get(db_key)
-    if db_item and _api_cache.is_fresh(db_item, ttl_seconds=_ORCID_EMPLOYMENT_TTL):
+    db_item = _get_api_cache().get(db_key)
+    if db_item and _get_api_cache().is_fresh(db_item, ttl_seconds=_ORCID_EMPLOYMENT_TTL):
         payload = db_item.get("payload")
         if isinstance(payload, list):
             cache[orcid] = payload
@@ -727,7 +735,7 @@ def _fetch_orcid_employments(orcid: str, cache: Dict[str, List[str]]) -> List[st
     _dbg(f"[orcid] employments {orcid} status={r.status_code}")
     if r.status_code >= 400:
         cache[orcid] = []
-        _api_cache.put(db_key, [], source="orcid", ttl_seconds=_ORCID_EMPLOYMENT_TTL)
+        _get_api_cache().put(db_key, [], source="orcid", ttl_seconds=_ORCID_EMPLOYMENT_TTL)
         return []
     data = r.json()
     insts: List[str] = []
@@ -744,7 +752,7 @@ def _fetch_orcid_employments(orcid: str, cache: Dict[str, List[str]]) -> List[st
                 insts.append(name)
     result = list(dict.fromkeys(insts))
     cache[orcid] = result
-    _api_cache.put(db_key, result, source="orcid", ttl_seconds=_ORCID_EMPLOYMENT_TTL)
+    _get_api_cache().put(db_key, result, source="orcid", ttl_seconds=_ORCID_EMPLOYMENT_TTL)
     return result
 
 
@@ -763,8 +771,8 @@ def _search_orcid_by_name(
         return None
     # L2: check DynamoDB persistent cache
     db_key = f"orcid_name_search::{fam}::{giv}"
-    db_item = _api_cache.get(db_key)
-    if db_item and _api_cache.is_fresh(db_item, ttl_seconds=_ORCID_NAME_SEARCH_TTL):
+    db_item = _get_api_cache().get(db_key)
+    if db_item and _get_api_cache().is_fresh(db_item, ttl_seconds=_ORCID_NAME_SEARCH_TTL):
         payload = db_item.get("payload")
         if isinstance(payload, dict) and payload.get("_none") is True:
             cache[key] = None
@@ -779,21 +787,21 @@ def _search_orcid_by_name(
     _dbg(f"[orcid] search family={fam} given={giv} status={r.status_code}")
     if r.status_code >= 400:
         cache[key] = None
-        _api_cache.put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
         return None
     data = r.json()
     results = data.get("result") or []
     if len(results) != 1:
         cache[key] = None
-        _api_cache.put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
         return None
     identifier = results[0].get("orcid-identifier") or {}
     orcid = _normalize_orcid(identifier.get("path"))
     cache[key] = orcid
     if orcid:
-        _api_cache.put(db_key, orcid, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
+        _get_api_cache().put(db_key, orcid, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
     else:
-        _api_cache.put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="orcid", ttl_seconds=_ORCID_NAME_SEARCH_TTL)
     return orcid
 
 
@@ -1219,8 +1227,8 @@ def _openalex_domain_for_affiliation(
         return cache[key]
 
     db_key = f"openalex_institution_domain::{key}"
-    db_item = _api_cache.get(db_key)
-    if db_item and _api_cache.is_fresh(db_item, ttl_seconds=_OPENALEX_INSTITUTION_TTL):
+    db_item = _get_api_cache().get(db_key)
+    if db_item and _get_api_cache().is_fresh(db_item, ttl_seconds=_OPENALEX_INSTITUTION_TTL):
         payload = db_item.get("payload")
         if isinstance(payload, dict) and payload.get("_none") is True:
             cache[key] = None
@@ -1241,7 +1249,7 @@ def _openalex_domain_for_affiliation(
     if r.status_code >= 400:
         _dbg(f"[openalex] institutions status={r.status_code} q={norm}")
         cache[key] = None
-        _api_cache.put(db_key, {"_none": True}, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
         return None
 
     data = r.json()
@@ -1254,9 +1262,9 @@ def _openalex_domain_for_affiliation(
 
     cache[key] = domain
     if domain:
-        _api_cache.put(db_key, domain, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
+        _get_api_cache().put(db_key, domain, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
     else:
-        _api_cache.put(db_key, {"_none": True}, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
+        _get_api_cache().put(db_key, {"_none": True}, source="openalex", ttl_seconds=_OPENALEX_INSTITUTION_TTL)
     return domain
 
 
