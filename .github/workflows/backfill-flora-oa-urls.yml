@@ -40,9 +40,4 @@ jobs:
 
       - name: Re-run FLoRA lookup to backfill oa_url_r
         run: |
-          ARGS="--no-only-unchecked"
-          LIMIT="${{ inputs.limit }}"
-          if [ "$LIMIT" != "0" ]; then
-            ARGS="$ARGS --limit $LIMIT"
-          fi
-          python -m osf_sync.augmentation.flora_original_lookup $ARGS
+          python -m osf_sync.augmentation.flora_original_lookup --no-only-unchecked --limit ${{ inputs.limit }}
