@@ -8,11 +8,16 @@ We are part of the FORRT team maintaining FLoRA, a community-driven database tha
 
 {% for original in originals %}
 **Cited:** {{ original.full_reference }}{% if original.doi %} [{{ original.doi }}]({{ original.doi_url }}){% endif %}
+{% if original.replications|length > 1 %}
+
+*({{ original.replications|length }} replication attempts found in FLoRA)*
+{% endif %}
 
 {% for replication in original.replications %}
-> **Replication:** {{ replication.full_reference }}{% if replication.doi %} [{{ replication.doi }}]({{ replication.doi_url }}){% endif %}{% if replication.oa_url %} — [Open Access]({{ replication.oa_url }}){% endif %} — Reported as {{ replication.outcome }}
-
+> **Replication{% if original.replications|length > 1 %} {{ loop.index }}{% endif %}:** {{ replication.full_reference }}{% if replication.doi %} [{{ replication.doi }}]({{ replication.doi_url }}){% endif %}{% if replication.oa_url %} — [Open Access]({{ replication.oa_url }}){% endif %} — Reported as {{ replication.outcome }}
+>
 {% endfor %}
+
 {% endfor %}
 
 If relevant to your framing and interpretation, you may wish to consider citing or contextualising replication evidence alongside the original reference to help readers evaluate the current evidence base.

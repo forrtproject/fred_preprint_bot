@@ -75,6 +75,12 @@ def _clean_text(value: Any) -> Optional[str]:
     return value or None
 
 
+def _valid_url(value: Any) -> str:
+    """Return value if it looks like an http(s) URL, otherwise empty string."""
+    txt = _clean_text(value) or ""
+    return txt if txt.startswith(("http://", "https://")) else ""
+
+
 def _normalize_outcome(value: Any) -> Optional[str]:
     txt = _clean_text(value)
     if not txt:
@@ -175,7 +181,7 @@ def _load_flora_pairs_by_original(path: Path) -> Dict[str, List[Dict[str, Option
                 "apa_ref_o": _row_value(row, "apa_ref_o"),
                 "apa_ref_r": _row_value(row, "apa_ref_r"),
                 "replication_outcome": outcome,
-                "oa_url_r": _row_value(row, "oa_url_r"),
+                "oa_url_r": _valid_url(_row_value(row, "oa_url_r")),
             }
             key = (
                 rec["doi_o"],
