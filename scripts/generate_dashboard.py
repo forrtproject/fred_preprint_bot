@@ -173,13 +173,14 @@ def collect_stats():
         boto3.dynamodb.conditions.Attr("email_error").exists(),
     )
 
-    # FLoRA screening and email extraction coverage
+    # FLoRA screening and email extraction coverage (active items only)
     Attr = boto3.dynamodb.conditions.Attr
+    active = Attr("excluded").not_exists() | Attr("excluded").eq(False)
     flora_screened = _scan_count_with_filter(
-        preprints, Attr("flora_eligible").exists(),
+        preprints, Attr("flora_eligible").exists() & active,
     )
     email_extracted = _scan_count_with_filter(
-        preprints, Attr("author_email_candidates").exists(),
+        preprints, Attr("author_email_candidates").exists() & active,
     )
 
     # FLoRA matching — preprints with flora_eligible = True
@@ -231,9 +232,28 @@ def collect_stats():
         and not item.get("flora_citation_validation_pending")
     )
 
+    queue_extract_done = funnel["queue_extract"]["done"]
+
+    funnel["flora_screening"] = {
+        "done": flora_screened,
+        "total": queue_extract_done,
+        "pending": max(0, queue_extract_done - flora_screened),
+    }
+    funnel["author_extraction"] = {
+        "done": email_extracted,
+        "total": queue_extract_done,
+        "pending": max(0, queue_extract_done - email_extracted),
+    }
+    funnel["trial_assignment"] = {
+        "done": total_assigned,
+        "total": flora_total_assignable,
+        "pending": max(0, flora_total_assignable - total_assigned),
+    }
+
     return {
         "funnel": funnel,
         "total_preprints": total_preprints,
+        "queue_extract_done": queue_extract_done,
         "excl_counts": excl_counts,
         "total_excluded": total_excluded,
         "arm_counts": arm_counts,
@@ -261,10 +281,13 @@ def collect_stats():
 # ---------------------------------------------------------------------------
 
 STAGE_LABELS = {
-    "queue_pdf": "PDF Download",
-    "queue_grobid": "GROBID Processing",
-    "queue_extract": "Reference Extraction",
-    "queue_email": "Email",
+    "queue_pdf":         "PDF Download",
+    "queue_grobid":      "GROBID Processing",
+    "queue_extract":     "Reference Extraction",
+    "flora_screening":   "FLoRA Screening",
+    "author_extraction": "Author Extraction",
+    "trial_assignment":  "Trial Assignment",
+    "queue_email":       "Email",
 }
 
 
@@ -296,7 +319,11 @@ def render_markdown(stats):
         "|-------|--------:|-----:|------:|",
     ])
 
-    for q in ["queue_pdf", "queue_grobid", "queue_extract", "queue_email"]:
+    for q in [
+        "queue_pdf", "queue_grobid", "queue_extract",
+        "flora_screening", "author_extraction", "trial_assignment",
+        "queue_email",
+    ]:
         s = stats["funnel"][q]
         lines.append(f"| {STAGE_LABELS[q]} | {s['pending']} | {s['done']} | {s['total']} |")
 
@@ -306,8 +333,8 @@ def render_markdown(stats):
         "## FLoRA Matching",
         "| Metric | Value |",
         "|--------|-------|",
-        f"| Screened against FLoRA | {stats['flora_screened']} / {stats['total_preprints']} |",
-        f"| Email extraction completed | {stats['email_extracted']} / {stats['total_preprints']} |",
+        f"| Screened against FLoRA | {stats['flora_screened']} / {stats['queue_extract_done']} |",
+        f"| Email extraction completed | {stats['email_extracted']} / {stats['queue_extract_done']} |",
         f"| Preprints with FLoRA matches | {stats['flora_total']} |",
         f"| Pending citation confirmation | {stats['flora_validation_pending']} |",
         f"| Missing author emails | {stats['flora_missing_email']} |",
