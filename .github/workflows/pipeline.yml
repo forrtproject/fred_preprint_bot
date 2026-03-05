@@ -1,6 +1,8 @@
 name: Pipeline Run
 
 on:
+  schedule:
+    - cron: '0 8 * * *'
   workflow_dispatch:
     inputs:
       stage:
@@ -9,6 +11,7 @@ on:
         default: 'all'
         options:
           - all
+          - extract-enrich-flora-author
           - extract
           - enrich
           - extract-enrich
@@ -38,7 +41,7 @@ jobs:
     timeout-minutes: 330
 
     env:
-      INPUT_STAGE: ${{ github.event.inputs.stage || inputs.stage || 'all' }}
+      INPUT_STAGE: ${{ github.event_name == 'schedule' && 'extract-enrich-flora-author' || github.event.inputs.stage || inputs.stage || 'all' }}
       INPUT_LIMIT: ${{ github.event.inputs.limit || inputs.limit || '0' }}
       INPUT_EMAIL_LIMIT: ${{ github.event.inputs.email_limit || inputs.email_limit || '0' }}
       INPUT_ENRICH_WORKERS: ${{ github.event.inputs.enrich_workers || inputs.enrich_workers || '6' }}
@@ -149,6 +152,34 @@ jobs:
             if [ "$RUN_RC" -eq 124 ]; then
               echo "::warning::run-post-grobid hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
               printf '%s\n' '{"stages":{"all":{"stage":"all","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}}}' > /tmp/pipeline_output.json
+            elif [ "$RUN_RC" -ne 0 ]; then
+              exit "$RUN_RC"
+            fi
+          elif [ "$STAGE" = "extract-enrich-flora-author" ]; then
+            REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+            if [ "$REMAINING_SECONDS" -le 0 ]; then
+              echo "::warning::No soft-time budget left before stage 'extract-enrich-flora-author'; marking backlog for follow-up run."
+              printf '%s\n' '{"stages":{"extract-enrich-flora-author":{"stage":"extract-enrich-flora-author","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}}}' > /tmp/pipeline_output.json
+              RUN_RC=124
+            else
+            set +e
+            timeout --signal=TERM --kill-after=60 \
+              "$REMAINING_SECONDS" \
+              python -m osf_sync.pipeline run-post-grobid \
+                --extract-limit "$LIMIT" \
+                --enrich-limit "$LIMIT" \
+                --enrich-workers "$ENRICH_WORKERS" \
+                --orcid-workers "$ORCID_WORKERS" \
+                --max-seconds-per-stage 3600 \
+                --skip-randomization \
+                --output-json /tmp/pipeline_output.json
+            RUN_RC=$?
+            set -e
+            fi
+
+            if [ "$RUN_RC" -eq 124 ]; then
+              echo "::warning::run-post-grobid (no randomize/email) hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+              printf '%s\n' '{"stages":{"extract-enrich-flora-author":{"stage":"extract-enrich-flora-author","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}}}' > /tmp/pipeline_output.json
             elif [ "$RUN_RC" -ne 0 ]; then
               exit "$RUN_RC"
             fi
