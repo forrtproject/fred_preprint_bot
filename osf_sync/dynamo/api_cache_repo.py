@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import calendar
 import datetime as dt
+import logging
 import math
 import os
 from decimal import Decimal
 from typing import Any, Dict, Optional
 
 from .client import get_dynamo_resource
+
+logger = logging.getLogger(__name__)
 
 CACHE_TABLE = os.environ.get("DDB_TABLE_API_CACHE", "api_cache")
 CACHE_TTL_MONTHS_DEFAULT = int(os.environ.get("API_CACHE_TTL_MONTHS", "6"))
@@ -104,7 +107,13 @@ class ApiCacheRepo:
             "expires_at": _expires_at_epoch_seconds(int(ttl_seconds)) if ttl_seconds is not None
             else _expires_at_epoch(CACHE_TTL_MONTHS_DEFAULT if ttl_months is None else int(ttl_months)),
         }
-        self.t_cache.put_item(Item=_strip_nones(item))
+        try:
+            self.t_cache.put_item(Item=_strip_nones(item))
+        except Exception as exc:
+            if "Item size has exceeded" in str(exc):
+                logger.warning("Cache item too large for DynamoDB, skipping persist: %s", cache_key)
+            else:
+                raise
 
     def is_fresh(self, item: Optional[Dict[str, Any]], *, ttl_seconds: Optional[int] = None) -> bool:
         if not item:
