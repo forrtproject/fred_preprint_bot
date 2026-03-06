@@ -731,7 +731,7 @@ def _crossref_request(params: Dict[str, str],
                       max_attempts: int = 6,
                       debug: bool = False) -> Optional[dict]:
     """
-    GET Crossref with retries. Log detailed errors.
+    GET Crossref with exponential backoff and Retry-After support.
     """
     url = CROSSREF_BASE
     if debug:
@@ -745,19 +745,29 @@ def _crossref_request(params: Dict[str, str],
                 return r.json()
             else:
                 body = r.text[:600]
-                # Log both via logger and console to ensure visibility
                 _warn("Crossref HTTP error", status=r.status_code, url=r.url, body=body)
                 if debug:
                     print("[Crossref HTTP error] Attempt {}/{}".format(attempt, max_attempts))
                     print("  Status:", r.status_code)
                     print("  URL:", r.url)
                     print("  Body:", body)
+                if r.status_code == 429:
+                    retry_after = r.headers.get("Retry-After")
+                    if retry_after:
+                        try:
+                            wait = min(float(retry_after), 120.0)
+                            _info("Crossref 429 Retry-After", wait=wait, attempt=attempt)
+                            time.sleep(wait)
+                            continue
+                        except (ValueError, TypeError):
+                            pass
         except requests.RequestException as e:
             _warn("Crossref network error", error=str(e))
             if debug:
                 print("[Crossref network error] Attempt {}/{}".format(attempt, max_attempts))
                 print("  Error:", repr(e))
-        time.sleep(1.2 * attempt)
+        wait = min(2.0 * (2 ** (attempt - 1)), 60.0)
+        time.sleep(wait)
     _warn("Crossref request exhausted", attempts=max_attempts, params=params)
     return None
 
