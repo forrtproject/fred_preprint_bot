@@ -343,7 +343,7 @@ def _load_author_rows(path: Optional[str]) -> Dict[str, List[Dict[str, str]]]:
         return {}
     fp = Path(path)
     if not fp.exists():
-        logger.warning("author CSV missing; continuing with TEI/raw fallback", extra={"path": str(fp)})
+        logger.warning("author CSV missing; continuing with database (TEI/raw) fallback", extra={"path": str(fp)})
         return {}
 
     grouped: Dict[str, List[Dict[str, str]]] = defaultdict(list)
@@ -1203,7 +1203,7 @@ def _augment_network(
 
 def run_author_randomization(
     *,
-    authors_csv: Optional[str] = "osf_sync/extraction/authorList_ext.csv",
+    authors_csv: Optional[str] = None,
     limit_preprints: Optional[int] = None,
     seed: Optional[int] = None,
     network_state_key: str = DEFAULT_NETWORK_STATE_KEY,

@@ -929,7 +929,7 @@ def process_author_batch(
 
 def process_author_randomization_batch(
     *,
-    authors_csv: Optional[str] = "osf_sync/extraction/authorList_ext.csv",
+    authors_csv: Optional[str] = None,
     limit_preprints: Optional[int] = None,
     seed: Optional[int] = None,
     network_state_key: str = "trial:author_network_state",
@@ -1066,7 +1066,7 @@ def run_stage(args: argparse.Namespace) -> Dict[str, Any]:
         )
     if stage == "author-randomize":
         return process_author_randomization_batch(
-            authors_csv=getattr(args, "authors_csv", "osf_sync/extraction/authorList_ext.csv"),
+            authors_csv=getattr(args, "authors_csv", None),
             limit_preprints=getattr(args, "limit_preprints", None) or getattr(args, "limit", None),
             seed=getattr(args, "seed", None),
             network_state_key=getattr(args, "network_state_key", "trial:author_network_state"),
@@ -1199,7 +1199,7 @@ def run_all(args: argparse.Namespace) -> Dict[str, Any]:
     )
     if not args.skip_randomization:
         out["stages"]["author-randomize"] = process_author_randomization_batch(
-            authors_csv=getattr(args, "authors_csv", "osf_sync/extraction/authorList_ext.csv"),
+            authors_csv=getattr(args, "authors_csv", None),
             limit_preprints=args.randomize_limit,
             seed=getattr(args, "seed", None),
             network_state_key=getattr(args, "network_state_key", "trial:author_network_state"),
@@ -1408,7 +1408,7 @@ def run_post_grobid(args: argparse.Namespace) -> Dict[str, Any]:
     )
     if not args.skip_randomization:
         out["stages"]["author-randomize"] = process_author_randomization_batch(
-            authors_csv=getattr(args, "authors_csv", "osf_sync/extraction/authorList_ext.csv"),
+            authors_csv=getattr(args, "authors_csv", None),
             limit_preprints=args.randomize_limit,
             seed=getattr(args, "seed", None),
             network_state_key=getattr(args, "network_state_key", "trial:author_network_state"),
@@ -1575,7 +1575,7 @@ def _add_downstream_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--match-emails-threshold", type=float, default=0.90)
     parser.add_argument("--include-existing", action="store_true")
     parser.add_argument("--write-debug-csv", action="store_true")
-    parser.add_argument("--authors-csv", default="osf_sync/extraction/authorList_ext.csv")
+    parser.add_argument("--authors-csv", default=None)
     parser.add_argument("--network-state-key", default="trial:author_network_state")
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--ref-id", default=None)
@@ -1691,8 +1691,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_rand.add_argument(
         "--authors-csv",
-        default="osf_sync/extraction/authorList_ext.csv",
-        help="Optional enriched author CSV used for identity resolution (fallbacks to TEI/raw)",
+        default=None,
+        help="Optional enriched author CSV for identity resolution (defaults to database lookup)",
     )
     p_rand.add_argument(
         "--limit-preprints",
