@@ -118,11 +118,7 @@ class PreprintsRepo:
         self.ddb = ddb
         self.t_preprints = ddb.Table(os.environ.get("DDB_TABLE_PREPRINTS", "preprints"))
         self.t_refs = ddb.Table(os.environ.get("DDB_TABLE_REFERENCES", "preprint_references"))
-        self.refs_gsi_flora_queue = os.environ.get("DDB_REFS_GSI_FLORA_QUEUE", "flora_queue-index")
-        self.flora_queue_pending_value = os.environ.get("DDB_REFS_FLORA_QUEUE_PENDING", "PENDING")
-        self.flora_queue_recheck_value = os.environ.get("DDB_REFS_FLORA_QUEUE_RECHECK", "RECHECK")
         self.flora_recheck_days = int(os.environ.get("DDB_REFS_FLORA_RECHECK_DAYS", "30"))
-        self._refs_gsi_flora_queue_unavailable = False
         self.t_tei = ddb.Table(os.environ.get("DDB_TABLE_TEI", "preprint_tei"))
         self.t_sync = ddb.Table(os.environ.get("DDB_TABLE_SYNCSTATE", "sync_state"))
         self.t_excluded = ddb.Table(os.environ.get("DDB_TABLE_EXCLUDED_PREPRINTS", "excluded_preprints"))
@@ -953,9 +949,6 @@ class PreprintsRepo:
         if doi_norm:
             ref_clean["doi"] = doi_norm
             ref_clean["has_doi"] = True
-            now = dt.datetime.utcnow()
-            ref_clean["flora_queue_pk"] = self.flora_queue_pending_value
-            ref_clean["flora_queue_sk"] = f"{now.isoformat()}#{osf_id}#{ref['ref_id']}"
         elif ref_clean.get("doi"):
             ref_clean["doi"] = None
             ref_clean["has_doi"] = False
@@ -1116,116 +1109,6 @@ class PreprintsRepo:
                 break
         return out
 
-    def select_refs_with_doi(
-        self,
-        limit: int,
-        osf_id: Optional[str] = None,
-        *,
-        ref_id: Optional[str] = None,
-        only_unchecked: bool = True,
-    ) -> List[Dict[str, Any]]:
-        """
-        Return references that already have a DOI. Optionally restrict to rows without FLORA status.
-        """
-        items: List[Dict[str, Any]] = []
-        doi_filter = Attr("doi").exists() & Attr("doi").ne("")
-        now = dt.datetime.utcnow()
-        recheck_due_key = f"{now.isoformat()}~"
-        if only_unchecked:
-            doi_filter = doi_filter & (
-                Attr("flora_queue_pk").eq(self.flora_queue_pending_value)
-                | (
-                    Attr("flora_queue_pk").eq(self.flora_queue_recheck_value)
-                    & Attr("flora_queue_sk").lte(recheck_due_key)
-                )
-            )
-
-        if osf_id:
-            last_key = None
-            while True:
-                kwargs = {
-                    "KeyConditionExpression": Key("osf_id").eq(osf_id),
-                    "FilterExpression": doi_filter,
-                }
-                if last_key:
-                    kwargs["ExclusiveStartKey"] = last_key
-                resp = self.t_refs.query(**kwargs)
-                chunk = resp.get("Items", [])
-                items.extend(chunk)
-                last_key = resp.get("LastEvaluatedKey")
-                if not last_key or (limit and len(items) >= limit):
-                    break
-        elif only_unchecked and not self._refs_gsi_flora_queue_unavailable:
-            # Efficient path: sparse GSI queue over pending and due rechecks.
-            try:
-                for queue_key, due_key in (
-                    (self.flora_queue_pending_value, None),
-                    (self.flora_queue_recheck_value, recheck_due_key),
-                ):
-                    last_key = None
-                    while True:
-                        key_expr = Key("flora_queue_pk").eq(queue_key)
-                        if due_key is not None:
-                            key_expr = key_expr & Key("flora_queue_sk").lte(due_key)
-                        query_kwargs: Dict[str, Any] = {
-                            "IndexName": self.refs_gsi_flora_queue,
-                            "KeyConditionExpression": key_expr,
-                        }
-                        if last_key:
-                            query_kwargs["ExclusiveStartKey"] = last_key
-                        if limit and limit > 0:
-                            remaining = limit - len(items)
-                            if remaining <= 0:
-                                break
-                            query_kwargs["Limit"] = remaining
-                        resp = self.t_refs.query(**query_kwargs)
-                        chunk = resp.get("Items", [])
-                        items.extend([it for it in chunk if it and it.get("doi")])
-                        if limit and len(items) >= limit:
-                            break
-                        last_key = resp.get("LastEvaluatedKey")
-                        if not last_key:
-                            break
-                    if limit and len(items) >= limit:
-                        break
-            except ClientError as e:
-                code = e.response.get("Error", {}).get("Code")
-                if code == "ValidationException":
-                    self._refs_gsi_flora_queue_unavailable = True
-                    with_extras(log, index_name=self.refs_gsi_flora_queue).warning(
-                        "FLORA queue GSI unavailable; falling back to scan"
-                    )
-                else:
-                    raise
-
-            if not self._refs_gsi_flora_queue_unavailable:
-                if ref_id:
-                    items = [it for it in items if it and it.get("ref_id") == ref_id]
-                if limit:
-                    items = items[:limit]
-                return items
-        else:
-            last_key = None
-            while True:
-                scan_kwargs: Dict[str, Any] = {"FilterExpression": doi_filter}
-                if last_key:
-                    scan_kwargs["ExclusiveStartKey"] = last_key
-                resp = self.t_refs.scan(**scan_kwargs)
-                chunk = resp.get("Items", [])
-                items.extend(chunk)
-                if limit and len(items) >= limit:
-                    break
-                last_key = resp.get("LastEvaluatedKey")
-                if not last_key:
-                    break
-
-        if ref_id:
-            items = [it for it in items if it and it.get("ref_id") == ref_id]
-
-        if limit:
-            items = items[:limit]
-        return items
-
     def filter_osf_ids_without_sent_email(self, osf_ids: Iterable[str]) -> Set[str]:
         """
         Return the subset of OSF ids that do not have email_sent=True.
@@ -1262,66 +1145,6 @@ class PreprintsRepo:
 
         return {oid for oid in wanted if oid not in sent_ids}
 
-    def select_refs_with_flora_original(
-        self,
-        limit: int,
-        osf_id: Optional[str] = None,
-        *,
-        ref_id: Optional[str] = None,
-        include_missing_original: bool = False,
-    ) -> List[Dict[str, Any]]:
-        """
-        Return references processed by FLORA CSV lookup.
-        If include_missing_original is True, include rows with status=False.
-        """
-        items: List[Dict[str, Any]] = []
-
-        def _has_flora(it: Dict[str, Any]) -> bool:
-            status = it.get("flora_lookup_status")
-            if include_missing_original:
-                return status is not None
-            return status is True
-
-        if osf_id:
-            last_key = None
-            while True:
-                kwargs = {"KeyConditionExpression": Key("osf_id").eq(osf_id)}
-                if last_key:
-                    kwargs["ExclusiveStartKey"] = last_key
-                resp = self.t_refs.query(**kwargs)
-                chunk = resp.get("Items", [])
-                items.extend([it for it in chunk if it and _has_flora(it)])
-                last_key = resp.get("LastEvaluatedKey")
-                if not last_key or (limit and len(items) >= limit):
-                    break
-        else:
-            if include_missing_original:
-                fe = "attribute_exists(flora_lookup_status)"
-                eav = None
-            else:
-                fe = "flora_lookup_status = :true"
-                eav = {":true": True}
-            last_key = None
-            while True:
-                scan_kwargs: Dict[str, Any] = {"FilterExpression": fe}
-                if eav is not None:
-                    scan_kwargs["ExpressionAttributeValues"] = eav
-                if last_key:
-                    scan_kwargs["ExclusiveStartKey"] = last_key
-                resp = self.t_refs.scan(**scan_kwargs)
-                items.extend([it for it in resp.get("Items", []) if it and _has_flora(it)])
-                if limit and len(items) >= limit:
-                    break
-                last_key = resp.get("LastEvaluatedKey")
-                if not last_key:
-                    break
-
-        if ref_id:
-            items = [it for it in items if it and it.get("ref_id") == ref_id]
-        if limit:
-            items = items[:limit]
-        return items
-
     def update_reference_doi(self, osf_id: str, ref_id: str, doi: str, *, source: str) -> bool:
         # Only set if not already set
         doi_norm = _normalize_reference_doi(doi, source=source)
@@ -1331,28 +1154,34 @@ class PreprintsRepo:
             )
             return False
         now = dt.datetime.utcnow().isoformat()
-        queue_sk = f"{now}#{osf_id}#{ref_id}"
         try:
             self.t_refs.update_item(
                 Key={"osf_id": osf_id, "ref_id": ref_id},
                 UpdateExpression=(
-                    "SET doi=:d, has_doi=:hd, doi_source=:src, flora_queue_pk=:fp, flora_queue_sk=:fsk, updated_at=:t "
+                    "SET doi=:d, has_doi=:hd, doi_source=:src, updated_at=:t "
                     "REMOVE doi_checked_at, flora_lookup_status, flora_checked_at, "
                     "flora_lookup_payload, flora_refs, flora_refs_count, flora_ref_pairs, flora_ref_pairs_count, "
-                    "flora_replication_cited, flora_screened_at, flora_matching_replication_dois"
+                    "flora_replication_cited, flora_screened_at, flora_matching_replication_dois, "
+                    "flora_queue_pk, flora_queue_sk"
                 ),
                 ExpressionAttributeValues={
                     ":d": doi_norm,
                     ":hd": True,
                     ":src": source,
-                    ":fp": self.flora_queue_pending_value,
-                    ":fsk": queue_sk,
                     ":t": now,
                     ":empty": "",
                 },
                 ConditionExpression="attribute_not_exists(doi) OR doi = :empty",
                 ReturnValues="NONE",
             )
+            # Clear preprint-level flora check so it gets rechecked
+            try:
+                self.t_preprints.update_item(
+                    Key={"osf_id": osf_id},
+                    UpdateExpression="REMOVE flora_last_checked",
+                )
+            except Exception:
+                pass  # Best-effort; 30-day recheck will catch it
             return True
         except ClientError as e:
             # Conditional check failed or other issue
@@ -1377,61 +1206,6 @@ class PreprintsRepo:
             ExpressionAttributeValues={":v": validity, ":t": now},
         )
 
-    def update_reference_flora(
-        self,
-        osf_id: str,
-        ref_id: str,
-        *,
-        status: bool,
-        ref_pairs: Optional[List[Dict[str, Any]]] = None,
-    ) -> None:
-        now_dt = dt.datetime.utcnow()
-        now = now_dt.isoformat()
-        set_exprs = ["flora_lookup_status=:s", "flora_checked_at=:t", "updated_at=:t"]
-        remove_exprs = ["flora_lookup_payload", "flora_refs", "flora_refs_count", "flora_ref_pairs", "flora_ref_pairs_count"]
-        eav: Dict[str, Any] = {":s": bool(status), ":t": now}
-
-        if status:
-            remove_exprs.extend(["flora_queue_pk", "flora_queue_sk"])
-        else:
-            due = (now_dt + dt.timedelta(days=max(1, self.flora_recheck_days))).isoformat()
-            set_exprs.append("flora_queue_pk=:qpk")
-            set_exprs.append("flora_queue_sk=:qsk")
-            eav[":qpk"] = self.flora_queue_recheck_value
-            eav[":qsk"] = f"{due}#{osf_id}#{ref_id}"
-
-        if ref_pairs is not None:
-            set_exprs.append("flora_ref_pairs=:p")
-            eav[":p"] = ref_pairs
-            set_exprs.append("flora_ref_pairs_count=:pc")
-            eav[":pc"] = len(ref_pairs)
-            remove_exprs = [r for r in remove_exprs if r not in {"flora_ref_pairs", "flora_ref_pairs_count"}]
-
-        update_expr = "SET " + ", ".join(set_exprs)
-        if remove_exprs:
-            update_expr += " REMOVE " + ", ".join(remove_exprs)
-
-        self.t_refs.update_item(
-            Key={"osf_id": osf_id, "ref_id": ref_id},
-            UpdateExpression=update_expr,
-            ExpressionAttributeValues=eav,
-        )
-
-    def update_reference_flora_screening(
-        self,
-        osf_id: str,
-        ref_id: str,
-        *,
-        replication_cited: bool,
-    ) -> None:
-        now = dt.datetime.utcnow().isoformat()
-        update_expr = "SET flora_replication_cited=:v, flora_screened_at=:t, updated_at=:t REMOVE flora_matching_replication_dois"
-        self.t_refs.update_item(
-            Key={"osf_id": osf_id, "ref_id": ref_id},
-            UpdateExpression=update_expr,
-            ExpressionAttributeValues={":v": bool(replication_cited), ":t": now},
-        )
-
     def update_preprint_flora_eligibility(
         self,
         osf_id: str,
@@ -1444,11 +1218,84 @@ class PreprintsRepo:
             Key={"osf_id": osf_id},
             UpdateExpression=(
                 "SET flora_eligible=:eligible, flora_eligible_count=:count, "
-                "flora_screened_at=:t, updated_at=:t"
+                "flora_last_checked=:t, flora_screened_at=:t, updated_at=:t"
             ),
             ExpressionAttributeValues={
                 ":eligible": bool(eligible),
                 ":count": int(eligible_count),
+                ":t": now,
+            },
+        )
+
+    def select_preprints_for_flora_check(
+        self,
+        *,
+        limit: int = 0,
+        osf_id: Optional[str] = None,
+        only_unchecked: bool = True,
+    ) -> List[str]:
+        """Return osf_ids of preprints due for FLORA check.
+
+        Scans the preprints table (small: ~10k rows) and returns ids where:
+        - email_sent is not True
+        - flora_last_checked is absent or older than flora_recheck_days
+        """
+        if osf_id:
+            return [osf_id]
+
+        cutoff = (
+            dt.datetime.utcnow() - dt.timedelta(days=max(1, self.flora_recheck_days))
+        ).isoformat()
+        items: List[str] = []
+        last_key = None
+        while True:
+            scan_kwargs: Dict[str, Any] = {
+                "ProjectionExpression": "osf_id, flora_last_checked, email_sent",
+            }
+            if last_key:
+                scan_kwargs["ExclusiveStartKey"] = last_key
+            resp = self.t_preprints.scan(**scan_kwargs)
+            for item in resp.get("Items", []):
+                if item.get("email_sent") is True:
+                    continue
+                checked = item.get("flora_last_checked")
+                if only_unchecked and checked and checked > cutoff:
+                    continue
+                oid = item.get("osf_id")
+                if oid:
+                    items.append(oid)
+                if limit and len(items) >= limit:
+                    break
+            if limit and len(items) >= limit:
+                break
+            last_key = resp.get("LastEvaluatedKey")
+            if not last_key:
+                break
+        return items
+
+    def update_reference_flora_result(
+        self,
+        osf_id: str,
+        ref_id: str,
+        *,
+        ref_pairs: List[Dict[str, Any]],
+        replication_cited: bool,
+    ) -> None:
+        """Write FLORA match + screening result in a single update (matched refs only)."""
+        now = dt.datetime.utcnow().isoformat()
+        self.t_refs.update_item(
+            Key={"osf_id": osf_id, "ref_id": ref_id},
+            UpdateExpression=(
+                "SET flora_ref_pairs=:p, flora_ref_pairs_count=:pc, "
+                "flora_replication_cited=:rc, flora_screened_at=:t, updated_at=:t "
+                "REMOVE flora_lookup_payload, flora_refs, flora_refs_count, "
+                "flora_matching_replication_dois, flora_lookup_status, flora_checked_at, "
+                "flora_queue_pk, flora_queue_sk"
+            ),
+            ExpressionAttributeValues={
+                ":p": ref_pairs,
+                ":pc": len(ref_pairs),
+                ":rc": bool(replication_cited),
                 ":t": now,
             },
         )

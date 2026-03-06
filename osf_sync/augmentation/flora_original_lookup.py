@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from ..dynamo.preprints_repo import PreprintsRepo
 from ..logging_setup import get_logger, with_extras
 from ..runtime_config import RUNTIME_CONFIG
 
@@ -30,13 +29,6 @@ def _warn(msg: str, **extras: Any) -> None:
         with_extras(logger, **extras).warning(msg)
     else:
         logger.warning(msg)
-
-
-def _exception(msg: str, **extras: Any) -> None:
-    if extras:
-        with_extras(logger, **extras).exception(msg)
-    else:
-        logger.exception(msg)
 
 
 _DOI_PATTERN = re.compile(r"10\.\S+", re.IGNORECASE)
@@ -197,122 +189,3 @@ def _load_flora_pairs_by_original(path: Path) -> Dict[str, List[Dict[str, Option
             pairs_by_original.setdefault(doi_o, []).append(rec)
 
     return pairs_by_original
-
-
-def lookup_originals_with_flora(
-    *,
-    limit: int = 200,
-    osf_id: Optional[str] = None,
-    ref_id: Optional[str] = None,
-    only_unchecked: bool = True,
-    cache_path: Optional[str] = None,
-    cache_ttl_hours: Optional[int] = None,
-    ignore_cache: bool = False,
-    debug: bool = False,
-) -> Dict[str, Any]:
-    """
-    Populate FLORA original/replication pairs from local flora.csv data.
-    The file is refreshed once per day from FLORA's public CSV source.
-    """
-    repo = PreprintsRepo()
-    rows = repo.select_refs_with_doi(limit=limit, osf_id=osf_id, ref_id=ref_id, only_unchecked=only_unchecked)
-
-    candidate_ids = sorted({(r or {}).get("osf_id") for r in rows if (r or {}).get("osf_id")})
-    allowed_ids = repo.filter_osf_ids_without_sent_email(candidate_ids)
-    filtered_rows = [r for r in rows if (r or {}).get("osf_id") in allowed_ids]
-    skipped_sent_preprint = len(rows) - len(filtered_rows)
-    rows = filtered_rows
-
-    if cache_ttl_hours is not None:
-        _warn("cache_ttl_hours is ignored for local FLORA CSV lookup", cache_ttl_hours=cache_ttl_hours)
-    if ignore_cache:
-        _warn("ignore_cache is ignored for local FLORA CSV lookup")
-
-    flora_path = _resolve_flora_csv_path(cache_path)
-    refresh_meta = _ensure_fresh_flora_csv(flora_path, debug=debug)
-    flora_pairs = _load_flora_pairs_by_original(flora_path)
-
-    stats: Dict[str, Any] = {
-        "checked": 0,
-        "updated": 0,
-        "failed": 0,
-        "skipped_sent_preprint": skipped_sent_preprint,
-        "cache_hits": 0,
-        "csv_downloaded": 1 if refresh_meta.get("downloaded") else 0,
-    }
-    processed_osf_ids: set[str] = set()
-
-    for r in rows:
-        osfid = r.get("osf_id")
-        refid = r.get("ref_id")
-        doi = normalize_doi(r.get("doi"))
-        if not doi:
-            continue
-
-        stats["checked"] += 1
-        if osfid:
-            processed_osf_ids.add(osfid)
-        ref_pairs = flora_pairs.get(doi) or []
-        status = bool(ref_pairs)
-        try:
-            repo.update_reference_flora(
-                osfid,
-                refid,
-                status=status,
-                ref_pairs=ref_pairs,
-            )
-            stats["updated"] += 1
-        except Exception:
-            stats["failed"] += 1
-            _exception(
-                "Failed to update FLORA lookup result",
-                osf_id=osfid,
-                ref_id=refid,
-                match_found=status,
-            )
-
-    stats["processed_preprints"] = len(processed_osf_ids)
-    stats["processed_osf_ids"] = sorted(processed_osf_ids)
-    return stats
-
-
-if __name__ == "__main__":
-    import argparse
-
-    ap = argparse.ArgumentParser(
-        description="Lookup originals via local FLORA CSV for references that already have DOIs."
-    )
-    ap.add_argument("--limit", type=int, default=200)
-    ap.add_argument("--osf_id", default=None)
-    ap.add_argument("--ref_id", default=None)
-    ap.add_argument("--no-only-unchecked", action="store_true", help="Process all DOI rows even if already checked.")
-    ap.add_argument(
-        "--cache-path",
-        default=None,
-        help="Override FLORA CSV path (defaults to flora.csv_path in config/runtime.toml).",
-    )
-    ap.add_argument(
-        "--cache-ttl-hours",
-        type=int,
-        default=None,
-        help="Deprecated; ignored when using local FLORA CSV lookup.",
-    )
-    ap.add_argument(
-        "--ignore-cache",
-        action="store_true",
-        help="Deprecated; ignored when using local FLORA CSV lookup.",
-    )
-    ap.add_argument("--debug", action="store_true")
-    args = ap.parse_args()
-
-    out = lookup_originals_with_flora(
-        limit=args.limit,
-        osf_id=args.osf_id,
-        ref_id=args.ref_id,
-        only_unchecked=not args.no_only_unchecked,
-        cache_path=args.cache_path,
-        cache_ttl_hours=args.cache_ttl_hours,
-        ignore_cache=args.ignore_cache,
-        debug=args.debug,
-    )
-    print(out)

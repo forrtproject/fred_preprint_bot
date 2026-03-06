@@ -866,16 +866,16 @@ def process_flora_batch(
     if dry_run:
         return {
             "stage": "flora",
-            "lookup": {"checked": 0, "updated": 0, "failed": 0},
+            "lookup": {"preprints_checked": 0, "preprints_eligible": 0},
             "screen": [],
             "dry_run": True,
         }
+    # limit_lookup and limit_screen are unified into a single preprint limit
+    limit = limit_lookup or limit_screen or 0
     out = lookup_and_screen_flora(
-        limit_lookup=limit_lookup,
-        limit_screen=limit_screen,
+        limit=limit,
         osf_id=osf_id,
         ref_id=ref_id,
-        cache_ttl_hours=cache_ttl_hours,
         persist_flags=persist_flags,
         only_unchecked=only_unchecked,
         debug=debug,

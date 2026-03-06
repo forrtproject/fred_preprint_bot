@@ -1,11 +1,15 @@
 from __future__ import annotations
 import uuid
-from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set
 
 from ..dynamo.preprints_repo import PreprintsRepo
-from .flora_original_lookup import normalize_doi, lookup_originals_with_flora
+from .flora_original_lookup import (
+    normalize_doi,
+    _ensure_fresh_flora_csv,
+    _load_flora_pairs_by_original,
+    _resolve_flora_csv_path,
+)
 from ..logging_setup import get_logger, with_extras
 from .citation_distance import (
     compute_citation_distance,
@@ -160,88 +164,68 @@ def _validate_eligible_ref_distances(
               osf_id=pid, review_id=review_id, error=str(exc))
 
 
-def screen_flora_replications(
+def lookup_and_screen_flora(
     *,
-    limit: int = 500,
+    limit: int = 0,
     osf_id: Optional[str] = None,
-    osf_ids: Optional[List[str]] = None,
     ref_id: Optional[str] = None,
+    cache_path: Optional[str] = None,
     persist_flags: bool = True,
+    only_unchecked: bool = True,
     debug: bool = False,
-) -> List[Dict[str, Any]]:
+) -> Dict[str, Any]:
     """
-    For each preprint, evaluate cited reference DOIs against FLORA original DOIs (doi_o).
-    A reference is a baseline target only when its own DOI is an original with at least one
-    linked replication DOI (doi_r). Then check whether any of those linked replications are
-    already cited in the same preprint reference list.
+    Merged FLORA lookup + screening in one pass per preprint.
+
+    For each preprint: query all refs, match DOIs against FLORA CSV dict,
+    run screening, write results. Writes per-preprint (flora_last_checked)
+    and per-matched-ref only (flora_ref_pairs + flora_replication_cited).
     """
     repo = PreprintsRepo()
-    preprint_dois: Dict[str, Set[str]] = {}
 
-    if osf_ids or osf_id:
-        # Combined fetch: read each partition once, split into flora rows + DOI set.
-        pids_to_fetch = osf_ids if osf_ids else [osf_id]
-        rows: List[Dict[str, Any]] = []
-        for pid in pids_to_fetch:
-            all_refs = _query_all_refs(repo, pid)
-            preprint_dois[pid] = _extract_dois(all_refs)
-            rows.extend(
-                r for r in all_refs
-                if r and r.get("flora_lookup_status") is not None
-                and (not ref_id or r.get("ref_id") == ref_id)
-            )
-        if limit:
-            rows = rows[:limit]
-    else:
-        # Scan path — DOIs will be pre-fetched after grouping.
-        rows = repo.select_refs_with_flora_original(
-            limit=limit,
-            ref_id=ref_id,
-            include_missing_original=True,
-        )
+    # 1. Load FLORA CSV
+    flora_path = _resolve_flora_csv_path(cache_path)
+    refresh_meta = _ensure_fresh_flora_csv(flora_path, debug=debug)
+    flora_pairs = _load_flora_pairs_by_original(flora_path)
 
-    candidate_ids = sorted({(r or {}).get("osf_id") for r in rows if (r or {}).get("osf_id")})
-    allowed_ids = repo.filter_osf_ids_without_sent_email(candidate_ids)
-    rows = [r for r in rows if (r or {}).get("osf_id") in allowed_ids]
+    # 2. Select preprints to check
+    preprint_ids = repo.select_preprints_for_flora_check(
+        limit=limit,
+        osf_id=osf_id,
+        only_unchecked=only_unchecked,
+    )
 
-    grouped: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
-    for r in rows:
-        osfid = r.get("osf_id")
-        if osfid:
-            grouped[osfid].append(r)
+    # 3. Filter out preprints with sent emails (select_preprints_for_flora_check
+    #    already excludes email_sent=True, but when osf_id is specified we need
+    #    to apply it here)
+    if osf_id:
+        allowed = repo.filter_osf_ids_without_sent_email(preprint_ids)
+        preprint_ids = [pid for pid in preprint_ids if pid in allowed]
 
-    # Pre-fetch DOIs for preprints not covered by the combined fetch (scan path).
-    missing_pids = [pid for pid in grouped if pid not in preprint_dois]
-    if missing_pids:
-        fetch_workers = min(20, len(missing_pids))
-        with ThreadPoolExecutor(max_workers=fetch_workers) as pool:
-            futures = {
-                pool.submit(_query_all_refs, repo, pid): pid
-                for pid in missing_pids
-            }
-            for future in as_completed(futures):
-                pid = futures[future]
-                try:
-                    preprint_dois[pid] = _extract_dois(future.result())
-                except Exception as e:
-                    _warn("Failed to pre-fetch DOIs", osf_id=pid, error=str(e))
-                    preprint_dois[pid] = set()
+    skipped_sent = 0  # tracked for stats compatibility
 
-    def _process_preprint(pid: str, refs: List[Dict[str, Any]]) -> Dict[str, Any]:
-        # All DOIs for this preprint were pre-fetched into preprint_dois.
-        all_dois: Set[str] = set(preprint_dois.get(pid, set()))
+    def _process_preprint(pid: str) -> Dict[str, Any]:
+        all_refs = _query_all_refs(repo, pid)
+        all_dois = _extract_dois(all_refs)
 
         eligible_refs: List[Dict[str, Any]] = []
         retained_refs: List[Dict[str, Any]] = []
 
-        for r in refs:
+        for r in all_refs:
             refid = r.get("ref_id")
+            if ref_id and refid != ref_id:
+                continue
             ref_doi = normalize_doi(r.get("doi"))
+            if not ref_doi:
+                continue
 
-            # Keep only FLORA pairs where the current cited reference is an original DOI.
-            ref_objs = r.get("flora_ref_pairs") or []
+            ref_pairs_for_doi = flora_pairs.get(ref_doi) or []
+            if not ref_pairs_for_doi:
+                continue
+
+            # Filter to pairs where this ref's DOI is the original DOI
             matching_pairs = []
-            for obj in ref_objs:
+            for obj in ref_pairs_for_doi:
                 doi_o = normalize_doi(obj.get("doi_o"))
                 doi_r = normalize_doi(obj.get("doi_r"))
                 if ref_doi and doi_o and ref_doi == doi_o:
@@ -256,23 +240,22 @@ def screen_flora_replications(
                 seen_replication_dois.add(doi_r)
                 replication_dois.append(doi_r)
 
-            # Not a baseline target: skip without writing — no downstream consumer
-            # needs a flag on refs that aren't FLORA originals.
             if not replication_dois:
                 continue
 
-            replication_cited = any(
-                (d in all_dois) for d in replication_dois)
+            replication_cited = any(d in all_dois for d in replication_dois)
 
+            # Write combined lookup + screening result for this matched ref
             if persist_flags:
                 try:
-                    repo.update_reference_flora_screening(
+                    repo.update_reference_flora_result(
                         pid,
                         refid,
+                        ref_pairs=ref_pairs_for_doi,
                         replication_cited=replication_cited,
                     )
                 except Exception as e:
-                    _warn("Failed to persist FLORA screening flag",
+                    _warn("Failed to persist FLORA result",
                           osf_id=pid, ref_id=refid, error=str(e))
 
             payload = {
@@ -281,17 +264,17 @@ def screen_flora_replications(
                 "original_doi": ref_doi,
                 "matching_replication_dois": replication_dois,
                 "replication_cited": replication_cited,
-                # raw_citation carried for citation distance validation below
                 "raw_citation": r.get("raw_citation", ""),
             }
             retained_refs.append(payload)
             if not replication_cited:
                 eligible_refs.append(payload)
 
-        # --- Citation distance validation for eligible refs ---
+        # Citation distance validation for eligible refs
         if persist_flags and eligible_refs:
             _validate_eligible_ref_distances(pid, eligible_refs, repo)
 
+        # Update preprint: flora_last_checked + eligibility
         if persist_flags and hasattr(repo, "update_preprint_flora_eligibility"):
             try:
                 repo.update_preprint_flora_eligibility(
@@ -300,126 +283,68 @@ def screen_flora_replications(
                     eligible_count=len(eligible_refs),
                 )
             except Exception as e:
-                _warn("Failed to persist preprint FLORA eligibility", osf_id=pid, error=str(e))
+                _warn("Failed to persist preprint FLORA eligibility",
+                      osf_id=pid, error=str(e))
 
         if debug:
-            _info("FLORA screening", osf_id=pid, eligible_count=len(
-                eligible_refs), total=len(retained_refs))
+            _info("FLORA check", osf_id=pid,
+                  eligible_count=len(eligible_refs), total=len(retained_refs))
 
-        if eligible_refs:
-            return {
-                "osf_id": pid,
-                "eligible": True,
-                "eligible_count": len(eligible_refs),
-                "replication_refs": retained_refs,
-            }
         return {
             "osf_id": pid,
-            "eligible": False,
-            "eligible_count": 0,
+            "eligible": bool(eligible_refs),
+            "eligible_count": len(eligible_refs),
             "replication_refs": retained_refs,
         }
 
+    # Parallel processing
     results: List[Dict[str, Any]] = []
-    max_workers = min(20, len(grouped)) if grouped else 1
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+    workers = min(20, len(preprint_ids)) if preprint_ids else 1
+    with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(_process_preprint, pid, refs): pid
-            for pid, refs in grouped.items()
+            pool.submit(_process_preprint, pid): pid
+            for pid in preprint_ids
         }
         for future in as_completed(futures):
             pid = futures[future]
             try:
                 results.append(future.result())
             except Exception as e:
-                _warn("FLORA screening failed for preprint", osf_id=pid, error=str(e))
+                _warn("FLORA check failed for preprint", osf_id=pid, error=str(e))
 
-    return results
-
-
-def lookup_and_screen_flora(
-    *,
-    limit_lookup: int = 0,
-    limit_screen: int = 0,
-    osf_id: Optional[str] = None,
-    ref_id: Optional[str] = None,
-    cache_ttl_hours: Optional[int] = None,
-    ignore_cache: bool = False,
-    persist_flags: bool = True,
-    only_unchecked: bool = True,
-    debug: bool = False,
-) -> Dict[str, Any]:
-    """
-    Convenience wrapper: first run FLORA local CSV lookup to populate original DOIs, then screen.
-    Returns {"lookup": {...stats...}, "screen": [...results...]}.
-    """
-    lookup_stats = lookup_originals_with_flora(
-        limit=limit_lookup,
-        osf_id=osf_id,
-        ref_id=ref_id,
-        only_unchecked=only_unchecked,
-        cache_ttl_hours=cache_ttl_hours,
-        ignore_cache=ignore_cache,
-        debug=debug,
-    )
-    scoped_osf_ids: Optional[List[str]] = None
-    if not osf_id and not ref_id and only_unchecked:
-        touched = lookup_stats.get("processed_osf_ids")
-        if isinstance(touched, list):
-            scoped_osf_ids = [str(v) for v in touched if v]
-    screen_results = screen_flora_replications(
-        limit=limit_screen,
-        osf_id=osf_id,
-        osf_ids=scoped_osf_ids,
-        ref_id=ref_id,
-        persist_flags=persist_flags,
-        debug=debug,
-    )
-    return {"lookup": lookup_stats, "screen": screen_results}
+    lookup_stats = {
+        "preprints_checked": len(results),
+        "preprints_eligible": sum(1 for r in results if r.get("eligible")),
+        "skipped_sent_preprint": skipped_sent,
+        "csv_downloaded": 1 if refresh_meta.get("downloaded") else 0,
+    }
+    return {"lookup": lookup_stats, "screen": results}
 
 
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(
-        description="Screen replication DOIs via FLORA local CSV comparison.")
+        description="Lookup + screen replication DOIs via FLORA local CSV (preprint-level).")
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--limit-lookup", type=int, default=0,
-                    help="How many rows to run through FLORA local CSV lookup before screening (0 = unlimited)")
     ap.add_argument("--osf_id", default=None)
     ap.add_argument("--only-osf-id", dest="osf_id", default=None,
                     help="Alias for --osf_id to process a single OSF id")
     ap.add_argument("--ref_id", default=None)
     ap.add_argument("--no-persist", action="store_true",
-                    help="Do not write screening flags back to Dynamo.")
-    ap.add_argument("--no-lookup-first", action="store_true",
-                    help="Skip the lookup stage and only screen existing FLORA results")
+                    help="Do not write flags back to Dynamo.")
     ap.add_argument("--include-checked", action="store_true",
-                    help="Re-run lookup even for rows with prior FLORA status")
-    ap.add_argument("--cache-ttl-hours", type=int, default=None)
-    ap.add_argument("--ignore-cache", action="store_true",
-                    help="Deprecated; ignored for local FLORA CSV lookup")
+                    help="Re-run even for preprints recently checked")
+    ap.add_argument("--cache-path", default=None)
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args()
 
-    if args.no_lookup_first:
-        out = screen_flora_replications(
-            limit=args.limit,
-            osf_id=args.osf_id,
-            ref_id=args.ref_id,
-            persist_flags=not args.no_persist,
-            debug=args.debug,
-        )
-        print(out)
-    else:
-        out = lookup_and_screen_flora(
-            limit_lookup=args.limit_lookup,
-            limit_screen=args.limit,
-            osf_id=args.osf_id,
-            ref_id=args.ref_id,
-            cache_ttl_hours=args.cache_ttl_hours,
-            ignore_cache=args.ignore_cache,
-            persist_flags=not args.no_persist,
-            only_unchecked=not args.include_checked,
-            debug=args.debug,
-        )
-        print(out)
+    out = lookup_and_screen_flora(
+        limit=args.limit,
+        osf_id=args.osf_id,
+        ref_id=args.ref_id,
+        cache_path=args.cache_path,
+        persist_flags=not args.no_persist,
+        only_unchecked=not args.include_checked,
+        debug=args.debug,
+    )
+    print(out)
