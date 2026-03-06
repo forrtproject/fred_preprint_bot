@@ -6,36 +6,35 @@ from osf_sync.author_randomization import (
     _load_unassigned_preprints,
     _choose_arm_for_new_cluster,
     assign_components_balanced,
-    compute_large_author_threshold,
     resolve_author_nodes_from_tokens,
     select_author_positions,
 )
 
 
 class AuthorRandomizationTests(unittest.TestCase):
-    def test_large_author_threshold_95th_percentile(self) -> None:
-        counts = [1, 2, 3, 4, 20]
-        self.assertEqual(compute_large_author_threshold(counts, percentile=0.95), 20)
+    def test_select_author_positions_first4_plus_last(self) -> None:
+        self.assertEqual(select_author_positions(20, []), [0, 1, 2, 3, 19])
 
-    def test_select_author_positions_base_rule(self) -> None:
-        # Above threshold: first 4 + last
-        self.assertEqual(select_author_positions(20, 4, []), [0, 1, 2, 3, 19])
-
-    def test_select_author_positions_below_threshold_returns_all(self) -> None:
-        self.assertEqual(select_author_positions(3, 4, [5]), [0, 1, 2])
+    def test_select_author_positions_small_list(self) -> None:
+        # 3 authors: first4+last collapses to all 3
+        self.assertEqual(select_author_positions(3, []), [0, 1, 2])
 
     def test_select_author_positions_extra_positions_included(self) -> None:
-        self.assertEqual(select_author_positions(20, 4, [7, 12]), [0, 1, 2, 3, 19, 7, 12])
+        self.assertEqual(select_author_positions(20, [7, 12]), [0, 1, 2, 3, 19, 7, 12])
 
     def test_select_author_positions_duplicates_deduped(self) -> None:
-        self.assertEqual(select_author_positions(20, 4, [0, 19]), [0, 1, 2, 3, 19])
+        self.assertEqual(select_author_positions(20, [0, 19]), [0, 1, 2, 3, 19])
 
     def test_select_author_positions_out_of_bounds_filtered(self) -> None:
-        self.assertEqual(select_author_positions(10, 4, [15]), [0, 1, 2, 3, 9])
+        self.assertEqual(select_author_positions(10, [15]), [0, 1, 2, 3, 9])
 
-    def test_select_author_positions_small_paper_overlap(self) -> None:
-        # 5 authors, threshold 4: first 4 + last overlaps at pos 4
-        self.assertEqual(select_author_positions(5, 4, []), [0, 1, 2, 3, 4])
+    def test_select_author_positions_five_authors(self) -> None:
+        # 5 authors: first 4 + last = all 5
+        self.assertEqual(select_author_positions(5, []), [0, 1, 2, 3, 4])
+
+    def test_select_author_positions_six_authors(self) -> None:
+        # 6 authors: first 4 (0-3) + last (5), position 4 excluded
+        self.assertEqual(select_author_positions(6, []), [0, 1, 2, 3, 5])
 
     def test_resolve_nodes_no_phantom_initials_bridging(self) -> None:
         """Full-name records should NOT merge via computed initials alone."""

@@ -4,7 +4,6 @@ import csv
 import datetime as dt
 import json
 import logging
-import math
 import random
 import re
 import secrets
@@ -497,31 +496,13 @@ def _build_mentions_fallback(
     return out
 
 
-def compute_large_author_threshold(author_counts: Sequence[int], percentile: float = 0.95) -> int:
-    values: List[int] = []
-    for raw in author_counts:
-        try:
-            val = int(raw)
-        except Exception:
-            continue
-        if val > 0:
-            values.append(val)
-    if not values:
-        return 1
-    values.sort()
-    idx = max(0, min(len(values) - 1, math.ceil(percentile * len(values)) - 1))
-    return max(1, values[idx])
-
-
 def select_author_positions(
     author_count: int,
-    threshold: int,
     email_candidate_positions: Sequence[int],
 ) -> List[int]:
+    """Select author positions for graph edges: first four + last + email recipients."""
     if author_count <= 0:
         return []
-    if author_count <= threshold:
-        return list(range(author_count))
     picks = [0, 1, 2, 3, author_count - 1]
     picks.extend(email_candidate_positions)
     out: List[int] = []
@@ -883,7 +864,6 @@ def _persist_run(
 def _initialize_network(
     *,
     candidates: List[PreprintEntry],
-    x_threshold: int,
     seed: int,
     clusters: Dict[str, Dict[str, Any]],
     nodes: Dict[str, NodeRecord],
@@ -893,7 +873,7 @@ def _initialize_network(
     mentions_flat: List[AuthorMention] = []
 
     for preprint in candidates:
-        picks = select_author_positions(len(preprint.mentions), x_threshold, preprint.email_candidate_positions)
+        picks = select_author_positions(len(preprint.mentions), preprint.email_candidate_positions)
         preprint.selected_mentions = [preprint.mentions[pos] for pos in picks]
         for mention in preprint.selected_mentions:
             token_groups.append(mention.tokens)
@@ -1075,7 +1055,6 @@ def _resolve_mention_nodes(
 def _augment_network(
     *,
     candidates: List[PreprintEntry],
-    x_threshold: int,
     seed: int,
     next_node_seq: int,
     next_cluster_seq: int,
@@ -1090,7 +1069,7 @@ def _augment_network(
     touched_clusters: Set[str] = set()
 
     for preprint in candidates:
-        picks = select_author_positions(len(preprint.mentions), x_threshold, preprint.email_candidate_positions)
+        picks = select_author_positions(len(preprint.mentions), preprint.email_candidate_positions)
         preprint.selected_mentions = [preprint.mentions[pos] for pos in picks]
 
         existing_cluster_ids: Set[str] = set()
@@ -1240,9 +1219,6 @@ def run_author_randomization(
         )
 
     network_initialized = state_initialized
-    x_threshold = _parse_int(state.get("x_threshold"), 0)
-    if x_threshold <= 0:
-        x_threshold = compute_large_author_threshold([len(p.mentions) for p in candidates], percentile=0.95)
 
     seed_used = int(seed) if seed is not None else _parse_int(state.get("next_seed"), 0)
     if seed_used <= 0:
@@ -1257,7 +1233,7 @@ def run_author_randomization(
     if network_initialized:
         all_tokens: Set[str] = set()
         for preprint in candidates:
-            picks = select_author_positions(len(preprint.mentions), x_threshold, preprint.email_candidate_positions)
+            picks = select_author_positions(len(preprint.mentions), preprint.email_candidate_positions)
             for pos in picks:
                 all_tokens.update(preprint.mentions[pos].tokens)
         raw_token_map = repo.get_trial_token_map(all_tokens)
@@ -1301,7 +1277,6 @@ def run_author_randomization(
     if not network_initialized:
         assignments, touched_nodes, touched_clusters = _initialize_network(
             candidates=candidates,
-            x_threshold=x_threshold,
             seed=seed_used,
             clusters=clusters,
             nodes=nodes_by_id,
@@ -1315,7 +1290,6 @@ def run_author_randomization(
     else:
         assignments, touched_nodes, touched_clusters, next_node_seq, next_cluster_seq = _augment_network(
             candidates=candidates,
-            x_threshold=x_threshold,
             seed=seed_used,
             next_node_seq=next_node_seq,
             next_cluster_seq=next_cluster_seq,
@@ -1357,7 +1331,6 @@ def run_author_randomization(
             {
                 "source_key": network_state_key,
                 "initialized": True,
-                "x_threshold": int(x_threshold),
                 "next_node_seq": int(next_node_seq),
                 "next_cluster_seq": int(next_cluster_seq),
                 "next_seed": str(next_seed),
@@ -1376,7 +1349,6 @@ def run_author_randomization(
         "processed_preprints": len(candidates),
         "assigned": assigned,
         "excluded": excluded,
-        "x_threshold": x_threshold,
         "seed_used": seed_used,
         "next_seed": next_seed,
         "next_node_seq": next_node_seq,
