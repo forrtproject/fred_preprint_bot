@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Exclude preprints whose creation date falls before the ingest window start.
 
-With anchor_date=2026-03-05 and window_months=6, the window starts on
-2025-09-05. Any preprint with date_created earlier than that was ingested
+With anchor_date=2026-03-06 and window_months=6, the window starts on
+2025-09-06. Any preprint with date_created earlier than that was ingested
 under a wider window and should be removed before the experiment begins.
 
 Usage:
@@ -27,8 +27,8 @@ from boto3.dynamodb.conditions import Attr
 
 from osf_sync.dynamo.preprints_repo import PreprintsRepo
 
-# Derived from anchor_date=2026-03-05, window_months=6
-WINDOW_START = "2025-09-05"
+# Derived from anchor_date=2026-03-06, window_months=6
+WINDOW_START = "2025-09-06"
 REASON = "ingest_date_window"
 
 
@@ -54,7 +54,7 @@ def _scan_pre_window(table) -> list[str]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Exclude preprints created before {WINDOW_START} (anchor 2026-03-05 ± 6 months)"
+        description=f"Exclude preprints created before {WINDOW_START} (anchor 2026-03-06 ± 6 months)"
     )
     parser.add_argument("--execute", action="store_true", help="Actually exclude (default is dry-run)")
     args = parser.parse_args()
