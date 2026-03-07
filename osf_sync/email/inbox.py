@@ -203,22 +203,25 @@ def _fetch_message(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> Optional[email.mes
 
 _REVIEW_ID_RE = re.compile(r"Review\s*ID:\s*(review-\S+)", re.IGNORECASE)
 _DECISION_RE = re.compile(
-    r"(APPROVE|REJECT)\s+(ALL|[A-Za-z0-9_]+)(?:\s+USE\s+APA)?",
+    r"(APPROVE|REJECT)\s+(REMAINDER|[A-Za-z0-9_]+/[A-Za-z0-9_]+)(?:\s+USE\s+APA)?",
     re.IGNORECASE,
 )
 # Separate pattern to detect USE APA suffix
 _USE_APA_RE = re.compile(
-    r"(APPROVE)\s+(ALL|[A-Za-z0-9_]+)\s+USE\s+APA",
+    r"(APPROVE)\s+(REMAINDER|[A-Za-z0-9_]+/[A-Za-z0-9_]+)\s+USE\s+APA",
     re.IGNORECASE,
 )
 
 
 def _parse_validation_body(body: str) -> tuple[Optional[str], list[tuple[str, str, bool]]]:
-    """Extract review_id and list of (decision, ref_id_or_ALL, use_apa) from reply text."""
+    """Extract review_id and list of (decision, target, use_apa) from reply text.
+
+    Target is either 'REMAINDER' or '{osf_id}/{ref_id}'.
+    """
     review_id_match = _REVIEW_ID_RE.search(body)
     review_id = review_id_match.group(1) if review_id_match else None
 
-    # Collect USE APA refs
+    # Collect USE APA targets
     use_apa_targets: set[str] = set()
     for m in _USE_APA_RE.finditer(body):
         use_apa_targets.add(m.group(2).upper())
@@ -230,15 +233,6 @@ def _parse_validation_body(body: str) -> tuple[Optional[str], list[tuple[str, st
     return review_id, decisions
 
 
-def _resolve_osf_id_from_review_id(review_id: str) -> Optional[str]:
-    """Extract the osf_id encoded in a review ID (review-{osf_id}-{hex})."""
-    parts = review_id.split("-")
-    # Format: review-{osf_id}-{hex8}
-    if len(parts) >= 3 and parts[0] == "review":
-        return "-".join(parts[1:-1])
-    return None
-
-
 def process_validation_responses(
     *,
     max_messages: int = 50,
@@ -246,8 +240,7 @@ def process_validation_responses(
 ) -> Dict[str, Any]:
     """Scan inbox for citation-distance review replies and apply decisions.
 
-    Looks for replies to "Citation Distance Review" emails. Parses APPROVE/REJECT
-    decisions and updates reference validation status + clears the preprint pending flag.
+    Supports batch review format where targets are '{osf_id}/{ref_id}' or 'REMAINDER'.
     """
     from ..dynamo.preprints_repo import PreprintsRepo
 
@@ -281,7 +274,6 @@ def process_validation_responses(
 
     try:
         if use_label:
-            # Only process unread messages; mark as read after processing
             msg_ids = _search_unseen(imap, "ALL", max_messages)
         else:
             msg_ids = _search_unseen(imap, 'SUBJECT "Citation Distance Review"', max_messages)
@@ -307,7 +299,6 @@ def process_validation_responses(
                             body = payload.decode("utf-8", errors="replace")
                             break
                 if not body:
-                    # Fall back to HTML stripped of tags
                     for part in msg.walk():
                         if part.get_content_type() == "text/html":
                             payload = part.get_payload(decode=True)
@@ -322,68 +313,83 @@ def process_validation_responses(
                     log.info("Skipping message — no review ID or decisions found")
                     continue
 
-                osf_id = _resolve_osf_id_from_review_id(review_id)
-                if not osf_id:
-                    log.warning("Could not extract osf_id from review_id %s", review_id)
+                # Find all preprints associated with this batch review_id
+                affected_osf_ids = _get_preprints_for_batch_review(repo, review_id)
+                if not affected_osf_ids:
+                    log.warning("No preprints found for review_id %s", review_id)
                     errors += 1
                     continue
 
-                # Verify this review_id matches the stored one
-                preprint = repo.t_preprints.get_item(
-                    Key={"osf_id": osf_id},
-                    ProjectionExpression="osf_id, citation_validation_review_id",
-                ).get("Item")
-                if not preprint:
-                    log.warning("Preprint %s not found for review %s", osf_id, review_id)
-                    errors += 1
-                    continue
-                stored_review_id = preprint.get("citation_validation_review_id")
-                if stored_review_id and stored_review_id != review_id:
-                    log.warning("Review ID mismatch for %s: expected %s, got %s",
-                                osf_id, stored_review_id, review_id)
-                    errors += 1
-                    continue
+                # Apply individual decisions first, track what's been decided
+                decided_pairs: set[tuple[str, str]] = set()
+                remainder_decision: Optional[tuple[str, bool]] = None
 
-                # Resolve "ALL" to actual ref IDs
-                refs_for_preprint = None
-                expanded_decisions: list[tuple[str, str, bool]] = []
-                for decision, ref_id_or_all, use_apa in decisions:
-                    if ref_id_or_all.upper() == "ALL":
-                        if refs_for_preprint is None:
-                            refs_for_preprint = _get_pending_refs(repo, osf_id)
-                        for rid in refs_for_preprint:
-                            expanded_decisions.append((decision, rid, use_apa))
+                for decision, target, use_apa in decisions:
+                    if target.upper() == "REMAINDER":
+                        remainder_decision = (decision, use_apa)
                     else:
-                        expanded_decisions.append((decision, ref_id_or_all, use_apa))
-
-                if not dry_run:
-                    for decision, ref_id, use_apa in expanded_decisions:
-                        status = "approved" if decision == "approve" else "rejected"
-                        try:
-                            repo.update_reference_validation_decision(
-                                osf_id, ref_id, decision=status,
-                            )
-                            if use_apa and status == "approved":
-                                _replace_raw_with_apa(repo, osf_id, ref_id)
+                        # target is {osf_id}/{ref_id}
+                        parts = target.split("/", 1)
+                        if len(parts) != 2:
+                            log.warning("Invalid target format: %s", target)
+                            errors += 1
+                            continue
+                        osf_id, ref_id = parts
+                        if not dry_run:
+                            status_val = "approved" if decision == "approve" else "rejected"
+                            try:
+                                repo.update_reference_validation_decision(
+                                    osf_id, ref_id, decision=status_val,
+                                )
+                                if use_apa and status_val == "approved":
+                                    _replace_raw_with_apa(repo, osf_id, ref_id)
+                                decisions_applied += 1
+                            except Exception:
+                                log.warning("Failed to apply decision %s for %s/%s",
+                                            status_val, osf_id, ref_id, exc_info=True)
+                                errors += 1
+                        else:
                             decisions_applied += 1
+                        decided_pairs.add((osf_id, ref_id))
+
+                # Apply REMAINDER to all undecided pending refs
+                if remainder_decision:
+                    rem_decision, rem_use_apa = remainder_decision
+                    for osf_id in affected_osf_ids:
+                        pending_refs = _get_pending_refs(repo, osf_id)
+                        for ref_id in pending_refs:
+                            if (osf_id, ref_id) in decided_pairs:
+                                continue
+                            if not dry_run:
+                                status_val = "approved" if rem_decision == "approve" else "rejected"
+                                try:
+                                    repo.update_reference_validation_decision(
+                                        osf_id, ref_id, decision=status_val,
+                                    )
+                                    if rem_use_apa and status_val == "approved":
+                                        _replace_raw_with_apa(repo, osf_id, ref_id)
+                                    decisions_applied += 1
+                                except Exception:
+                                    log.warning("Failed to apply remainder decision %s for %s/%s",
+                                                status_val, osf_id, ref_id, exc_info=True)
+                                    errors += 1
+                            else:
+                                decisions_applied += 1
+
+                # Clear pending flags on all affected preprints
+                if not dry_run:
+                    for osf_id in affected_osf_ids:
+                        try:
+                            repo.set_citation_validation_pending(osf_id, pending=False)
                         except Exception:
-                            log.warning("Failed to apply decision %s for %s/%s",
-                                        status, osf_id, ref_id, exc_info=True)
+                            log.warning("Failed to clear pending flag for %s", osf_id, exc_info=True)
                             errors += 1
 
-                    # Clear the preprint-level pending flag
-                    try:
-                        repo.set_citation_validation_pending(osf_id, pending=False)
-                    except Exception:
-                        log.warning("Failed to clear pending flag for %s", osf_id, exc_info=True)
-                        errors += 1
-                else:
-                    decisions_applied += len(expanded_decisions)
-
                 responses_processed += 1
-                log.info("Processed validation response",
-                         extra={"osf_id": osf_id, "review_id": review_id,
-                                "decisions": len(expanded_decisions)})
+                log.info("Processed batch validation response",
+                         extra={"review_id": review_id,
+                                "affected_preprints": len(affected_osf_ids),
+                                "decisions": decisions_applied})
 
                 if not dry_run:
                     imap.store(msg_id, "+FLAGS", "\\Seen")
@@ -427,6 +433,29 @@ def _replace_raw_with_apa(repo, osf_id: str, ref_id: str) -> None:
         log.info("Replaced raw_citation with APA for %s/%s", osf_id, ref_id)
     except Exception:
         log.warning("Failed to replace raw_citation with APA for %s/%s", osf_id, ref_id, exc_info=True)
+
+
+def _get_preprints_for_batch_review(repo, review_id: str) -> list[str]:
+    """Return osf_ids of preprints whose citation_validation_review_id matches review_id."""
+    osf_ids: list[str] = []
+    last_key = None
+    while True:
+        kwargs: Dict[str, Any] = {
+            "FilterExpression": "citation_validation_review_id = :rid",
+            "ExpressionAttributeValues": {":rid": review_id},
+            "ProjectionExpression": "osf_id",
+        }
+        if last_key:
+            kwargs["ExclusiveStartKey"] = last_key
+        resp = repo.t_preprints.scan(**kwargs)
+        for item in resp.get("Items", []):
+            oid = item.get("osf_id")
+            if oid:
+                osf_ids.append(oid)
+        last_key = resp.get("LastEvaluatedKey")
+        if not last_key:
+            break
+    return osf_ids
 
 
 def _get_pending_refs(repo, osf_id: str) -> list[str]:

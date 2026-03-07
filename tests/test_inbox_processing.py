@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, Mock, patch
 from osf_sync.email.inbox import (
     _extract_bounce_addresses,
     _extract_unsub_sender,
+    _parse_validation_body,
     process_inbox,
 )
 
@@ -209,6 +210,71 @@ class TestProcessInbox(unittest.TestCase):
         process_inbox()
 
         imap.store.assert_called_once_with(b"5", "+FLAGS", "\\Seen")
+
+
+class TestParseValidationBody(unittest.TestCase):
+    def test_approve_individual_ref(self) -> None:
+        body = "APPROVE osf123/ref456\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(review_id, "review-batch-abcd1234")
+        self.assertEqual(len(decisions), 1)
+        self.assertEqual(decisions[0], ("approve", "osf123/ref456", False))
+
+    def test_reject_individual_ref(self) -> None:
+        body = "REJECT osf123/ref456\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(decisions[0], ("reject", "osf123/ref456", False))
+
+    def test_approve_use_apa(self) -> None:
+        body = "APPROVE osf123/ref456 USE APA\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(len(decisions), 1)
+        self.assertEqual(decisions[0], ("approve", "osf123/ref456", True))
+
+    def test_approve_remainder(self) -> None:
+        body = "APPROVE REMAINDER\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(decisions[0], ("approve", "REMAINDER", False))
+
+    def test_approve_remainder_use_apa(self) -> None:
+        body = "APPROVE REMAINDER USE APA\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(decisions[0], ("approve", "REMAINDER", True))
+
+    def test_reject_remainder(self) -> None:
+        body = "REJECT REMAINDER\n\nReview ID: review-batch-abcd1234"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(decisions[0], ("reject", "REMAINDER", False))
+
+    def test_mixed_individual_and_remainder(self) -> None:
+        body = (
+            "REJECT osf1/ref1\n"
+            "APPROVE REMAINDER\n\n"
+            "Review ID: review-batch-abcd1234"
+        )
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(len(decisions), 2)
+        self.assertEqual(decisions[0], ("reject", "osf1/ref1", False))
+        self.assertEqual(decisions[1], ("approve", "REMAINDER", False))
+
+    def test_multiple_individual_decisions(self) -> None:
+        body = (
+            "APPROVE osf1/ref1\n"
+            "REJECT osf2/ref2\n"
+            "APPROVE osf1/ref3 USE APA\n\n"
+            "Review ID: review-batch-xyz12345"
+        )
+        review_id, decisions = _parse_validation_body(body)
+        self.assertEqual(len(decisions), 3)
+        self.assertEqual(decisions[0], ("approve", "osf1/ref1", False))
+        self.assertEqual(decisions[1], ("reject", "osf2/ref2", False))
+        self.assertEqual(decisions[2], ("approve", "osf1/ref3", True))
+
+    def test_no_review_id(self) -> None:
+        body = "APPROVE osf1/ref1\n"
+        review_id, decisions = _parse_validation_body(body)
+        self.assertIsNone(review_id)
+        self.assertEqual(len(decisions), 1)
 
 
 if __name__ == "__main__":

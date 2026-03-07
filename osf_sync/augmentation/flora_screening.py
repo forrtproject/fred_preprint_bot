@@ -67,8 +67,10 @@ def _validate_eligible_ref_distances(
     pid: str,
     eligible_refs: List[Dict[str, Any]],
     repo: PreprintsRepo,
-) -> None:
+) -> List[Dict[str, Any]]:
     """Compute citation distance for each eligible ref and flag high-distance ones.
+
+    Returns the list of flagged refs (high distance, reviewer configured).
 
     Distance and APA citation are always stored on the reference.
 
@@ -138,30 +140,15 @@ def _validate_eligible_ref_distances(
         elif validation_needed:
             flagged.append(ref)
 
-    if not flagged:
-        return
+    if flagged:
+        # Set pending flag for safety gating (review_id assigned later at batch level)
+        try:
+            repo.set_citation_validation_pending(pid, pending=True)
+        except Exception as exc:
+            _warn("Failed to set citation validation pending flag",
+                  osf_id=pid, error=str(exc))
 
-    review_id = f"review-{pid}-{uuid.uuid4().hex[:8]}"
-    try:
-        repo.set_citation_validation_pending(pid, pending=True, review_id=review_id)
-    except Exception as exc:
-        _warn("Failed to set citation validation pending flag",
-              osf_id=pid, review_id=review_id, error=str(exc))
-        return
-
-    _info(
-        "Citation validation pending",
-        osf_id=pid,
-        flagged_count=len(flagged),
-        review_id=review_id,
-    )
-
-    try:
-        from ..email.citation_review import send_citation_review_email
-        send_citation_review_email(pid, flagged, review_id)
-    except Exception as exc:
-        _warn("Failed to send citation review email",
-              osf_id=pid, review_id=review_id, error=str(exc))
+    return flagged
 
 
 def lookup_and_screen_flora(
@@ -271,8 +258,9 @@ def lookup_and_screen_flora(
                 eligible_refs.append(payload)
 
         # Citation distance validation for eligible refs
+        flagged_for_review: List[Dict[str, Any]] = []
         if persist_flags and eligible_refs:
-            _validate_eligible_ref_distances(pid, eligible_refs, repo)
+            flagged_for_review = _validate_eligible_ref_distances(pid, eligible_refs, repo)
 
         # Update preprint: flora_last_checked + eligibility
         if persist_flags and hasattr(repo, "update_preprint_flora_eligibility"):
@@ -295,6 +283,7 @@ def lookup_and_screen_flora(
             "eligible": bool(eligible_refs),
             "eligible_count": len(eligible_refs),
             "replication_refs": retained_refs,
+            "flagged_for_review": flagged_for_review,
         }
 
     # Parallel processing
@@ -311,6 +300,36 @@ def lookup_and_screen_flora(
                 results.append(future.result())
             except Exception as e:
                 _warn("FLORA check failed for preprint", osf_id=pid, error=str(e))
+
+    # Collect all flagged refs across preprints and send one batch review email
+    all_flagged: Dict[str, List[Dict[str, Any]]] = {}
+    for r in results:
+        flagged = r.get("flagged_for_review", [])
+        if flagged:
+            all_flagged[r["osf_id"]] = flagged
+
+    if all_flagged:
+        from ..runtime_config import RUNTIME_CONFIG
+        if RUNTIME_CONFIG.validation.reviewer_email:
+            review_id = f"review-batch-{uuid.uuid4().hex[:8]}"
+            # Store batch review_id on each affected preprint
+            for pid in all_flagged:
+                try:
+                    repo.set_citation_validation_pending(pid, pending=True, review_id=review_id)
+                except Exception as exc:
+                    _warn("Failed to set batch review_id",
+                          osf_id=pid, review_id=review_id, error=str(exc))
+
+            _info("Sending batch citation review email",
+                  review_id=review_id,
+                  preprints=len(all_flagged),
+                  total_refs=sum(len(v) for v in all_flagged.values()))
+            try:
+                from ..email.citation_review import send_batch_citation_review_email
+                send_batch_citation_review_email(all_flagged, review_id)
+            except Exception as exc:
+                _warn("Failed to send batch citation review email",
+                      review_id=review_id, error=str(exc))
 
     lookup_stats = {
         "preprints_checked": len(results),

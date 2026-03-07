@@ -172,6 +172,8 @@ def main() -> int:
     total_errors = 0
     last_request_time = 0.0
 
+    all_flagged_for_batch: Dict[str, List[Dict[str, Any]]] = {}
+
     for pid, refs in by_preprint.items():
         flagged_for_preprint: List[Dict[str, Any]] = []
         already_emailed = _preprint_already_emailed(repo, pid)
@@ -233,29 +235,35 @@ def main() -> int:
             else:
                 total_pass += 1
 
-        # Preprint-level: set pending flag and optionally send review email
+        # Preprint-level: collect flagged refs for batch review email
         if flagged_for_preprint and not already_emailed:
-            import uuid
-            review_id = f"review-{pid}-{uuid.uuid4().hex[:8]}"
-            print(f"  -> {pid}: {len(flagged_for_preprint)} flagged ref(s), review_id={review_id}", flush=True)
-            if not args.dry_run:
-                try:
-                    repo.set_citation_validation_pending(pid, pending=True, review_id=review_id)
-                except Exception as exc:
-                    print(f"  ERROR setting pending flag for {pid}: {exc}", flush=True)
-
-                if args.send_reviews:
-                    try:
-                        from osf_sync.email.citation_review import send_citation_review_email
-                        msg_id = send_citation_review_email(pid, flagged_for_preprint, review_id)
-                        if msg_id:
-                            print(f"  -> Review email sent for {pid} (msg_id={msg_id})", flush=True)
-                        else:
-                            print(f"  -> Review email skipped for {pid} (no reviewer configured?)", flush=True)
-                    except Exception as exc:
-                        print(f"  ERROR sending review email for {pid}: {exc}", flush=True)
+            all_flagged_for_batch[pid] = flagged_for_preprint
+            print(f"  -> {pid}: {len(flagged_for_preprint)} flagged ref(s), queued for batch review", flush=True)
         elif flagged_for_preprint and already_emailed:
             print(f"  -> {pid}: {len(flagged_for_preprint)} flagged ref(s), but email already sent — skipping", flush=True)
+
+    # Send batch review email for all flagged refs
+    if all_flagged_for_batch and not args.dry_run and args.send_reviews:
+        import uuid
+        review_id = f"review-batch-{uuid.uuid4().hex[:8]}"
+        print(f"\nSending batch review email: {sum(len(v) for v in all_flagged_for_batch.values())} ref(s) "
+              f"across {len(all_flagged_for_batch)} preprint(s), review_id={review_id}", flush=True)
+        for pid in all_flagged_for_batch:
+            try:
+                repo.set_citation_validation_pending(pid, pending=True, review_id=review_id)
+            except Exception as exc:
+                print(f"  ERROR setting pending flag for {pid}: {exc}", flush=True)
+        try:
+            from osf_sync.email.citation_review import send_batch_citation_review_email
+            msg_id = send_batch_citation_review_email(all_flagged_for_batch, review_id)
+            if msg_id:
+                print(f"  -> Batch review email sent (msg_id={msg_id})", flush=True)
+            else:
+                print("  -> Batch review email skipped (no reviewer configured?)", flush=True)
+        except Exception as exc:
+            print(f"  ERROR sending batch review email: {exc}", flush=True)
+    elif all_flagged_for_batch and not args.dry_run:
+        print(f"\n{len(all_flagged_for_batch)} preprint(s) have flagged refs but --send-reviews not set", flush=True)
 
     print(
         f"\nDone. checked={total_checked} pass={total_pass} "
