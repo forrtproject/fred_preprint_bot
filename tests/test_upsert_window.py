@@ -27,7 +27,7 @@ class UpsertWindowTests(unittest.TestCase):
             }
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg()):
-            kept, skipped_provider, skipped_date, _skipped_links, _records = upsert._filter_ingest_rows(rows)
+            kept, skipped_provider, skipped_date, _skipped_links, _skipped_version, _records = upsert._filter_ingest_rows(rows)
 
         self.assertEqual(len(kept), 1)
         self.assertEqual(skipped_provider, 0)
@@ -52,7 +52,7 @@ class UpsertWindowTests(unittest.TestCase):
             },
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg()):
-            kept, _skipped_provider, skipped_date, _skipped_links, _records = upsert._filter_ingest_rows(rows)
+            kept, _skipped_provider, skipped_date, _skipped_links, _skipped_version, _records = upsert._filter_ingest_rows(rows)
 
         kept_ids = {row["id"] for row in kept}
         self.assertEqual(kept_ids, {"inside_window"})
@@ -76,7 +76,7 @@ class UpsertProviderFilterTests(unittest.TestCase):
             },
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg(excluded_providers=("thesiscommons",))):
-            kept, skipped_provider, skipped_date, skipped_links, records = upsert._filter_ingest_rows(rows)
+            kept, skipped_provider, skipped_date, skipped_links, _skipped_version, records = upsert._filter_ingest_rows(rows)
 
         self.assertEqual(len(kept), 1)
         self.assertEqual(kept[0]["id"], "psyarxiv1")
@@ -101,7 +101,7 @@ class UpsertProviderFilterTests(unittest.TestCase):
             },
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg(excluded_providers=("thesiscommons",))):
-            kept, skipped_provider, _skipped_date, _skipped_links, _records = upsert._filter_ingest_rows(rows)
+            kept, skipped_provider, _skipped_date, _skipped_links, _skipped_version, _records = upsert._filter_ingest_rows(rows)
 
         self.assertEqual(len(kept), 2)
         self.assertEqual(skipped_provider, 0)
@@ -116,7 +116,7 @@ class UpsertProviderFilterTests(unittest.TestCase):
             },
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg(excluded_providers=("thesiscommons",))):
-            kept, skipped_provider, _skipped_date, _skipped_links, _records = upsert._filter_ingest_rows(rows)
+            kept, skipped_provider, _skipped_date, _skipped_links, _skipped_version, _records = upsert._filter_ingest_rows(rows)
 
         self.assertEqual(len(kept), 0)
         self.assertEqual(skipped_provider, 1)
@@ -131,7 +131,7 @@ class UpsertProviderFilterTests(unittest.TestCase):
             },
         ]
         with patch.object(upsert, "RUNTIME_CONFIG", _cfg(excluded_providers=())):
-            kept, skipped_provider, _skipped_date, _skipped_links, _records = upsert._filter_ingest_rows(rows)
+            kept, skipped_provider, _skipped_date, _skipped_links, _skipped_version, _records = upsert._filter_ingest_rows(rows)
 
         self.assertEqual(len(kept), 1)
         self.assertEqual(skipped_provider, 0)

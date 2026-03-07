@@ -160,6 +160,7 @@ def collect_stats():
     assigned_items = _query_all_items(assignments, "by_status", "status", "assigned")
     arm_counts = Counter(item.get("arm", "unknown") for item in assigned_items)
     total_assigned = len(assigned_items)
+    treatment_assigned = arm_counts.get("treatment", 0)
 
     # Randomization-excluded count
     randomization_excluded = _count_by_gsi(assignments, "by_status", "status", "excluded")
@@ -234,20 +235,22 @@ def collect_stats():
 
     queue_extract_done = funnel["queue_extract"]["done"]
 
+    flora_screening_pending = max(0, queue_extract_done - flora_screened)
     funnel["flora_screening"] = {
         "done": flora_screened,
-        "total": queue_extract_done,
-        "pending": max(0, queue_extract_done - flora_screened),
+        "pending": flora_screening_pending,
+        "total": flora_screened + flora_screening_pending,
     }
+    author_extraction_pending = max(0, queue_extract_done - email_extracted)
     funnel["author_extraction"] = {
         "done": email_extracted,
-        "total": queue_extract_done,
-        "pending": max(0, queue_extract_done - email_extracted),
+        "pending": author_extraction_pending,
+        "total": email_extracted + author_extraction_pending,
     }
     funnel["trial_assignment"] = {
         "done": total_assigned,
-        "total": flora_total_assignable,
-        "pending": max(0, flora_total_assignable - total_assigned),
+        "pending": flora_assignment_pending,
+        "total": total_assigned + flora_assignment_pending,
     }
 
     return {
@@ -258,6 +261,7 @@ def collect_stats():
         "total_excluded": total_excluded,
         "arm_counts": arm_counts,
         "total_assigned": total_assigned,
+        "treatment_assigned": treatment_assigned,
         "randomization_excluded": randomization_excluded,
         "suppression_counts": suppression_counts,
         "total_suppressed": total_suppressed,
@@ -333,8 +337,8 @@ def render_markdown(stats):
         "## FLoRA Matching",
         "| Metric | Value |",
         "|--------|-------|",
-        f"| Screened against FLoRA | {stats['flora_screened']} / {stats['queue_extract_done']} |",
-        f"| Email extraction completed | {stats['email_extracted']} / {stats['queue_extract_done']} |",
+        f"| Screened against FLoRA | {stats['flora_screened']} / {stats['funnel']['flora_screening']['total']} |",
+        f"| Email extraction completed | {stats['email_extracted']} / {stats['funnel']['author_extraction']['total']} |",
         f"| Preprints with FLoRA matches | {stats['flora_total']} |",
         f"| Pending citation confirmation | {stats['flora_validation_pending']} |",
         f"| Missing author emails | {stats['flora_missing_email']} |",
@@ -359,14 +363,23 @@ def render_markdown(stats):
 
     # Email summary (from funnel)
     email = stats["funnel"]["queue_email"]
+    email_in_queue = email["pending"] + email["done"]
+    treatment = stats["treatment_assigned"]
     lines.extend([
         "",
         "## Emails",
         "| Status | Count |",
         "|--------|-------|",
         f"| Sent (queue done) | {email['done']} |",
-        f"| Pending | {email['pending']} |",
+        f"| Pending in queue | {email['pending']} |",
+        f"| Treatment assigned | {treatment} |",
     ])
+    missing_from_queue = treatment - email_in_queue
+    if missing_from_queue > 0:
+        lines.append(
+            f"\n**WARNING:** {missing_from_queue} treatment preprints are not in the "
+            "email queue. Run `scripts/backfill_queue_email.py` to fix."
+        )
 
     lines.extend([
         "",

@@ -1,5 +1,6 @@
 from .client import get_dynamo_resource
 from ..logging_setup import get_logger, with_extras
+from ..version_utils import parse_version, sibling_ids
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Attr, Key
 from typing import List, Dict, Optional, Any, Iterable, Set
@@ -472,49 +473,128 @@ class PreprintsRepo:
                     with_extras(log, skipped=skipped, incoming=before).info("skipping existing preprints")
             if not rows:
                 return 0
-        # Dynamo BatchWrite (25/item max per request); keep it simple
-        count = 0
-        with self.t_preprints.batch_writer(overwrite_by_pkeys=["osf_id"]) as bw:
-            for obj in rows:
-                try:
-                    a = (obj.get("attributes") or {})
-                    rid = obj.get("relationships") or {}
-                    # compute simple presence of a primary_file to avoid scanning nested JSON later
-                    rel_pf = (rid.get("primary_file") or {})
-                    has_primary = bool((rel_pf.get("data") or rel_pf.get("links")))
-                    is_published = bool(a.get("is_published"))
+        # Split into new vs existing preprints
+        all_ids = [r.get("id") for r in rows if r.get("id")]
+        existing_ids = self._fetch_existing_ids(all_ids) if all_ids else set()
 
-                    item_full = {
-                        "osf_id": obj["id"],
-                        "type": obj.get("type"),
-                        "provider_id": (rid.get("provider") or {}).get("data", {}).get("id"),
-                        "title": a.get("title"),
-                        "description": a.get("description"),
-                        "doi": a.get("doi"),
-                        "date_created": a.get("date_created"),
-                        "date_modified": a.get("date_modified"),
-                        "date_published": a.get("date_published") or "",
-                        "is_published": is_published,
-                        "version": a.get("version"),
-                        "is_latest_version": a.get("is_latest_version"),
-                        "reviews_state": a.get("reviews_state"),
-                        "tags": a.get("tags") or [],
-                        "subjects": a.get("subjects") or [],
-                        "license_record": a.get("license_record"),
-                        "links": obj.get("links"),
-                        "raw": obj,
-                        "pdf_downloaded": False,
-                        "tei_generated": False,
-                        "tei_extracted": False,
-                        "updated_at": dt.datetime.utcnow().isoformat()
-                    }
-                    # queue flags for GSIs
+        # --- Version-aware sibling handling ---
+        versioned_rows = [r for r in rows if parse_version(r.get("id", ""))[1] is not None]
+        if versioned_rows:
+            sibling_states = self._fetch_sibling_states(versioned_rows)
+            version_excluded_ids: Set[str] = set()
+            for row in versioned_rows:
+                osf_id = row.get("id", "")
+                sibs = sibling_ids(osf_id)
+                existing_sibs = {sid: sibling_states[sid] for sid in sibs if sid in sibling_states}
+                if not existing_sibs:
+                    continue
+                # Check if any non-excluded sibling has been randomized
+                randomized_sib = None
+                for sid, state in existing_sibs.items():
+                    if state.get("excluded"):
+                        continue
+                    if state.get("trial_assignment_status"):
+                        randomized_sib = sid
+                        break
+                if randomized_sib:
+                    # Sibling already randomized — exclude the incoming version
+                    version_excluded_ids.add(osf_id)
+                    self.mark_preprint_excluded(
+                        osf_id=osf_id,
+                        reason="ingest_older_version_randomized",
+                        stage="sync",
+                        details={"randomized_version": randomized_sib},
+                    )
+                    with_extras(log, osf_id=osf_id, randomized_version=randomized_sib).info(
+                        "excluding version: sibling already randomized"
+                    )
+                else:
+                    # No sibling randomized — exclude older siblings, ingest new
+                    for sid, state in existing_sibs.items():
+                        if state.get("excluded"):
+                            continue
+                        self.mark_preprint_excluded(
+                            osf_id=sid,
+                            reason="superseded_by_newer_version",
+                            stage="sync",
+                            details={"superseded_by": osf_id},
+                        )
+                        with_extras(log, osf_id=sid, superseded_by=osf_id).info(
+                            "excluding old version: superseded by newer"
+                        )
+                    # Ensure incoming version is treated as new (fresh put_item)
+                    existing_ids.discard(osf_id)
+            if version_excluded_ids:
+                rows = [r for r in rows if r.get("id") not in version_excluded_ids]
+                with_extras(log, excluded=len(version_excluded_ids)).info(
+                    "version-excluded incoming preprints"
+                )
+
+        count = 0
+        now_iso = dt.datetime.utcnow().isoformat()
+
+        for obj in rows:
+            try:
+                a = (obj.get("attributes") or {})
+                rid = obj.get("relationships") or {}
+                rel_pf = (rid.get("primary_file") or {})
+                has_primary = bool((rel_pf.get("data") or rel_pf.get("links")))
+                is_published = bool(a.get("is_published"))
+                osf_id = obj["id"]
+
+                osf_fields = {
+                    "type": obj.get("type"),
+                    "provider_id": (rid.get("provider") or {}).get("data", {}).get("id"),
+                    "title": a.get("title"),
+                    "description": a.get("description"),
+                    "doi": a.get("doi"),
+                    "date_created": a.get("date_created"),
+                    "date_modified": a.get("date_modified"),
+                    "date_published": a.get("date_published") or "",
+                    "is_published": is_published,
+                    "version": a.get("version"),
+                    "is_latest_version": a.get("is_latest_version"),
+                    "reviews_state": a.get("reviews_state"),
+                    "tags": a.get("tags") or [],
+                    "subjects": a.get("subjects") or [],
+                    "license_record": a.get("license_record"),
+                    "links": obj.get("links"),
+                    "raw": obj,
+                    "updated_at": now_iso,
+                }
+
+                if osf_id in existing_ids:
+                    # Update only OSF metadata fields, preserving pipeline state
+                    set_exprs = []
+                    eav = {}
+                    ean = {}
+                    for i, (k, v) in enumerate(osf_fields.items()):
+                        if v is None:
+                            continue
+                        attr_name = f"#f{i}"
+                        attr_val = f":v{i}"
+                        ean[attr_name] = k
+                        eav[attr_val] = v
+                        set_exprs.append(f"{attr_name}={attr_val}")
+                    if set_exprs:
+                        self.t_preprints.update_item(
+                            Key={"osf_id": osf_id},
+                            UpdateExpression="SET " + ", ".join(set_exprs),
+                            ExpressionAttributeValues=eav,
+                            ExpressionAttributeNames=ean,
+                        )
+                else:
+                    # New preprint — full put
+                    item_full = {"osf_id": osf_id, **osf_fields,
+                                 "pdf_downloaded": False,
+                                 "tei_generated": False,
+                                 "tei_extracted": False}
                     if is_published and has_primary:
                         item_full["queue_pdf"] = "pending"
-                    bw.put_item(Item=_strip_nones(item_full))
-                    count += 1
-                except Exception as e:
-                    with_extras(log, osf_id=obj.get("id"), err=str(e)).warning("preprint upsert failed")
+                    self.t_preprints.put_item(Item=_strip_nones(item_full))
+                count += 1
+            except Exception as e:
+                with_extras(log, osf_id=obj.get("id"), err=str(e)).warning("preprint upsert failed")
         return count
 
     def _fetch_existing_ids(self, ids: Iterable[str]) -> Set[str]:
@@ -569,6 +649,39 @@ class PreprintsRepo:
                         existing[str(osf_id)] = item.get("exclusion_reason")
                 unprocessed = resp.get("UnprocessedKeys") or {}
         return existing
+
+    def _fetch_sibling_states(self, versioned_rows: List[Dict]) -> Dict[str, Dict]:
+        """For incoming versioned preprints, batch-get existing sibling records.
+
+        Returns {osf_id: {"trial_assignment_status": ..., "excluded": ...}} for
+        siblings that actually exist in the DB.
+        """
+        candidate_ids: Set[str] = set()
+        for row in versioned_rows:
+            osf_id = row.get("id") or ""
+            candidate_ids.update(sibling_ids(osf_id))
+        if not candidate_ids:
+            return {}
+
+        table_name = self.t_preprints.name
+        result: Dict[str, Dict] = {}
+        id_list = sorted(candidate_ids)
+        for chunk in _chunks(id_list, 100):
+            keys = [{"osf_id": i} for i in chunk]
+            request = {table_name: {
+                "Keys": keys,
+                "ProjectionExpression": "osf_id, trial_assignment_status, excluded",
+            }}
+            resp = self.ddb.batch_get_item(RequestItems=request)
+            for item in resp.get("Responses", {}).get(table_name, []):
+                result[item["osf_id"]] = item
+            unprocessed = resp.get("UnprocessedKeys") or {}
+            while unprocessed:
+                resp = self.ddb.batch_get_item(RequestItems=unprocessed)
+                for item in resp.get("Responses", {}).get(table_name, []):
+                    result[item["osf_id"]] = item
+                unprocessed = resp.get("UnprocessedKeys") or {}
+        return result
 
     # --- PDF / TEI flags ---
     def mark_pdf(self, osf_id: str, ok: bool, path: Optional[str] = None):

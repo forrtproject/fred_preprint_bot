@@ -127,7 +127,7 @@ def _contains_zenodo_link(value: Any) -> bool:
 
 def _filter_ingest_rows(
     rows: List[Dict[str, Any]],
-) -> Tuple[List[Dict[str, Any]], int, int, int, List[Dict[str, Any]]]:
+) -> Tuple[List[Dict[str, Any]], int, int, int, int, List[Dict[str, Any]]]:
     anchor_dt = _parse_anchor_dt()
     excluded_providers = RUNTIME_CONFIG.ingest.excluded_providers
     kept: List[Dict[str, Any]] = []
@@ -135,7 +135,13 @@ def _filter_ingest_rows(
     skipped_provider = 0
     skipped_date = 0
     skipped_links = 0
+    skipped_version = 0
     for obj in rows:
+        attrs = obj.get("attributes") or {}
+        if attrs.get("is_latest_version") is False:
+            skipped_version += 1
+            skipped_records.append({"osf_id": obj.get("id"), "reason": "not_latest_version"})
+            continue
         provider_id = _extract_provider_id(obj)
         if provider_id and provider_id.lower() in excluded_providers:
             skipped_provider += 1
@@ -143,7 +149,6 @@ def _filter_ingest_rows(
                 {"osf_id": obj.get("id"), "reason": "excluded_provider", "provider_id": provider_id}
             )
             continue
-        attrs = obj.get("attributes") or {}
         created_dt = _effective_created_dt(attrs)
         if not _within_anchor_window(created_dt, anchor_dt):
             skipped_date += 1
@@ -158,21 +163,22 @@ def _filter_ingest_rows(
             )
             continue
         kept.append(obj)
-    return kept, skipped_provider, skipped_date, skipped_links, skipped_records
+    return kept, skipped_provider, skipped_date, skipped_links, skipped_version, skipped_records
 
 
 def upsert_batch(objs: Iterable[Dict]) -> int:
     rows = list(objs)
     if not rows:
         return 0
-    filtered, skipped_provider, skipped_date, skipped_links, skipped_records = _filter_ingest_rows(rows)
-    if skipped_provider or skipped_date or skipped_links:
+    filtered, skipped_provider, skipped_date, skipped_links, skipped_version, skipped_records = _filter_ingest_rows(rows)
+    if skipped_provider or skipped_date or skipped_links or skipped_version:
         log.info(
             "ingest filter skipped rows",
             extra={
                 "skipped_provider": skipped_provider,
                 "skipped_date": skipped_date,
                 "skipped_links": skipped_links,
+                "skipped_version": skipped_version,
                 "incoming": len(rows),
                 "kept": len(filtered),
                 "anchor_date": RUNTIME_CONFIG.ingest.anchor_date,

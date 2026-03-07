@@ -21,9 +21,17 @@ class _FakeBatchWriter:
 class _FakePreprintsTable:
     def __init__(self) -> None:
         self.writer = _FakeBatchWriter()
+        self.name = "preprints"
+        self.key_schema = [{"AttributeName": "osf_id", "KeyType": "HASH"}]
 
     def batch_writer(self, overwrite_by_pkeys=None):
         return self.writer
+
+    def put_item(self, Item=None, **kwargs):
+        self.writer.items.append(Item)
+
+    def update_item(self, **kwargs):
+        pass
 
 
 class IngestExclusionReentryTests(unittest.TestCase):
