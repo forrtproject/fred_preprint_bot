@@ -331,6 +331,50 @@ jobs:
             echo "has_backlog=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Append pipeline results to summary
+        if: always()
+        run: |
+          if [ ! -f /tmp/pipeline_output.json ]; then
+            echo "No pipeline output found." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, os
+
+          with open("/tmp/pipeline_output.json") as f:
+              data = json.load(f)
+
+          lines = ["\n## Pipeline Results\n"]
+          stages = data.get("stages", {})
+          # Single-stage output (no "stages" wrapper)
+          if not stages and data.get("stage"):
+              stages = {data["stage"]: data}
+
+          for name, info in stages.items():
+              lines.append(f"### Stage: `{name}`\n")
+              lines.append("| Metric | Value |")
+              lines.append("|--------|-------|")
+              for k, v in info.items():
+                  if k == "stage":
+                      continue
+                  if isinstance(v, dict):
+                      continue
+                  lines.append(f"| {k} | `{v}` |")
+              # Render nested dicts (e.g. inbox sub-results) as sub-tables
+              for k, v in info.items():
+                  if isinstance(v, dict):
+                      lines.append(f"\n**{k}**\n")
+                      lines.append("| Metric | Value |")
+                      lines.append("|--------|-------|")
+                      for sk, sv in v.items():
+                          lines.append(f"| {sk} | `{sv}` |")
+              lines.append("")
+
+          summary = "\n".join(lines)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write(summary + "\n")
+          PY
+
       - name: Re-trigger if backlog remains
         if: steps.run.outputs.has_backlog == 'true' && env.INPUT_BACKLOG_DEPTH != '0'
         env:
