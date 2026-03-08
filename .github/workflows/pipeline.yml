@@ -77,6 +77,14 @@ jobs:
       PIPELINE_NOTIFY_EMAIL: ${{ secrets.PIPELINE_NOTIFY_EMAIL }}
 
     steps:
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost \
+                      "$AGENT_TOOLSDIRECTORY"
+          docker rmi $(docker images -aq) 2>/dev/null || true
+          
       - name: Report run parameters
         run: |
           echo "## Pipeline Run: stage=\`$INPUT_STAGE\`" >> "$GITHUB_STEP_SUMMARY"
