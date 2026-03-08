@@ -501,7 +501,7 @@ class PreprintsRepo:
                     version_excluded_ids.add(osf_id)
                     self.mark_preprint_excluded(
                         osf_id=osf_id,
-                        reason="ingest_older_version_randomized",
+                        reason="ingest_sibling_version_randomized",
                         stage="sync",
                         details={"randomized_version": randomized_sib},
                     )
@@ -1220,6 +1220,10 @@ class PreprintsRepo:
             last_key = resp.get("LastEvaluatedKey")
             if not last_key:
                 break
+        # Filter out excluded preprints to avoid wasting Crossref API calls
+        if out:
+            excluded = self._fetch_excluded_reasons(out)
+            out = [oid for oid in out if oid not in excluded]
         return out
 
     def filter_osf_ids_without_sent_email(self, osf_ids: Iterable[str]) -> Set[str]:
@@ -1363,12 +1367,14 @@ class PreprintsRepo:
         last_key = None
         while True:
             scan_kwargs: Dict[str, Any] = {
-                "ProjectionExpression": "osf_id, flora_last_checked, email_sent",
+                "ProjectionExpression": "osf_id, flora_last_checked, email_sent, excluded",
             }
             if last_key:
                 scan_kwargs["ExclusiveStartKey"] = last_key
             resp = self.t_preprints.scan(**scan_kwargs)
             for item in resp.get("Items", []):
+                if item.get("excluded") is True:
+                    continue
                 if item.get("email_sent") is True:
                     continue
                 checked = item.get("flora_last_checked")

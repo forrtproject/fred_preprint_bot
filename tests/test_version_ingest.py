@@ -230,5 +230,51 @@ class SiblingVersionTests(unittest.TestCase):
         self.assertIn("abc_v1", put_ids)
 
 
+    def test_two_new_versions_in_batch_sibling_randomized_both_excluded(self):
+        """v1 randomized, v2 and v3 arrive in same batch -> both excluded."""
+        repo = _make_repo(
+            preprints_data={
+                "abc_v1": {"osf_id": "abc_v1", "trial_assignment_status": "assigned", "excluded": None},
+            },
+        )
+        rows = [
+            _make_row("abc_v2", is_latest_version=True),
+            _make_row("abc_v3", is_latest_version=True),
+        ]
+
+        with patch.dict("os.environ", {"OSF_INGEST_SKIP_EXISTING": "false"}, clear=False):
+            count = repo.upsert_preprints(rows)
+
+        self.assertEqual(count, 0)
+        put_ids = {item.get("osf_id") for item in repo.t_preprints._put_items}
+        self.assertNotIn("abc_v2", put_ids)
+        self.assertNotIn("abc_v3", put_ids)
+        excluded_put_ids = {item.get("osf_id") for item in repo.t_excluded._put_items}
+        self.assertIn("abc_v2", excluded_put_ids)
+        self.assertIn("abc_v3", excluded_put_ids)
+
+    def test_new_version_supersedes_multiple_old_siblings(self):
+        """v5 arrives, v1-v4 exist unrandomized -> all old versions excluded."""
+        repo = _make_repo(
+            preprints_data={
+                "abc_v1": {"osf_id": "abc_v1", "trial_assignment_status": None, "excluded": None},
+                "abc_v2": {"osf_id": "abc_v2", "trial_assignment_status": None, "excluded": None},
+                "abc_v3": {"osf_id": "abc_v3", "trial_assignment_status": None, "excluded": None},
+                "abc_v4": {"osf_id": "abc_v4", "trial_assignment_status": None, "excluded": None},
+            },
+        )
+        rows = [_make_row("abc_v5", is_latest_version=True)]
+
+        with patch.dict("os.environ", {"OSF_INGEST_SKIP_EXISTING": "false"}, clear=False):
+            count = repo.upsert_preprints(rows)
+
+        self.assertEqual(count, 1)
+        put_ids = {item.get("osf_id") for item in repo.t_preprints._put_items}
+        self.assertIn("abc_v5", put_ids)
+        excluded_put_ids = {item.get("osf_id") for item in repo.t_excluded._put_items}
+        for v in ["abc_v1", "abc_v2", "abc_v3", "abc_v4"]:
+            self.assertIn(v, excluded_put_ids, f"{v} should be excluded")
+
+
 if __name__ == "__main__":
     unittest.main()
