@@ -10,10 +10,10 @@ on:
         default: '0'
       download_workers:
         description: 'Parallel workers for PDF downloads'
-        default: '4'
+        default: '2'
       backlog_depth:
         description: 'How many follow-up runs remain (0 = no re-trigger)'
-        default: '5'
+        default: '10'
       sync_start_date_override:
         description: 'Optional sync start override (YYYY-MM-DD or ISO datetime) for backfill'
         default: ''
@@ -27,7 +27,7 @@ on:
 jobs:
   grobid:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 60
 
     services:
       grobid:
@@ -72,14 +72,6 @@ jobs:
       PIPELINE_NOTIFY_EMAIL: ${{ secrets.PIPELINE_NOTIFY_EMAIL }}
 
     steps:
-
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost \
-                      "$AGENT_TOOLSDIRECTORY"
-          docker rmi $(docker images -aq) 2>/dev/null || true
-    
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -98,23 +90,24 @@ jobs:
         id: run
         run: |
           LIMIT="${{ inputs.limit || '0' }}"
-          DL_WORKERS="${{ inputs.download_workers || '4' }}"
-          CURRENT_DEPTH="${{ inputs.backlog_depth || '5' }}"
+          DL_WORKERS="${{ inputs.download_workers || '2' }}"
+          CURRENT_DEPTH="${{ inputs.backlog_depth || '10' }}"
 
           if [ "$LIMIT" = "0" ]; then
-            LIMIT="100000"
+            LIMIT="150"
           fi
 
           # Suppress per-run summary emails; send one final summary only when recursion is exhausted.
           # --max-seconds: exit gracefully before the GH Actions timeout-minutes (330).
-          # Use --output-json to write result directly to file, bypassing stdout
-          # (stray print() calls in submodules can corrupt piped JSON).
+          # Keep per-run limits modest so GROBID container memory stays bounded;
+          # the backlog re-trigger mechanism chains runs until the queue is drained.
           PIPELINE_NOTIFY_EMAIL="" python -m osf_sync.pipeline run-grobid-stages \
             --sync-limit "$LIMIT" \
             --pdf-limit "$LIMIT" \
             --grobid-limit "$LIMIT" \
             --download-workers "$DL_WORKERS" \
-            --max-seconds 18000 \
+            --interleave-batch 25 \
+            --max-seconds 1800 \
             --output-json /tmp/pipeline_output.json
 
           # Check if any stage was cut short by time or had items processed
@@ -145,7 +138,7 @@ jobs:
           fi
 
       - name: Re-trigger if backlog remains
-        if: steps.run.outputs.has_backlog == 'true' && (inputs.backlog_depth || '5') != '0'
+        if: steps.run.outputs.has_backlog == 'true' && (inputs.backlog_depth || '10') != '0'
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_DISPATCH_TOKEN }}
         run: |
@@ -153,14 +146,14 @@ jobs:
             echo "::warning::WORKFLOW_DISPATCH_TOKEN secret not set - cannot re-trigger."
             exit 0
           fi
-          CURRENT_DEPTH="${{ inputs.backlog_depth || '5' }}"
+          CURRENT_DEPTH="${{ inputs.backlog_depth || '10' }}"
           NEXT_DEPTH=$((CURRENT_DEPTH - 1))
           if [ "$NEXT_DEPTH" -gt 0 ]; then
             echo "Backlog detected, re-triggering with depth=$NEXT_DEPTH"
             gh workflow run grobid.yml \
               --ref "${{ github.ref_name }}" \
               -f limit="${{ inputs.limit || '0' }}" \
-              -f download_workers="${{ inputs.download_workers || '4' }}" \
+              -f download_workers="${{ inputs.download_workers || '2' }}" \
               -f sync_start_date_override="${{ inputs.sync_start_date_override || '' }}" \
               -f sync_end_date_override="${{ inputs.sync_end_date_override || '' }}" \
               -f sync_override_writes_cursor="${{ inputs.sync_override_writes_cursor || 'false' }}" \

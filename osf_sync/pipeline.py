@@ -5,6 +5,7 @@ import datetime as dt
 import json
 import logging
 import os
+import shutil
 import socket
 import time
 import uuid
@@ -580,6 +581,14 @@ def grobid_single(osf_id: str) -> Dict[str, Any]:
     if ok:
         mark_tei(osf_id, ok=True, tei_path=tei_path)
     logger.info("GROBID done [%s] ok=%s", osf_id, ok)
+
+    # Clean up local PDF to free disk/memory on ephemeral runners.
+    # TEI is already uploaded to S3; downstream stages re-download as needed.
+    base = os.environ.get("PDF_DEST_ROOT", PDF_DEST_ROOT)
+    pdf_dir = os.path.join(base, provider_id, osf_id)
+    if os.path.isdir(pdf_dir):
+        shutil.rmtree(pdf_dir, ignore_errors=True)
+
     return {"osf_id": osf_id, "ok": ok, "tei_path": tei_path, "error": err}
 
 
