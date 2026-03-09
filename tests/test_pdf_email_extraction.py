@@ -45,12 +45,6 @@ class PdfEmailExtractionTests(unittest.TestCase):
         emails = _extract_emails_from_text(normalized)
         self.assertIn("cornelius.erfort@hu-berlin.de", [e.lower() for e in emails])
 
-    def test_repairs_multi_word_camelcase_prefix(self) -> None:
-        """UniversityCollegeLondonstnvcp1@ucl.ac.uk -> stnvcp1@ucl.ac.uk"""
-        text = "UniversityCollegeLondonstnvcp1@ucl.ac.uk"
-        emails = _extract_emails_from_text(text)
-        self.assertIn("stnvcp1@ucl.ac.uk", [e.lower() for e in emails])
-
     def test_repairs_correspondence_prefix(self) -> None:
         """Pleaseaddresscorrespondencetojostarck@stanford.edu -> jostarck@stanford.edu"""
         text = "Pleaseaddresscorrespondencetojostarck@stanford.edu"

@@ -27,9 +27,10 @@ def repair_email_tld(email: str) -> str:
     (DNS/MX) of the full domain and, if it fails, strips dot-segments
     from the right until a deliverable domain is found.
 
-    When a dot-segment contains concatenated junk (e.g. ``ukDrChris``),
-    tries truncating at the first uppercase letter to recover multi-part
-    TLDs like ``.ac.uk``.
+    When a dot-segment contains concatenated junk (e.g. ``ukDrChris``
+    or ``uk15Dr``), tries truncating at the first non-lowercase character
+    (digit, uppercase, punctuation) to recover multi-part TLDs like
+    ``.ac.uk``.
 
     If no repair is possible the original string is returned unchanged.
     """
@@ -40,8 +41,10 @@ def repair_email_tld(email: str) -> str:
         return email
     local, _, domain = email.rpartition("@")
     parts = domain.split(".")
-    # Try stripping from the right, keeping at least 2 segments (host.tld)
-    for end in range(len(parts) - 1, 1, -1):
+    # Try stripping from the right, keeping at least 2 segments (host.tld).
+    # Start from len(parts) so that 2-segment domains like
+    # "example.comLink" can still have their last segment truncated.
+    for end in range(len(parts), 1, -1):
         candidate_domain = ".".join(parts[:end])
         normalized = _try_validate(local + "@" + candidate_domain)
         if normalized:

@@ -41,9 +41,9 @@ def _find_best_local(text: str, domain: str) -> str | None:
     """Find a plausible email local part at the end of *text*.
 
     Tries each position and returns the longest candidate that is all
-    lowercase / digits with short segments.  Uses tighter limits for
-    locals without separators (max 8 chars) than for locals with
-    separators (max 12 per segment).
+    lowercase / digits, contains at least one separator (``._-``), and
+    has segments of 2–12 chars each.  Only matches separator-containing
+    locals to avoid false positives on ambiguous no-separator usernames.
     """
     best = None
     for i in range(1, len(text)):
@@ -52,29 +52,21 @@ def _find_best_local(text: str, domain: str) -> str | None:
             continue
         if any(c.isupper() for c in rest):
             continue
+        if not any(c in rest for c in "._-"):
+            continue
         if not STRICT_EMAIL_RE.fullmatch(rest + "@" + domain):
             continue
-        has_sep = any(c in rest for c in "._")
-        plausible = (
-            _PLAUSIBLE_LOCAL_SEP_RE.fullmatch(rest)
-            if has_sep
-            else _PLAUSIBLE_LOCAL_NOSEP_RE.fullmatch(rest)
-        )
-        if not plausible:
+        if not _PLAUSIBLE_LOCAL_RE.fullmatch(rest):
             continue
         if best is None or len(rest) > len(best):
             best = rest
     return best
 
 
-# With separators: each segment 2–12 chars.
-_PLAUSIBLE_LOCAL_SEP_RE = re.compile(
+# Plausible email local with separators: each segment 2–12 chars.
+_PLAUSIBLE_LOCAL_RE = re.compile(
     r"^[a-z][a-z0-9]{1,11}(?:[._-][a-z0-9]{1,12}){1,3}$"
 )
-# Without separators: max 7 chars total.  Longer no-separator locals
-# are ambiguous (could be partial CamelCase word + username).  Phrase-
-# stripped results bypass this check so longer usernames still work.
-_PLAUSIBLE_LOCAL_NOSEP_RE = re.compile(r"^[a-z][a-z0-9]{1,6}$")
 
 
 def _repair_common_prefix_noise(email: str) -> str:
@@ -125,16 +117,7 @@ def _repair_common_prefix_noise(email: str) -> str:
                 if best:
                     return best + "@" + domain
 
-    # 4. General CamelCase prefix before lowercase email local.
-    #    Require ≥2 uppercase letters in the local and a long local (>12).
-    if sum(1 for c in local if c.isupper()) >= 2 and len(local) > 12:
-        best = _find_best_local(local, domain)
-        if best and len(best) < len(local):
-            prefix = local[: len(local) - len(best)]
-            if prefix.isalpha():
-                return best + "@" + domain
-
-    # 5. Single CamelCase word + uppercase-starting rest with separator:
+    # 4. Single CamelCase word + uppercase-starting rest with separator:
     # SingaporeNikita_Rane@... → Nikita_Rane@...
     match = re.match(r"^([A-Z][a-z]{3,})([A-Z][A-Za-z0-9._%+\-]+)$", local)
     if match and any(ch in match.group(2) for ch in "._-"):
