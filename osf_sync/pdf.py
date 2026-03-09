@@ -2,6 +2,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import signal
 import shutil
 import subprocess
 import tempfile
@@ -125,6 +126,19 @@ def _pdf_length_status(path: Path) -> str:
             break
     return "ok" if word_count >= MIN_PDF_WORDS else "too_short"
 
+def _kill_process_tree(proc: subprocess.Popen) -> None:
+    """Kill a process and its entire process group (soffice spawns children)."""
+    try:
+        pgid = os.getpgid(proc.pid)
+        os.killpg(pgid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        proc.kill()
+    except (ProcessLookupError, PermissionError):
+        pass
+
+
 def _convert_office_to_pdf(in_file: Path, out_pdf: Path) -> bool:
     soffice_bin = _office_converter_binary()
     if not soffice_bin:
@@ -153,18 +167,23 @@ def _convert_office_to_pdf(in_file: Path, out_pdf: Path) -> bool:
                 str(out_pdf.parent),
                 str(in_file),
             ]
+            proc = None
             try:
                 if candidate.exists():
                     candidate.unlink()
                 if out_pdf.exists():
                     out_pdf.unlink()
-                subprocess.run(
+                # Run soffice in its own process group so we can kill the
+                # entire tree (oosplash, soffice.bin, etc.) on timeout.
+                proc = subprocess.Popen(
                     cmd,
-                    check=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    timeout=SOFFICE_TIMEOUT_SECONDS,
+                    start_new_session=True,
                 )
+                proc.communicate(timeout=SOFFICE_TIMEOUT_SECONDS)
+                if proc.returncode != 0:
+                    raise subprocess.CalledProcessError(proc.returncode, cmd)
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
                 logger.warning(
                     "Office conversion attempt failed",
@@ -174,7 +193,12 @@ def _convert_office_to_pdf(in_file: Path, out_pdf: Path) -> bool:
                         "max_attempts": attempts,
                     },
                 )
+                if proc is not None:
+                    _kill_process_tree(proc)
             finally:
+                # Ensure no orphaned soffice processes survive this attempt.
+                if proc is not None:
+                    _kill_process_tree(proc)
                 shutil.rmtree(profile_dir, ignore_errors=True)
 
             if candidate.exists():
