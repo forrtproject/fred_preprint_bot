@@ -27,7 +27,7 @@ on:
 jobs:
   grobid:
     runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    timeout-minutes: 150
 
     services:
       grobid:
@@ -94,20 +94,17 @@ jobs:
           CURRENT_DEPTH="${{ inputs.backlog_depth || '10' }}"
 
           if [ "$LIMIT" = "0" ]; then
-            LIMIT="150"
+            LIMIT="100000"
           fi
 
           # Suppress per-run summary emails; send one final summary only when recursion is exhausted.
-          # --max-seconds: exit gracefully before the GH Actions timeout-minutes (330).
-          # Keep per-run limits modest so GROBID container memory stays bounded;
-          # the backlog re-trigger mechanism chains runs until the queue is drained.
+          # --max-seconds: exit gracefully before the GH Actions timeout-minutes.
           PIPELINE_NOTIFY_EMAIL="" python -m osf_sync.pipeline run-grobid-stages \
             --sync-limit "$LIMIT" \
             --pdf-limit "$LIMIT" \
             --grobid-limit "$LIMIT" \
             --download-workers "$DL_WORKERS" \
-            --interleave-batch 25 \
-            --max-seconds 1800 \
+            --max-seconds 7200 \
             --output-json /tmp/pipeline_output.json
 
           # Check if any stage was cut short by time or had items processed
