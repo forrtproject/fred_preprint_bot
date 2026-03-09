@@ -37,22 +37,94 @@ def _normalize_pdf_text_for_email_extraction(text: str) -> str:
     return txt
 
 
+def _find_best_local(text: str, domain: str) -> str | None:
+    """Find a plausible email local part at the end of *text*.
+
+    Tries each position and returns the longest candidate that is all
+    lowercase / digits, contains at least one separator (``._-``), and
+    has segments of 2–12 chars each.  Only matches separator-containing
+    locals to avoid false positives on ambiguous no-separator usernames.
+    """
+    best = None
+    for i in range(1, len(text)):
+        rest = text[i:]
+        if not rest or rest[0].isupper() or len(rest) < 3:
+            continue
+        if any(c.isupper() for c in rest):
+            continue
+        if not any(c in rest for c in "._-"):
+            continue
+        if not STRICT_EMAIL_RE.fullmatch(rest + "@" + domain):
+            continue
+        if not _PLAUSIBLE_LOCAL_RE.fullmatch(rest):
+            continue
+        if best is None or len(rest) > len(best):
+            best = rest
+    return best
+
+
+# Plausible email local with separators: each segment 2–12 chars.
+_PLAUSIBLE_LOCAL_RE = re.compile(
+    r"^[a-z][a-z0-9]{1,11}(?:[._-][a-z0-9]{1,12}){1,3}$"
+)
+
+
 def _repair_common_prefix_noise(email: str) -> str:
     if "@" not in email:
         return email
     local, domain = email.split("@", 1)
-    # Example artifact: Berlin.cornelius.erfort@...
+
+    # 1. Dot-prefix: Berlin.cornelius.erfort@... → cornelius.erfort@...
     dot_parts = local.split(".")
     if len(dot_parts) >= 3 and dot_parts[0][:1].isupper() and dot_parts[0][1:].islower():
         candidate = ".".join(dot_parts[1:]) + "@" + domain
         if STRICT_EMAIL_RE.fullmatch(candidate):
             return candidate
-    # Example artifact: SingaporeNikita_Rane@...
+
+    # 2. Name-repetition: when a CamelCase word appears again in lowercase
+    #    later in the local part, the email starts at the repeated word.
+    #    e.g. AnastasiaRousakianastasia.rousaki → anastasia.rousaki
+    for m in re.finditer(r"[A-Z][a-z]{2,}", local):
+        word_lower = m.group().lower()
+        search_from = m.end()
+        rest_after = local[search_from:]
+        idx = rest_after.lower().find(word_lower)
+        if idx >= 0:
+            email_start = search_from + idx
+            email_local = local[email_start:]
+            if email_local[0].islower() and STRICT_EMAIL_RE.fullmatch(
+                email_local + "@" + domain
+            ):
+                return email_local + "@" + domain
+
+    # 3. Known phrase prefixes (case-insensitive).
+    phrase_match = re.search(
+        r"correspondenceto|addressedto|contactat|mailto",
+        local,
+        re.IGNORECASE,
+    )
+    if phrase_match:
+        rest = local[phrase_match.end():]
+        if rest:
+            # Try rest directly if it starts lowercase.
+            if rest[0].islower() and STRICT_EMAIL_RE.fullmatch(
+                rest + "@" + domain
+            ):
+                return rest + "@" + domain
+            # Rest may have an additional CamelCase name prefix.
+            if rest[0].isupper():
+                best = _find_best_local(rest, domain)
+                if best:
+                    return best + "@" + domain
+
+    # 4. Single CamelCase word + uppercase-starting rest with separator:
+    # SingaporeNikita_Rane@... → Nikita_Rane@...
     match = re.match(r"^([A-Z][a-z]{3,})([A-Z][A-Za-z0-9._%+\-]+)$", local)
     if match and any(ch in match.group(2) for ch in "._-"):
         candidate = match.group(2) + "@" + domain
         if STRICT_EMAIL_RE.fullmatch(candidate):
             return candidate
+
     return email
 
 
