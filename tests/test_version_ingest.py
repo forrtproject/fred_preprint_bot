@@ -253,6 +253,28 @@ class SiblingVersionTests(unittest.TestCase):
         self.assertIn("abc_v2", excluded_put_ids)
         self.assertIn("abc_v3", excluded_put_ids)
 
+    def test_resync_existing_version_siblings_already_excluded(self):
+        """Re-synced versioned preprint whose siblings are already excluded
+        should be treated as existing (update_item), not new (put_item),
+        to avoid resetting pipeline state like tei_generated."""
+        repo = _make_repo(
+            preprints_data={
+                "abc_v1": {"osf_id": "abc_v1", "excluded": True},
+                "abc_v2": {"osf_id": "abc_v2", "tei_generated": True, "queue_grobid": "done"},
+            },
+        )
+        rows = [_make_row("abc_v2", is_latest_version=True)]
+
+        with patch.dict("os.environ", {"OSF_INGEST_SKIP_EXISTING": "false"}, clear=False):
+            count = repo.upsert_preprints(rows)
+
+        self.assertEqual(count, 1)
+        # Should be update_item (preserving pipeline state), NOT put_item
+        put_ids = {item.get("osf_id") for item in repo.t_preprints._put_items}
+        self.assertNotIn("abc_v2", put_ids, "existing preprint should not be re-inserted via put_item")
+        update_keys = {u["Key"]["osf_id"] for u in repo.t_preprints._update_items}
+        self.assertIn("abc_v2", update_keys, "existing preprint should be updated via update_item")
+
     def test_new_version_supersedes_multiple_old_siblings(self):
         """v5 arrives, v1-v4 exist unrandomized -> all old versions excluded."""
         repo = _make_repo(

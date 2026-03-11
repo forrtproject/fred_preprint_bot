@@ -535,9 +535,11 @@ class PreprintsRepo:
                     )
                 else:
                     # No sibling randomized/emailed — exclude older siblings, ingest new
+                    newly_excluded = False
                     for sid, state in existing_sibs.items():
                         if state.get("excluded"):
                             continue
+                        newly_excluded = True
                         self.mark_preprint_excluded(
                             osf_id=sid,
                             reason="superseded_by_newer_version",
@@ -547,8 +549,9 @@ class PreprintsRepo:
                         with_extras(log, osf_id=sid, superseded_by=osf_id).info(
                             "excluding old version: superseded by newer"
                         )
-                    # Ensure incoming version is treated as new (fresh put_item)
-                    existing_ids.discard(osf_id)
+                    if newly_excluded:
+                        # First time superseding — treat as new (fresh put_item)
+                        existing_ids.discard(osf_id)
             if version_excluded_ids:
                 rows = [r for r in rows if r.get("id") not in version_excluded_ids]
                 with_extras(log, excluded=len(version_excluded_ids)).info(
