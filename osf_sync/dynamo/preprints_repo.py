@@ -192,39 +192,64 @@ class PreprintsRepo:
                 return False
             raise
 
-        try:
-            expr_values = {
-                ":true": True,
-                ":reason": reason_val,
-                ":at": excluded_at,
-                ":date": exclusion_date,
-                ":t": excluded_at,
-            }
-            set_exprs = [
-                "excluded=:true",
-                "excluded_reason=:reason",
-                "excluded_at=:at",
-                "excluded_date=:date",
-                "updated_at=:t",
-            ]
-            if stage:
-                expr_values[":stage"] = stage
-                set_exprs.append("excluded_stage=:stage")
-            self.t_preprints.update_item(
-                Key={"osf_id": osf_id_val},
-                ConditionExpression="attribute_exists(osf_id)",
-                UpdateExpression=(
-                    "SET " + ", ".join(set_exprs) + " "
-                    "REMOVE queue_pdf, queue_grobid, queue_extract, queue_email, "
-                    "claim_pdf_owner, claim_pdf_until, "
-                    "claim_grobid_owner, claim_grobid_until, "
-                    "claim_extract_owner, claim_extract_until"
-                ),
-                ExpressionAttributeValues=expr_values,
-            )
-        except ClientError as e:
-            if e.response.get("Error", {}).get("Code") != "ConditionalCheckFailedException":
-                raise
+        expr_values = {
+            ":true": True,
+            ":reason": reason_val,
+            ":at": excluded_at,
+            ":date": exclusion_date,
+            ":t": excluded_at,
+        }
+        set_exprs = [
+            "excluded=:true",
+            "excluded_reason=:reason",
+            "excluded_at=:at",
+            "excluded_date=:date",
+            "updated_at=:t",
+        ]
+        if stage:
+            expr_values[":stage"] = stage
+            set_exprs.append("excluded_stage=:stage")
+
+        # If the email was already sent, keep queue_email intact so the
+        # dashboard count stays correct and we never lose send tracking.
+        remove_exprs = [
+            "queue_pdf", "queue_grobid", "queue_extract",
+            "claim_pdf_owner", "claim_pdf_until",
+            "claim_grobid_owner", "claim_grobid_until",
+            "claim_extract_owner", "claim_extract_until",
+        ]
+        # Two-pass: first try with email_sent=True condition (preserve queue_email),
+        # then fall back to removing queue_email (email not sent).
+        for include_queue_email in (False, True):
+            removes = list(remove_exprs)
+            if include_queue_email:
+                removes.append("queue_email")
+            condition = "attribute_exists(osf_id)"
+            if not include_queue_email:
+                # Only match if email_sent IS true (preserve queue_email)
+                condition += " AND email_sent = :true"
+            try:
+                self.t_preprints.update_item(
+                    Key={"osf_id": osf_id_val},
+                    ConditionExpression=condition,
+                    UpdateExpression=(
+                        "SET " + ", ".join(set_exprs) + " "
+                        "REMOVE " + ", ".join(removes)
+                    ),
+                    ExpressionAttributeValues=expr_values,
+                )
+                if not include_queue_email:
+                    with_extras(log, osf_id=osf_id_val, reason=reason_val).warning(
+                        "excluding already-emailed preprint; preserving queue_email=done"
+                    )
+                break  # success
+            except ClientError as e:
+                code = e.response.get("Error", {}).get("Code")
+                if code == "ConditionalCheckFailedException" and not include_queue_email:
+                    continue  # email_sent != True, try fallback
+                if code != "ConditionalCheckFailedException":
+                    raise
+                break  # item doesn't exist, nothing to update
 
         return True
 
@@ -488,28 +513,28 @@ class PreprintsRepo:
                 existing_sibs = {sid: sibling_states[sid] for sid in sibs if sid in sibling_states}
                 if not existing_sibs:
                     continue
-                # Check if any non-excluded sibling has been randomized
-                randomized_sib = None
+                # Check if any non-excluded sibling has been randomized or emailed
+                protected_sib = None
                 for sid, state in existing_sibs.items():
                     if state.get("excluded"):
                         continue
-                    if state.get("trial_assignment_status"):
-                        randomized_sib = sid
+                    if state.get("trial_assignment_status") or state.get("email_sent") is True:
+                        protected_sib = sid
                         break
-                if randomized_sib:
-                    # Sibling already randomized — exclude the incoming version
+                if protected_sib:
+                    # Sibling already randomized/emailed — exclude the incoming version
                     version_excluded_ids.add(osf_id)
                     self.mark_preprint_excluded(
                         osf_id=osf_id,
                         reason="ingest_sibling_version_randomized",
                         stage="sync",
-                        details={"randomized_version": randomized_sib},
+                        details={"randomized_version": protected_sib},
                     )
-                    with_extras(log, osf_id=osf_id, randomized_version=randomized_sib).info(
-                        "excluding version: sibling already randomized"
+                    with_extras(log, osf_id=osf_id, randomized_version=protected_sib).info(
+                        "excluding version: sibling already randomized/emailed"
                     )
                 else:
-                    # No sibling randomized — exclude older siblings, ingest new
+                    # No sibling randomized/emailed — exclude older siblings, ingest new
                     for sid, state in existing_sibs.items():
                         if state.get("excluded"):
                             continue
@@ -670,7 +695,7 @@ class PreprintsRepo:
             keys = [{"osf_id": i} for i in chunk]
             request = {table_name: {
                 "Keys": keys,
-                "ProjectionExpression": "osf_id, trial_assignment_status, excluded",
+                "ProjectionExpression": "osf_id, trial_assignment_status, excluded, email_sent",
             }}
             resp = self.ddb.batch_get_item(RequestItems=request)
             for item in resp.get("Responses", {}).get(table_name, []):

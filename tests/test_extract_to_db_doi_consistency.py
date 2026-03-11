@@ -8,17 +8,44 @@ from osf_sync.augmentation.extract_to_db import (
 )
 
 
+class _DummyBatchWriter:
+    """Mimics DynamoDB Table.batch_writer() context manager."""
+
+    def __init__(self, store):
+        self._store = store
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def put_item(self, Item):
+        self._store.append(Item)
+
+
+class _DummyTable:
+    def __init__(self):
+        self.items = []
+
+    def batch_writer(self):
+        return _DummyBatchWriter(self.items)
+
+
 class _DummyRepo:
     def __init__(self) -> None:
         self.tei = []
         self.refs = []
         self.extracted = []
+        self.t_refs = _DummyTable()
 
     def upsert_tei(self, osf_id, preprint):
         self.tei.append((osf_id, preprint))
 
-    def upsert_reference(self, osf_id, item):
+    def prepare_reference_item(self, osf_id, item):
+        prepared = {"osf_id": osf_id, **item}
         self.refs.append((osf_id, item))
+        return prepared
 
     def mark_extracted(self, osf_id):
         self.extracted.append(osf_id)

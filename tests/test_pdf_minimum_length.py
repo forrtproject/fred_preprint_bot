@@ -34,7 +34,7 @@ class PdfMinimumLengthTests(unittest.TestCase):
     @patch("osf_sync.pdf._pdf_length_status", return_value="unreadable")
     @patch("osf_sync.pdf._download_to")
     @patch("osf_sync.pdf.resolve_primary_file_info_from_raw")
-    def test_unreadable_pdf_raises_in_delete_path(
+    def test_unreadable_pdf_passed_to_grobid(
         self,
         mock_resolve,
         _mock_download,
@@ -43,14 +43,16 @@ class PdfMinimumLengthTests(unittest.TestCase):
     ) -> None:
         mock_resolve.return_value = ("https://example.org/file.pdf", "application/pdf", "paper.pdf")
 
-        with self.assertRaises(RuntimeError):
-            pdf.ensure_pdf_available_or_delete(
-                osf_id="p1",
-                provider_id="psyarxiv",
-                raw={"relationships": {"primary_file": {"data": {"id": "f1"}}}},
-                dest_root="/tmp/flora_preprint_tests",
-            )
+        kind, path, reason = pdf.ensure_pdf_available_or_delete(
+            osf_id="p1",
+            provider_id="psyarxiv",
+            raw={"relationships": {"primary_file": {"data": {"id": "f1"}}}},
+            dest_root="/tmp/flora_preprint_tests",
+        )
 
+        self.assertEqual(kind, "pdf")
+        self.assertIsNotNone(path)
+        self.assertIsNone(reason)
         mock_delete.assert_not_called()
 
 
