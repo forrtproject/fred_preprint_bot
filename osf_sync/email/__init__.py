@@ -117,9 +117,13 @@ def process_email_batch(
             logger.debug("Failed to release email claim", exc_info=True)
 
     # Pre-compute average inter-send delay when spreading is requested.
+    # Cap per-email delay so that a large spread with few actual preprints
+    # doesn't cause extremely long waits (e.g. spread sized for 50 emails
+    # but only 3 found → divide by actual count, not limit).
+    _MAX_AVG_DELAY = float(os.environ.get("EMAIL_MAX_SPREAD_DELAY", "480"))  # 8 min
     avg_delay = 0.0
     if spread_seconds and spread_seconds > 0 and len(preprints) > 1:
-        avg_delay = spread_seconds / len(preprints)
+        avg_delay = min(spread_seconds / len(preprints), _MAX_AVG_DELAY)
 
     recipients_sent = 0
     failed = 0
