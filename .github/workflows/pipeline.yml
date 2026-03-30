@@ -31,6 +31,9 @@ on:
       orcid_workers:
         description: 'Parallel workers for ORCID lookups'
         default: '3'
+      flora_recheck_days:
+        description: 'FLORA recheck window in days (default 30; set to 0 to re-screen ALL preprints, e.g. after FLORA CSV update)'
+        default: '30'
       backlog_depth:
         description: 'How many follow-up runs remain (0 = no re-trigger)'
         default: '5'
@@ -46,6 +49,7 @@ jobs:
       INPUT_EMAIL_LIMIT: ${{ github.event.inputs.email_limit || inputs.email_limit || '0' }}
       INPUT_ENRICH_WORKERS: ${{ github.event.inputs.enrich_workers || inputs.enrich_workers || '6' }}
       INPUT_ORCID_WORKERS: ${{ github.event.inputs.orcid_workers || inputs.orcid_workers || '3' }}
+      INPUT_FLORA_RECHECK_DAYS: ${{ github.event.inputs.flora_recheck_days || inputs.flora_recheck_days || '30' }}
       INPUT_BACKLOG_DEPTH: ${{ github.event.inputs.backlog_depth || inputs.backlog_depth || '5' }}
       PIPELINE_ENV: prod
       PIPELINE_ENABLE_EMAIL_STAGE: 'true'
@@ -88,6 +92,7 @@ jobs:
           echo "| Email limit | \`$INPUT_EMAIL_LIMIT\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Enrich workers | \`$INPUT_ENRICH_WORKERS\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| ORCID workers | \`$INPUT_ORCID_WORKERS\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| FLORA recheck days | \`$INPUT_FLORA_RECHECK_DAYS\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Backlog depth | \`$INPUT_BACKLOG_DEPTH\` |" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
@@ -128,6 +133,13 @@ jobs:
             EMAIL_ARGS="--include-email --email-limit $EMAIL_LIMIT"
           fi
 
+          # FLORA recheck: override env var and pass --include-checked when 0
+          export DDB_REFS_FLORA_RECHECK_DAYS="$INPUT_FLORA_RECHECK_DAYS"
+          FLORA_ARGS=""
+          if [ "$INPUT_FLORA_RECHECK_DAYS" = "0" ]; then
+            FLORA_ARGS="--include-checked"
+          fi
+
           if [ "$STAGE" = "all" ]; then
             REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
             if [ "$REMAINING_SECONDS" -le 0 ]; then
@@ -145,6 +157,7 @@ jobs:
                 --orcid-workers "$ORCID_WORKERS" \
                 --max-seconds-per-stage 3600 \
                 $EMAIL_ARGS \
+                $FLORA_ARGS \
                 --output-json /tmp/pipeline_output.json
             RUN_RC=$?
             set -e
@@ -173,6 +186,7 @@ jobs:
                 --orcid-workers "$ORCID_WORKERS" \
                 --max-seconds-per-stage 3600 \
                 --skip-randomization \
+                $FLORA_ARGS \
                 --output-json /tmp/pipeline_output.json
             RUN_RC=$?
             set -e
@@ -273,6 +287,9 @@ jobs:
               # Spread emails: ~2 min average delay per message
               SPREAD=$(( STAGE_LIMIT * 120 ))
               EXTRA_ARGS="--spread-seconds $SPREAD"
+            fi
+            if [ "$STAGE" = "flora" ]; then
+              EXTRA_ARGS="$EXTRA_ARGS $FLORA_ARGS"
             fi
             REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
             if [ "$REMAINING_SECONDS" -le 0 ]; then
@@ -395,6 +412,7 @@ jobs:
               -f email_limit="$INPUT_EMAIL_LIMIT" \
               -f enrich_workers="$INPUT_ENRICH_WORKERS" \
               -f orcid_workers="$INPUT_ORCID_WORKERS" \
+              -f flora_recheck_days="$INPUT_FLORA_RECHECK_DAYS" \
               -f backlog_depth="$NEXT_DEPTH"
           else
             echo "Backlog depth exhausted, not re-triggering"
