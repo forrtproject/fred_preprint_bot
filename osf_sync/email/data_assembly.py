@@ -37,6 +37,30 @@ def _provider_display_name(provider_id: str | None) -> str:
     return _PROVIDER_NAMES.get(provider_id.lower(), provider_id)
 
 
+def _strip_middle_initials(text: str) -> str:
+    """Drop single-letter tokens (e.g. "J", "J.") from a name."""
+    if not text:
+        return ""
+    tokens = [p for p in re.split(r"\s+", text.strip()) if p]
+    return " ".join(p for p in tokens if len(p.strip(".")) > 1)
+
+
+def _clean_first_name(full_name: str) -> str:
+    """Pick a usable first name from a full name, or "Author" if only initials.
+
+    "Marc J Smith"     -> "Marc"
+    "Marc J. Smith"    -> "Marc"
+    "J. R. R. Tolkien" -> "Author"  (given name is initials-only)
+    "Madonna"          -> "Madonna" (single-token name)
+    """
+    if not full_name:
+        return "Author"
+    parts = full_name.rsplit(" ", 1)
+    given = parts[0] if len(parts) > 1 else full_name
+    cleaned = _strip_middle_initials(given)
+    return cleaned or "Author"
+
+
 def _build_greeting(first_names: List[str]) -> str:
     """Build a greeting addressing recipients by first name.
 
@@ -81,7 +105,7 @@ def assemble_email_context(osf_id: str, repo: PreprintsRepo | None = None) -> Op
         parts = full_name.rsplit(" ", 1) if full_name else ["", ""]
         recipients.append({
             "email": email,
-            "first_name": parts[0] if len(parts) > 1 else full_name,
+            "first_name": _clean_first_name(full_name),
             "last_name": parts[1] if len(parts) > 1 else "",
         })
 
