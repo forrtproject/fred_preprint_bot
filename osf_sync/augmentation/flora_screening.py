@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set
@@ -11,11 +12,14 @@ from .flora_original_lookup import (
     _resolve_flora_csv_path,
 )
 from ..logging_setup import get_logger, with_extras
+from ..version_utils import base_id, sibling_ids
 from .citation_distance import (
     compute_citation_distance,
     fetch_apa_citation,
     needs_validation,
 )
+
+_OSF_DOI_RE = re.compile(r"^(?P<prefix>10\.[\d]+/osf\.io/)(?P<id>[a-z0-9]+(?:_v\d+)?)$")
 
 logger = get_logger(__name__)
 
@@ -61,6 +65,50 @@ def _extract_dois(refs: List[Dict[str, Any]]) -> Set[str]:
         if d:
             dois.add(d)
     return dois
+
+
+def _build_self_dois(preprint: Optional[Dict[str, Any]]) -> Set[str]:
+    """Return the set of DOIs that identify the preprint itself.
+
+    Used to drop FLoRA pairs that list the preprint as the replication of one
+    of its own references — without this, a preprint that is itself a
+    replication study gets emailed urging its authors to cite their own paper.
+
+    Includes:
+    - The preprint's linked version-of-record DOI (``doi`` attribute), if set.
+    - The OSF preprint DOI of the current version, plus all sibling versions
+      and the unversioned base, derived from ``links.preprint_doi``.
+    """
+    out: Set[str] = set()
+    if not preprint:
+        return out
+
+    own_doi = normalize_doi(preprint.get("doi"))
+    if own_doi:
+        out.add(own_doi)
+
+    links = preprint.get("links") or {}
+    own_preprint_doi = normalize_doi(links.get("preprint_doi"))
+    if not own_preprint_doi:
+        return out
+    out.add(own_preprint_doi)
+
+    m = _OSF_DOI_RE.match(own_preprint_doi)
+    if not m:
+        return out
+    prefix, variant_id = m.group("prefix"), m.group("id")
+    base = base_id(variant_id)
+    candidates = {base, variant_id, *sibling_ids(variant_id)}
+    # If the preprint id is unversioned, also include _vN variants — FLoRA may
+    # register the same paper under a versioned form even when our record is
+    # unversioned.
+    if base == variant_id:
+        candidates.update(f"{base}_v{n}" for n in range(1, 31))
+    for cid in candidates:
+        d = normalize_doi(prefix + cid)
+        if d:
+            out.add(d)
+    return out
 
 
 def _validate_eligible_ref_distances(
@@ -192,6 +240,8 @@ def lookup_and_screen_flora(
     skipped_sent = 0  # tracked for stats compatibility
 
     def _process_preprint(pid: str) -> Dict[str, Any]:
+        preprint = repo.t_preprints.get_item(Key={"osf_id": pid}).get("Item")
+        self_dois = _build_self_dois(preprint)
         all_refs = _query_all_refs(repo, pid)
         all_dois = _extract_dois(all_refs)
 
@@ -210,9 +260,39 @@ def lookup_and_screen_flora(
             if not ref_pairs_for_doi:
                 continue
 
+            # Drop FLoRA pairs whose replication DOI is the preprint itself —
+            # those represent the preprint being listed as a replication of
+            # one of its own references, and we must not email authors urging
+            # them to cite their own paper.
+            non_self_pairs = [
+                obj for obj in ref_pairs_for_doi
+                if normalize_doi(obj.get("doi_r")) not in self_dois
+            ]
+            self_pair_count = len(ref_pairs_for_doi) - len(non_self_pairs)
+            if self_pair_count and debug:
+                _info("Dropped self-replication FLoRA pairs",
+                      osf_id=pid, ref_id=refid, doi=ref_doi,
+                      dropped=self_pair_count)
+            if not non_self_pairs:
+                # Every replication for this ref is self. Treat as "cited" so
+                # the ref drops out of the eligible set; on a re-run this also
+                # overwrites previously-persisted self-only state.
+                if persist_flags and self_pair_count:
+                    try:
+                        repo.update_reference_flora_result(
+                            pid,
+                            refid,
+                            ref_pairs=[],
+                            replication_cited=True,
+                        )
+                    except Exception as e:
+                        _warn("Failed to clear self-only FLORA result",
+                              osf_id=pid, ref_id=refid, error=str(e))
+                continue
+
             # Filter to pairs where this ref's DOI is the original DOI
             matching_pairs = []
-            for obj in ref_pairs_for_doi:
+            for obj in non_self_pairs:
                 doi_o = normalize_doi(obj.get("doi_o"))
                 doi_r = normalize_doi(obj.get("doi_r"))
                 if ref_doi and doi_o and ref_doi == doi_o:
@@ -238,7 +318,7 @@ def lookup_and_screen_flora(
                     repo.update_reference_flora_result(
                         pid,
                         refid,
-                        ref_pairs=ref_pairs_for_doi,
+                        ref_pairs=non_self_pairs,
                         replication_cited=replication_cited,
                     )
                 except Exception as e:
