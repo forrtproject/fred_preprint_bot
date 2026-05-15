@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       stage:
-        description: 'Run specific stage (extract, enrich, extract-enrich, flora, author, author-randomize, email) or all'
+        description: 'Run specific stage (extract, enrich, extract-enrich, flora, author, author-randomize, email, randomize-email) or all'
         type: choice
         default: 'all'
         options:
@@ -19,6 +19,7 @@ on:
           - author
           - author-randomize
           - email
+          - randomize-email
       limit:
         description: 'Max preprints per stage (0 = unlimited)'
         default: '0'
@@ -279,6 +280,94 @@ jobs:
           print(json.dumps(out, indent=2))
           PY
             python /tmp/merge_pipeline_outputs.py
+          elif [ "$STAGE" = "randomize-email" ]; then
+            RANDOMIZE_TIMED_OUT=0
+
+            REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+            if [ "$REMAINING_SECONDS" -le 0 ]; then
+              RUN_RC=124
+            else
+              set +e
+              timeout --signal=TERM --kill-after=60 \
+                "$REMAINING_SECONDS" \
+                python -m osf_sync.pipeline run \
+                  --stage author-randomize \
+                  --limit "$LIMIT" \
+                  --max-seconds 18000 \
+                  --output-json /tmp/pipeline_output_randomize.json
+              RUN_RC=$?
+              set -e
+            fi
+
+            if [ "$RUN_RC" -eq 124 ]; then
+              echo "::warning::stage 'author-randomize' hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+              printf '%s\n' '{"stage":"author-randomize","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}' > /tmp/pipeline_output_randomize.json
+              RANDOMIZE_TIMED_OUT=1
+            elif [ "$RUN_RC" -ne 0 ]; then
+              exit "$RUN_RC"
+            fi
+
+            if [ "$RANDOMIZE_TIMED_OUT" -eq 0 ]; then
+              EMAIL_STAGE_LIMIT="$EMAIL_LIMIT"
+              if [ "$EMAIL_STAGE_LIMIT" = "0" ]; then
+                echo "::warning::randomize-email requested but email_limit is 0; skipping email stage."
+                printf '%s\n' '{"stage":"email","skipped":true,"reason":"email_limit=0"}' > /tmp/pipeline_output_email.json
+              else
+                SPREAD=$(( EMAIL_STAGE_LIMIT * 120 ))
+                REMAINING_SECONDS=$(( SOFT_DEADLINE_EPOCH - $(date +%s) ))
+                if [ "$REMAINING_SECONDS" -le 0 ]; then
+                  RUN_RC=124
+                else
+                  set +e
+                  timeout --signal=TERM --kill-after=60 \
+                    "$REMAINING_SECONDS" \
+                    python -m osf_sync.pipeline run \
+                      --stage email \
+                      --limit "$EMAIL_STAGE_LIMIT" \
+                      --max-seconds 18000 \
+                      --spread-seconds "$SPREAD" \
+                      --output-json /tmp/pipeline_output_email.json
+                  RUN_RC=$?
+                  set -e
+                fi
+
+                if [ "$RUN_RC" -eq 124 ]; then
+                  echo "::warning::stage 'email' hit soft timeout (${SOFT_TIMEOUT_SECONDS}s); marking backlog for follow-up run."
+                  printf '%s\n' '{"stage":"email","processed":0,"failed":0,"limit_reached":false,"stopped_due_to_time":true}' > /tmp/pipeline_output_email.json
+                elif [ "$RUN_RC" -ne 0 ]; then
+                  exit "$RUN_RC"
+                fi
+              fi
+            fi
+
+            cat > /tmp/merge_randomize_email_outputs.py <<'PY'
+          import json
+
+          def _load(path: str):
+              try:
+                  with open(path, "r", encoding="utf-8") as f:
+                      return json.load(f)
+              except Exception:
+                  return {}
+
+          randomize = _load("/tmp/pipeline_output_randomize.json")
+          email = _load("/tmp/pipeline_output_email.json")
+          out = {"stages": {}}
+          if isinstance(randomize, dict):
+              if randomize.get("stage") == "author-randomize":
+                  out["stages"]["author-randomize"] = randomize
+              elif isinstance(randomize.get("stages"), dict):
+                  out["stages"]["author-randomize"] = randomize["stages"].get("author-randomize", {})
+          if isinstance(email, dict):
+              if email.get("stage") == "email":
+                  out["stages"]["email"] = email
+              elif isinstance(email.get("stages"), dict):
+                  out["stages"]["email"] = email["stages"].get("email", {})
+          with open("/tmp/pipeline_output.json", "w", encoding="utf-8") as f:
+              json.dump(out, f)
+          print(json.dumps(out, indent=2))
+          PY
+            python /tmp/merge_randomize_email_outputs.py
           else
             EXTRA_ARGS=""
             STAGE_LIMIT="$LIMIT"
