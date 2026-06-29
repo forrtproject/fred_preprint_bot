@@ -1,6 +1,7 @@
 """Send batch citation-distance review emails and build mailto: action links."""
 from __future__ import annotations
 
+import html
 import logging
 import os
 import urllib.parse
@@ -40,9 +41,10 @@ def _build_batch_html(all_flagged: Dict[str, List[Dict[str, Any]]], review_id: s
         for i, ref in enumerate(refs, 1):
             ref_id = ref.get("ref_id", "unknown")
             distance = ref.get("citation_distance", 0)
-            doi = ref.get("original_doi") or ref.get("doi", "")
-            raw = ref.get("raw_citation", "")
-            apa = ref.get("citation_apa_resolved", "")
+            # Escape externally-sourced fields so they cannot break or spoof the HTML.
+            doi = html.escape(str(ref.get("original_doi") or ref.get("doi", "")))
+            raw = html.escape(str(ref.get("raw_citation", "")))
+            apa = html.escape(str(ref.get("citation_apa_resolved", "")))
             target = f"{pid}/{ref_id}"
 
             lines.append(f"<h3>Reference {i}: {ref_id} — Distance: {distance:.1%}</h3>")
@@ -58,10 +60,17 @@ def _build_batch_html(all_flagged: Dict[str, List[Dict[str, Any]]], review_id: s
                          f'| <a href="{reject_link}">REJECT {target}</a></p>')
             lines.append("<hr>")
 
-    # Remainder actions at the bottom
-    approve_rem_link = _mailto_link(subject, f"APPROVE REMAINDER\n\nReview ID: {review_id}")
-    approve_rem_apa_link = _mailto_link(subject, f"APPROVE REMAINDER USE APA\n\nReview ID: {review_id}")
-    reject_rem_link = _mailto_link(subject, f"REJECT REMAINDER\n\nReview ID: {review_id}")
+    # Remainder actions at the bottom.  Embed the full member list as a "Targets:"
+    # line so the reply is self-contained: applying REMAINDER never depends on the
+    # server-side review_id link (which re-screening can clear before a reply arrives).
+    targets_line = "Targets: " + ", ".join(
+        f"{pid}/{ref.get('ref_id', 'unknown')}"
+        for pid, refs in all_flagged.items()
+        for ref in refs
+    )
+    approve_rem_link = _mailto_link(subject, f"APPROVE REMAINDER\n{targets_line}\n\nReview ID: {review_id}")
+    approve_rem_apa_link = _mailto_link(subject, f"APPROVE REMAINDER USE APA\n{targets_line}\n\nReview ID: {review_id}")
+    reject_rem_link = _mailto_link(subject, f"REJECT REMAINDER\n{targets_line}\n\nReview ID: {review_id}")
 
     lines.append("<p><b>Bulk actions</b> (apply to all refs not individually decided above):</p>")
     lines.append(f'<p><a href="{approve_rem_link}">APPROVE REMAINDER</a> — All DOI matches are correct; use raw citations</p>')
@@ -104,6 +113,17 @@ def _build_batch_plain(all_flagged: Dict[str, List[Dict[str, Any]]], review_id: 
             parts.append(f"Reply: APPROVE {target} / APPROVE {target} USE APA / REJECT {target}")
             parts.append("")
 
+    # Self-contained bulk action: the Targets line lets REMAINDER apply without the
+    # server-side review_id link.
+    targets_line = "Targets: " + ", ".join(
+        f"{pid}/{ref.get('ref_id', 'unknown')}"
+        for pid, refs in all_flagged.items()
+        for ref in refs
+    )
+    parts.append("Bulk action (all refs not individually decided):")
+    parts.append(f"  APPROVE REMAINDER / APPROVE REMAINDER USE APA / REJECT REMAINDER")
+    parts.append(f"  {targets_line}")
+    parts.append("")
     parts.append(f"Review ID: {review_id}")
     return "\n".join(parts)
 

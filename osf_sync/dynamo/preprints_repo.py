@@ -1489,12 +1489,15 @@ class PreprintsRepo:
         *decision* should be ``"approved"`` or ``"rejected"``.
         """
         now = dt.datetime.utcnow().isoformat()
+        # Require the reference to already exist so a stale/typo target raises
+        # ConditionalCheckFailedException instead of creating a sparse phantom item.
         self.t_refs.update_item(
             Key={"osf_id": osf_id, "ref_id": ref_id},
             UpdateExpression=(
                 "SET citation_validation_status=:s, "
                 "citation_validation_updated_at=:t, updated_at=:t"
             ),
+            ConditionExpression="attribute_exists(osf_id)",
             ExpressionAttributeValues={":s": decision, ":t": now},
         )
 
@@ -1525,9 +1528,12 @@ class PreprintsRepo:
                 "citation_validation_review_id"
             )
             eav = {":t": now}
+        # Require the preprint to exist so this never creates a sparse phantom item
+        # (e.g. from a decision applied to an orphan reference).
         self.t_preprints.update_item(
             Key={"osf_id": osf_id},
             UpdateExpression=expr,
+            ConditionExpression="attribute_exists(osf_id)",
             ExpressionAttributeValues=eav,
         )
 
